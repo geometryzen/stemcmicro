@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
-import { LambdaExpr } from 'math-expression-context';
+import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprEngineListener } from '../..';
@@ -8,7 +8,7 @@ import { AtomListener, UndeclaredVars } from '../api/api';
 import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
 import { Eval_function } from "../Eval_function";
 import { yyfactorpoly } from "../factorpoly";
-import { hash_for_atom, hash_info } from "../hashing/hash_info";
+import { hash_for_atom, hash_info, hash_nonop_cons } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { algebra } from "../operators/algebra/algebra";
 import { setq } from '../operators/assign/assign_any_any';
@@ -518,13 +518,13 @@ export class DerivedEnv implements ExtensionEnv {
         }
         throw new Error(`DerivedEnv.valueOf ${expr} method not implemented.`);
     }
-    getBinding(sym: Sym): U {
-        const key = sym.key();
+    getBinding(name: Sym): U {
+        const key = name.key();
         if (this.#bindings.has(key)) {
             return this.#bindings.get(key)!;
         }
         else {
-            return this.#baseEnv.getBinding(sym);
+            return this.#baseEnv.getBinding(name);
         }
     }
 
@@ -841,21 +841,31 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setCellHost(host: CellHost): void {
             throw new ProgrammingError();
         },
-        getBinding(sym: Sym): U {
-            assert_sym(sym);
-            if (symTab.hasBinding(sym)) {
-                return symTab.getBinding(sym);
+        getBinding(name: Sym): U {
+            assert_sym(name);
+            if (symTab.hasBinding(name)) {
+                return symTab.getBinding(name);
             }
             else {
+                const currents: { [operator: string]: Operator<U>[] } = currentConsByOperator();
+                const cons: Operator<U>[] = currents[name.key()];
+                if (Array.isArray(cons) && cons.length > 0) {
+                    const hash = hash_nonop_cons(name);
+                    for (let i = 0; i < cons.length; i++) {
+                        if (cons[i].hash === hash) {
+                            const operator = cons[i];
+                            const bodyExpr = make_lambda_expr_from_operator(name, operator);
+                            return new Lambda(bodyExpr, "???");
+                        }
+                    }
+                }
                 // console.lg(`config.allowUndeclaredVars => ${config.allowUndeclaredVars}`);
                 switch (config.allowUndeclaredVars) {
                     case UndeclaredVars.Err: {
-                        // console.lg("getBinding", `${sym}`);
-                        // throw new ProgrammingError();// TEMP
-                        return new Err(new Str(`Use of undeclared Var ${sym.key()}.`));
+                        return new Err(new Str(`Use of undeclared Var ${name.key()}.`));
                     }
                     case UndeclaredVars.Nil: {
-                        return sym;
+                        return name;
                         // return nil;
                     }
                     default: {
@@ -864,27 +874,30 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
         },
-        getUserFunction(sym: Sym): U {
-            return $.getSymbolUsrFunc(sym);
-        },
-        hasBinding(sym: Sym): boolean {
-            const currents: { [operator: string]: Operator<U>[] } = currentConsByOperator();
-            const cons: Operator<U>[] = currents[sym.key()];
-            if (Array.isArray(cons) && cons.length > 0) {
+        hasBinding(name: Sym): boolean {
+            if (symTab.hasBinding(name)) {
                 return true;
             }
             else {
-                // TODO: May need to adjust the ordering.
-                // Do we check the symTab first?
-                return symTab.hasBinding(sym);
+                const currents: { [operator: string]: Operator<U>[] } = currentConsByOperator();
+                const cons: Operator<U>[] = currents[name.key()];
+                if (Array.isArray(cons) && cons.length > 0) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
             }
-        },
-        hasUserFunction(sym: Sym): boolean {
-            return userSymbols.has(sym.key());
         },
         setBinding(sym: Sym, binding: U): void {
             // console.lg("ExprContext.setBinding", `${sym}`, `${binding}`);
             symTab.setBinding(sym, binding);
+        },
+        getUserFunction(sym: Sym): U {
+            return $.getSymbolUsrFunc(sym);
+        },
+        hasUserFunction(sym: Sym): boolean {
+            return userSymbols.has(sym.key());
         },
         setUserFunction(sym: Sym, usrfunc: U): void {
             return $.setSymbolUsrFunc(sym, usrfunc);
@@ -1698,3 +1711,14 @@ function unambiguous_operator(expr: Cons, ops: Operator<U>[], $: ExtensionEnv): 
         return void 0;
     }
 }
+
+/**
+ * 
+ */
+function make_lambda_expr_from_operator(name: Sym, operator: Operator<U>): LambdaExpr {
+    // FIXME: Dropping the $ shows that we should be using Extension, not Operator.
+    return (argList: Cons, $: ExprContext): U => {
+        return operator.valueOf(cons(name, argList));
+    };
+}
+

@@ -1,4 +1,4 @@
-import { assert_sym, create_flt, create_sym, Flt, is_num, is_sym, is_tensor, Sym } from "math-expression-atoms";
+import { assert_sym, create_flt, create_sym, Flt, is_num, is_tensor, Sym } from "math-expression-atoms";
 import { Cons, nil, U } from "math-expression-tree";
 import { Directive } from "../env/ExtensionEnv";
 import { assert_cons } from "../tree/cons/assert_cons";
@@ -39,7 +39,7 @@ interface DrawContext {
 
 const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
-const X_LOWER = create_sym("x");
+// const X_LOWER = create_sym("x");
 
 const DRAW_LEFT_PAD = 200;
 const DRAW_RIGHT_PAD = 100;
@@ -61,14 +61,15 @@ export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
             ctrl.pushDirective(Directive.drawing, 1);
             try {
 
-                const F = assert_cons(expr).item(1);
-                let T = assert_cons(expr).item(2);
-
+                const F = assert_cons(expr).item1;
+                const varName = assert_sym(assert_cons(expr).item2);
+                /*
                 if (!(is_sym(T) && env.hasUserFunction(T))) {
                     T = X_LOWER;
                 }
+                */
 
-                save_symbol(assert_sym(T), env);
+                save_symbol(assert_sym(varName), env);
                 try {
                     const dc: DrawContext = {
                         tmax: +Math.PI,
@@ -82,13 +83,13 @@ export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
                     setup_xrange(env, ctrl, $, dc);
                     setup_yrange(env, ctrl, $, dc);
 
-                    setup_final(F, assert_sym(T), env, ctrl, $, dc);
+                    setup_final(F, assert_sym(varName), env, ctrl, $, dc);
 
-                    const draw_array: { t: number; x: number; y: number }[] = [];
+                    const points: { t: number; x: number; y: number }[] = [];
 
                     // TODO: Why do we use the theta range? How do we ensure integrity across function calls?
-                    draw_pass1(F, T, draw_array, env, ctrl, $, dc);
-                    draw_pass2(F, T, draw_array, env, ctrl, $, dc);
+                    draw_pass1(F, varName, points, env, ctrl, $, dc);
+                    draw_pass2(F, varName, points, env, ctrl, $, dc);
 
                     const outbuf: string[] = [];
 
@@ -96,7 +97,7 @@ export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
                         useImaginaryI: isimaginaryunit(get_binding(I_LOWER, env)),
                         useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, env))
                     };
-                    emit_graph(draw_array, $, dc, ec, outbuf);
+                    emit_graph(points, $, dc, ec, outbuf);
 
                     const output = outbuf.join('');
 
@@ -190,29 +191,29 @@ function setup_yrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc
     dc.ymax = p3.toNumber();
 }
 
-function draw_pass1(F: U, T: U, draw_array: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function draw_pass1(F: U, varName: Sym, points: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
     for (let i = 0; i <= DRAW_WIDTH; i++) {
         const t = dc.tmin + (dc.tmax - dc.tmin) * i / DRAW_WIDTH;
-        sample(F, T, t, draw_array, env, ctrl, $, dc);
+        sample(F, varName, t, points, env, ctrl, $, dc);
     }
 }
 //    draw_array: { t: number; x: number; y: number }[] = [];
 
-function draw_pass2(F: U, T: U, draw_array: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function draw_pass2(F: U, varName: Sym, points: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
     // var dt, dx, dy, i, j, m, n, t, t1, t2, x1, x2, y1, y2;
 
-    const n = draw_array.length - 1;
+    const n = points.length - 1;
 
     for (let i = 0; i < n; i++) {
 
-        const t1 = draw_array[i].t;
-        const t2 = draw_array[i + 1].t;
+        const t1 = points[i].t;
+        const t2 = points[i + 1].t;
 
-        const x1 = draw_array[i].x;
-        const x2 = draw_array[i + 1].x;
+        const x1 = points[i].x;
+        const x2 = points[i + 1].x;
 
-        const y1 = draw_array[i].y;
-        const y2 = draw_array[i + 1].y;
+        const y1 = points[i].y;
+        const y2 = points[i + 1].y;
 
         if (!inrange(x1, y1) && !inrange(x2, y2))
             continue;
@@ -227,48 +228,39 @@ function draw_pass2(F: U, T: U, draw_array: { t: number; x: number; y: number }[
 
         for (let j = 1; j < m; j++) {
             const t = t1 + dt * j / m;
-            sample(F, T, t, draw_array, env, ctrl, $, dc);
+            sample(F, varName, t, points, env, ctrl, $, dc);
         }
     }
 }
 
-function setup_final(F: U, T: Sym, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function setup_final(F: U, varName: Sym, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
 
-    $.push(create_flt(dc.tmin));
-    let p1 = $.pop()!;
-    set_symbol(T, p1, nil, env);
+    set_symbol(varName, create_flt(dc.tmin), nil, env);
 
     $.push(F);
     eval_nonstop(env, ctrl, $);
-    p1 = $.pop()!;
+    const Fmin = $.pop();
 
-    if (!is_tensor(p1)) {
+    if (!is_tensor(Fmin)) {
         dc.tmin = dc.xmin;
         dc.tmax = dc.xmax;
     }
 }
 
-function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function sample(F: U, varName: Sym, t: number, points: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
 
-    const t_as_flt = create_flt(t);
+    let X: U = create_flt(t);
 
-    set_symbol(assert_sym(T), t_as_flt, nil, env);
+    set_symbol(assert_sym(varName), X, nil, env);
 
     $.push(F);
     eval_nonstop(env, ctrl, $);
     floatfunc(env, ctrl, $);
-    const F_of_t = $.pop();
+    let Y = $.pop();
     try {
-        let X: U;
-        let Y: U;
-
-        if (is_tensor(F_of_t)) {
-            X = F_of_t.elems[0];
-            Y = F_of_t.elems[1];
-        }
-        else {
-            X = t_as_flt;
-            Y = F_of_t;
+        if (is_tensor(Y)) {
+            X = Y.elems[0];
+            Y = Y.elems[1];
         }
 
         if (!is_num(X) || !is_num(Y)) {
@@ -285,10 +277,12 @@ function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: nu
         const x = DRAW_WIDTH * (xUnscaled - dc.xmin) / (dc.xmax - dc.xmin);
         const y = DRAW_HEIGHT * (yUnscaled - dc.ymin) / (dc.ymax - dc.ymin);
 
-        draw_array.push({ t: t, x: x, y: y });
+        const point = { t: t, x: x, y: y };
+
+        points.push(point);
     }
     finally {
-        F_of_t.release();
+        Y.release();
     }
 }
 

@@ -4335,10 +4335,10 @@ export function floatfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
 }
 
 function floatfunc_subst($: ProgramStack): void {
-    let p1 = pop($);
+    let expr = pop($);
 
-    if (is_tensor(p1)) {
-        const T = copy_tensor(p1);
+    if (is_tensor(expr)) {
+        const T = copy_tensor(expr);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
@@ -4349,27 +4349,27 @@ function floatfunc_subst($: ProgramStack): void {
         return;
     }
 
-    if (p1.equals(PI)) {
+    if (expr.equals(PI)) {
         push_double(Math.PI, $);
         return;
     }
 
-    if (p1.equals(DOLLAR_E)) {
+    if (expr.equals(DOLLAR_E)) {
         push_double(Math.E, $);
         return;
     }
 
-    if (is_rat(p1)) {
-        push_double(p1.toNumber(), $);
+    if (is_rat(expr)) {
+        push_double(expr.toNumber(), $);
         return;
     }
 
     // don't float exponential
 
-    if (car(p1).equals(POWER) && cadr(p1).equals(DOLLAR_E)) {
+    if (car(expr).equals(POWER) && cadr(expr).equals(DOLLAR_E)) {
         push(POWER, $);
         push(DOLLAR_E, $);
-        push(caddr(p1), $);
+        push(caddr(expr), $);
         floatfunc_subst($);
         list(3, $);
         return;
@@ -4377,32 +4377,32 @@ function floatfunc_subst($: ProgramStack): void {
 
     // don't float imaginary unit, but multiply it by 1.0
 
-    if (car(p1).equals(POWER) && isminusone(cadr(p1))) {
+    if (car(expr).equals(POWER) && isminusone(cadr(expr))) {
         push(MULTIPLY, $);
         push_double(1.0, $);
         push(POWER, $);
-        push(cadr(p1), $);
-        push(caddr(p1), $);
+        push(cadr(expr), $);
+        push(caddr(expr), $);
         floatfunc_subst($);
         list(3, $);
         list(3, $);
         return;
     }
 
-    if (is_cons(p1)) {
+    if (is_cons(expr)) {
         const h = $.length;
-        push(car(p1), $);
-        p1 = cdr(p1);
-        while (is_cons(p1)) {
-            push(car(p1), $);
+        push(car(expr), $);
+        expr = cdr(expr);
+        while (is_cons(expr)) {
+            push(car(expr), $);
             floatfunc_subst($);
-            p1 = cdr(p1);
+            expr = cdr(expr);
         }
         list($.length - h, $);
         return;
     }
 
-    push(p1, $);
+    push(expr, $);
 }
 
 function eval_floor(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
@@ -6599,7 +6599,6 @@ function eval_nonstop_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
         value_of(env, ctrl, $);
     }
     catch (errmsg) {
-
         $.splice(save_tos);
         frame.splice(save_tof);
 
@@ -9735,21 +9734,27 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
                 finally {
                     name.release();
                 }
-            }
-
-            if (is_sym(expr) && env.hasBinding(expr)) { // bare keyword
                 push(expr, $);
-                push(LAST, $); // default arg
-                list(2, $);
-                value_of(env, ctrl, $);
                 return;
             }
 
-            if (is_sym(expr) && env.hasUserFunction(expr)) {
-                eval_user_symbol(expr, env, ctrl, $);
+            if (is_sym(expr)) {
+                if (env.hasBinding(expr)) { // bare keyword
+                    push(expr, $);
+                    push(LAST, $); // default arg
+                    list(2, $);
+                    value_of(env, ctrl, $);
+                    return;
+                }
+                if (env.hasUserFunction(expr)) {
+                    eval_user_symbol(expr, env, ctrl, $);
+                    return;
+                }
+                push(expr, $);
                 return;
             }
 
+            // The generalization here is to evaluate all other atoms through an appropriate extension.
             if (is_tensor(expr)) {
                 eval_tensor(expr, env, ctrl, $);
                 return;
@@ -13702,15 +13707,15 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     defineUserSymbol(sym: Sym): void {
         this.#userFunctions.set(sym.key(), eval_user_symbol);
     }
-    getBinding(sym: Sym): U {
-        assert_sym(sym);
-        const key = sym.key();
+    getBinding(name: Sym): U {
+        assert_sym(name);
+        const key = name.key();
         if (this.#bindings.has(key)) {
             return this.#bindings.get(key)!;
         }
         else if (this.#consFunctions.has(key)) {
             const consFunction: ConsFunction = this.#consFunctions.get(key)!;
-            const bodyExpr = make_lambda_expr_from_cons_function(sym, consFunction);
+            const bodyExpr = make_lambda_expr_from_cons_function(name, consFunction);
             return new Lambda(bodyExpr, "???");
         }
         else {

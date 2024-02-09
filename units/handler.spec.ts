@@ -16,7 +16,7 @@ export function should_stepper_render_svg(stepper: Stepper): boolean {
     const $: Scope = stepper.stack.top.$;
     const sym: Sym = create_sym("tty");
     const tty = $.getBinding(sym);
-    if (is_nil(tty)) {
+    if (tty.isnil) {
         // Unbound in Native engine.
         return true;
     }
@@ -98,7 +98,7 @@ class TestScriptHandler implements ScriptHandler<ExprEngine> {
         };
         function should_annotate_symbol(x: Sym, value: U): boolean {
             if ($.hasUserFunction(x)) {
-                if (x.equals(value) || is_nil(value)) {
+                if (x.equals(value) || value.isnil) {
                     return false;
                 }
                 /*

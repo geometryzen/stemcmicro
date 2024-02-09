@@ -1,33 +1,43 @@
+
 import { assert } from "chai";
-import { create_sym } from "math-expression-atoms";
-import { cons, Cons, items_to_cons } from "math-expression-tree";
-import { ExtensionEnv, LambdaExpr } from "../src/env/ExtensionEnv";
-import { create_script_context } from "../src/runtime/script_engine";
+import { U } from "math-expression-tree";
+import { create_engine, ExprEngineListener } from "../src/api/api";
 
-const DRAW = create_sym('draw');
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const draw_lambda: LambdaExpr = (argList: Cons, $: ExtensionEnv) => {
-    return cons(DRAW, argList);
-};
+class TestListener implements ExprEngineListener {
+    readonly outputs: string[] = [];
+    output(output: string): void {
+        this.outputs.push(output);
+    }
+}
 
 describe("draw", function () {
-    it("A", function () {
+    it("sin(x)/x", function () {
         const lines: string[] = [
-            `trace=1`,
             `f=sin(x)/x`,
             `yrange=[-1,1]`,
             `draw(f,x)`
         ];
-        const engine = create_script_context({
-            // ScriptContextOptions
-        });
-        engine.defineFunction(items_to_cons(DRAW), draw_lambda);
-        const { values } = engine.executeScript(lines.join('\n'), {
-            // ScriptExecuteOptions
-        });
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(draw f x)");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "draw(f,x)");
+        const sourceText = lines.join('\n');
+        const engine = create_engine();
+        const subscriber = new TestListener();
+        engine.addListener(subscriber);
+        const { trees, errors } = engine.parse(sourceText);
+        if (errors.length > 0) {
+            // eslint-disable-next-line no-console
+            console.log(errors[0]);
+        }
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!value.isnil) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 0);
+        const outputs = subscriber.outputs;
+        assert.strictEqual(outputs.length, 1);
+        // assert.strictEqual(outputs[0], '???');
         engine.release();
     });
 });

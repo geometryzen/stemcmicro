@@ -49,7 +49,7 @@ import { add_2_uom_flt } from '../operators/add/add_2_uom_flt';
 import { add_2_uom_rat } from '../operators/add/add_2_uom_rat';
 import { add_2_xxx_mul_2_rm1_xxx } from '../operators/add/add_2_xxx_mul_2_rm1_xxx';
 import { Eval_add } from '../operators/add/Eval_add';
-import { adj_any } from '../operators/adj/adj_any';
+import { Eval_adj } from '../operators/adj/adj';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
 import { arccos_varargs } from '../operators/arccos/arccos_varargs';
 import { arccosh_varargs } from '../operators/arccosh/arccosh_varargs';
@@ -442,7 +442,7 @@ import { Eval_prime } from '../prime';
 import { get_last_print_mode_symbol } from '../print/print';
 import { render_using_print_mode } from '../print/render_using_print_mode';
 import { store_text_in_binding } from '../print/store_text_in_binding';
-import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE } from '../runtime/constants';
+import { ADJ, AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
@@ -747,7 +747,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     // $.defineOperator(abs_factorize);
     $.defineOperator(abs_any);
 
-    $.defineOperator(adj_any);
+    $.defineConsTransformer(ADJ, Eval_adj);
 
     $.defineOperator(algebra_2_tensor_tensor);
     $.defineConsTransformer(AND, Eval_and);

@@ -126,9 +126,9 @@ export function createSymTab(): SymTab {
                 props_from_key.delete(key);
             }
         },
-        hasBinding(sym: Sym) {
-            assert_sym(sym);
-            const exists = binding_from_key.has(sym.key());
+        hasBinding(name: Sym) {
+            assert_sym(name);
+            const exists = binding_from_key.has(name.key());
             // console.lg("SymTab.hasBinding", `${sym}`, " => ", exists);
             return exists;
         },

@@ -114,8 +114,8 @@ describe("eigenmath", function () {
         const errorHandler = new TestErrorHandler();
         execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const errors = errorHandler.errors;
-        if (errors.length>0) {
-            for (let i=0;i<errors.length;i++) {
+        if (errors.length > 0) {
+            for (let i = 0; i < errors.length; i++) {
                 // eslint-disable-next-line no-console
                 console.log(errors[i]);
             }
@@ -312,5 +312,31 @@ describe("eigenmath", function () {
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsString(values[0], {}), "a b");
         engine.release();
+    });
+
+    describe("sample", function () {
+        it("(a+b) squared", function () {
+            const lines: string[] = [
+                `(a+b)^2`
+            ];
+            const sourceText = lines.join('\n');
+            const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath, useCaretForExponentiation: true });
+            const { trees, errors } = engine.parse(sourceText, { useParenForTensors: false });
+            if (errors.length > 0) {
+                // eslint-disable-next-line no-console
+                console.log(errors[0]);
+            }
+            assert.strictEqual(errors.length, 0);
+            const values: U[] = [];
+            for (const tree of trees) {
+                const value = engine.valueOf(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            assert.strictEqual(values.length, 1);
+            assert.strictEqual(engine.renderAsString(values[0], {}), 'a**2 + 2 a b + b**2');
+            engine.release();
+        });
     });
 });

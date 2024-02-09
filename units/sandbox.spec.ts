@@ -1,83 +1,41 @@
 
 import { assert } from "chai";
-import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine } from "../src/api/api";
-import { SyntaxKind } from "../src/parser/parser";
+import { U } from "math-expression-tree";
+import { create_engine, ExprEngineListener } from "../src/api/api";
 
-describe("sample", function () {
-    it("(a+b) squared", function () {
+class TestListener implements ExprEngineListener {
+    readonly outputs: string[] = [];
+    output(output: string): void {
+        this.outputs.push(output);
+    }
+}
+
+describe("sandbox", function () {
+    it("adj", function () {
         const lines: string[] = [
-            `(a+b)^2`
+            `adj([[a,b],[c,d]])`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath, useCaretForExponentiation: true });
-        const { trees, errors } = engine.parse(sourceText, { useParenForTensors: false });
-        if (errors.length > 0) {
-            // eslint-disable-next-line no-console
-            console.log(errors[0]);
-        }
-        assert.strictEqual(errors.length, 0);
-        const values: U[] = [];
-        for (const tree of trees) {
-            const value = engine.valueOf(tree);
-            if (!is_nil(value)) {
-                values.push(value);
-            }
-        }
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], {}), 'a**2 + 2 a b + b**2');
-        engine.release();
-    });
-});
-
-xdescribe("Eigenmath", function () {
-    it("kronecker", function () {
-        const lines: string[] = [
-            `A=[[1,2],[3,4]]`,
-            `B=[[a,b],[c,d]]`,
-            `kronecker(A,B)`
-        ];
-        const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
-        const { trees, errors } = engine.parse(sourceText, { useParenForTensors: false });
-        if (errors.length > 0) {
-            // eslint-disable-next-line no-console
-            console.log(errors[0]);
-        }
-        assert.strictEqual(errors.length, 0);
-        const values: U[] = [];
-        for (const tree of trees) {
-            const value = engine.valueOf(tree);
-            if (!is_nil(value)) {
-                values.push(value);
-            }
-        }
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], {}), "[[a,b,2 a,2 b],[c,d,2 c,2 d],[3 a,3 b,4 a,4 b],[3 c,3 d,4 c,4 d]]");
-        engine.release();
-    });
-});
-
-xdescribe("Micro", function () {
-    it("kronecker", function () {
-        const lines: string[] = [
-            `A=[[1,2],[3,4]]`,
-            `B=[[a,b],[c,d]]`,
-            `kronecker(A,B)`
-        ];
-        const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({});
+        const engine = create_engine();
+        const subscriber = new TestListener();
+        engine.addListener(subscriber);
         const { trees, errors } = engine.parse(sourceText);
+        if (errors.length > 0) {
+            // eslint-disable-next-line no-console
+            console.log(errors[0]);
+        }
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
             const value = engine.valueOf(tree);
-            if (!is_nil(value)) {
+            if (!value.isnil) {
                 values.push(value);
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], {}), "[[a,b,2*a,2*b],[c,d,2*c,2*d],[3*a,3*b,4*a,4*b],[3*c,3*d,4*c,4*d]]");
+        const outputs = subscriber.outputs;
+        assert.strictEqual(outputs.length, 0);
+        assert.strictEqual(engine.renderAsString(values[0]), '[[d,-b],[-c,a]]');
         engine.release();
     });
 });

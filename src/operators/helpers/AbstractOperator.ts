@@ -80,8 +80,7 @@ export abstract class AbstractOperator {
     toListString(expr: U): string {
         return render_as_sexpr(expr, this.$);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: U): U {
-        throw new Error(`${this.name} AbstractOperator.valueOf ${expr} method not implemented.`);
+        return this.$.valueOf(expr);
     }
 }

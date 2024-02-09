@@ -1,11 +1,15 @@
 /* eslint-disable no-console */
 import fs from 'fs';
+import { U } from 'math-expression-tree';
 import process from 'process';
 import { create_engine, EngineConfig, ExprEngine } from './src/api/api';
 import { Predicates } from './src/env/ExtensionEnv';
 import { SyntaxKind } from './src/parser/parser';
 import { stemc_prolog } from './src/runtime/init';
-import { U } from './src/tree/tree';
+
+const USE_CARET_FOR_EXPONENTIATION = false;
+const USE_DERIVATIVE_SHORTHAND = false;
+const USE_INTEGER_PREDICATES = false;
 
 const shardCount = Number(process.env['TEST_TOTAL_SHARDS']) || 1;
 const shardIndex = Number(process.env['TEST_SHARD_INDEX']) || 0;
@@ -251,9 +255,9 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
         const config: TestConfig = {
             assumes: options.assumes ? options.assumes : {},
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
-            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
-            useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : true,
-            useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
+            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : USE_CARET_FOR_EXPONENTIATION,
+            useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : USE_DERIVATIVE_SHORTHAND,
+            useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : USE_INTEGER_PREDICATES,
             syntaxKind: typeof options.syntaxKind === 'number' ? options.syntaxKind : SyntaxKind.STEMCscript,
             verbose: typeof options.verbose === 'boolean' ? options.verbose : false
         };
@@ -263,9 +267,9 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
         const config: TestConfig = {
             assumes: {},
             dependencies: [],
-            useCaretForExponentiation: true,
-            useDerivativeShorthandLowerD: true,
-            useIntegersForPredicates: true,
+            useCaretForExponentiation: USE_CARET_FOR_EXPONENTIATION,
+            useDerivativeShorthandLowerD: USE_DERIVATIVE_SHORTHAND,
+            useIntegersForPredicates: USE_INTEGER_PREDICATES,
             syntaxKind: SyntaxKind.STEMCscript,
             verbose: false
         };
@@ -280,17 +284,17 @@ function harness_options_to_engine_options(options: TestOptions | undefined): Pa
     if (options) {
         return {
             syntaxKind: typeof options.syntaxKind === 'number' ? options.syntaxKind : SyntaxKind.STEMCscript,
-            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
-            useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : true,
-            useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
+            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : USE_CARET_FOR_EXPONENTIATION,
+            useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : USE_DERIVATIVE_SHORTHAND,
+            useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : USE_INTEGER_PREDICATES,
         };
     }
     else {
         return {
             syntaxKind: SyntaxKind.STEMCscript,
-            useCaretForExponentiation: true,
-            useDerivativeShorthandLowerD: true,
-            useIntegersForPredicates: true
+            useCaretForExponentiation: USE_CARET_FOR_EXPONENTIATION,
+            useDerivativeShorthandLowerD: USE_DERIVATIVE_SHORTHAND,
+            useIntegersForPredicates: USE_INTEGER_PREDICATES,
         };
     }
 }

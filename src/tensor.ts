@@ -5,6 +5,7 @@ import { items_to_cons } from './makeList';
 import { nativeInt } from './nativeInt';
 import { derivative } from './operators/derivative/derivative';
 import { is_tensor } from './operators/tensor/is_tensor';
+import { ProgrammingError } from './programming/ProgrammingError';
 import { MAXDIM, POWER } from './runtime/constants';
 import { Err } from './tree/err/Err';
 import { one, zero } from './tree/rat/Rat';
@@ -57,12 +58,12 @@ export function assert_square_matrix(expr: U, $: ExtensionEnv): number | never {
     }
 }
 
-export function assert_square_matrix_tensor(tensor: Tensor, $: ExtensionEnv): number | never {
+export function assert_square_matrix_tensor(tensor: Tensor): number | never {
     if (is_square_matrix_tensor(tensor)) {
         return tensor.dim(0);
     }
     else {
-        throw new Error(`tensor => ${$.toInfixString(tensor)} MUST be a square matrix. ${tensor} ndim=${tensor.ndim}`);
+        throw new ProgrammingError();
     }
 }
 

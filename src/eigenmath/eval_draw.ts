@@ -1,8 +1,8 @@
 import { assert_sym, create_flt, create_sym, Flt, is_num, is_sym, is_tensor, Sym } from "math-expression-atoms";
-import { nil, U } from "math-expression-tree";
+import { Cons, nil, U } from "math-expression-tree";
 import { Directive } from "../env/ExtensionEnv";
 import { assert_cons } from "../tree/cons/assert_cons";
-import { broadcast, eval_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol } from "./eigenmath";
+import { broadcast, ConsFunction, eval_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
@@ -50,9 +50,9 @@ const DRAW_BOTTOM_PAD = 40;
 const DRAW_XLABEL_BASELINE = 30;
 const DRAW_YLABEL_MARGIN = 15;
 
-export function make_eval_draw(io: ProgramIO) {
+export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
 
-    return function (expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    return function (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
         if (ctrl.getDirective(Directive.drawing)) {
             // Do nothing
@@ -68,7 +68,7 @@ export function make_eval_draw(io: ProgramIO) {
                     T = X_LOWER;
                 }
 
-                save_symbol(assert_sym(T), env, $);
+                save_symbol(assert_sym(T), env);
                 try {
                     const dc: DrawContext = {
                         tmax: +Math.PI,
@@ -103,7 +103,7 @@ export function make_eval_draw(io: ProgramIO) {
                     broadcast(output, io);
                 }
                 finally {
-                    restore_symbol(env, $);
+                    restore_symbol(env);
                 }
             }
             finally {

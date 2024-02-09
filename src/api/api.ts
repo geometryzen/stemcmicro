@@ -4,7 +4,7 @@ import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
-import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
+import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
 import { make_eval_draw } from '../eigenmath/eval_draw';
 import { eval_infixform } from '../eigenmath/eval_infixform';
 import { make_eval_print } from '../eigenmath/eval_print';
@@ -114,13 +114,13 @@ export interface ExprEngine {
     simplify(expr: U): U;
     valueOf(expr: U): U;
 
-    getBinding(sym: Sym): U;
-    hasBinding(sym: Sym): boolean;
-    setBinding(sym: Sym, binding: U): void;
+    getBinding(name: Sym): U;
+    hasBinding(name: Sym): boolean;
+    setBinding(name: Sym, binding: U): void;
 
-    hasUserFunction(sym: Sym): boolean;
-    getUserFunction(sym: Sym): U;
-    setUserFunction(sym: Sym, usrfunc: U): void;
+    hasUserFunction(name: Sym): boolean;
+    getUserFunction(name: Sym): U;
+    setUserFunction(name: Sym, userfunc: U): void;
 
     symbol(concept: Concept): Sym;
 
@@ -440,9 +440,9 @@ class MicroEngine implements ExprEngine {
     release(): void {
         env_term(this.#env);
     }
-    setUserFunction(sym: Sym, usrfunc: U): void {
-        assert_sym(sym);
-        this.#env.setUserFunction(sym, usrfunc);
+    setUserFunction(name: Sym, userfunc: U): void {
+        assert_sym(name);
+        this.#env.setUserFunction(name, userfunc);
     }
     symbol(concept: Concept): Sym {
         switch (concept) {
@@ -463,8 +463,8 @@ class MicroEngine implements ExprEngine {
     removeAtomListener(listener: AtomListener): void {
         this.#env.removeAtomListener(listener);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addListener(listener: ExprEngineListener): void {
+        this.#env.listeners.push(listener);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     removeListener(listener: ExprEngineListener): void {
@@ -589,9 +589,9 @@ class ClojureScriptEngine implements ExprEngine {
     release(): void {
         env_term(this.#env);
     }
-    setUserFunction(sym: Sym, usrfunc: U): void {
-        assert_sym(sym);
-        this.#env.setUserFunction(sym, usrfunc);
+    setUserFunction(name: Sym, userfunc: U): void {
+        assert_sym(name);
+        this.#env.setUserFunction(name, userfunc);
     }
     symbol(concept: Concept): Sym {
         switch (concept) {
@@ -627,15 +627,6 @@ function eigenmath_infix_config(config: Partial<RenderConfig>): InfixOptions {
         useParenForTensors: !!config.useParenForTensors
     };
     return options;
-}
-
-class EigenmathOutputListener implements ScriptOutputListener {
-    constructor(private readonly inner: ExprEngineListener) {
-
-    }
-    output(output: string): void {
-        this.inner.output(output);
-    }
 }
 
 class ScriptVarsPrintConfig implements PrintConfig {
@@ -851,8 +842,8 @@ class EigenmathEngine implements ExprEngine {
     release(): void {
         // Do nothing (yet).
     }
-    setUserFunction(sym: Sym, usrfunc: U): void {
-        set_user_function(sym, usrfunc, this.#scriptVars);
+    setUserFunction(name: Sym, userfunc: U): void {
+        set_user_function(name, userfunc, this.#scriptVars);
     }
     symbol(concept: Concept): Sym {
         switch (concept) {
@@ -874,12 +865,10 @@ class EigenmathEngine implements ExprEngine {
     removeAtomListener(listener: AtomListener): void {
     }
     addListener(listener: ExprEngineListener): void {
-        this.#scriptVars.addOutputListener(new EigenmathOutputListener(listener));
+        this.#scriptVars.addOutputListener(listener);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     removeListener(listener: ExprEngineListener): void {
-        // This doesn't work because we've lost the identity of the adapter.
-        this.#scriptVars.removeOutputListener(new EigenmathOutputListener(listener));
+        this.#scriptVars.removeOutputListener(listener);
     }
 }
 
@@ -947,8 +936,8 @@ class PythonEngine implements ExprEngine {
         throw new Error('renderAsString method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setUserFunction(sym: Sym, usrfunc: U): void {
-        throw new Error('setUserFunction method not implemented.');
+    setUserFunction(name: Sym, usrfunc: U): void {
+        throw new Error('PythonEngine.setUserFunction method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     symbol(concept: Concept): Sym {
@@ -1109,7 +1098,7 @@ export function run_module(module: Cons, handler: ScriptHandler<Stepper>): void 
  * An adapter for the print_result_and_output(...) function.
  * @deprecated
  */
-class PrintScriptListener implements ScriptOutputListener {
+class PrintScriptListener implements ExprEngineListener {
     constructor(private readonly element: HTMLElement) {
     }
     /**

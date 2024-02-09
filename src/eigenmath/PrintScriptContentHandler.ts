@@ -1,7 +1,8 @@
 import { create_sym, Sym } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
-import { get_binding, ScriptContentHandler, ScriptOutputListener, ScriptVars } from "./eigenmath";
+import { ExprEngineListener } from "../api/api";
+import { get_binding, ScriptContentHandler, ScriptVars } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
 import { iszero } from "./iszero";
 import { print_value_and_input_as_svg_or_infix } from "./print_value_and_input_as_svg_or_infix";
@@ -11,7 +12,7 @@ const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
 const TTY = create_sym("tty");
 
-class PrintScriptOutputListener implements ScriptOutputListener {
+class PrintScriptOutputListener implements ExprEngineListener {
     // TODO: only stdout needed here.
     // TOOD: May be the proper place for escaping.
     constructor(private readonly outer: PrintScriptContentHandler) {

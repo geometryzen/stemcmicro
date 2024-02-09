@@ -127,7 +127,7 @@ import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from '../ope
 import { divisors_varargs } from '../operators/divisors/divisors_varargs';
 import { do_varargs } from '../operators/do/do_varargs';
 import { dotdot_builder } from '../operators/dotdot/Eval_dotdot';
-import { draw_varargs } from '../operators/draw/draw_varargs';
+import { Eval_draw } from '../operators/draw/eval_draw';
 import { eigenval_varargs } from '../operators/eigen/eigenval_varargs';
 import { eigenvec_varargs } from '../operators/eigen/eigenvec_varargs';
 import { eigen_varargs } from '../operators/eigen/eigen_varargs';
@@ -842,7 +842,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineConsTransformer(DOT, Eval_inner);
 
-    $.defineOperator(draw_varargs);
+    $.defineConsTransformer(create_sym("draw"), Eval_draw);
 
     $.defineOperator(eigen_varargs);
     $.defineOperator(eigenval_varargs);

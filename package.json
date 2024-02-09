@@ -160,7 +160,7 @@
         "math-expression-atoms": "^0.9.30",
         "math-expression-context": "^0.9.14",
         "math-expression-native": "^0.9.16",
-        "math-expression-tree": "^0.9.23"
+        "math-expression-tree": "^0.9.24"
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
@@ -170,7 +170,7 @@
         "@rollup/plugin-typescript": "^11.1.6",
         "@types/chai": "^4.3.11",
         "@types/mocha": "^10.0.6",
-        "@types/node": "^20.11.16",
+        "@types/node": "^20.11.17",
         "@types/rollup-plugin-peer-deps-external": "^2.2.4",
         "@typescript-eslint/eslint-plugin": "^6.21.0",
         "@typescript-eslint/parser": "^6.21.0",

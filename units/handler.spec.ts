@@ -5,7 +5,7 @@ import { is_native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, ExprEngineListener, run_module, run_script, ScriptHandler } from "../src/api/api";
 import { Scope, State, Stepper } from "../src/clojurescript/runtime/Stepper";
-import { iszero, ScriptOutputListener } from "../src/eigenmath/eigenmath";
+import { iszero } from "../src/eigenmath/iszero";
 import { print_value_and_input_as_svg_or_infix } from "../src/eigenmath/print_value_and_input_as_svg_or_infix";
 import { SvgRenderConfig } from "../src/eigenmath/render_svg";
 import { should_engine_render_svg } from "../src/eigenmath/should_engine_render_svg";
@@ -55,7 +55,7 @@ class TestStepperListener implements ExprEngineListener {
     }
 }
 
-class TestScriptOutputListener implements ScriptOutputListener {
+class TestScriptOutputListener implements ExprEngineListener {
     constructor(private readonly outer: TestScriptListener) {
 
     }
@@ -65,7 +65,7 @@ class TestScriptOutputListener implements ScriptOutputListener {
     }
 }
 
-class TestStepperOutputListener implements ScriptOutputListener {
+class TestStepperOutputListener implements ExprEngineListener {
     constructor(private readonly outer: TestStepperListener) {
 
     }
@@ -202,7 +202,7 @@ describe("handler", function () {
     it("STEMCscript", function () {
         const lines: string[] = [
             `trace=1`,
-            `f=sin(x)/x+0.5`,
+            `f=sin(x)/x`,
             `f`,
             `yrange=[-1,1]`,
             `yrange`,
@@ -216,7 +216,7 @@ describe("handler", function () {
         assert.strictEqual(trees.length, 6);
         const handler = new TestScriptHandler();
         run_script(engine, trees, handler);
-        assert.strictEqual(handler.outputs.length, 2);
+        assert.strictEqual(handler.outputs.length, 3);
         // console.lg(`${handler.outputs[0]}`);   // f=sin(x)/x
         // console.lg(`${handler.outputs[1]}`);   // yrange
         engine.release();

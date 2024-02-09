@@ -2,6 +2,9 @@ import { CellHost, Rat, Sym, Tensor } from "math-expression-atoms";
 import { ExprContext, LambdaExpr } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
 import { AtomListener } from "../api/api";
+import { ProgramControl } from "../eigenmath/ProgramControl";
+import { ProgramEnv } from "../eigenmath/ProgramEnv";
+import { ProgramIO } from "../eigenmath/ProgramIO";
 import { Native } from "../native/Native";
 import { EnvConfig } from "./EnvConfig";
 
@@ -291,7 +294,7 @@ export interface Predicates {
 /**
  *
  */
-export interface ExtensionEnv extends ExprContext {
+export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, Pick<ProgramIO, 'listeners'> {
     addAtomListener(subscriber: AtomListener): void;
     removeAtomListener(subscriber: AtomListener): void;
     getCellHost(): CellHost;

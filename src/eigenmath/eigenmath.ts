@@ -2,6 +2,7 @@ import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, cre
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
+import { ExprEngineListener } from '../api/api';
 import { DirectiveStack } from '../env/DirectiveStack';
 import { Directive } from '../env/ExtensionEnv';
 import { StackU } from '../env/StackU';
@@ -10,6 +11,7 @@ import { convertMetricToNative } from '../operators/algebra/create_algebra_as_te
 import { is_lambda } from '../operators/lambda/is_lambda';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
+import { ProgrammingError } from '../programming/ProgrammingError';
 import { is_power } from '../runtime/helpers';
 import { assert_cons } from '../tree/cons/assert_cons';
 import { Err } from '../tree/err/Err';
@@ -1639,7 +1641,7 @@ function eval_and(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
 }
 
 /**
- * Evaluates the given exprression in the specified context and returns the result.
+ * Evaluates the given expression in the specified context and returns the result.
  * @param expression The expression to be evaluated.
  * @param $ The expression context.
  */
@@ -2523,18 +2525,19 @@ function circexp_subst($: ProgramStack): void {
     push(p1, $);
 }
 
-function eval_clear(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
-    save_symbol(TRACE, env, $);
-    save_symbol(TTY, env, $);
+function eval_clear(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
+    save_symbol(TRACE, env);
+    save_symbol(TTY, env);
+    try {
+        env.clearBindings();
 
-    env.clearBindings();
-
-    // TODO: A restore or rest would be better here.
-    env.executeProlog(eigenmath_prolog);
-
-    restore_symbol(env, $);
-    restore_symbol(env, $);
-
+        // TODO: A restore or rest would be better here.
+        env.executeProlog(eigenmath_prolog);
+    }
+    finally {
+        restore_symbol(env);
+        restore_symbol(env);
+    }
     push(nil, $); // result
 }
 
@@ -4454,44 +4457,66 @@ function floorfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
     list(2, $);
 }
 
-function eval_for(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+/**
+ * (for i j k a b ...)
+ *      0 1 2 3 4 ...
+ */
+function eval_for(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    const p2 = cadr(p1);
-    if (!(is_sym(p2) && env.hasUserFunction(p2)))
-        stopf("for: symbol error");
+    const argList = expr.argList;
+    try {
+        const I = argList.item0;
+        const J = argList.item1;
+        const K = argList.item2;
+        try {
+            if (!(is_sym(I) && env.hasUserFunction(I))) {
+                stopf("for: symbol error");
+            }
 
-    push(caddr(p1), $);
-    value_of(env, ctrl, $);
-    let j = pop_integer($);
-
-    push(cadddr(p1), $);
-    value_of(env, ctrl, $);
-    const k = pop_integer($);
-
-    p1 = cddddr(p1);
-
-    save_symbol(p2, env, $);
-
-    for (; ;) {
-        push_integer(j, $);
-        let p3 = pop($);
-        set_symbol(p2, p3, nil, env);
-        p3 = p1;
-        while (is_cons(p3)) {
-            push(car(p3), $);
+            push(J, $);
             value_of(env, ctrl, $);
-            pop($);
-            p3 = cdr(p3);
-        }
-        if (j === k)
-            break;
-        if (j < k)
-            j++;
-        else
-            j--;
-    }
+            let index = pop_integer($);
 
-    restore_symbol(env, $);
+            push(K, $);
+            value_of(env, ctrl, $);
+            const k = pop_integer($);
+
+            save_symbol(I, env);
+            try {
+                for (; ;) {
+                    set_symbol(I, create_int(index), nil, env);
+                    let xs = argList.item3;
+                    while (is_cons(xs)) {
+                        $.push(xs.head);
+                        value_of(env, ctrl, $);
+                        // Evaluating the expression for its side-effect, so throw away the return value.
+                        $.pop().release();
+                        xs = xs.rest;
+                    }
+                    if (index === k) {
+                        break;
+                    }
+                    if (index < k) {
+                        index++;
+                    }
+                    else {
+                        index--;
+                    }
+                }
+            }
+            finally {
+                restore_symbol(env);
+            }
+        }
+        finally {
+            I.release();
+            J.release();
+            K.release();
+        }
+    }
+    finally {
+        argList.release();
+    }
 
     push(nil, $); // return value
 }
@@ -5831,9 +5856,9 @@ function integral(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
 
 function integral_nib(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    save_symbol(DOLLAR_A, env, $);
-    save_symbol(DOLLAR_B, env, $);
-    save_symbol(DOLLAR_X, env, $);
+    save_symbol(DOLLAR_A, env);
+    save_symbol(DOLLAR_B, env);
+    save_symbol(DOLLAR_X, env);
 
     set_symbol(DOLLAR_X, X, nil, env);
 
@@ -5849,9 +5874,9 @@ function integral_nib(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: Prog
 
     integral_lookup(h, F, env, ctrl, $);
 
-    restore_symbol(env, $);
-    restore_symbol(env, $);
-    restore_symbol(env, $);
+    restore_symbol(env);
+    restore_symbol(env);
+    restore_symbol(env);
 }
 
 function integral_lookup(h: number, F: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -7320,7 +7345,7 @@ function eval_product(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Prog
 
     const p1 = caddddr(expr);
 
-    save_symbol(p2, env, $);
+    save_symbol(p2, env);
 
     const h = $.length;
 
@@ -7340,21 +7365,43 @@ function eval_product(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Prog
 
     multiply_factors($.length - h, env, ctrl, $);
 
-    restore_symbol(env, $);
+    restore_symbol(env);
 }
 
 function eval_quote(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $); // not evaluated
 }
 
+/**
+ * (rank a)
+ */
 function eval_rank(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(expr), $);
-    value_of(env, ctrl, $);
-    const p1 = pop($);
-    if (is_tensor(p1))
-        push_integer(p1.ndim, $);
-    else
-        push_integer(0, $);
+    const argList = expr.argList;
+    try {
+        const a = argList.item0;
+        try {
+            $.push(a);
+            value_of(env, ctrl, $);
+            const A = pop($);
+            try {
+                if (is_tensor(A)) {
+                    push_integer(A.ndim, $);
+                }
+                else {
+                    push_integer(0, $);
+                }
+            }
+            finally {
+                A.release();
+            }
+        }
+        finally {
+            a.release();
+        }
+    }
+    finally {
+        argList.release();
+    }
 }
 
 function eval_rationalize(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -8860,58 +8907,80 @@ function subst($: ProgramStack): void {
     push(p1, $);
 }
 
-function eval_sum(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+/**
+ * (sum i j k f)
+ *      0 1 2 3
+ * 
+ * e.g. sum(i,1,5,x^i) => x^5 + x^4 + x^3 + x^2 + x
+ */
+function eval_sum(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    if (lengthf(p1) === 2) {
-        push(cadr(p1), $);
-        value_of(env, ctrl, $);
-        p1 = pop($);
-        if (!istensor(p1)) {
-            push(p1, $);
-            return;
+    const argList = expr.argList;
+    try {
+
+        if (lengthf(expr) === 2) {
+            push(car(argList), $);
+            value_of(env, ctrl, $);
+            const p1 = pop($);
+            if (!istensor(p1)) {
+                push(p1, $);
+                return;
+            }
+            else {
+                const n = p1.nelem;
+                for (let i = 0; i < n; i++) {
+                    push(p1.elems[i], $);
+                }
+                add_terms(n, env, ctrl, $);
+                return;
+            }
         }
-        const n = p1.nelem;
-        for (let i = 0; i < n; i++)
-            push(p1.elems[i], $);
-        add_terms(n, env, ctrl, $);
-        return;
-    }
 
-    const p2 = cadr(p1);
-    if (!(is_sym(p2) && env.hasUserFunction(p2)))
-        stopf("sum: symbol error");
+        const i = argList.item0;
+        if (!(is_sym(i) && env.hasUserFunction(i))) {
+            stopf("sum: symbol error");
+        }
 
-    push(caddr(p1), $);
-    value_of(env, ctrl, $);
-    let j = pop_integer($);
-
-    push(cadddr(p1), $);
-    value_of(env, ctrl, $);
-    const k = pop_integer($);
-
-    p1 = caddddr(p1);
-
-    save_symbol(p2, env, $);
-
-    const h = $.length;
-
-    for (; ;) {
-        push_integer(j, $);
-        const p3 = pop($);
-        set_symbol(p2, p3, nil, env);
-        push(p1, $);
+        push(argList.item1, $);
         value_of(env, ctrl, $);
-        if (j === k)
-            break;
-        if (j < k)
-            j++;
-        else
-            j--;
+        let j = pop_integer($);
+
+        push(argList.item2, $);
+        value_of(env, ctrl, $);
+        const k = pop_integer($);
+
+        const F = argList.item3;
+
+        save_symbol(i, env);
+        try {
+            const h = $.length;
+
+            for (; ;) {
+                push_integer(j, $);
+                const J = pop($);
+                set_symbol(i, J, nil, env);
+                push(F, $);
+                value_of(env, ctrl, $);
+                if (j === k) {
+                    break;
+                }
+                if (j < k) {
+                    j++;
+                }
+                else {
+                    j--;
+                }
+            }
+
+            add_terms($.length - h, env, ctrl, $);
+        }
+        finally {
+            restore_symbol(env);
+        }
     }
-
-    add_terms($.length - h, env, ctrl, $);
-
-    restore_symbol(env, $);
+    finally {
+        argList.release();
+    }
 }
 
 function eval_tan(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -9470,79 +9539,101 @@ function eval_uom(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     }
 }
 
-function eval_user_function(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function eval_user_function(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // console.lg(`eval_user_function(${p1})`);
 
-    const FUNC_NAME = assert_sym(car(p1));
-    let FUNC_ARGS = cdr(p1);
+    const name = assert_sym(expr.head);
+    const userfunc = get_userfunc(name, env);
+    try {
 
-    const FUNC_DEFN = get_usrfunc(FUNC_NAME, env);
+        // undefined function?
 
-    // undefined function?
-
-    if (FUNC_DEFN.isnil) {
-        if (FUNC_NAME.equals(D_LOWER)) {
-            ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) + 1);
-            try {
-                eval_derivative(p1, env, ctrl, $);
+        if (userfunc.isnil) {
+            if (name.equals(D_LOWER)) {
+                ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) + 1);
+                try {
+                    eval_derivative(expr, env, ctrl, $);
+                }
+                finally {
+                    ctrl.popDirective();
+                }
+                return;
             }
-            finally {
-                ctrl.popDirective();
+            const h = $.length;
+            push(name, $);
+            let args = expr.rest;
+            while (is_cons(args)) {
+                push(args.head, $);
+                value_of(env, ctrl, $);
+                args = args.rest;
             }
+            list($.length - h, $);
             return;
         }
-        const h = $.length;
-        push(FUNC_NAME, $);
-        while (is_cons(FUNC_ARGS)) {
-            push(car(FUNC_ARGS), $);
-            value_of(env, ctrl, $);
-            FUNC_ARGS = cdr(FUNC_ARGS);
+
+        push(userfunc, $);
+
+        // eval all args before changing bindings
+
+        let args = expr.rest;
+        try {
+            for (let i = 0; i < 9; i++) {
+                const head = args.head;
+                try {
+                    $.push(head);
+                    value_of(env, ctrl, $);
+                    const rest = args.rest;
+                    args.release();
+                    args = rest;
+                }
+                finally {
+                    head.release();
+                }
+            }
         }
-        list($.length - h, $);
-        return;
+        finally {
+            args.release();
+        }
+
+        save_symbol(ARG1, env);
+        save_symbol(ARG2, env);
+        save_symbol(ARG3, env);
+        save_symbol(ARG4, env);
+        save_symbol(ARG5, env);
+        save_symbol(ARG6, env);
+        save_symbol(ARG7, env);
+        save_symbol(ARG8, env);
+        save_symbol(ARG9, env);
+        try {
+            // TODO: We should be calling release on all the popped.
+            set_symbol(ARG9, pop($), nil, env);
+            set_symbol(ARG8, pop($), nil, env);
+            set_symbol(ARG7, pop($), nil, env);
+            set_symbol(ARG6, pop($), nil, env);
+            set_symbol(ARG5, pop($), nil, env);
+            set_symbol(ARG4, pop($), nil, env);
+            set_symbol(ARG3, pop($), nil, env);
+            set_symbol(ARG2, pop($), nil, env);
+            set_symbol(ARG1, pop($), nil, env);
+
+            value_of(env, ctrl, $);
+        }
+        finally {
+            restore_symbol(env);
+            restore_symbol(env);
+            restore_symbol(env);
+            restore_symbol(env);
+            restore_symbol(env);
+            restore_symbol(env);
+            restore_symbol(env);
+            restore_symbol(env);
+            restore_symbol(env);
+        }
     }
-
-    push(FUNC_DEFN, $);
-
-    // eval all args before changing bindings
-
-    for (let i = 0; i < 9; i++) {
-        push(car(FUNC_ARGS), $);
-        value_of(env, ctrl, $);
-        FUNC_ARGS = cdr(FUNC_ARGS);
+    finally {
+        name.release();
+        userfunc.release();
     }
-
-    save_symbol(ARG1, env, $);
-    save_symbol(ARG2, env, $);
-    save_symbol(ARG3, env, $);
-    save_symbol(ARG4, env, $);
-    save_symbol(ARG5, env, $);
-    save_symbol(ARG6, env, $);
-    save_symbol(ARG7, env, $);
-    save_symbol(ARG8, env, $);
-    save_symbol(ARG9, env, $);
-
-    set_symbol(ARG9, pop($), nil, env);
-    set_symbol(ARG8, pop($), nil, env);
-    set_symbol(ARG7, pop($), nil, env);
-    set_symbol(ARG6, pop($), nil, env);
-    set_symbol(ARG5, pop($), nil, env);
-    set_symbol(ARG4, pop($), nil, env);
-    set_symbol(ARG3, pop($), nil, env);
-    set_symbol(ARG2, pop($), nil, env);
-    set_symbol(ARG1, pop($), nil, env);
-
-    value_of(env, ctrl, $);
-
-    restore_symbol(env, $);
-    restore_symbol(env, $);
-    restore_symbol(env, $);
-    restore_symbol(env, $);
-    restore_symbol(env, $);
-    restore_symbol(env, $);
-    restore_symbol(env, $);
-    restore_symbol(env, $);
-    restore_symbol(env, $);
 }
 
 // TODO: It should be possible to type p1: Sym (changes to math-expression-atoms needed)
@@ -10556,39 +10647,47 @@ function flatten_factors(start: number, $: ProgramStack): void {
     }
 }
 
-export function get_binding(sym: Sym, env: ProgramEnv): U {
-    if (!is_sym(sym)) {
-        stopf(`get_binding(${sym}) argument must be a Sym.`);
+export function get_binding(name: Sym, env: ProgramEnv): U {
+    if (!is_sym(name)) {
+        stopf(`get_binding(${name}) argument must be a Sym.`);
     }
-    if (!env.hasUserFunction(sym)) {
-        stopf(`get_binding(${sym}) symbol error`);
+    /*
+    if (!env.hasUserFunction(name)) {
+        stopf(`get_binding(${name}) symbol error`);
     }
-    const binding = env.getBinding(sym);
+    */
+    const binding = env.getBinding(name);
     // TODO: We shouldn't need these first two checks.
     if (typeof binding === 'undefined') {
-        return sym;
+        return name;
     }
     else if (binding === null) {
-        return sym;
+        return name;
     }
     else if (binding.isnil) {
-        return sym; // symbol binds to itself
+        return name; // symbol binds to itself
     }
     else {
         return binding;
     }
 }
 
-function get_usrfunc(sym: Sym, env: ProgramEnv): U {
-    if (!env.hasUserFunction(sym)) {
-        stopf("symbol error");
-    }
-    const f = env.getUserFunction(sym);
-    if (typeof f === 'undefined') {
-        return nil;
+function get_userfunc(name: Sym, env: ProgramEnv): U {
+    if (env.hasUserFunction(name)) {
+        const f: U = env.getUserFunction(name);
+        if (typeof f === 'undefined') {
+            return nil;
+        }
+        else if (f === null) {
+            return nil;
+        }
+        else {
+            return f;
+        }
     }
     else {
-        return f;
+        // stopf(`symbol error ${name.key()}`);
+        return nil;
     }
 }
 
@@ -11420,28 +11519,31 @@ function pop_double($: ProgramStack): number {
 }
 
 function pop_integer($: ProgramStack): number {
+    const expr = pop($);
+    try {
+        if (!issmallinteger(expr)) {
+            stopf("small integer expected");
+        }
 
-    const p = pop($);
-
-    if (!issmallinteger(p))
-        stopf("small integer expected");
-
-    let n: number;
-
-    if (is_rat(p)) {
-        const n = bignum_smallnum(p.a);
-        if (isnegativenumber(p)) {
-            return -n;
+        if (is_rat(expr)) {
+            const n = bignum_smallnum(expr.a);
+            if (isnegativenumber(expr)) {
+                return -n;
+            }
+            else {
+                return n;
+            }
+        }
+        else if (is_flt(expr)) {
+            return (expr as Flt).d;
         }
         else {
-            return n;
+            throw new ProgrammingError();
         }
     }
-    else {
-        return (p as Flt).d;
+    finally {
+        expr.release();
     }
-
-    return n;
 }
 
 function power_complex_double(_BASE: U, EXPO: U, X: U, Y: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -12492,19 +12594,32 @@ function reduce_radical_rational(h: number, COEFF: Rat, env: ProgramEnv, ctrl: P
  */
 const frame: StackU = new StackU();
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function save_symbol(p: Sym, env: ProgramEnv, $: ProgramStack): void {
-    frame.push(p);
-    frame.push(get_binding(p, env));
-    frame.push(get_usrfunc(p, env));
+export function save_symbol(name: Sym, env: ProgramEnv): void {
+    const binding = get_binding(name, env);
+    const userfunc = get_userfunc(name, env);
+    try {
+        frame.push(name);
+        frame.push(binding);
+        frame.push(userfunc);
+    }
+    finally {
+        binding.release();
+        userfunc.release();
+    }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function restore_symbol(env: ProgramEnv, $: ProgramStack): void {
-    const p3 = frame.pop();
-    const p2 = frame.pop();
-    const p1 = assert_sym(frame.pop());
-    set_symbol(p1, p2, p3, env);
+export function restore_symbol(env: ProgramEnv): void {
+    const userfunc = frame.pop();
+    const binding = frame.pop();
+    const name = assert_sym(frame.pop());
+    try {
+        set_symbol(name, binding, userfunc, env);
+    }
+    finally {
+        userfunc.release();
+        binding.release();
+        name.release();
+    }
 }
 
 export interface ScriptContentHandler {
@@ -12608,7 +12723,7 @@ class IntegralsProgramIO implements ProgramIO {
     get inbuf(): string {
         throw new Error('inbuf property not implemented.');
     }
-    get listeners(): ScriptOutputListener[] {
+    get listeners(): ExprEngineListener[] {
         throw new Error('listeners propertynot implemented.');
     }
     get trace1(): number {
@@ -13174,12 +13289,14 @@ export function scan_inbuf(k: number, env: ProgramEnv, ctrl: ProgramControl, $: 
     return k;
 }
 
-export function set_symbol(sym: Sym, binding: U, usrfunc: U, env: ProgramEnv): void {
-    if (!env.hasUserFunction(sym)) {
+export function set_symbol(name: Sym, binding: U, userfunc: U, env: ProgramEnv): void {
+    /*
+    if (!env.hasUserFunction(name)) {
         stopf("symbol error");
     }
-    env.setBinding(sym, binding);
-    env.setUserFunction(sym, usrfunc);
+    */
+    env.setBinding(name, binding);
+    env.setUserFunction(name, userfunc);
 }
 
 export function set_binding(sym: Sym, binding: U, env: ProgramEnv): void {
@@ -13188,11 +13305,11 @@ export function set_binding(sym: Sym, binding: U, env: ProgramEnv): void {
     }
     env.setBinding(sym, binding);
 }
-export function set_user_function(sym: Sym, usrfunc: U, env: ProgramEnv): void {
-    if (!env.hasUserFunction(sym)) {
+export function set_user_function(name: Sym, userfunc: U, env: ProgramEnv): void {
+    if (!env.hasUserFunction(name)) {
         stopf("symbol error");
     }
-    env.setUserFunction(sym, usrfunc);
+    env.setUserFunction(name, userfunc);
 }
 
 function sort(n: number, $: ProgramStack): void {
@@ -13327,14 +13444,10 @@ function trace_source_text(env: ProgramEnv, io: ProgramIO): void {
 /**
  * Sends the `text` to all output listeners.
  */
-export function broadcast(text: string, io: ProgramIO): void {
+export function broadcast(text: string, io: Pick<ProgramIO, 'listeners'>): void {
     for (const listener of io.listeners) {
         listener.output(text);
     }
-}
-
-export interface ScriptOutputListener {
-    output(output: string): void;
 }
 
 class ExprContextAdapter implements ExprContext {
@@ -13400,7 +13513,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     usrfunc: { [key: string]: U } = {};
 
     readonly #directiveStack: DirectiveStack = new DirectiveStack();
-    listeners: ScriptOutputListener[] = [];
+    listeners: ExprEngineListener[] = [];
     readonly #prolog: string[] = [];
     readonly #userFunctions: Map<string, UserFunction> = new Map();
     constructor() {
@@ -13629,11 +13742,10 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         };
         this.define_cons_function(name, handler);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    addOutputListener(listener: ScriptOutputListener): void {
+    addOutputListener(listener: ExprEngineListener): void {
         this.listeners.push(listener);
     }
-    removeOutputListener(listener: ScriptOutputListener): void {
+    removeOutputListener(listener: ExprEngineListener): void {
         const index = this.listeners.findIndex((value) => value === listener);
         this.listeners.splice(index, 1);
     }
@@ -13685,7 +13797,7 @@ const one: Rat = create_int(1);
 const minusone: Rat = create_int(-1);
 let imaginaryunit: U;
 
-interface ConsFunction {
+export interface ConsFunction {
     (x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
 }
 

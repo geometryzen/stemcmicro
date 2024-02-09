@@ -3,8 +3,7 @@ import { assert } from "chai";
 import { Boo, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { Cons, is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine, run_script, ScriptHandler, UndeclaredVars } from "../src/api/api";
-import { ScriptOutputListener } from "../src/eigenmath/eigenmath";
+import { create_engine, ExprEngine, ExprEngineListener, run_script, ScriptHandler, UndeclaredVars } from "../src/api/api";
 import { print_value_and_input_as_svg_or_infix } from "../src/eigenmath/print_value_and_input_as_svg_or_infix";
 import { SvgRenderConfig } from "../src/eigenmath/render_svg";
 import { should_engine_render_svg } from "../src/eigenmath/should_engine_render_svg";
@@ -48,7 +47,7 @@ const svg: string[] = [
     `</svg>`
 ];
 
-class TestScriptOutputListener implements ScriptOutputListener {
+class TestScriptOutputListener implements ExprEngineListener {
     readonly #outer: TestHandler;
     constructor(outer: TestHandler) {
         this.#outer = outer;
@@ -70,7 +69,7 @@ class TestHandler implements ScriptHandler<ExprEngine>{
             useImaginaryJ: false,//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
         // 
-        const listener: ScriptOutputListener = new TestScriptOutputListener(this);
+        const listener: ExprEngineListener = new TestScriptOutputListener(this);
         function should_annotate_symbol(x: Sym, value: U): boolean {
             if ($.hasUserFunction(x)) {
                 // console.lg(`hasUserFunction(${x})=>true`);

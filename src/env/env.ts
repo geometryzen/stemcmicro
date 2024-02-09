@@ -3,6 +3,7 @@ import { Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_jsobj
 import { LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
+import { ExprEngineListener } from '../..';
 import { AtomListener, UndeclaredVars } from '../api/api';
 import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
 import { Eval_function } from "../Eval_function";
@@ -143,6 +144,7 @@ export class DerivedEnv implements ExtensionEnv {
     readonly #baseEnv: ExtensionEnv;
     readonly #bindings: Map<string, U> = new Map();
     readonly #userfunc: Map<string, U> = new Map();
+    readonly listeners: ExprEngineListener[] = [];
     constructor(baseEnv: ExtensionEnv) {
         this.#baseEnv = baseEnv;
     }
@@ -816,11 +818,15 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     }
 
     const cellHost = new ReactiveHost();
+    const subscribers: ExprEngineListener[] = [];
 
     /**
      * The environment return value and environment for callbacks.
      */
     const $: ExtensionEnv = {
+        get listeners(): ExprEngineListener[] {
+            return subscribers;
+        },
         addAtomListener(subscriber: AtomListener): void {
             cellHost.addAtomListener(subscriber);
         },

@@ -1,14 +1,10 @@
+import { Err, is_rat, Rat, Sym, zero } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { Err } from "../../tree/err/Err";
-import { Rat, zero } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { is_rat } from "../rat/is_rat";
 
 const LOG = native_sym(Native.log);
 const PI = native_sym(Native.PI);

@@ -1,8 +1,8 @@
+import { Err } from "math-expression-atoms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { Err } from "../../tree/err/Err";
 import { create_flt, Flt, piAsFlt, zeroAsFlt } from "../../tree/flt/Flt";
 import { imu } from "../../tree/imu/Imu";
 import { Sym } from "../../tree/sym/Sym";

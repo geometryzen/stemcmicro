@@ -1,4 +1,4 @@
-import { one, Sym, Tensor, zero } from 'math-expression-atoms';
+import { Err, one, Sym, Tensor, zero } from 'math-expression-atoms';
 import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { divide } from './helpers/divide';
@@ -8,7 +8,6 @@ import { INV, INVG } from './runtime/constants';
 import { halt } from './runtime/defs';
 import { is_identity_matrix, is_inner_or_dot, is_num_or_tensor_or_identity_matrix, is_opr_eq_inv } from './runtime/helpers';
 import { is_square_matrix } from './tensor';
-import { Err } from './tree/err/Err';
 
 //-----------------------------------------------------------------------------
 //

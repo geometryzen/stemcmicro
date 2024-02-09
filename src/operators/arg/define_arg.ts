@@ -1,3 +1,4 @@
+import { Err, is_flt, is_rat, is_sym } from 'math-expression-atoms';
 import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { subtract } from '../../calculators/sub/subtract';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
@@ -11,20 +12,16 @@ import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { MATH_PI } from '../../runtime/ns_math';
-import { Err } from '../../tree/err/Err';
 import { piAsFlt, zeroAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, zero } from '../../tree/rat/Rat';
 import { MATH_EXP } from '../exp/MATH_EXP';
-import { is_flt } from '../flt/is_flt';
 import { is_unaop } from '../helpers/is_unaop';
 import { im } from '../imag/imag';
 import { is_imu } from '../imu/is_imu';
 import { is_pi } from '../pi/is_pi';
 import { is_pow } from '../pow/is_pow';
-import { is_rat } from '../rat/is_rat';
 import { re } from '../real/real';
-import { is_sym } from '../sym/is_sym';
 
 export const ARG = native_sym(Native.arg);
 export const IM = native_sym(Native.im);

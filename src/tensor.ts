@@ -1,18 +1,13 @@
+import { Err, is_tensor, one, Sym, Tensor, zero } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
+import { Cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { inv } from './inv';
-import { items_to_cons } from './makeList';
 import { nativeInt } from './nativeInt';
 import { derivative } from './operators/derivative/derivative';
-import { is_tensor } from './operators/tensor/is_tensor';
 import { ProgrammingError } from './programming/ProgrammingError';
 import { MAXDIM, POWER } from './runtime/constants';
-import { Err } from './tree/err/Err';
-import { one, zero } from './tree/rat/Rat';
-import { Sym } from './tree/sym/Sym';
 import { create_tensor_elements_diagonal } from './tree/tensor/create_tensor_elements';
-import { Tensor } from './tree/tensor/Tensor';
-import { Cons, U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
 //

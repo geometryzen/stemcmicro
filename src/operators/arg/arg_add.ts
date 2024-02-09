@@ -1,12 +1,10 @@
+import { Err, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, items_to_cons, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
 import { is_negative } from "../../predicates/is_negative";
 import { DynamicConstants } from "../../runtime/defs";
-import { Err } from "../../tree/err/Err";
 import { half } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, items_to_cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
 const ARG = native_sym(Native.arg);

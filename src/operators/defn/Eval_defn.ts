@@ -1,12 +1,9 @@
-import { assert_map, assert_sym, assert_tensor, is_map, is_tensor, Map, Str, Sym, Tensor } from "math-expression-atoms";
+import { assert_map, assert_sym, assert_tensor, Err, is_err, is_map, is_str, is_tensor, Map, Str, Sym, Tensor } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, items_to_cons, nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { Err } from "../../tree/err/Err";
-import { is_err } from "../err/is_err";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { is_str } from "../str/is_str";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

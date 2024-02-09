@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
+import { Boo, Cell, CellHost, create_sym, Err, Flt, is_boo, is_cell, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
@@ -25,7 +25,6 @@ import { ASSIGN, COMPONENT, FN, FUNCTION, LET } from "../runtime/constants";
 import { execute_definitions } from '../runtime/init';
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
-import { Err } from '../tree/err/Err';
 import { Lambda } from "../tree/lambda/Lambda";
 import { visit } from '../visitor/visit';
 import { Visitor } from '../visitor/Visitor';

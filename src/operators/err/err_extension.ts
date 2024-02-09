@@ -1,7 +1,6 @@
-import { nil } from 'math-expression-tree';
+import { Err } from "math-expression-atoms";
+import { cons, Cons, nil, U } from 'math-expression-tree';
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { Err } from "../../tree/err/Err";
-import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 const ENGLISH_UNDEFINED = 'undefined';

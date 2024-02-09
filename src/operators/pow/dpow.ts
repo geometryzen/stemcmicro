@@ -1,9 +1,8 @@
-import { create_flt } from 'math-expression-atoms';
+import { create_flt, Err } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
-import { Err } from '../../tree/err/Err';
 
 // power function for double precision floating point
 export function dpow(base: number, expo: number, $: ExtensionEnv): U {

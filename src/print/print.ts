@@ -1,4 +1,4 @@
-import { booT, create_sym, is_blade, is_boo, is_flt, is_keyword, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Keyword, one, Rat, Sym, Tensor, zero } from 'math-expression-atoms';
+import { booT, create_sym, is_blade, is_boo, is_err, is_flt, is_keyword, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Keyword, one, Rat, Sym, Tensor, zero } from 'math-expression-atoms';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { car, cdr, Cons, is_atom, is_cons, U } from 'math-expression-tree';
 import { mp_denominator, mp_numerator } from '../bignum';
@@ -6,7 +6,6 @@ import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { Directive } from '../env/ExtensionEnv';
 import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from '../is';
 import { denominator } from '../operators/denominator/denominator';
-import { is_err } from '../operators/err/is_err';
 import { is_hyp } from '../operators/hyp/is_hyp';
 import { is_imu } from '../operators/imu/is_imu';
 import { numerator } from '../operators/numerator/numerator';

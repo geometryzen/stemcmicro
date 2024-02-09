@@ -14,12 +14,12 @@ describe("assumptions", function () {
         });
 
         const aValue = context.getBinding(create_sym('a'));
-        assert.strictEqual(aValue.toString(), `Sym("a")`);
+        assert.strictEqual(aValue.toString(), `a`);
 
         const aProps = context.getSymbolProps(create_sym('a'));
         assert.strictEqual(Object.keys(aProps).length, 28);
-        assert.strictEqual(aProps.antihermitian, false);        // 1
-        assert.strictEqual(aProps.algebraic, true);             // 2
+        assert.strictEqual(aProps.algebraic, true);             // 1
+        assert.strictEqual(aProps.antihermitian, false);        // 2
         assert.strictEqual(aProps.commutative, true);           // 3
         assert.strictEqual(aProps.complex, true);               // 4
         assert.strictEqual(aProps.extended_negative, false);    // 5

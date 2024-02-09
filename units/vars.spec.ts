@@ -1,9 +1,8 @@
 
 import { assert } from "chai";
-import { assert_str, is_sym } from "math-expression-atoms";
+import { assert_err, assert_str, is_err, is_sym } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/api";
-import { assert_err, is_err } from "../src/operators/err/is_err";
 import { SyntaxKind } from "../src/parser/parser";
 
 describe("ClojureScript", function () {

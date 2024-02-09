@@ -159,7 +159,7 @@
         "typhon-lang": "^1.0.13"
     },
     "peerDependencies": {
-        "math-expression-atoms": "^0.9.30",
+        "math-expression-atoms": "^0.9.31",
         "math-expression-context": "^0.9.14",
         "math-expression-native": "^0.9.16",
         "math-expression-tree": "^0.9.24"

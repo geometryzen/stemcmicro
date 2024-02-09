@@ -1,7 +1,6 @@
-import { create_sym, is_sym, Str, Sym } from "math-expression-atoms";
+import { create_sym, Err, is_sym, Str, Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Err } from "../../tree/err/Err";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";

@@ -1,12 +1,8 @@
+import { Err, is_rat, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, Cons1, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { Err } from "../../tree/err/Err";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { Cons1 } from "../helpers/Cons1";
 import { CompositeOperator } from "../CompositeOperator";
-import { is_rat } from "../rat/is_rat";
 
 const real = native_sym(Native.re);
 const log = native_sym(Native.log);

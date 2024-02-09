@@ -1,10 +1,9 @@
 
-import { is_rat, Rat, Sym, zero } from "math-expression-atoms";
+import { is_err, is_rat, Rat, Sym, zero } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, Cons2, U } from "math-expression-tree";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
-import { is_err } from "../err/is_err";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 

@@ -1,7 +1,6 @@
-import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_num, is_tensor, Sym } from "math-expression-atoms";
+import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_num, is_tensor, Sym } from "math-expression-atoms";
 import { Cons, nil, U } from "math-expression-tree";
 import { Directive } from "../env/ExtensionEnv";
-import { is_err } from "../operators/err/is_err";
 import { assert_cons } from "../tree/cons/assert_cons";
 import { broadcast, ConsFunction, duplicate, eval_nonstop, floatfunc, get_binding, head, lookup, rest, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";

@@ -1,3 +1,5 @@
+import { bigInt, BigInteger, Err, negOne, one, Rat, Sym, zero } from 'math-expression-atoms';
+import { Cons, U } from 'math-expression-tree';
 import { bignum_truncate, makePositive, makeSignSameAs } from './bignum';
 import { Directive, ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
@@ -12,11 +14,7 @@ import { native_sym } from './native/native_sym';
 import { nativeInt } from './nativeInt';
 import { is_num_and_negative } from './predicates/is_negative_number';
 import { quickfactor } from './quickfactor';
-import { Err } from './tree/err/Err';
-import { bigInt, BigInteger } from './tree/rat/big-integer';
-import { half, negOne, one, Rat, zero } from './tree/rat/Rat';
-import { Sym } from './tree/sym/Sym';
-import { Cons, U } from './tree/tree';
+import { half } from './tree/rat/Rat';
 
 export const E = native_sym(Native.E);
 export const PI = native_sym(Native.PI);

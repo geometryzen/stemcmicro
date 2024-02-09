@@ -1,11 +1,7 @@
-import { negOne, one } from "math-expression-atoms";
+import { Err, is_flt, is_rat, negOne, one } from "math-expression-atoms";
 import { items_to_cons, U } from "math-expression-tree";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
-import { is_flt } from "../operators/flt/is_flt";
-import { is_rat } from "../operators/rat/is_rat";
-import { MATH_POW } from "../runtime/ns_math";
-import { Err } from "../tree/err/Err";
 import { oneAsFlt } from "../tree/flt/Flt";
 
 /**
@@ -29,6 +25,6 @@ export function one_divided_by(expr: U): U {
         }
     }
     else {
-        return items_to_cons(MATH_POW.clone(expr.pos, expr.end), expr, negOne);
+        return items_to_cons(native_sym(Native.pow).clone(expr.pos, expr.end), expr, negOne);
     }
 }

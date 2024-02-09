@@ -888,14 +888,15 @@ function divide(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     multiply(env, ctrl, $);
 }
 
-/**
- * ( x -- x x )
- * @param $ 
- */
-function dupl($: ProgramStack): void {
-    const p1 = pop($);
-    push(p1, $);
-    push(p1, $);
+export function duplicate($: ProgramStack): void {
+    const expr = pop($);
+    try {
+        push(expr, $);
+        push(expr, $);
+    }
+    finally {
+        expr.release();
+    }
 }
 
 function equal(p1: U, p2: U): boolean {
@@ -7064,7 +7065,7 @@ function eval_power(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Progra
         push(expr.base, $);
         push(expr.expo, $);
         value_of(env, ctrl, $);
-        dupl($);
+        duplicate($);
         // expo has been evaluated with a decremented expanding value.
         const expo = pop($);
         try {
@@ -9677,7 +9678,7 @@ function eval_zero(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
     while (is_cons(p1)) {
         push(car(p1), $);
         value_of(env, ctrl, $);
-        dupl($);
+        duplicate($);
         const n = pop_integer($);
         if (n < 2)
             stopf("zero: dim err");
@@ -12488,7 +12489,7 @@ function push(expr: U, $: ProgramStack): void {
 /**
  * Replaces the top expr on the stack with expr.head
  */
-function head($: ProgramStack): void {
+export function head($: ProgramStack): void {
     const expr = $.pop();
     try {
         const head = car(expr);
@@ -12497,6 +12498,25 @@ function head($: ProgramStack): void {
         }
         finally {
             head.release();
+        }
+    }
+    finally {
+        expr.release();
+    }
+}
+
+/**
+ * Replaces the top expr on the stack with expr.rest
+ */
+export function rest($: ProgramStack): void {
+    const expr = $.pop();
+    try {
+        const rest = cdr(expr);
+        try {
+            $.push(rest);
+        }
+        finally {
+            rest.release();
         }
     }
     finally {

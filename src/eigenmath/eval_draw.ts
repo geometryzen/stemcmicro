@@ -3,7 +3,7 @@ import { Cons, nil, U } from "math-expression-tree";
 import { Directive } from "../env/ExtensionEnv";
 import { is_err } from "../operators/err/is_err";
 import { assert_cons } from "../tree/cons/assert_cons";
-import { broadcast, ConsFunction, eval_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
+import { broadcast, ConsFunction, duplicate, eval_nonstop, floatfunc, get_binding, head, lookup, rest, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
@@ -51,28 +51,36 @@ const DRAW_BOTTOM_PAD = 40;
 const DRAW_XLABEL_BASELINE = 30;
 const DRAW_YLABEL_MARGIN = 15;
 
-function draw_args(argList: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): [F: U, varName: Sym, n: number] {
-    const F = argList.item0;
-    const varName = assert_sym(argList.item1);
-    const item2 = argList.item2;
+function draw_args(argList: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): [F: U, varName: Sym, n: number, pass2: boolean] {
+    // The following illustrates how using stack operations can avoid the need for explicit reference counting code.
+    // Whenever a pop happens, the popped item should either be returned or released.
+    // Keeping track of the stack contents is difficult but can be aided by inline comment documentation.
+    $.push(argList);                        // (argList)
+    duplicate($);                           // (argList, argList)
+    head($);                                // (arg0, argList)
+    const F = $.pop();                      // (argList)
+    rest($);                                // (argList.rest)
+    duplicate($);                           // (argList.rest, argList.rest)
+    head($);                                // (arg1, argList.rest)        
+    const varName = assert_sym($.pop());    // (argList.rest)
+    rest($);                                // (argList.rest.rest)
+    duplicate($);                           // (argList.rest.rest, argList.rest.rest)
+    head($);                                // (arg2, argList.rest.rest)
+    value_of(env, ctrl, $);                 // (val2, argList.rest.rest)
+    const N = $.pop();                      // (argList.rest.rest)
+    rest($);                                // (argList.rest.rest.rest)
+    $.pop();                                // ()
+    // TODO: Perom a null check on the previously popped item.
     try {
-        $.push(item2);
-        value_of(env, ctrl, $);
-        const N = $.pop();
-        try {
-            if (N.isnil) {
-                return [F, varName, DRAW_WIDTH + 1];
-            }
-            else {
-                return [F, varName, assert_rat(N).toNumber()];
-            }
+        if (N.isnil) {
+            return [F, varName, DRAW_WIDTH + 1, true];
         }
-        finally {
-            N.release();
+        else {
+            return [F, varName, assert_rat(N).toNumber(), false];
         }
     }
     finally {
-        item2.release();
+        N.release();
     }
 }
 
@@ -86,7 +94,7 @@ export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
         else {
             ctrl.pushDirective(Directive.drawing, 1);
             try {
-                const [F, varName, n] = draw_args(expr.argList, env, ctrl, $);
+                const [F, varName, n, pass2] = draw_args(expr.argList, env, ctrl, $);
                 /*
                 if (!(is_sym(T) && env.hasUserFunction(T))) {
                     T = X_LOWER;
@@ -115,8 +123,7 @@ export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
 
                     // TODO: Why do we use the theta range? How do we ensure integrity across function calls?
                     draw_pass1(F, varName, n, points, env, ctrl, $, dc);
-                    // eslint-disable-next-line no-constant-condition
-                    if (false) {
+                    if (pass2) {
                         draw_pass2(F, varName, points, env, ctrl, $, dc);
                     }
 

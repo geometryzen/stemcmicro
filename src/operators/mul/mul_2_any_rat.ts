@@ -1,14 +1,12 @@
 
+import { is_rat, Rat, Sym, zero } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, Cons2, U } from "math-expression-tree";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
-import { MATH_MUL } from "../../runtime/ns_math";
-import { Rat, zero } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
+import { is_err } from "../err/is_err";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
-import { is_rat } from "../rat/is_rat";
 
 class Builder implements OperatorBuilder<Cons> {
     constructor(readonly opr: Sym) {
@@ -43,8 +41,10 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         }
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
-        // console.lg(this.name, render_as_infix(lhs, this.$), render_as_infix(rhs, this.$), render_as_infix(orig, this.$));
-        if (rhs.isOne()) {
+        if (is_err(lhs)) {
+            return [TFLAG_DIFF, lhs];
+        }
+        else if (rhs.isOne()) {
             return [TFLAG_DIFF, lhs];
         }
         else if (rhs.isZero()) {
@@ -56,4 +56,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const mul_2_any_rat = new Builder(MATH_MUL);
+export const mul_2_any_rat = new Builder(native_sym(Native.multiply));

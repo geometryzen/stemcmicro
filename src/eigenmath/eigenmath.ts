@@ -9692,53 +9692,74 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
             stopf("circular definition?");
         }
 
-        const p1 = pop($);
-
-        const sym = car(p1);
-        if (is_cons(p1) && issymbol(sym)) {
-            if (env.hasBinding(sym)) {
-                ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) + 1);
+        const expr = pop($);
+        try {
+            if (is_cons(expr)) {
+                const name = expr.head;
                 try {
-                    const binding = env.getBinding(sym);
-                    if (is_lambda(binding)) {
-                        const ctxt = new ExprContextAdapter(env, ctrl, $);
-                        const value = binding.body(p1.argList, ctxt);
-                        $.push(value);
-                    }
-                    else {
-                        $.push(binding);
+                    if (issymbol(name)) {
+                        if (env.hasBinding(name)) {
+                            ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) + 1);
+                            try {
+                                const binding = env.getBinding(name);
+                                try {
+                                    if (is_lambda(binding)) {
+                                        const ctxt = new ExprContextAdapter(env, ctrl, $);
+                                        const value = binding.body(expr.rest, ctxt);
+                                        try {
+                                            $.push(value);
+                                        }
+                                        finally {
+                                            value.release();
+                                        }
+                                    }
+                                    else {
+                                        $.push(binding);
+                                    }
+                                }
+                                finally {
+                                    binding.release();
+                                }
+                            }
+                            finally {
+                                ctrl.popDirective();
+                            }
+                            return;
+                        }
+                        if (env.hasUserFunction(name)) {
+                            eval_user_function(expr, env, ctrl, $);
+                            return;
+                        }
                     }
                 }
                 finally {
-                    ctrl.popDirective();
+                    name.release();
                 }
+            }
+
+            if (is_sym(expr) && env.hasBinding(expr)) { // bare keyword
+                push(expr, $);
+                push(LAST, $); // default arg
+                list(2, $);
+                value_of(env, ctrl, $);
                 return;
             }
-            if (env.hasUserFunction(sym)) {
-                eval_user_function(p1, env, ctrl, $);
+
+            if (is_sym(expr) && env.hasUserFunction(expr)) {
+                eval_user_symbol(expr, env, ctrl, $);
                 return;
             }
-        }
 
-        if (is_sym(p1) && env.hasBinding(p1)) { // bare keyword
-            push(p1, $);
-            push(LAST, $); // default arg
-            list(2, $);
-            value_of(env, ctrl, $);
-            return;
-        }
+            if (is_tensor(expr)) {
+                eval_tensor(expr, env, ctrl, $);
+                return;
+            }
 
-        if (is_sym(p1) && env.hasUserFunction(p1)) {
-            eval_user_symbol(p1, env, ctrl, $);
-            return;
+            push(expr, $); // rational, double, or string    
         }
-
-        if (is_tensor(p1)) {
-            eval_tensor(p1, env, ctrl, $);
-            return;
+        finally {
+            expr.release();
         }
-
-        push(p1, $); // rational, double, or string
     }
     finally {
         ctrl.popDirective();

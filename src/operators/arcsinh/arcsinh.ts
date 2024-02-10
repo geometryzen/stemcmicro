@@ -1,27 +1,9 @@
+import { create_flt, is_flt, zero } from 'math-expression-atoms';
+import { car, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { items_to_cons } from '../../makeList';
 import { ARCSINH, SINH } from '../../runtime/constants';
-import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
-import { zero } from '../../tree/rat/Rat';
-import { car, U } from '../../tree/tree';
-import { is_flt } from '../flt/is_flt';
 
-/* arcsinh =====================================================================
-
-Tags
-----
-scripting, JS, internal, treenode, general concept
-
-Parameters
-----------
-x
-
-General description
--------------------
-Returns the inverse hyperbolic sine of x.
-
-*/
 export function Eval_arcsinh(x: U, $: ExtensionEnv): U {
     return arcsinh($.valueOf(cadr(x)), $);
 }

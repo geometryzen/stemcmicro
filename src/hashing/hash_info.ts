@@ -1,4 +1,4 @@
-import { Cell, CellHost, create_flt, create_int, create_sym, create_tensor, is_keyword, is_rat, is_str, is_sym, JsString, Map, Sym } from "math-expression-atoms";
+import { Cell, CellHost, create_flt, create_int, create_sym, create_tensor, Err, is_keyword, is_rat, is_str, is_sym, JsString, Map, Sym } from "math-expression-atoms";
 import { is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { create_uom } from "../operators/uom/uom";
 
@@ -48,7 +48,7 @@ export const HASH_BLADE = 'Blade';
 export const HASH_BOO = 'Boo';
 export const HASH_CELL = hash_for_atom(darkCell);
 export const HASH_DICTIONARY = new Map([]).name;
-export const HASH_ERR = 'Err';
+export const HASH_ERR = hash_for_atom(new Err(nil));
 export const HASH_FLT = hash_for_atom(create_flt(1));
 export const HASH_HYP = 'Hyp';
 export const HASH_IMU = 'Imu';

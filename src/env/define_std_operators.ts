@@ -52,21 +52,12 @@ import { Eval_add } from '../operators/add/Eval_add';
 import { Eval_adj } from '../operators/adj/adj';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
 import { arccos_varargs } from '../operators/arccos/arccos_varargs';
-import { arccosh_varargs } from '../operators/arccosh/arccosh_varargs';
+import { Eval_arccosh } from '../operators/arccosh/arccosh';
 import { arcsin_varargs } from '../operators/arcsin/arcsin_varargs';
-import { arcsinh_any } from '../operators/arcsinh/arcsinh_any';
+import { Eval_arcsinh } from '../operators/arcsinh/arcsinh';
 import { Eval_arctan } from '../operators/arctan/arctan';
-import { arctanh_varargs } from '../operators/arctanh/arctanh_varargs';
-import { arg_abs } from '../operators/arg/arg_abs';
-import { arg_add } from '../operators/arg/arg_add';
-import { arg_any } from '../operators/arg/arg_any';
-import { arg_exp } from '../operators/arg/arg_exp';
-import { arg_flt } from '../operators/arg/arg_flt';
-import { arg_imu } from '../operators/arg/arg_imu';
-import { arg_mul } from '../operators/arg/arg_mul';
-import { arg_pow } from '../operators/arg/arg_pow';
-import { arg_rat } from '../operators/arg/arg_rat';
-import { arg_sym } from '../operators/arg/arg_sym';
+import { Eval_arctanh } from '../operators/arctanh/arctanh';
+import { Eval_arg } from '../operators/arg/define_arg';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
 import { atom_builder } from '../operators/atom/Eval_atom';
@@ -325,7 +316,7 @@ import { make_printmode_operator } from '../operators/printing/make_printmode_op
 import { product_varargs } from '../operators/product/product_varargs';
 import { Eval_quote } from '../operators/quote/quote_varargs';
 import { quotient_varargs } from '../operators/quotient/quotient_varargs';
-import { rank_varargs } from '../operators/rank/rank_varargs';
+import { Eval_rank } from '../operators/rank/rank';
 import { rat_extension } from '../operators/rat/rat_extension';
 import { rationalize_fn } from '../operators/rationalize/rationalize_fn';
 import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
@@ -442,7 +433,7 @@ import { Eval_prime } from '../prime';
 import { get_last_print_mode_symbol } from '../print/print';
 import { render_using_print_mode } from '../print/render_using_print_mode';
 import { store_text_in_binding } from '../print/store_text_in_binding';
-import { ADJ, AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE } from '../runtime/constants';
+import { ADJ, AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE, RANK } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
@@ -717,7 +708,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineConsTransformer(PRIME, Eval_prime);
 
-    $.defineOperator(rank_varargs);
+    $.defineConsTransformer(RANK, Eval_rank);
 
     $.defineOperator(rco_2_blade_blade);
     $.defineOperator(make_lhs_distrib_expand_law(MATH_RCO, MATH_ADD));
@@ -752,24 +743,24 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(algebra_2_tensor_tensor);
     $.defineConsTransformer(AND, Eval_and);
     $.defineOperator(arccos_varargs);
-    $.defineOperator(arccosh_varargs);
+    $.defineConsTransformer(native_sym(Native.arccosh), Eval_arccosh);
     $.defineOperator(arcsin_varargs);
-    $.defineOperator(arcsinh_any);
+    $.defineConsTransformer(native_sym(Native.arcsinh), Eval_arcsinh);
 
     $.defineConsTransformer(native_sym(Native.arctan), Eval_arctan);
 
-    $.defineOperator(arctanh_varargs);
+    $.defineConsTransformer(native_sym(Native.arctanh), Eval_arctanh);
 
-    $.defineOperator(arg_abs);
-    $.defineOperator(arg_add);
-    $.defineOperator(arg_exp);
-    $.defineOperator(arg_flt);
-    $.defineOperator(arg_imu);
-    $.defineOperator(arg_mul);
-    $.defineOperator(arg_pow);
-    $.defineOperator(arg_rat);
-    $.defineOperator(arg_sym);
-    $.defineOperator(arg_any);
+    // $.defineOperator(arg_abs);
+    // $.defineOperator(arg_add);
+    // $.defineOperator(arg_exp);
+    // $.defineOperator(arg_flt);
+    // $.defineOperator(arg_imu);
+    // $.defineOperator(arg_mul);
+    // $.defineOperator(arg_pow);
+    // $.defineOperator(arg_rat);
+    // $.defineOperator(arg_sym);
+    $.defineConsTransformer(native_sym(Native.arg), Eval_arg);
 
     $.defineOperator(assign_sym_any);
     $.defineOperator(assign_any_any);

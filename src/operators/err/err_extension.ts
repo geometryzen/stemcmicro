@@ -1,6 +1,7 @@
 import { Err } from "math-expression-atoms";
 import { cons, Cons, nil, U } from 'math-expression-tree';
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { hash_for_atom } from "../../hashing/hash_info";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 const ENGLISH_UNDEFINED = 'undefined';
@@ -22,7 +23,7 @@ export function error_compare(lhs: Err, rhs: Err): Sign {
 */
 
 export class ErrExtension implements Extension<Err> {
-    readonly #hash = new Err(nil).name;
+    readonly #hash = hash_for_atom(new Err(nil));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor($: ExtensionEnv) {
         // Nothing to see here.
@@ -47,7 +48,7 @@ export class ErrExtension implements Extension<Err> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: Err, $: ExtensionEnv): U {
-        throw new Error("ErrExtension.valueOf Method not implemented.");
+        throw new Error("ErrExtension.valueOf method not implemented.");
     }
     isKind(arg: unknown): arg is Err {
         return arg instanceof Err;

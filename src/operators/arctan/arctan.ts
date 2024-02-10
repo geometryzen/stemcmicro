@@ -2,11 +2,13 @@ import { create_flt, create_rat, is_flt, is_sym, is_tensor, Num, Sym } from 'mat
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { car, cdr, Cons, Cons1, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { rational } from '../../bignum';
+import { eigenmath_arctan_numbers } from '../../eigenmath/eigenmath';
 import { isdoublez } from '../../eigenmath/isdoublez';
 import { isnegativeterm } from '../../eigenmath/isnegativeterm';
 import { isplusone } from '../../eigenmath/isplusone';
 import { iszero } from '../../eigenmath/iszero';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
+import { StackU } from '../../env/StackU';
 import { equaln, is_num_and_equalq } from '../../is';
 import { is_negative } from '../../predicates/is_negative';
 import { ARCTAN, COS, POWER, SIN, TAN } from '../../runtime/constants';
@@ -105,10 +107,10 @@ function arctan2(y: U, x: U, $: ExtensionEnv): U {
     return items_to_cons(native_sym(Native.arctan), y, x);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function arctan_numbers(x: Num, y: Num, $: ExtensionEnv): U {
-    // In the spirit of test-driven development...
-    return items_to_cons(native_sym(Native.multiply), create_rat(1, 2), native_sym(Native.PI));
+function arctan_numbers(x: Num, y: Num, env: ExtensionEnv): U {
+    const $ = new StackU();
+    eigenmath_arctan_numbers(x, y, env, env, $);
+    return $.pop();
 }
 
 /**

@@ -88,6 +88,7 @@
         "unit-predicates": "mocha 'units/predicates.spec.ts'",
         "unit-prefixes": "mocha 'units/prefixes.spec.ts'",
         "unit-product": "mocha 'units/product.spec.ts'",
+        "unit-rank": "mocha 'units/rank.spec.ts'",
         "unit-rect": "mocha 'units/rect.spec.ts'",
         "unit-refcount": "mocha 'units/refcount.spec.ts'",
         "unit-rendersvg": "mocha 'units/rendersvg.spec.ts'",
@@ -186,7 +187,7 @@
         "rollup-plugin-dts": "^6.1.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "ts-node": "^10.9.2",
-        "typedoc": "^0.25.7",
+        "typedoc": "^0.25.8",
         "typescript": "^5.3.3"
     }
 }

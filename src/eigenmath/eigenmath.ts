@@ -2033,7 +2033,7 @@ function arctan(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     }
 
     if (is_num(x) && is_num(y)) {
-        arctan_numbers(x, y, env, ctrl, $);
+        eigenmath_arctan_numbers(x, y, env, ctrl, $);
         return;
     }
 
@@ -2081,7 +2081,7 @@ function arctan(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     list(3, $);
 }
 
-function arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (iszero(X) && iszero(Y)) {
         push(ARCTAN, $);
@@ -2256,8 +2256,8 @@ function arctanh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     list(2, $);
 }
 
-function eval_arg(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
+export function eigenmath_eval_arg(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    push(cadr(expr), $);
     value_of(env, ctrl, $);
     arg(env, ctrl, $);
 }
@@ -7405,7 +7405,7 @@ function eval_rank(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Program
             const A = pop($);
             try {
                 if (is_tensor(A)) {
-                    push_integer(A.ndim, $);
+                    push_integer(A.rank, $);
                 }
                 else {
                     push_integer(0, $);
@@ -10894,7 +10894,7 @@ function lessp(p1: U, p2: U): boolean {
     return cmp(p1, p2) < 0;
 }
 
-function list(n: number, $: ProgramStack): void {
+export function list(n: number, $: ProgramStack): void {
     push(nil, $);
     for (let i = 0; i < n; i++) {
         cons($);
@@ -13529,7 +13529,7 @@ function subtract(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
 /**
  * ( x y => y x )
  */
-function swap($: ProgramStack): void {
+export function swap($: ProgramStack): void {
     const p2 = pop($);
     const p1 = pop($);
     push(p2, $);
@@ -13657,7 +13657,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.define_cons_function(ARCTAN, eval_arctan);
         this.define_cons_function(ARCTANH, eval_arctanh);
         this.define_cons_function(AND, eval_and);
-        this.define_cons_function(ARG, eval_arg);
+        this.define_cons_function(ARG, eigenmath_eval_arg);
         this.define_cons_function(BINDING, eval_binding);
         this.define_cons_function(CEILING, eval_ceiling);
         this.define_cons_function(CHECK, eval_check);

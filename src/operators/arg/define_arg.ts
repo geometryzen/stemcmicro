@@ -1,10 +1,11 @@
-import { Err, is_flt, is_rat, is_sym } from 'math-expression-atoms';
+import { Err, is_flt, is_sym } from 'math-expression-atoms';
+import { Native, native_sym } from 'math-expression-native';
 import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { subtract } from '../../calculators/sub/subtract';
+import { eigenmath_eval_arg } from '../../eigenmath/eigenmath';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
+import { StackU } from '../../env/StackU';
 import { equaln, is_num_and_equal_one_half, is_num_and_gt_zero } from '../../is';
-import { Native } from '../../native/Native';
-import { native_sym } from '../../native/native_sym';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_cons_opr_eq_sym } from '../../predicates/is_cons_opr_eq_sym';
 import { is_negative } from '../../predicates/is_negative';
@@ -20,7 +21,6 @@ import { is_unaop } from '../helpers/is_unaop';
 import { im } from '../imag/imag';
 import { is_imu } from '../imu/is_imu';
 import { is_pi } from '../pi/is_pi';
-import { is_pow } from '../pow/is_pow';
 import { re } from '../real/real';
 
 export const ARG = native_sym(Native.arg);
@@ -91,40 +91,13 @@ function arg(z: U, $: ExtensionEnv): U {
 
 }
 
-export function arg_old(z: U, $: ExtensionEnv): U {
-    // console.lg("arg", $.toInfixString(z));
-    if (is_multiply(z)) {
-        const argList = z.argList;
-        if (argList.length === 2) {
-            const lhs = argList.item(0);
-            const rhs = argList.item(1);
-            if (is_cons(rhs) && is_pow(rhs)) {
-                const base = rhs.base;
-                const expo = rhs.expo;
-                if (is_rat(expo) && expo.isMinusOne()) {
-                    // console.lg(`z => ${render_as_infix(z, $)} is in the form a/b`);
-                    const numer = lhs; // numerator(z, $);
-                    // console.lg(`numer=> ${render_as_sexpr(numer, $)}`);
-                    // console.lg(`lhs  => ${render_as_sexpr(lhs, $)}`);
-                    const denom = base; // denominator(z, $);
-                    // console.lg(`denom=> ${render_as_sexpr(denom, $)}`);
-                    // console.lg(`base => ${render_as_sexpr(base, $)}`);
-                    if (numer.equals(z)) {
-                        // Termination condition to prevent infinite recursion.
-                        // I'm allowed to use the MATH_ARG symbol because I'm the arg implementation.
-                        return items_to_cons(ARG, z);
-                    }
-                    else {
-                        return $.subtract(yyarg(numer, $), yyarg(denom, $));
-                    }
-                }
-            }
-        }
-    }
-    return yyarg(z, $);
+export function Eval_arg(expr: Cons, env: ExtensionEnv): U {
+    const $ = new StackU();
+    eigenmath_eval_arg(expr, env, env, $);
+    return $.pop();
 }
 
-function yyarg(expr: U, $: ExtensionEnv): U {
+export function yyarg(expr: U, $: ExtensionEnv): U {
     // console.lg("yyarg", $.toSExprString(expr));
     // case of plain number
     if (is_num_and_gt_zero(expr) || is_pi(expr)) {

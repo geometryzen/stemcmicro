@@ -1,28 +1,13 @@
+import { car, Cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { items_to_cons } from '../../makeList';
-import { is_flt } from '../flt/is_flt';
 import { ARCTANH, TANH } from '../../runtime/constants';
 import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
-import { car, U } from '../../tree/tree';
+import { is_flt } from '../flt/is_flt';
 
-/* arctanh =====================================================================
-
-Tags
-----
-scripting, JS, internal, treenode, general concept
-
-Parameters
-----------
-x
-
-General description
--------------------
-Returns the inverse hyperbolic tangent of x.
-
-*/
-export function Eval_arctanh(x: U, $: ExtensionEnv): U {
+export function Eval_arctanh(x: Cons, $: ExtensionEnv): U {
     return arctanh($.valueOf(cadr(x)), $);
 }
 

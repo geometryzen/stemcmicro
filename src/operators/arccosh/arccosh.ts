@@ -1,33 +1,34 @@
+import { create_flt, is_flt, zero } from 'math-expression-atoms';
+import { Native, native_sym } from 'math-expression-native';
+import { car, Cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { items_to_cons } from '../../makeList';
-import { is_flt } from '../flt/is_flt';
-import { ARCCOSH, COSH } from '../../runtime/constants';
+import { COSH } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
-import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
-import { zero } from '../../tree/rat/Rat';
-import { car, U } from '../../tree/tree';
 
-/* arccosh =====================================================================
-
-Tags
-----
-scripting, JS, internal, treenode, general concept
-
-Parameters
-----------
-x
-
-General description
--------------------
-Returns the inverse hyperbolic cosine of x.
-
-*/
-export function Eval_arccosh(x: U, $: ExtensionEnv): U {
-    return arccosh($.valueOf(cadr(x)), $);
+export function Eval_arccosh(expr: Cons, $: ExtensionEnv): U {
+    const argList = expr.argList;
+    try {
+        const arg = argList.head;
+        try {
+            const x = $.valueOf(arg);
+            try {
+                return arccosh(x, $);
+            }
+            finally {
+                x.release();
+            }
+        }
+        finally {
+            arg.release();
+        }
+    }
+    finally {
+        argList.release();
+    }
 }
 
-function arccosh(x: U, $: ExtensionEnv): U {
+function arccosh(x: U, env: ExtensionEnv): U {
     if (car(x).equals(COSH)) {
         return cadr(x);
     }
@@ -41,9 +42,32 @@ function arccosh(x: U, $: ExtensionEnv): U {
         return create_flt(d);
     }
 
-    if ($.isone(x)) {
+    if (env.isone(x)) {
         return zero;
     }
 
-    return items_to_cons(ARCCOSH, x);
+    /*
+    const $ = new StackU();
+    $.push(native_sym(Native.pow));     //  pow
+    $.push(x);                          //  pow x
+    $.push(create_int(2));              //  pow x 2
+    list(3, $);                         //  x**2
+    $.push(native_sym(Native.add));     //  x**2 + 
+    swap($);                            //  + x**2
+    $.push(create_int(-1));             //  + x**2 -1
+    list(3, $);                         //  x**2-1
+    $.push(native_sym(Native.sqrt));    //  x**2-1 sqrt
+    swap($);                            //  sqrt x**2-1
+    list(2, $);                         //  sqrt(x**2-1)
+    $.push(native_sym(Native.add));     //  sqrt(x**2-1) + 
+    swap($);                            //  + sqrt(x**2-1)
+    $.push(x);                          //  + sqrt(x**2-1) x
+    list(3, $);                         //  x+sqrt(x**2-1)
+    $.push(native_sym(Native.log));     //  x+sqrt(x**2-1) log
+    swap($);                            //  log x+sqrt(x**2-1)
+    list(2, $);                         //  log(x+sqrt(x**2-1))
+    value_of(env, env, $);              //  normalization             
+    return $.pop();
+    */
+    return items_to_cons(native_sym(Native.arccosh), x);
 }

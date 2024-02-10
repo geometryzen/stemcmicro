@@ -1,13 +1,13 @@
 import { create_sym, Flt, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Tensor } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { car, cdr, Cons, is_atom, is_cons, is_nil, U } from "math-expression-tree";
+import { is_imu } from "../operators/imu/is_imu";
 import { caddr, cadr, cddr } from "../tree/helpers";
 import { bignum_itoa } from "./bignum_itoa";
 import { count_denominators } from "./count_denominators";
 import { find_denominator } from "./find_denominator";
 import { fmtnum } from "./fmtnum";
 import { isdenominator } from "./isdenominator";
-import { isimaginaryunit } from "./isimaginaryunit";
 import { isinteger } from "./isinteger";
 import { isminusone } from "./isminusone";
 import { isnegativenumber } from "./isnegativenumber";
@@ -344,7 +344,7 @@ function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
         return;
     }
 
-    if (isimaginaryunit(p)) {
+    if (is_imu(p)) {
         /*
         if (isimaginaryunit(get_binding(symbol(J_LOWER), $))) {
             infixform_write("j", outbuf);

@@ -1,3 +1,4 @@
+import { Imu, is_imu } from "math-expression-atoms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_IMU } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
@@ -7,7 +8,6 @@ import { Cons, items_to_cons, U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
-import { IMU_TYPE, is_imu } from "../imu/is_imu";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -15,7 +15,7 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = IMU_TYPE;
+type LHS = Imu;
 type RHS = U;
 type EXP = Cons2<Sym, LHS, RHS>;
 

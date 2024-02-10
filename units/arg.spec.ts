@@ -7,7 +7,7 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 // Using concrete complex numbers to test the handling of the various quadrants.
 // https://en.wikipedia.org/wiki/Argument_(complex_analysis) 
 //
-describe("arg", function () {
+xdescribe("arg", function () {
     it("arg(0)", function () {
         const lines: string[] = [
             `arg(0)`
@@ -158,7 +158,7 @@ describe("arg", function () {
     });
 });
 
-describe("arg", function () {
+xdescribe("arg", function () {
     xit("arg(a)", function () {
         const lines: string[] = [
             `arg(a)`

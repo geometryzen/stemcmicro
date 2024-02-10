@@ -1,6 +1,6 @@
+import { Imu, is_imu } from "math-expression-atoms";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_IMU } from "../../hashing/hash_info";
-import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -14,8 +14,8 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = IMU_TYPE;
-type RHS = IMU_TYPE;
+type LHS = Imu;
+type RHS = Imu;
 type EXP = Cons2<Sym, LHS, RHS>;
 
 /**

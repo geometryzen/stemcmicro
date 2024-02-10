@@ -1,8 +1,8 @@
 import { create_sym, is_str } from "math-expression-atoms";
 import { is_nil, nil, U } from "math-expression-tree";
+import { is_imu } from "../operators/imu/is_imu";
 import { cadr } from "../tree/helpers";
 import { EigenmathParseConfig, evaluate_expression, get_binding, scan_inbuf, set_symbol, stopf, value_of } from "./eigenmath";
-import { isimaginaryunit } from "./isimaginaryunit";
 import { make_should_annotate } from "./make_should_annotate";
 import { print_value_and_input_as_svg_or_infix } from "./print_value_and_input_as_svg_or_infix";
 import { ProgramControl } from "./ProgramControl";
@@ -64,8 +64,8 @@ export function make_eval_run(io: ProgramIO) {
             const input = $.pop();
             const result = evaluate_expression(input, env, ctrl, $);
             const ec: SvgRenderConfig = {
-                useImaginaryI: isimaginaryunit(get_binding(I_LOWER, env)),
-                useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, env))
+                useImaginaryI: is_imu(get_binding(I_LOWER, env)),
+                useImaginaryJ: is_imu(get_binding(J_LOWER, env))
             };
             print_value_and_input_as_svg_or_infix(result, input, should_render_svg(env), ec, io.listeners, make_should_annotate(env));
             if (!is_nil(result)) {

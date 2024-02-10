@@ -1,3 +1,4 @@
+import { Imu, is_imu } from "math-expression-atoms";
 import { ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_IMU } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -6,7 +7,6 @@ import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { is_mul_2_any_sym } from "./is_mul_2_any_sym";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<Cons> {
 type LL = U;
 type LR = Sym;
 type LHS = Cons2<Sym, LL, LR>;
-type RHS = IMU_TYPE;
+type RHS = Imu;
 type EXP = Cons2<Sym, LHS, RHS>;
 
 /**

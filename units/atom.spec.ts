@@ -1,12 +1,13 @@
 
 import { assert } from "chai";
-import { Atom, create_sym } from "math-expression-atoms";
+import { create_sym, JsAtom } from "math-expression-atoms";
 import { ExprContext, LambdaExpr } from "math-expression-context";
 import { Cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 
-class TestAtom extends Atom {
+class TestAtom extends JsAtom {
+    readonly type = 'testatom';
     constructor() {
         super('TestAtom');
     }

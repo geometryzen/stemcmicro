@@ -12,7 +12,6 @@ import { fmtnum } from "./fmtnum";
 import { isdenominator } from "./isdenominator";
 import { isdigit } from "./isdigit";
 import { isfraction } from "./isfraction";
-import { isimaginaryunit } from "./isimaginaryunit";
 import { isinteger } from "./isinteger";
 import { isminusone } from "./isminusone";
 import { isnegativenumber } from "./isnegativenumber";
@@ -890,7 +889,7 @@ function emit_power(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
         return;
     }
 
-    if (isimaginaryunit(p)) {
+    if (is_imu(p)) {
         if (ec.useImaginaryJ) {
             emit_italic_string("j", $);
             return;

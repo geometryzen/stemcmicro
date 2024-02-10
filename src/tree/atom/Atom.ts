@@ -1,2 +1,2 @@
-export { Atom } from 'math-expression-atoms';
+export { JsAtom } from 'math-expression-atoms';
 

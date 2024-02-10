@@ -1,5 +1,5 @@
 
-import { is_flt } from "math-expression-atoms";
+import { Imu, is_flt, is_imu } from "math-expression-atoms";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_IMU } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -8,7 +8,6 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-import { IMU_TYPE, is_imu } from "../imu/is_imu";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -16,7 +15,7 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = IMU_TYPE;
+type LHS = Imu;
 type RHS = Flt;
 type EXP = Cons2<Sym, LHS, RHS>;
 

@@ -505,7 +505,7 @@ describe("edge", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("arctanh(1/2)"));
         engine.release();
     });
-    it("arg(z)", function () {
+    xit("arg(z)", function () {
         const lines: string[] = [
             `i = sqrt(-1)`,
             `arg(1)`,

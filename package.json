@@ -160,10 +160,10 @@
         "typhon-lang": "^1.0.13"
     },
     "peerDependencies": {
-        "math-expression-atoms": "^0.9.31",
+        "math-expression-atoms": "^0.9.34",
         "math-expression-context": "^0.9.14",
         "math-expression-native": "^0.9.16",
-        "math-expression-tree": "^0.9.24"
+        "math-expression-tree": "^0.9.26"
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
@@ -183,7 +183,7 @@
         "mocha": "^10.3.0",
         "nyc": "^15.1.0",
         "release-it": "^17.0.3",
-        "rollup": "^4.9.6",
+        "rollup": "^4.10.0",
         "rollup-plugin-dts": "^6.1.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "ts-node": "^10.9.2",

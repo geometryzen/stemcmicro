@@ -54,23 +54,6 @@ function assert_cons(expr: U, context?: Cons, needle?: Sym): Cons {
         }
     }
 }
-/*
-class Widget extends Atom {
-    #refCount = 1;
-    constructor() {
-        super('Widget');
-    }
-    get refCount(): number {
-        return this.#refCount;
-    }
-    override addRef(): void {
-        this.#refCount++;
-    }
-    override release(): void {
-        this.#refCount--;
-    }
-}
-*/
 
 describe("(zip lhs rhs)", function () {
     it("(zip nil nil) => nil", function () {

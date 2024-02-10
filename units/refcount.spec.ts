@@ -1,9 +1,10 @@
 
 import { assert } from "chai";
-import { Atom } from "math-expression-atoms";
+import { JsAtom } from "math-expression-atoms";
 import { StackU } from "../src/env/StackU";
 
-class Widget extends Atom {
+class Widget extends JsAtom {
+    readonly type = 'widget';
     #refCount = 1;
     constructor() {
         super('Widget');

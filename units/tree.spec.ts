@@ -1,11 +1,12 @@
 import { assert } from 'chai';
-import { Atom } from 'math-expression-atoms';
+import { JsAtom } from 'math-expression-atoms';
 import { car, cdr, Cons, is_cons, is_singleton, items_to_cons, nil, U } from 'math-expression-tree';
 
 /**
  * A simple atom for testing purposes.
  */
-class Int extends Atom {
+class Int extends JsAtom {
+    readonly type = 'int';
     constructor(public readonly value: number, pos?: number, end?: number) {
         super('Int', pos, end);
     }

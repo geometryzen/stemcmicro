@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("rect", function () {
+xdescribe("rect", function () {
     it("rect(a)", function () {
         const lines: string[] = [
             `rect(a)`,

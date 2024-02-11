@@ -1,9 +1,7 @@
+import { is_tensor, Tensor, zero } from 'math-expression-atoms';
+import { car, cdr, Cons, is_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_tensor } from './operators/tensor/is_tensor';
 import { is_add } from './runtime/helpers';
-import { zero } from './tree/rat/Rat';
-import { Tensor } from './tree/tensor/Tensor';
-import { car, cdr, Cons, is_cons, U } from './tree/tree';
 
 /*
 Remove terms that involve a given symbol or expression. For example...
@@ -12,7 +10,7 @@ Remove terms that involve a given symbol or expression. For example...
 
   filter(x^2 + x + 1, x^2)  =>  x + 1
 */
-export function Eval_filter(p1: U, $: ExtensionEnv): U {
+export function Eval_filter(p1: Cons, $: Pick<ExtensionEnv, 'add' | 'valueOf'>): U {
     p1 = cdr(p1);
     let result = $.valueOf(car(p1));
 
@@ -28,11 +26,11 @@ export function Eval_filter(p1: U, $: ExtensionEnv): U {
  * @param F The polynomial.
  * @param X The variable.
  */
-export function filter(F: U, X: U, $: ExtensionEnv): U {
+export function filter(F: U, X: U, $: Pick<ExtensionEnv, 'add'>): U {
     return filter_main(F, X, $);
 }
 
-function filter_main(F: U, X: U, $: ExtensionEnv): U {
+function filter_main(F: U, X: U, $: Pick<ExtensionEnv, 'add'>): U {
     if (is_add(F)) {
         return filter_sum(F, X, $);
     }
@@ -48,10 +46,10 @@ function filter_main(F: U, X: U, $: ExtensionEnv): U {
     return F;
 }
 
-function filter_sum(F: Cons, X: U, $: ExtensionEnv): U {
+function filter_sum(F: Cons, X: U, $: Pick<ExtensionEnv, 'add'>): U {
     return F.tail().reduce((a: U, b: U) => $.add(a, filter(b, X, $)), zero);
 }
 
-function filter_tensor(F: Tensor, X: U, $: ExtensionEnv): U {
+function filter_tensor(F: Tensor, X: U, $: Pick<ExtensionEnv, 'add'>): U {
     return F.map((f) => filter(f, X, $));
 }

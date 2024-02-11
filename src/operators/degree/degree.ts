@@ -1,76 +1,67 @@
+import { is_num, Num, one, zero } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
+import { Cons, is_cons, U } from 'math-expression-tree';
 import { compare_num_num } from '../../calculators/compare/compare_num_num';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { guess } from '../../guess';
-import { is_num } from '../num/is_num';
 import { is_power } from '../../runtime/helpers';
-import { caddr, cadr } from '../../tree/helpers';
-import { Num } from '../../tree/num/Num';
-import { one, zero } from '../../tree/rat/Rat';
-import { Cons, is_cons, nil, U } from '../../tree/tree';
 
-/* deg =====================================================================
-
-Tags
-----
-scripting, JS, internal, treenode, general concept
-
-Parameters
-----------
-p,x
-
-General description
--------------------
-Returns the degree of polynomial p(x).
-
-*/
-export function Eval_degree(degreeInvoke: Cons, $: ExtensionEnv): U {
-    const p1 = $.valueOf(caddr(degreeInvoke));
-    const top = $.valueOf(cadr(p1));
-    const variable = nil.equals(p1) ? guess(top) : p1;
-    return degree(top, variable, $);
+/**
+ * (deg p x)
+ */
+export function eval_degree(expr: Cons, $: Pick<ExprContext, 'valueOf'>): U {
+    const argList = expr.argList;
+    try {
+        const arg0 = argList.item0;
+        const arg1 = argList.item1;
+        try {
+            const P = $.valueOf(arg0);
+            const X = $.valueOf(arg1);
+            if (X.isnil) {
+                return degree(P, guess(P));
+            }
+            else {
+                return degree(P, X);
+            }
+        }
+        finally {
+            arg0.release();
+            arg1.release();
+        }
+    }
+    finally {
+        argList.release();
+    }
 }
 
-//-----------------------------------------------------------------------------
-//
-//  Find the degree of a polynomial
-//
-//  Input:    POLY    p(x)
-//            X       x
-//
-//  Output:    Result
-//
-//  Note: Finds the largest numerical power of x. Does not check for
-//  weirdness in p(x).
-//
-//-----------------------------------------------------------------------------
-export function degree(P: U, X: U, $: ExtensionEnv): U {
-    return yydegree(P, X, zero, $);
+export function degree(P: U, X: U): Num {
+    return yydegree(P, X, zero);
 }
 
-function yydegree(P: U, X: U, d: Num, $: ExtensionEnv): Num {
+function yydegree(P: U, X: U, d: Num): Num {
     if (P.equals(X)) {
-        if ($.iszero(d)) {
+        if (d.isZero()) {
             return one;
         }
         else {
             return d;
         }
     }
-    else if (is_cons(P) && is_power(P)) {
-        // It's not obvious in the following that we are looking at the base and exponent.
-        // A match on (pow base exponent) would make this clearer.
-        const caddr_poly = caddr(P);
-        if ($.equals(cadr(P), X) && is_num(caddr_poly) && compare_num_num(d, caddr_poly) < 0) {
-            return caddr_poly;
+    else if (is_cons(P)) {
+        if (is_power(P)) {
+            const base = P.base;
+            const expo = P.expo;
+            if (base.equals(X) && is_num(expo) && compare_num_num(d, expo) < 0) {
+                return expo;
+            }
+            else {
+                return d;
+            }
         }
         else {
-            return d;
+            return P.tail().reduce(function (prev: Num, curr: U) {
+                return yydegree(curr, X, prev);
+            }, d);
         }
-    }
-    else if (is_cons(P)) {
-        return P.tail().reduce(function (prev: Num, curr: U) {
-            return yydegree(curr, X, prev, $);
-        }, d);
     }
     else {
         return d;

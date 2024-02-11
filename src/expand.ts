@@ -315,7 +315,7 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
         p6 = p5;
     }
     const stack: U[] = [];
-    const d = nativeInt(degree(p6, p9, $));
+    const d = nativeInt(degree(p6, p9));
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < d; j++) {
             const arg6 = $.power(p6, create_int(i));
@@ -390,7 +390,7 @@ function expand_get_AF(p5: U, X: U, $: ExtensionEnv): U[] {
         p5 = p5.base;
     }
     const results: U[] = [];
-    const d = nativeInt(degree(p5, X, $));
+    const d = nativeInt(degree(p5, X));
     for (let i = n; i > 0; i--) {
         for (let j = 0; j < d; j++) {
             const A = $.power(p5, create_int(i));

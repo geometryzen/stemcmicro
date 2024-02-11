@@ -10,7 +10,7 @@ describe("degree", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1");
         engine.release();
     });
     it("degree(x*x)", function () {
@@ -21,7 +21,7 @@ describe("degree", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "2");
         engine.release();
     });
     it("degree(x**2)", function () {
@@ -32,7 +32,7 @@ describe("degree", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "2");
         engine.release();
     });
 });

@@ -104,7 +104,7 @@ import { def_sym_doc_init_builder } from '../operators/def/def_sym_doc_init';
 import { def_sym_init_builder } from '../operators/def/def_sym_init';
 import { defint_builder } from '../operators/defint/defint';
 import { defn_builder } from '../operators/defn/Eval_defn';
-import { degree_varargs } from '../operators/degree/degree_varargs';
+import { eval_degree } from '../operators/degree/degree';
 import { denominator_builder } from '../operators/denominator/denominator_builder';
 import { deref_builder } from '../operators/deref/Eval_deref';
 import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
@@ -434,7 +434,7 @@ import { Eval_prime } from '../prime';
 import { get_last_print_mode_symbol } from '../print/print';
 import { render_using_print_mode } from '../print/render_using_print_mode';
 import { store_text_in_binding } from '../print/store_text_in_binding';
-import { ADJ, AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE, RANK } from '../runtime/constants';
+import { ADJ, AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DEGREE, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE, RANK } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
@@ -626,7 +626,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(conj_mul);
     $.defineOperator(conj_any);
 
-    $.defineOperator(degree_varargs);
+    $.defineConsTransformer(DEGREE, eval_degree);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // TODO: I don't think we should be using defineKeyword for (factor n) and factor(p, x)

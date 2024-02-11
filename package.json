@@ -31,6 +31,7 @@
         "tests": "mocha 'tests/**/*.ts' --sort",
         "units": "mocha 'units/**/*.spec.ts' --sort",
         "test-polar": "mocha 'tests/polar.ts'",
+        "example-degree": "mocha 'examples/degree.spec.ts'",
         "example-hadamard": "mocha 'examples/hadamard.spec.ts'",
         "unit-abs": "mocha 'units/abs.spec.ts'",
         "unit-algebrite": "mocha 'units/algebrite.spec.ts'",

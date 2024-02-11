@@ -3,6 +3,8 @@ import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { ConsFunction } from '../adapters/ConsFunction';
+import { ExprContextAdapter } from '../adapters/ExprContextAdapter';
+import { make_stack } from '../adapters/make_stack';
 import { ExprEngineListener } from '../api/api';
 import { DirectiveStack } from '../env/DirectiveStack';
 import { Directive } from '../env/ExtensionEnv';
@@ -10,6 +12,7 @@ import { imu } from '../env/imu';
 import { StackU } from '../env/StackU';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
+import { eval_degree } from '../operators/degree/degree';
 import { eval_hadamard, hadamard } from '../operators/hadamard/eval_hadamard';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_lambda } from '../operators/lambda/is_lambda';
@@ -17,6 +20,7 @@ import { eval_rotate } from '../operators/rotate/evaL_rotate';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
 import { ProgrammingError } from '../programming/ProgrammingError';
+import { DEGREE } from '../runtime/constants';
 import { is_power } from '../runtime/helpers';
 import { assert_cons } from '../tree/cons/assert_cons';
 import { Lambda } from '../tree/lambda/Lambda';
@@ -13301,53 +13305,6 @@ export function broadcast(text: string, io: Pick<ProgramIO, 'listeners'>): void 
     }
 }
 
-class ExprContextAdapter implements ExprContext {
-    constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly $: ProgramStack) {
-        // Nothing to see here.
-    }
-    clearBindings(): void {
-        this.env.clearBindings();
-    }
-    executeProlog(script: string[]): void {
-        this.env.executeProlog(script);
-    }
-    getDirective(directive: number): number {
-        return this.ctrl.getDirective(directive);
-    }
-    pushDirective(directive: number, value: number): void {
-        this.ctrl.pushDirective(directive, value);
-    }
-    popDirective(): void {
-        this.ctrl.popDirective();
-    }
-    hasBinding(name: Sym): boolean {
-        return this.env.hasBinding(name);
-    }
-    getBinding(name: Sym): U {
-        return this.env.getBinding(name);
-    }
-    setBinding(name: Sym, binding: U): void {
-        this.env.setBinding(name, binding);
-    }
-    hasUserFunction(name: Sym): boolean {
-        return this.env.hasUserFunction(name);
-    }
-    getUserFunction(name: Sym): U {
-        return this.env.getUserFunction(name);
-    }
-    setUserFunction(name: Sym, userfunc: U): void {
-        this.env.setUserFunction(name, userfunc);
-    }
-    defineUserSymbol(name: Sym): void {
-        this.env.defineUserSymbol(name);
-    }
-    valueOf(expr: U): U {
-        this.$.push(expr);
-        value_of(this.env, this.ctrl, this.$);
-        return this.$.pop();
-    }
-}
-
 export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, ProgramStack, ProgramFrame, ProgramIO {
     inbuf: string = "";
     /**
@@ -13418,6 +13375,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.define_cons_function(COS, eval_cos);
         this.define_cons_function(COSH, eval_cosh);
         this.define_cons_function(DEFINT, eval_defint);
+        this.define_cons_function(DEGREE, make_stack(eval_degree));
         this.define_cons_function(DENOMINATOR, eval_denominator);
         this.define_cons_function(DET, eval_det);
         this.define_cons_function(DERIVATIVE, eval_derivative);

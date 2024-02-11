@@ -31,6 +31,7 @@
         "tests": "mocha 'tests/**/*.ts' --sort",
         "units": "mocha 'units/**/*.spec.ts' --sort",
         "test-polar": "mocha 'tests/polar.ts'",
+        "example-hadamard": "mocha 'examples/hadamard.spec.ts'",
         "unit-abs": "mocha 'units/abs.spec.ts'",
         "unit-algebrite": "mocha 'units/algebrite.spec.ts'",
         "unit-api": "mocha 'units/api.spec.ts'",
@@ -160,7 +161,7 @@
         "typhon-lang": "^1.0.13"
     },
     "peerDependencies": {
-        "math-expression-atoms": "^0.9.34",
+        "math-expression-atoms": "^0.9.35",
         "math-expression-context": "^0.9.14",
         "math-expression-native": "^0.9.16",
         "math-expression-tree": "^0.9.26"

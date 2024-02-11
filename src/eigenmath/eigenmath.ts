@@ -2,6 +2,7 @@ import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, cre
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
+import { ConsFunction } from '../adapters/ConsFunction';
 import { ExprEngineListener } from '../api/api';
 import { DirectiveStack } from '../env/DirectiveStack';
 import { Directive } from '../env/ExtensionEnv';
@@ -9,8 +10,10 @@ import { imu } from '../env/imu';
 import { StackU } from '../env/StackU';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
+import { eval_hadamard, hadamard } from '../operators/hadamard/eval_hadamard';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_lambda } from '../operators/lambda/is_lambda';
+import { eval_rotate } from '../operators/rotate/evaL_rotate';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
 import { ProgrammingError } from '../programming/ProgrammingError';
@@ -40,8 +43,8 @@ import { ProgramFrame } from './ProgramFrame';
 import { ProgramIO } from './ProgramIO';
 import { ProgramStack } from './ProgramStack';
 
-function alloc_tensor(): Tensor {
-    return new Tensor([], []);
+function alloc_tensor<T extends U>(): Tensor<T> {
+    return new Tensor<T>([], []);
 }
 
 function alloc_matrix(nrow: number, ncol: number): Tensor {
@@ -713,21 +716,23 @@ const ARG7 = create_sym("$7");
 const ARG8 = create_sym("$8");
 const ARG9 = create_sym("$9");
 
-function copy_tensor(p1: Tensor) {
+export function copy_tensor<T extends U>(source: Tensor<T>): Tensor<T> {
 
-    const p2 = alloc_tensor();
+    const dst = alloc_tensor<T>();
 
-    let n = p1.ndim;
+    const ndim = source.ndim;
 
-    for (let i = 0; i < n; i++)
-        p2.dims[i] = p1.dims[i];
+    for (let i = 0; i < ndim; i++) {
+        dst.dims[i] = source.dims[i];
+    }
 
-    n = p1.nelem;
+    const nelem = source.nelem;
 
-    for (let i = 0; i < n; i++)
-        p2.elems[i] = p1.elems[i];
+    for (let i = 0; i < nelem; i++) {
+        dst.elems[i] = source.elems[i];
+    }
 
-    return p2;
+    return dst;
 }
 
 function decomp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
@@ -1006,7 +1011,7 @@ function eval_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramS
     }
 }
 
-function add(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function add(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     add_terms(2, env, ctrl, $);
 }
 
@@ -2348,12 +2353,12 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
                             push(native_sym(Native.PI), $);     // [pi]
                             push(expo, $);                      // [pi expo]
                             multiply(env, ctrl, $);             // [pi*expo]
-                            return;    
+                            return;
                         }
                         finally {
                             expo.release();
                         }
-                    }    
+                    }
                 }
                 finally {
                     base.release();
@@ -4174,7 +4179,7 @@ function eval_exp(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     expfunc(env, ctrl, $);
 }
 
-function expfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function expfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(DOLLAR_E, $);
     swap($);
     power(env, ctrl, $);
@@ -4571,58 +4576,6 @@ function eval_for(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramS
     }
 
     push(nil, $); // return value
-}
-
-function eval_hadamard(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-    p1 = cddr(p1);
-    while (is_cons(p1)) {
-        push(car(p1), $);
-        value_of(env, ctrl, $);
-        hadamard(env, ctrl, $);
-        p1 = cdr(p1);
-    }
-}
-
-/**
- * 
- * @param $ 
- * @returns 
- */
-function hadamard(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-
-    const p2 = pop($);
-    const p1 = pop($);
-
-    if (!istensor(p1) || !istensor(p2)) {
-        push(p1, $);
-        push(p2, $);
-        multiply(env, ctrl, $);
-        return;
-    }
-
-    if (p1.ndim !== p2.ndim)
-        stopf("hadamard");
-
-    let n = p1.ndim;
-
-    for (let i = 0; i < n; i++)
-        if (p1.dims[i] !== p2.dims[i])
-            stopf("hadamard");
-
-    const T = copy_tensor(p1);
-
-    n = T.nelem;
-
-    for (let i = 0; i < n; i++) {
-        push(p1.elems[i], $);
-        push(p2.elems[i], $);
-        multiply(env, ctrl, $);
-        T.elems[i] = pop($);
-    }
-
-    push(p1, $);
 }
 
 function eval_imag(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -7176,7 +7129,7 @@ function power_args($: ProgramStack): [base: U, expo: U] {
  * 
  * Both expressions have been evaluated.
  */
-function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const [base, expo] = power_args($);
     try {
@@ -7880,261 +7833,6 @@ function reduce(h: number, n: number, A: U, env: ProgramEnv, ctrl: ProgramContro
 
     for (let i = 0; i < n - 1; i++)
         $.setAt(h + i, $.getAt(h + i + 1));
-}
-
-function eval_rotate(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-    const PSI = pop($);
-
-    if (!istensor(PSI) || PSI.ndim > 1 || PSI.nelem > 32768 || (PSI.nelem & (PSI.nelem - 1)) !== 0)
-        stopf("rotate error 1 first argument is not a vector or dimension error");
-
-    let c = 0;
-
-    p1 = cddr(p1);
-
-    while (is_cons(p1)) {
-
-        if (!is_cons(cdr(p1)))
-            stopf("rotate error 2 unexpected end of argument list");
-
-        const OPCODE = car(p1);
-        push(cadr(p1), $);
-        value_of(env, ctrl, $);
-        let n = pop_integer($);
-
-        if (n > 14 || (1 << n) >= PSI.nelem)
-            stopf("rotate error 3 qubit number format or range");
-
-        p1 = cddr(p1);
-
-        if (OPCODE.equals(create_sym("C"))) {
-            c |= 1 << n;
-            continue;
-        }
-
-        if (OPCODE.equals(create_sym("H"))) {
-            rotate_h(PSI, c, n, env, ctrl, $);
-            c = 0;
-            continue;
-        }
-
-        if (OPCODE.equals(create_sym("P"))) {
-            if (!is_cons(p1))
-                stopf("rotate error 2 unexpected end of argument list");
-            push(car(p1), $);
-            p1 = cdr(p1);
-            value_of(env, ctrl, $);
-            push(imu, $);
-            multiply(env, ctrl, $);
-            expfunc(env, ctrl, $);
-            const PHASE = pop($);
-            rotate_p(PSI, PHASE, c, n, env, ctrl, $);
-            c = 0;
-            continue;
-        }
-
-        if (OPCODE.equals(create_sym("Q"))) {
-            rotate_q(PSI, n, env, ctrl, $);
-            c = 0;
-            continue;
-        }
-
-        if (OPCODE.equals(create_sym("V"))) {
-            rotate_v(PSI, n, env, ctrl, $);
-            c = 0;
-            continue;
-        }
-
-        if (OPCODE.equals(create_sym("W"))) {
-            const m = n;
-            if (!is_cons(p1))
-                stopf("rotate error 2 unexpected end of argument list");
-            push(car(p1), $);
-            p1 = cdr(p1);
-            value_of(env, ctrl, $);
-            n = pop_integer($);
-            if (n > 14 || (1 << n) >= PSI.nelem)
-                stopf("rotate error 3 qubit number format or range");
-            rotate_w(PSI, c, m, n, $);
-            c = 0;
-            continue;
-        }
-
-        if (OPCODE.equals(create_sym("X"))) {
-            rotate_x(PSI, c, n, $);
-            c = 0;
-            continue;
-        }
-
-        if (OPCODE.equals(create_sym("Y"))) {
-            rotate_y(PSI, c, n, env, ctrl, $);
-            c = 0;
-            continue;
-        }
-
-        if (OPCODE.equals(create_sym("Z"))) {
-            rotate_z(PSI, c, n, env, ctrl, $);
-            c = 0;
-            continue;
-        }
-
-        stopf("rotate error 4 unknown rotation code");
-    }
-
-    push(PSI, $);
-}
-
-// hadamard
-
-function rotate_h(PSI: Tensor, c: number, n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    n = 1 << n;
-    for (let i = 0; i < PSI.nelem; i++) {
-        if ((i & c) !== c)
-            continue;
-        if (i & n) {
-            push(PSI.elems[i ^ n], $);		// KET0
-            push(PSI.elems[i], $);		// KET1
-            add(env, ctrl, $);
-            push_rational(1, 2, $);
-            sqrtfunc(env, ctrl, $);
-            multiply(env, ctrl, $);
-            push(PSI.elems[i ^ n], $);		// KET0
-            push(PSI.elems[i], $);		// KET1
-            subtract(env, ctrl, $);
-            push_rational(1, 2, $);
-            sqrtfunc(env, ctrl, $);
-            multiply(env, ctrl, $);
-            PSI.elems[i] = pop($);		// KET1
-            PSI.elems[i ^ n] = pop($);	// KET0
-        }
-    }
-}
-
-// phase
-
-function rotate_p(PSI: Tensor, PHASE: U, c: number, n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    n = 1 << n;
-    for (let i = 0; i < PSI.nelem; i++) {
-        if ((i & c) !== c)
-            continue;
-        if (i & n) {
-            push(PSI.elems[i], $);		// KET1
-            push(PHASE, $);
-            multiply(env, ctrl, $);
-            PSI.elems[i] = pop($);		// KET1
-        }
-    }
-}
-
-// swap
-
-function rotate_w(PSI: Tensor, c: number, m: number, n: number, $: ProgramStack): void {
-    m = 1 << m;
-    n = 1 << n;
-    for (let i = 0; i < PSI.nelem; i++) {
-        if ((i & c) !== c)
-            continue;
-        if ((i & m) && !(i & n)) {
-            push(PSI.elems[i], $);
-            push(PSI.elems[i ^ m ^ n], $);
-            PSI.elems[i] = pop($);
-            PSI.elems[i ^ m ^ n] = pop($);
-        }
-    }
-}
-
-function rotate_x(PSI: Tensor, c: number, n: number, $: ProgramStack): void {
-    n = 1 << n;
-    for (let i = 0; i < PSI.nelem; i++) {
-        if ((i & c) !== c)
-            continue;
-        if (i & n) {
-            push(PSI.elems[i ^ n], $);		// KET0
-            push(PSI.elems[i], $);		// KET1
-            PSI.elems[i ^ n] = pop($);	// KET0
-            PSI.elems[i] = pop($);		// KET1
-        }
-    }
-}
-
-function rotate_y(PSI: Tensor, c: number, n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    n = 1 << n;
-    for (let i = 0; i < PSI.nelem; i++) {
-        if ((i & c) !== c)
-            continue;
-        if (i & n) {
-            push(imu, $);
-            negate(env, ctrl, $);
-            push(PSI.elems[i ^ n], $);		// KET0
-            multiply(env, ctrl, $);
-            push(imu, $);
-            push(PSI.elems[i], $);		// KET1
-            multiply(env, ctrl, $);
-            PSI.elems[i ^ n] = pop($);	// KET0
-            PSI.elems[i] = pop($);		// KET1
-        }
-    }
-}
-
-function rotate_z(PSI: Tensor, c: number, n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    n = 1 << n;
-    for (let i = 0; i < PSI.nelem; i++) {
-        if ((i & c) !== c)
-            continue;
-        if (i & n) {
-            push(PSI.elems[i], $);		// KET1
-            negate(env, ctrl, $);
-            PSI.elems[i] = pop($);		// KET1
-        }
-    }
-}
-
-// quantum fourier transform
-
-function rotate_q(PSI: Tensor, n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    for (let i = n; i >= 0; i--) {
-        rotate_h(PSI, 0, i, env, ctrl, $);
-        for (let j = 0; j < i; j++) {
-            push_rational(1, 2, $);
-            push_integer(i - j, $);
-            power(env, ctrl, $);
-            push(imu, $);
-            push(PI, $);
-            value_of(env, ctrl, $);
-            multiply_factors(3, env, ctrl, $);
-            expfunc(env, ctrl, $);
-            const PHASE = pop($);
-            rotate_p(PSI, PHASE, 1 << j, i, env, ctrl, $);
-        }
-    }
-    for (let i = 0; i < (n + 1) / 2; i++)
-        rotate_w(PSI, 0, i, n - i, $);
-}
-
-// inverse qft
-
-function rotate_v(PSI: Tensor, n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    for (let i = 0; i < (n + 1) / 2; i++)
-        rotate_w(PSI, 0, i, n - i, $);
-    for (let i = 0; i <= n; i++) {
-        for (let j = i - 1; j >= 0; j--) {
-            push_rational(1, 2, $);
-            push_integer(i - j, $);
-            power(env, ctrl, $);
-            push(imu, $);
-            push(PI, $);
-            value_of(env, ctrl, $);
-            multiply_factors(3, env, ctrl, $);
-            negate(env, ctrl, $);
-            expfunc(env, ctrl, $);
-            const PHASE = pop($);
-            rotate_p(PSI, PHASE, 1 << j, i, env, ctrl, $);
-        }
-        rotate_h(PSI, 0, i, env, ctrl, $);
-    }
 }
 
 function eval_assign(x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -8896,7 +8594,7 @@ function eval_sqrt(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
     sqrtfunc(env, ctrl, $);
 }
 
-function sqrtfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function sqrtfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push_rational(1, 2, $);
     power(env, ctrl, $);
 }
@@ -10908,7 +10606,7 @@ function issymbol(p: U): p is Sym {
     return is_sym(p);
 }
 
-function istensor(p: U): p is Tensor {
+export function istensor(p: U): p is Tensor {
     return is_tensor(p);
 }
 
@@ -10952,7 +10650,7 @@ export function lookup(sym: Sym, env: ProgramEnv): Sym {
 /**
  * A convenience function for multiply_factors(2, $) factors on the stack.
  */
-function multiply(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function multiply(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     multiply_factors(2, env, ctrl, $);
 }
 
@@ -10972,7 +10670,7 @@ function multiply_expand(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
  * 
  * @param n number of factors on stack to be multiplied.
  */
-function multiply_factors(n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function multiply_factors(n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (n < 2) {
         return;
@@ -11187,7 +10885,7 @@ function multiply_uom_factors(start: number, $: ProgramStack): U {
     return product;
 }
 
-function negate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function negate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push_integer(-1, $);
     multiply(env, ctrl, $);
 }
@@ -11578,7 +11276,7 @@ function erfc(x: number): number {
     return 1.0 - erf(x);
 }
 
-function pop($: ProgramStack): U {
+export function pop($: ProgramStack): U {
     return $.pop();
 }
 
@@ -11603,7 +11301,7 @@ function pop_double($: ProgramStack): number {
     }
 }
 
-function pop_integer($: ProgramStack): number {
+export function pop_integer($: ProgramStack): number {
     const expr = pop($);
     try {
         if (!issmallinteger(expr)) {
@@ -12519,7 +12217,7 @@ function promote_tensor($: ProgramStack): void {
  * pushes the expression onto the stack.
  * There is no evaluation of the expression.
  */
-function push(expr: U, $: ProgramStack): void {
+export function push(expr: U, $: ProgramStack): void {
     $.push(expr);
 }
 
@@ -12586,7 +12284,7 @@ function push_double(d: number, $: ProgramStack): void {
  * Pushes a Rat onto the stack.
  * @param n 
  */
-function push_integer(n: number, $: ProgramStack): void {
+export function push_integer(n: number, $: ProgramStack): void {
     push_rational(n, 1, $);
 }
 /**
@@ -12594,7 +12292,7 @@ function push_integer(n: number, $: ProgramStack): void {
  * @param a 
  * @param b 
  */
-function push_rational(a: number, b: number, $: ProgramStack): void {
+export function push_rational(a: number, b: number, $: ProgramStack): void {
     const n = create_rat(a, b);
     try {
         push(n, $);
@@ -13571,7 +13269,7 @@ export function stopf(errmsg: string): never {
     throw new Error(errmsg);
 }
 
-function subtract(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function subtract(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     negate(env, ctrl, $);
     add(env, ctrl, $);
 }
@@ -13942,10 +13640,6 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
 const zero: Rat = create_int(0);
 const one: Rat = create_int(1);
 const minusone: Rat = create_int(-1);
-
-export interface ConsFunction {
-    (x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
-}
 
 function make_lambda_expr_from_cons_function(sym: Sym, consFunction: ConsFunction): LambdaExpr {
     return function (argList: Cons, ctxt: ExprContext): U {

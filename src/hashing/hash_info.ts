@@ -1,4 +1,4 @@
-import { Cell, CellHost, create_flt, create_int, create_sym, create_tensor, Err, is_keyword, is_rat, is_str, is_sym, JsString, Map, Sym } from "math-expression-atoms";
+import { booT, Cell, CellHost, create_flt, create_int, create_str, create_sym, create_tensor, epsilon, Err, et, imu, is_keyword, is_rat, is_str, is_sym, Map, Sym } from "math-expression-atoms";
 import { is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { create_uom } from "../operators/uom/uom";
 
@@ -23,6 +23,7 @@ type INFO = { kind: KIND, parts: string[] };
  */
 export function hash_for_atom(atom: U): string | never {
     if (is_atom(atom)) {
+        // TODO: Change this to atom.type...
         return atom.name;
     }
     else {
@@ -44,16 +45,16 @@ class QuietCellHost implements CellHost {
 const noopHost = new QuietCellHost();
 const darkCell = new Cell(nil, noopHost);
 
-export const HASH_BLADE = 'Blade';
-export const HASH_BOO = 'Boo';
+export const HASH_BLADE = hash_for_atom(et);
+export const HASH_BOO = hash_for_atom(booT);
 export const HASH_CELL = hash_for_atom(darkCell);
-export const HASH_DICTIONARY = new Map([]).name;
+export const HASH_DICTIONARY = hash_for_atom(new Map([]));
 export const HASH_ERR = hash_for_atom(new Err(nil));
 export const HASH_FLT = hash_for_atom(create_flt(1));
-export const HASH_HYP = 'Hyp';
-export const HASH_IMU = 'Imu';
+export const HASH_HYP = hash_for_atom(epsilon);
+export const HASH_IMU = hash_for_atom(imu);
 export const HASH_RAT = hash_for_atom(create_int(1));
-export const HASH_STR = hash_for_atom(new JsString(""));  // JsString is currently an alias for Str.
+export const HASH_STR = hash_for_atom(create_str(""));  // JsString is currently an alias for Str.
 export const HASH_SYM = hash_for_atom(create_sym('x'));
 export const HASH_TENSOR = hash_for_atom(create_tensor([]));
 export const HASH_UOM = hash_for_atom(create_uom('second'));

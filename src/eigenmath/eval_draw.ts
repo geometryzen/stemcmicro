@@ -1,9 +1,10 @@
 import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_num, is_tensor, Sym } from "math-expression-atoms";
 import { Cons, nil, U } from "math-expression-tree";
+import { ConsFunction } from "../adapters/ConsFunction";
 import { Directive } from "../env/ExtensionEnv";
 import { is_imu } from "../operators/imu/is_imu";
 import { assert_cons } from "../tree/cons/assert_cons";
-import { broadcast, ConsFunction, duplicate, eval_nonstop, floatfunc, get_binding, head, lookup, rest, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
+import { broadcast, duplicate, eval_nonstop, floatfunc, get_binding, head, lookup, rest, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
 import { ProgramIO } from "./ProgramIO";

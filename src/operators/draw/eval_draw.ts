@@ -1,5 +1,5 @@
 import { Cons, U } from 'math-expression-tree';
-import { ConsFunction } from '../../eigenmath/eigenmath';
+import { ConsFunction } from '../../adapters/ConsFunction';
 import { make_eval_draw } from '../../eigenmath/eval_draw';
 import { ProgramIO } from '../../eigenmath/ProgramIO';
 import { ExtensionEnv } from '../../env/ExtensionEnv';

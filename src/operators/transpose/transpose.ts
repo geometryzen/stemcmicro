@@ -1,35 +1,35 @@
+import { is_num, is_tensor, one, Tensor, zero } from 'math-expression-atoms';
+import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_num_and_eq_two } from '../../is';
-import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { MAXDIM, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { is_add, is_identity_matrix, is_inner_or_dot, is_multiply, is_transpose } from '../../runtime/helpers';
-import { cadddr, caddr, cadr, cddr } from '../../tree/helpers';
-import { one, two, zero } from '../../tree/rat/Rat';
-import { Tensor } from '../../tree/tensor/Tensor';
-import { car, cdr, is_cons, nil, U } from '../../tree/tree';
-import { is_num } from '../num/is_num';
-import { is_tensor } from '../tensor/is_tensor';
+import { two } from '../../tree/rat/Rat';
 
 
-// Transpose tensor indices
-export function Eval_transpose(p1: U, $: ExtensionEnv): U {
-    const arg1 = $.valueOf(cadr(p1));
-    let arg2: U = one;
-    let arg3: U = two;
-    if (nil !== cddr(p1)) {
-        arg2 = $.valueOf(caddr(p1));
-        arg3 = $.valueOf(cadddr(p1));
+/**
+ * (transpose a i j)
+ */
+export function Eval_transpose(expr: Cons, $: ExtensionEnv): U {
+    const argList = expr.argList;
+    try {
+        const A = $.valueOf(argList.head);
+        let I: U = one;
+        let J: U = two;
+        if (nil !== argList.rest) {
+            I = $.valueOf(argList.item1);
+            J = $.valueOf(argList.item2);
+        }
+
+        return transpose(A, I, J, $);
     }
-
-    return transpose(arg1, arg2, arg3, $);
+    finally {
+        argList.release();
+    }
 }
 
-// by default p3 is 2 and p2 is 1
-// p3: index to be transposed
-// p2: other index to be transposed
-// p1: what needs to be transposed
 export function transpose(p1: U, p2: U, p3: U, $: Pick<ExtensionEnv, 'add' | 'equals' | 'inner' | 'isExpanding' | 'isone' | 'iszero' | 'multiply'>): U {
     let t = 0;
     const ai: number[] = Array(MAXDIM).fill(0);

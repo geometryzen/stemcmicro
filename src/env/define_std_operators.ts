@@ -1,4 +1,5 @@
 import { create_sym, is_blade, is_flt } from 'math-expression-atoms';
+import { make_micro } from '../adapters/make_micro';
 import { Eval_approxratio } from '../approxratio';
 import { MulComparator } from '../calculators/compare/compare_factor_factor';
 import { AddComparator } from '../calculators/compare/compare_term_term';
@@ -144,6 +145,7 @@ import { flt_extension } from '../operators/flt/flt_extension';
 import { for_varargs } from '../operators/for/for_varargs';
 import { gamma_varargs } from '../operators/gamma/gamma_varargs';
 import { gcd_varargs } from '../operators/gcd/gcd_varargs';
+import { eval_hadamard } from '../operators/hadamard/eval_hadamard';
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
 import { hermite_varargs } from '../operators/hermite/hermite_varargs';
 import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
@@ -357,6 +359,7 @@ import { rect_sin } from '../operators/rect/rect_sin';
 import { rect_sym } from '../operators/rect/rect_sym';
 import { reset_builder } from '../operators/reset/Eval_reset';
 import { roots_varargs } from '../operators/roots/roots_varargs';
+import { eval_rotate } from '../operators/rotate/evaL_rotate';
 import { round_varargs } from '../operators/round/round_varargs';
 import { script_last_0 } from '../operators/script_last/script_last';
 import { sgn_any } from '../operators/sgn/sgn_any';
@@ -411,7 +414,7 @@ import { testlt_flt_rat } from '../operators/testlt/testlt_flt_rat';
 import { testlt_mul_2_any_any_rat } from '../operators/testlt/testlt_mul_2_any_any_rat';
 import { testlt_rat_rat } from '../operators/testlt/testlt_rat_rat';
 import { testlt_sym_rat } from '../operators/testlt/testlt_sym_rat';
-import { transpose_varargs } from '../operators/transpose/transpose_varargs';
+import { Eval_transpose } from '../operators/transpose/transpose';
 import { add_2_mul_2_cos_sin_mul_2_cos_sin_factoring } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_cos_sin_factoring';
 import { add_2_mul_2_cos_sin_mul_2_cos_sin_ordering } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_cos_sin_ordering';
 import { add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_factoring } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_factoring';
@@ -422,9 +425,7 @@ import { add_2_mul_2_sin_cos_mul_2_mul_2_rat_cos_sin } from '../operators/trig/a
 import { add_2_mul_2_sin_cos_mul_2_rat_mul_2_cos_sin } from '../operators/trig/add_2_mul_2_sin_cos_mul_2_rat_mul_2_cos_sin';
 import { add_2_pow_2_cos_rat_pow_2_sin_rat } from '../operators/trig/add_2_pow_2_cos_rat_pow_2_sin_rat';
 import { mul_2_sin_cos } from '../operators/trig/mul_2_sin_cos';
-import { typeof_any } from '../operators/typeof/typeof_any';
-import { typeof_blade } from '../operators/typeof/typeof_blade';
-import { typeof_tensor } from '../operators/typeof/typeof_tensor';
+import { eval_typeof } from '../operators/typeof/eval_typeof';
 import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
@@ -862,6 +863,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(floor_varargs);
     $.defineOperator(for_varargs);
 
+    $.defineConsTransformer(create_sym("hadamard"), make_micro(eval_hadamard));
+
     $.defineOperator(hilbert_varargs);
 
     $.defineOperator(imag_add);
@@ -1008,6 +1011,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(roots_varargs);
     $.defineOperator(round_varargs);
 
+    $.defineConsTransformer(create_sym("rotate"), make_micro(eval_rotate));
+
     $.defineOperator(script_last_0);
 
     $.defineOperator(sgn_flt);
@@ -1057,9 +1062,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(tanh_varargs);
     $.defineOperator(tau);
 
-    $.defineOperator(typeof_tensor);
-    $.defineOperator(typeof_blade);
-    $.defineOperator(typeof_any);
+    $.defineConsTransformer(create_sym('typeof'), eval_typeof);
 
     $.defineConsTransformer(TEST, Eval_test);
 
@@ -1082,7 +1085,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineConsTransformer(native_sym(Native.testne), Eval_testne);
 
-    $.defineOperator(transpose_varargs);
+    $.defineConsTransformer(create_sym("transpose"), Eval_transpose);
 
     $.defineOperator(sym_math_add);
     $.defineOperator(sym_math_mul);

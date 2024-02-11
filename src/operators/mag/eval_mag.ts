@@ -1,5 +1,5 @@
-import { is_num, is_tensor } from "math-expression-atoms";
-import { car, cdr, Cons, is_cons } from "math-expression-tree";
+import { is_imu, is_num, is_tensor, one } from "math-expression-atoms";
+import { car, cdr, Cons, is_atom, is_cons } from "math-expression-tree";
 import { absfunc, add, denominator, divide, DOLLAR_E, elementwise, expfunc, head, imag, multiply, multiply_factors, numerator, pop, power, push, push_integer, push_rational, real, rect, rest, value_of } from "../../eigenmath/eigenmath";
 import { isminusone } from "../../eigenmath/isminusone";
 import { ProgramControl } from "../../eigenmath/ProgramControl";
@@ -20,9 +20,15 @@ export function mag(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): voi
 
     const z = pop($);
     try {
-        if (is_tensor(z)) {
-            push(elementwise(z, mag, env, ctrl, $), $);
-            return;
+        if (is_atom(z)) {
+            if (is_imu(z)) {
+                push(one, $);
+                return;
+            }
+            if (is_tensor(z)) {
+                push(elementwise(z, mag, env, ctrl, $), $);
+                return;
+            }
         }
 
         // use numerator and denominator to handle (a + i b) / (c + i d)
@@ -46,10 +52,16 @@ function mag_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const z = pop($);
     try {
-        if (is_num(z)) {
-            push(z, $);
-            absfunc(env, ctrl, $);
-            return;
+        if (is_atom(z)) {
+            if (is_num(z)) {
+                push(z, $);
+                absfunc(env, ctrl, $);
+                return;
+            }
+            if (is_imu(z)) {
+                push(one, $);
+                return;
+            }
         }
 
         // -1 to a power

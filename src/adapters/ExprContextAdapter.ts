@@ -29,6 +29,7 @@ export class ExprContextAdapter implements ExprContext {
         return this.env.hasBinding(name);
     }
     getBinding(name: Sym): U {
+        // console.lg("ExprContextAdapter.getBinding", `${name}`);
         return this.env.getBinding(name);
     }
     setBinding(name: Sym, binding: U): void {

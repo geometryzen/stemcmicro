@@ -1,12 +1,10 @@
+import { is_rat, Rat, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { half, Rat } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
+import { half } from "../../tree/rat/Rat";
 import { Function1 } from "../helpers/Function1";
-import { is_rat } from "../rat/is_rat";
 
 export const MATH_SQRT = native_sym(Native.sqrt);
 
@@ -29,7 +27,7 @@ class Op extends Function1<Rat> implements Operator<Cons> {
         return this.#hash;
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
-        // TODO: 
+        // console.lg(this.name, `${arg}`);
         return [TFLAG_DIFF, this.$.power(arg, half)];
     }
 }

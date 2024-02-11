@@ -1,8 +1,8 @@
+import { Cons, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { AND } from "../../runtime/constants";
 import { Eval_and } from "../../test";
-import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
 class Builder implements OperatorBuilder<U> {

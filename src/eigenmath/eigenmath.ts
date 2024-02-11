@@ -1,4 +1,4 @@
-import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
+import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
@@ -11,7 +11,6 @@ import { Directive } from '../env/ExtensionEnv';
 import { imu } from '../env/imu';
 import { StackU } from '../env/StackU';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
-import { is_rat_and_even_integer } from '../is';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { eval_degree } from '../operators/degree/degree';
 import { eval_hadamard, hadamard } from '../operators/hadamard/eval_hadamard';
@@ -26,7 +25,7 @@ import { DEGREE } from '../runtime/constants';
 import { is_power } from '../runtime/helpers';
 import { assert_cons } from '../tree/cons/assert_cons';
 import { Lambda } from '../tree/lambda/Lambda';
-import { two } from '../tree/rat/Rat';
+import { half, two } from '../tree/rat/Rat';
 import { bignum_equal } from './bignum_equal';
 import { bignum_itoa } from './bignum_itoa';
 import { ColorCode, html_escape_and_colorize } from './html_escape_and_colorize';
@@ -7053,6 +7052,7 @@ function power_args($: ProgramStack): [base: U, expo: U] {
 export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const [base, expo] = power_args($);
+    // console.lg("power", "base", `${base}`, "expo", `${expo}`);
     try {
         if (is_tensor(base) && istensor(expo)) {
             push(POWER, $);
@@ -7125,18 +7125,22 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
         }
 
         if (is_imu(base) && is_rat(expo) && isinteger(expo)) {
-            if (is_rat_and_even_integer(expo)) {
-                push(one, $);
-                return;
+            if (expo.isEven()) {
+                const n = expo.mul(half);
+                if (n.isEven()) {
+                    throw new ProgrammingError(`base ${base} expo ${expo}`);
+                }
+                else {
+                    $.push(negOne);
+                    return;
+                }
             }
-            push(POWER, $);             //  [pow]
-            push_rational(1, 2, $);       //  [pow, 1/2]
-            push(expo, $);               //  [pow, 1/2, expo]
-            multiply(env, ctrl, $);       //  [pow, 1/2*expo]
-            push_integer(-1, $);         //  [pow, 1/2*expo,-1]
-            swap($);                    //  [pow, -1, 1/2*expo]
-            list(3, $);                  //  [(pow -1 1/2*expo)]
-            value_of(env, ctrl, $);
+            else if (expo.isOdd()) {
+                throw new ProgrammingError(`base ${base} expo ${expo}`);
+            }
+            else {
+                // We've dealt with the easy integral cases.
+            }
         }
 
         // BASE is an integer?
@@ -8531,8 +8535,10 @@ function sinhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
     list(2, $);
 }
 
-function eval_sqrt(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
+export function eval_sqrt(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    push(expr, $);
+    rest($);
+    head($);
     value_of(env, ctrl, $);
     sqrtfunc(env, ctrl, $);
 }
@@ -9401,7 +9407,11 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
                             ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) + 1);
                             try {
                                 const binding = env.getBinding(name);
+                                // console.lg("binding", `${binding}`);
                                 try {
+                                    if (is_atom(binding)) {
+                                        // console.lg("binding.type", `${binding.type}`);
+                                    }
                                     if (is_lambda(binding)) {
                                         const ctxt = new ExprContextAdapter(env, ctrl, $);
                                         const value = binding.body(expr.rest, ctxt);
@@ -12163,18 +12173,19 @@ function promote_tensor($: ProgramStack): void {
 export function push(expr: U, $: ProgramStack): void {
     $.push(expr);
 }
-
+/*
 export function peek(tag: string, $: ProgramStack): void {
     const expr = $.pop();
     try {
         // eslint-disable-next-line no-console
-        console.log(tag, `${expr}`);
+        // console.lg(tag, `${expr}`);
         $.push(expr);
     }
     finally {
         expr.release();
     }
 }
+*/
 
 /**
  * Replaces the top expr on the stack with expr.head
@@ -13424,6 +13435,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.#userFunctions.set(sym.key(), eval_user_symbol);
     }
     getBinding(name: Sym): U {
+        // console.lg("ScriptVars.getBinding", `${name}`);
         assert_sym(name);
         const key = name.key();
         if (this.#bindings.has(key)) {

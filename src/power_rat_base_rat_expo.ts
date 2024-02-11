@@ -1,16 +1,13 @@
-import { bigInt, BigInteger, Err, negOne, one, Rat, Sym, zero } from 'math-expression-atoms';
-import { Cons, U } from 'math-expression-tree';
+import { bigInt, BigInteger, Err, imu, negOne, one, Rat, Sym, zero } from 'math-expression-atoms';
+import { Native, native_sym } from 'math-expression-native';
+import { Cons, items_to_cons, U } from 'math-expression-tree';
 import { bignum_truncate, makePositive, makeSignSameAs } from './bignum';
 import { Directive, ExtensionEnv } from './env/ExtensionEnv';
-import { imu } from './env/imu';
 import { in_safe_integer_range } from './in_safe_integer_range';
 import { is_num_and_eq_minus_one } from './is';
 import { is_rat_and_integer } from './is_rat_and_integer';
-import { items_to_cons } from './makeList';
 import { mpow } from './mpow';
 import { mroot } from './mroot';
-import { Native } from './native/Native';
-import { native_sym } from './native/native_sym';
 import { nativeInt } from './nativeInt';
 import { is_num_and_negative } from './predicates/is_negative_number';
 import { quickfactor } from './quickfactor';
@@ -25,7 +22,7 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExtensionEnv): 
     // console.lg("power_rat_base_rat_expo", $.toInfixString(base), $.toLatexString(expo));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
-        // console.lg("pow_rat_rat", render_as_sexpr(base, $), render_as_sexpr(expo, $), render_as_sexpr(retval, $), description);
+        // console.lg("pow_rat_base_rat_expo", "base", $.toInfixString(base), "expo", $.toInfixString(expo), "retval", $.toInfixString(retval), description);
         return retval;
     };
 

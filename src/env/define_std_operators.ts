@@ -4,6 +4,7 @@ import { Eval_approxratio } from '../approxratio';
 import { MulComparator } from '../calculators/compare/compare_factor_factor';
 import { AddComparator } from '../calculators/compare/compare_term_term';
 import { Eval_clear, Eval_clearall } from '../clear';
+import { eval_sqrt } from '../eigenmath/eigenmath';
 import { Eval_filter } from '../filter';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
 import { Eval_leading } from '../leading';
@@ -1044,8 +1045,9 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(sin_sym);
     $.defineOperator(sin_any);
 
-    $.defineOperator(sqrt_rat);
-    $.defineOperator(sqrt_any);
+    $.defineOperator(sqrt_rat);                                         // (sqrt Rat)
+    $.defineOperator(sqrt_any);                                         // (sqrt U)
+    $.defineConsTransformer(create_sym("sqrt"), make_micro(eval_sqrt)); // (sqrt)
 
     $.defineOperator(st_add_2_any_hyp);
     $.defineOperator(st_mul_2_rat_any);

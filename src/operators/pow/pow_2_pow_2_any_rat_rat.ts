@@ -55,7 +55,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        // console.lg(this.name, this.$.toInfixString(lhs), this.$.toInfixString(rhs));
         const b = lhs.base;
         const m = lhs.expo;
         const n = rhs;

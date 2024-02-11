@@ -15,7 +15,7 @@ import { cddr } from "../../tree/helpers";
 
 export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     // The only reason we should be here is that all other handlers for this multiplication do not match.
-    /// console.log(`Eval_multiply ${$.toInfixString(expr)}`);
+    /// console.lg(`Eval_multiply ${$.toInfixString(expr)}`);
     const args = expr.argList;
     const vals = args.map($.valueOf);
     return multiply_values(vals, expr, $);

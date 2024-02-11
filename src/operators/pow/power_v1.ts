@@ -39,13 +39,6 @@ function multiply_terms(lhs: U[], rhs: U[], $: ExtensionEnv) {
     return parts;
 }
 
-/**
- * 
- * @param base
- * @param expo 
- * @param $ 
- * @returns 
- */
 export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // console.lg("power_v1", `${base}`, `${expo}`);
     if (typeof base === 'undefined') {

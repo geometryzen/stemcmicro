@@ -1,13 +1,10 @@
+import { is_rat, Rat, Sym } from "math-expression-atoms";
+import { Cons, Cons2, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { MATH_POW } from "../../runtime/ns_math";
-import { Rat } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-import { is_rat } from "../rat/rat_extension";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -17,9 +14,9 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Rat;
 type RHS = Rat;
-type EXPR = Cons2<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
-class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('pow_rat_rat', MATH_POW, is_rat, is_rat, $);
@@ -28,11 +25,12 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Rat, rhs: Rat, expr: EXP): [TFLAGS, U] {
+        // console.lg(this.name, `${lhs}`, `${rhs}`);
         // const $ = this.$;
         // console.lg(`${this.name}  ${print_expr(expr, $)}`);
         const retval = power_rat_base_rat_expo(lhs, rhs, this.$);
-        return [!retval.equals(expr) ? TFLAG_DIFF : TFLAG_HALT, retval];
+        return [retval.equals(expr) ? TFLAG_HALT : TFLAG_DIFF, retval];
     }
 }
 

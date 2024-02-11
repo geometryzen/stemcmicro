@@ -33,6 +33,7 @@
         "test-polar": "mocha 'tests/polar.ts'",
         "example-degree": "mocha 'examples/degree.spec.ts'",
         "example-hadamard": "mocha 'examples/hadamard.spec.ts'",
+        "example-imu": "mocha 'examples/imu.spec.ts'",
         "example-mag": "mocha 'examples/mag.spec.ts'",
         "unit-abs": "mocha 'units/abs.spec.ts'",
         "unit-algebrite": "mocha 'units/algebrite.spec.ts'",
@@ -163,7 +164,7 @@
         "typhon-lang": "^1.0.13"
     },
     "peerDependencies": {
-        "math-expression-atoms": "^0.9.35",
+        "math-expression-atoms": "^0.9.36",
         "math-expression-context": "^0.9.14",
         "math-expression-native": "^0.9.16",
         "math-expression-tree": "^0.9.26"

@@ -23,7 +23,7 @@ class Sqrt extends Function1<U> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('sqrt_any', MATH_SQRT, is_any, $);
-        this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
+        this.#hash = hash_unaop_atom(this.opr, HASH_ANY);   // (sqrt U)
     }
     get hash(): string {
         return this.#hash;

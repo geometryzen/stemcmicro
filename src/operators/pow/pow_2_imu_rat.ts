@@ -1,15 +1,10 @@
+import { imu, Imu, is_imu, is_rat, negOne, one, Rat, Sym } from "math-expression-atoms";
+import { Cons, Cons2, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { imu } from "../../env/imu";
 import { hash_binop_atom_atom, HASH_IMU, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
-import { Imu } from "../../tree/imu/Imu";
-import { negOne, Rat } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
+import { half } from "../../tree/rat/Rat";
 import { Function2 } from "../helpers/Function2";
-import { is_imu } from "../imu/is_imu";
-import { is_rat } from "../rat/rat_extension";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -30,16 +25,29 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Imu, rhs: Rat, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        // TODO: Generalize
-        if (rhs.isTwo()) {
-            return [TFLAG_DIFF, negOne];
+        if (rhs.isEven()) {
+            const n = rhs.mul(half);
+            if (n.isEven()) {
+                return [TFLAG_DIFF, one];
+            }
+            else {
+                return [TFLAG_DIFF, negOne];
+            }
         }
-        else if (rhs.isMinusOne()) {
-            return [TFLAG_DIFF, $.negate(imu)];
+        else if (rhs.isOdd()) {
+            const n = rhs.succ().mul(half);
+            if (n.isEven()) {
+                return [TFLAG_DIFF, $.negate(imu)];
+            }
+            else {
+                return [TFLAG_DIFF, imu];
+            }
         }
         else {
+            // We've dealt with all the integer cases.
+            // We are now getting into roots of i.
             return [TFLAG_NONE, expr];
         }
     }

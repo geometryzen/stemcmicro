@@ -518,6 +518,7 @@ export class DerivedEnv implements ExtensionEnv {
         throw new Error(`DerivedEnv.valueOf ${expr} method not implemented.`);
     }
     getBinding(name: Sym): U {
+        // console.lg("DerivedEnv.getBinding", `${name}`);
         const key = name.key();
         if (this.#bindings.has(key)) {
             return this.#bindings.get(key)!;
@@ -841,6 +842,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             throw new ProgrammingError();
         },
         getBinding(name: Sym): U {
+            // console.lg("ExprContext.getBinding", `${name}`);
             assert_sym(name);
             if (symTab.hasBinding(name)) {
                 return symTab.getBinding(name);
@@ -849,14 +851,23 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 const currents: { [operator: string]: Operator<U>[] } = currentConsByOperator();
                 const cons: Operator<U>[] = currents[name.key()];
                 if (Array.isArray(cons) && cons.length > 0) {
+                    // We may not match because available are (opr Rat) and (opr U), but this hash_nonop_cons gives (opr). 
                     const hash = hash_nonop_cons(name);
+                    // console.lg("looking for: ", hash);
                     for (let i = 0; i < cons.length; i++) {
                         if (cons[i].hash === hash) {
                             const operator = cons[i];
                             const bodyExpr = make_lambda_expr_from_operator(name, operator);
                             return new Lambda(bodyExpr, "???");
                         }
+                        else {
+                            // console.lg("mismatch: ", cons[i].hash, "name", cons[i].name);
+                        }
                     }
+                    // console.lg(`No matching operators for ${name}`);
+                }
+                else {
+                    // console.lg(`No operators for ${name}`);
                 }
                 // console.lg(`config.allowUndeclaredVars => ${config.allowUndeclaredVars}`);
                 switch (config.allowUndeclaredVars) {
@@ -1404,7 +1415,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         transform(expr: U): [TFLAGS, U] {
-            // console.lg("transform", `${expr}`);
             // We short-circuit some expressions in order to improve performance.
             if (is_cons(expr)) {
                 // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
@@ -1470,10 +1480,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         const op = unambiguous_operator(expr, ops, $);
                         if (op) {
                             const composite = op.transform(expr);
-                            if ($.getDirective(Directive.convertSinToCos)) {
-                                // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite[1])} flags: ${composite[0]}`);
-                                // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
-                            }
+                            // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite[1])} flags: ${composite[0]}`);
+                            // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
                             return composite;
                         }
                     }

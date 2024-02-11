@@ -11,11 +11,13 @@ import { Directive } from '../env/ExtensionEnv';
 import { imu } from '../env/imu';
 import { StackU } from '../env/StackU';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
+import { is_rat_and_even_integer } from '../is';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { eval_degree } from '../operators/degree/degree';
 import { eval_hadamard, hadamard } from '../operators/hadamard/eval_hadamard';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_lambda } from '../operators/lambda/is_lambda';
+import { eval_mag, mag } from '../operators/mag/eval_mag';
 import { eval_rotate } from '../operators/rotate/evaL_rotate';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
@@ -705,7 +707,7 @@ const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
 const X_LOWER = create_sym("x");
 
-const DOLLAR_E = create_sym("$e");
+export const DOLLAR_E = create_sym("$e");
 const DOLLAR_A = create_sym("$a");
 const DOLLAR_B = create_sym("$b");
 const DOLLAR_X = create_sym("$x");
@@ -892,7 +894,7 @@ function decomp_product(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 /**
  * 
  */
-function divide(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function divide(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     reciprocate(env, ctrl, $);
     multiply(env, ctrl, $);
 }
@@ -918,7 +920,7 @@ function eval_abs(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStac
     absfunc(env, ctrl, $);
 }
 
-function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     let p1 = pop($);
 
@@ -2667,45 +2669,57 @@ function conjfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
 
 function conjfunc_subst(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    let p1 = pop($);
-
-    if (is_tensor(p1)) {
-        const T = copy_tensor(p1);
-        const n = T.nelem;
-        for (let i = 0; i < n; i++) {
-            push(T.elems[i], $);
-            conjfunc_subst(env, ctrl, $);
-            T.elems[i] = pop($);
+    const z = pop($);
+    try {
+        if (is_tensor(z)) {
+            const T = copy_tensor(z);
+            const n = T.nelem;
+            for (let i = 0; i < n; i++) {
+                push(T.elems[i], $);
+                conjfunc_subst(env, ctrl, $);
+                T.elems[i] = pop($);
+            }
+            push(T, $);
+            return;
         }
-        push(T, $);
-        return;
-    }
 
-    // (-1) ^ expr
-
-    if (car(p1).equals(POWER) && isminusone(cadr(p1))) {
-        push(POWER, $);
-        push_integer(-1, $);
-        push(caddr(p1), $);
-        negate(env, ctrl, $);
-        list(3, $);
-        return;
-    }
-
-    if (is_cons(p1)) {
-        const h = $.length;
-        push(car(p1), $);
-        p1 = cdr(p1);
-        while (is_cons(p1)) {
-            push(car(p1), $);
-            conjfunc_subst(env, ctrl, $);
-            p1 = cdr(p1);
+        if (is_imu(z)) {
+            push(native_sym(Native.multiply), $);    // [*]
+            push_integer(-1, $);                    // [*,-1]
+            push(z, $);                              // [*,-1,i]
+            list(3, $);                             // [-1*i]
+            return;
         }
-        list($.length - h, $);
-        return;
-    }
 
-    push(p1, $);
+        // (-1) ^ expr
+
+        if (car(z).equals(POWER) && isminusone(cadr(z))) {
+            push(POWER, $);
+            push_integer(-1, $);
+            push(caddr(z), $);
+            negate(env, ctrl, $);
+            list(3, $);
+            return;
+        }
+
+        if (is_cons(z)) {
+            const h = $.length;
+            push(car(z), $);
+            let p1 = cdr(z);
+            while (is_cons(p1)) {
+                push(car(p1), $);
+                conjfunc_subst(env, ctrl, $);
+                p1 = cdr(p1);
+            }
+            list($.length - h, $);
+            return;
+        }
+
+        push(z, $);
+    }
+    finally {
+        z.release();
+    }
 }
 
 function eval_contract(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -3154,7 +3168,7 @@ function eval_denominator(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
     denominator(env, ctrl, $);
 }
 
-function denominator(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function denominator(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const arg = pop($);
 
@@ -4588,7 +4602,7 @@ function eval_imag(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
     imag(env, ctrl, $);
 }
 
-function imag(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function imag(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     let p1 = pop($);
 
     if (is_tensor(p1)) {
@@ -6251,18 +6265,12 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     list(2, $);
 }
 
-function eval_mag(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-    mag(env, ctrl, $);
-}
-
 /**
  * Returns a copy of the source Tensor with foo applied to each element.
  * @param source 
  * @param foo A function that is expected to pop a single value from the stack and push the result.
  */
-function elementwise(source: Tensor, foo: (env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) => void, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): Tensor {
+export function elementwise(source: Tensor, foo: (env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) => void, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): Tensor {
     const T = copy_tensor(source);
     const n = T.nelem;
     for (let i = 0; i < n; i++) {
@@ -6271,97 +6279,6 @@ function elementwise(source: Tensor, foo: (env: ProgramEnv, ctrl: ProgramControl
         T.elems[i] = pop($);
     }
     return T;
-}
-
-function mag(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-
-    const p1 = pop($);
-
-    if (is_tensor(p1)) {
-        push(elementwise(p1, mag, env, ctrl, $), $);
-        return;
-    }
-
-    // use numerator and denominator to handle (a + i b) / (c + i d)
-
-    push(p1, $);
-    numerator(env, ctrl, $);
-    mag_nib(env, ctrl, $);
-
-    push(p1, $);
-    denominator(env, ctrl, $);
-    mag_nib(env, ctrl, $);
-
-    divide(env, ctrl, $);
-}
-
-function mag_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-
-    let p1 = pop($);
-
-    if (is_num(p1)) {
-        push(p1, $);
-        absfunc(env, ctrl, $);
-        return;
-    }
-
-    // -1 to a power
-
-    if (car(p1).equals(POWER) && isminusone(cadr(p1))) {
-        push_integer(1, $);
-        return;
-    }
-
-    // exponential
-
-    if (car(p1).equals(POWER) && cadr(p1).equals(DOLLAR_E)) {
-        push(caddr(p1), $);
-        real(env, ctrl, $);
-        expfunc(env, ctrl, $);
-        return;
-    }
-
-    // product
-
-    if (car(p1).equals(MULTIPLY)) {
-        p1 = cdr(p1);
-        const h = $.length;
-        while (is_cons(p1)) {
-            push(car(p1), $);
-            mag(env, ctrl, $);
-            p1 = cdr(p1);
-        }
-        multiply_factors($.length - h, env, ctrl, $);
-        return;
-    }
-
-    // sum
-
-    if (car(p1).equals(ADD)) {
-        push(p1, $);
-        rect(env, ctrl, $); // convert polar terms, if any
-        p1 = pop($);
-        push(p1, $);
-        real(env, ctrl, $);
-        const RE = pop($);
-        push(p1, $);
-        imag(env, ctrl, $);
-        const IM = pop($);
-        push(RE, $);
-        push(RE, $);
-        multiply(env, ctrl, $);
-        push(IM, $);
-        push(IM, $);
-        multiply(env, ctrl, $);
-        add(env, ctrl, $);
-        push_rational(1, 2, $);
-        power(env, ctrl, $);
-        return;
-    }
-
-    // real
-
-    push(p1, $);
 }
 
 function eval_minor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -6931,7 +6848,7 @@ function eval_numerator(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Prog
     numerator(env, ctrl, $);
 }
 
-function numerator(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function numerator(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     let p1 = pop($);
 
     if (is_rat(p1)) {
@@ -7207,6 +7124,21 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
             return;
         }
 
+        if (is_imu(base) && is_rat(expo) && isinteger(expo)) {
+            if (is_rat_and_even_integer(expo)) {
+                push(one, $);
+                return;
+            }
+            push(POWER, $);             //  [pow]
+            push_rational(1, 2, $);       //  [pow, 1/2]
+            push(expo, $);               //  [pow, 1/2, expo]
+            multiply(env, ctrl, $);       //  [pow, 1/2*expo]
+            push_integer(-1, $);         //  [pow, 1/2*expo,-1]
+            swap($);                    //  [pow, -1, 1/2*expo]
+            list(3, $);                  //  [(pow -1 1/2*expo)]
+            value_of(env, ctrl, $);
+        }
+
         // BASE is an integer?
 
         if (is_rat(base) && isinteger(base)) {
@@ -7460,24 +7392,31 @@ function eval_real(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
     real(env, ctrl, $);
 }
 
-function real(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-
-    let p1 = pop($);
-
-    if (is_tensor(p1)) {
-        push(elementwise(p1, real, env, ctrl, $), $);
-        return;
+/**
+ * [x+i*y] => [x]
+ */
+export function real(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    const z = pop($);           //  []
+    try {
+        if (is_atom(z)) {
+            // I'd like to apply the Native.real operation to this atom through an extension
+            if (is_tensor(z)) {
+                push(elementwise(z, real, env, ctrl, $), $);
+                return;
+            }
+        }
+        // In all other cases we would be handling cons or nil
+        push(z, $);             //  [z]
+        rect(env, ctrl, $);     //  [x+i*y]
+        duplicate($);           //  [x+i*y,x+i*y]
+        conjfunc(env, ctrl, $); //  [x+i*y,x-i*y]
+        add(env, ctrl, $);      //  [2*x]
+        push_rational(1, 2, $); //  [2*x, 1/2]
+        multiply(env, ctrl, $); //  [x]    
     }
-
-    push(p1, $);
-    rect(env, ctrl, $);
-    p1 = pop($);
-    push(p1, $);
-    push(p1, $);
-    conjfunc(env, ctrl, $);
-    add(env, ctrl, $);
-    push_rational(1, 2, $);
-    multiply(env, ctrl, $);
+    finally {
+        z.release();
+    }
 }
 
 function eval_rect(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -7486,7 +7425,7 @@ function eval_rect(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
     rect(env, ctrl, $);
 }
 
-function rect(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function rect(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     let p1 = pop($);
 

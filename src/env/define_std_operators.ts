@@ -245,6 +245,7 @@ import { log_pow } from '../operators/log/log_pow';
 import { log_rat } from '../operators/log/log_rat';
 import { log_sym } from '../operators/log/log_sym';
 import { log_varargs } from '../operators/log/log_varargs';
+import { eval_mag } from '../operators/mag/eval_mag';
 import { mod_varargs } from '../operators/mod/mod_varargs';
 import { Eval_multiply } from '../operators/mul/Eval_multiply';
 import { mul_2_any_flt } from '../operators/mul/mul_2_any_flt';
@@ -691,6 +692,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(log_rat);
     $.defineOperator(log_sym);
     $.defineOperator(log_varargs);
+
+    $.defineConsTransformer(create_sym("mag"), make_micro(eval_mag));
 
     $.defineConsTransformer(LOOKUP, Eval_lookup);
 

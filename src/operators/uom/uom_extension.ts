@@ -1,12 +1,8 @@
-import { create_int, Uom } from "math-expression-atoms";
+import { create_int, is_uom, Uom } from "math-expression-atoms";
 import { cons, Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
-
-export function is_uom(p: U): p is Uom {
-    return p instanceof Uom;
-}
 
 class UomExtension implements Extension<Uom> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

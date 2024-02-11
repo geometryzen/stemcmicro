@@ -1,6 +1,6 @@
 import { Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
-import { U } from "math-expression-tree";
+import { Cons, U } from "math-expression-tree";
 import { value_of } from "../eigenmath/eigenmath";
 import { ProgramControl } from "../eigenmath/ProgramControl";
 import { ProgramEnv } from "../eigenmath/ProgramEnv";
@@ -25,15 +25,15 @@ export class ExprContextAdapter implements ExprContext {
     popDirective(): void {
         this.ctrl.popDirective();
     }
-    hasBinding(name: Sym): boolean {
-        return this.env.hasBinding(name);
+    hasBinding(opr: Sym, target: Cons): boolean {
+        return this.env.hasBinding(opr, target);
     }
-    getBinding(name: Sym): U {
-        // console.lg("ExprContextAdapter.getBinding", `${name}`);
-        return this.env.getBinding(name);
+    getBinding(opr: Sym, target: Cons): U {
+        // console.lg("ExprContextAdapter.getBinding", `${opr}`, `${target}`);
+        return this.env.getBinding(opr, target);
     }
-    setBinding(name: Sym, binding: U): void {
-        this.env.setBinding(name, binding);
+    setBinding(opr: Sym, binding: U): void {
+        this.env.setBinding(opr, binding);
     }
     hasUserFunction(name: Sym): boolean {
         return this.env.hasUserFunction(name);

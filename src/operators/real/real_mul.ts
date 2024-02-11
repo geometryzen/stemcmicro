@@ -1,8 +1,7 @@
-import { is_blade } from "math-expression-atoms";
+import { imu, is_blade, is_uom } from "math-expression-atoms";
 import { count_factors } from "../../calculators/count_factors";
 import { remove_factors } from "../../calculators/remove_factors";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { imu } from "../../env/imu";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { is_power } from "../../runtime/helpers";
@@ -13,7 +12,6 @@ import { CompositeOperator } from "../CompositeOperator";
 import { is_imu } from "../imu/is_imu";
 import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
-import { is_uom } from "../uom/uom_extension";
 import { compute_r_from_base_and_expo } from "./compute_r_from_base_and_expo";
 import { compute_theta_from_base_and_expo } from "./compute_theta_from_base_and_expo";
 

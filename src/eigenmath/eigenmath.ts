@@ -19,7 +19,7 @@ import { is_lambda } from '../operators/lambda/is_lambda';
 import { eval_mag, mag } from '../operators/mag/eval_mag';
 import { eval_rotate } from '../operators/rotate/evaL_rotate';
 import { assert_sym } from '../operators/sym/assert_sym';
-import { create_uom, is_uom_name } from '../operators/uom/uom';
+import { eval_uom } from '../operators/uom/eval_uom';
 import { ProgrammingError } from '../programming/ProgrammingError';
 import { DEGREE } from '../runtime/constants';
 import { is_power } from '../runtime/helpers';
@@ -271,7 +271,7 @@ function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
     if (is_str(rhs))
         return 1;
 
-    if (is_sym(lhs) && issymbol(rhs)) {
+    if (is_sym(lhs) && is_sym(rhs)) {
         // The comparison is by namespace then localName.
         return lhs.compare(rhs);
     }
@@ -2414,9 +2414,12 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push_integer(0, $); // p1 is real
 }
 
-function eval_binding(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const sym = assert_sym(cadr(p1));
-    push(get_binding(sym, env), $);
+/**
+ * (binding s)
+ */
+function eval_binding(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    const sym = assert_sym(cadr(expr));
+    push(get_binding(sym, nil, env), $);
 }
 
 function eval_ceiling(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -4645,7 +4648,7 @@ function eval_index(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Progra
     // try to optimize by indexing before eval
 
     if (is_sym(T) && env.hasUserFunction(T)) {
-        const x = get_binding(T, env);
+        const x = get_binding(T, nil, env);
         const n = $.length - h;
         if (is_tensor(x) && n <= x.ndim) {
             T = x;
@@ -9223,27 +9226,6 @@ function eval_unit(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
     push(M, $);
 }
 
-function eval_uom(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-
-    const strname = pop($);
-    if (is_str(strname)) {
-        const name = strname.str;
-        if (is_uom_name(name)) {
-            const uom = create_uom(name);
-            push(uom, $);
-        }
-        else {
-            stopf(``);
-        }
-    }
-    else {
-        stopf(``);
-    }
-}
-
 function eval_user_function(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // console.lg(`eval_user_function(${p1})`);
 
@@ -9343,7 +9325,7 @@ function eval_user_function(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $
 
 // TODO: It should be possible to type p1: Sym (changes to math-expression-atoms needed)
 function eval_user_symbol(name: Sym, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const binding = get_binding(assert_sym(name), env);
+    const binding = get_binding(assert_sym(name), nil, env);
     if (name.equals(binding)) {
         push(name, $); // symbol evaluates to itself
     }
@@ -9400,13 +9382,13 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
         const expr = pop($);
         try {
             if (is_cons(expr)) {
-                const name = expr.head;
+                const opr = expr.opr;
                 try {
-                    if (issymbol(name)) {
-                        if (env.hasBinding(name)) {
+                    if (is_sym(opr)) {
+                        if (env.hasBinding(opr, expr)) {
                             ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) + 1);
                             try {
-                                const binding = env.getBinding(name);
+                                const binding = env.getBinding(opr, expr);
                                 // console.lg("binding", `${binding}`);
                                 try {
                                     if (is_atom(binding)) {
@@ -9435,21 +9417,21 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
                             }
                             return;
                         }
-                        if (env.hasUserFunction(name)) {
+                        if (env.hasUserFunction(opr)) {
                             eval_user_function(expr, env, ctrl, $);
                             return;
                         }
                     }
                 }
                 finally {
-                    name.release();
+                    opr.release();
                 }
                 push(expr, $);
                 return;
             }
 
             if (is_sym(expr)) {
-                if (env.hasBinding(expr)) { // bare keyword
+                if (env.hasBinding(expr, nil)) { // bare keyword
                     push(expr, $);
                     push(LAST, $); // default arg
                     list(2, $);
@@ -10383,25 +10365,25 @@ function flatten_factors(start: number, $: ProgramStack): void {
     }
 }
 
-export function get_binding(name: Sym, env: ProgramEnv): U {
-    if (!is_sym(name)) {
-        stopf(`get_binding(${name}) argument must be a Sym.`);
+export function get_binding(opr: Sym, target: Cons, env: ProgramEnv): U {
+    if (!is_sym(opr)) {
+        stopf(`get_binding(${opr}) argument must be a Sym.`);
     }
     /*
     if (!env.hasUserFunction(name)) {
         stopf(`get_binding(${name}) symbol error`);
     }
     */
-    const binding = env.getBinding(name);
+    const binding = env.getBinding(opr, target);
     // TODO: We shouldn't need these first two checks.
     if (typeof binding === 'undefined') {
-        return name;
+        return opr;
     }
     else if (binding === null) {
-        return name;
+        return opr;
     }
     else if (binding.isnil) {
-        return name; // symbol binds to itself
+        return opr; // symbol binds to itself
     }
     else {
         return binding;
@@ -10555,10 +10537,6 @@ function isstring(p: U): p is Str {
     return is_str(p);
 }
 
-function issymbol(p: U): p is Sym {
-    return is_sym(p);
-}
-
 export function istensor(p: U): p is Tensor {
     return is_tensor(p);
 }
@@ -10594,7 +10572,7 @@ export function list(n: number, $: ProgramStack): void {
  * 
  */
 export function lookup(sym: Sym, env: ProgramEnv): Sym {
-    if (!env.hasBinding(sym)) {
+    if (!env.hasBinding(sym, nil)) {
         env.defineUserSymbol(sym);
     }
     return sym;
@@ -12400,7 +12378,7 @@ function reduce_radical_rational(h: number, COEFF: Rat, env: ProgramEnv, ctrl: P
 const frame: StackU = new StackU();
 
 export function save_symbol(name: Sym, env: ProgramEnv): void {
-    const binding = get_binding(name, env);
+    const binding = get_binding(name, nil, env);
     const userfunc = get_userfunc(name, env);
     try {
         frame.push(name);
@@ -13234,15 +13212,26 @@ export function subtract(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
 export function swap($: ProgramStack): void {
     const p2 = pop($);
     const p1 = pop($);
-    push(p2, $);
-    push(p1, $);
+    try {
+        push(p2, $);
+        push(p1, $);
+    }
+    finally {
+        p1.release();
+        p2.release();
+    }
 }
 
 function trace_source_text(env: ProgramEnv, io: ProgramIO): void {
-    const p1 = get_binding(TRACE, env);
-    if (!p1.equals(TRACE) && !iszero(p1)) {
-        const escaped = html_escape_and_colorize(instring.substring(io.trace1, io.trace2), ColorCode.BLUE);
-        broadcast(escaped, io);
+    const binding = get_binding(TRACE, nil, env);
+    try {
+        if (!binding.equals(TRACE) && !iszero(binding)) {
+            const escaped = html_escape_and_colorize(instring.substring(io.trace1, io.trace2), ColorCode.BLUE);
+            broadcast(escaped, io);
+        }
+    }
+    finally {
+        binding.release();
     }
 }
 
@@ -13434,16 +13423,17 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     defineUserSymbol(sym: Sym): void {
         this.#userFunctions.set(sym.key(), eval_user_symbol);
     }
-    getBinding(name: Sym): U {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getBinding(opr: Sym, target: Cons): U {
         // console.lg("ScriptVars.getBinding", `${name}`);
-        assert_sym(name);
-        const key = name.key();
+        assert_sym(opr);
+        const key = opr.key();
         if (this.#bindings.has(key)) {
             return this.#bindings.get(key)!;
         }
         else if (this.#consFunctions.has(key)) {
             const consFunction: ConsFunction = this.#consFunctions.get(key)!;
-            const bodyExpr = make_lambda_expr_from_cons_function(name, consFunction);
+            const bodyExpr = make_lambda_expr_from_cons_function(opr, consFunction);
             return new Lambda(bodyExpr, "???");
         }
         else {
@@ -13454,9 +13444,10 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         assert_sym(sym);
         return this.usrfunc[sym.key()];
     }
-    hasBinding(sym: Sym): boolean {
-        assert_sym(sym);
-        const key = sym.key();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    hasBinding(opr: Sym, target: Cons): boolean {
+        assert_sym(opr);
+        const key = opr.key();
         if (this.#bindings.has(key)) {
             return true;
         }
@@ -13470,8 +13461,8 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     hasUserFunction(sym: Sym): boolean {
         return this.#userFunctions.has(sym.key());
     }
-    setBinding(sym: Sym, binding: U): void {
-        this.#bindings.set(sym.key(), binding);
+    setBinding(opr: Sym, binding: U): void {
+        this.#bindings.set(opr.key(), binding);
     }
     setUserFunction(sym: Sym, usrfunc: U): void {
         this.usrfunc[sym.key()] = usrfunc;
@@ -13509,9 +13500,14 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     concat(exprs: U[]): void {
         this.stack = this.stack.concat(exprs);
     }
+    peek(): U {
+        const x = this.pop();
+        this.push(x);
+        return x;
+    }
     pop(): U {
         if (this.stack.length === 0) {
-            stopf("stack error");
+            throw new ProgrammingError();
         }
         else {
             return this.stack.pop()!;

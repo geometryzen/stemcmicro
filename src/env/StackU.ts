@@ -48,6 +48,11 @@ export class StackU {
         element.addRef();
         this.#stack.push(element);
     }
+    peek(): U {
+        const x = this.pop();
+        this.push(x);
+        return x;
+    }
     pop(): U {
         return this.#stack.pop();
     }

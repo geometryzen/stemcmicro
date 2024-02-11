@@ -1,7 +1,7 @@
+import { cons, Cons, nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
-import { cons, Cons, U } from "../../tree/tree";
 import { AbstractKeywordOperator } from "../helpers/KeywordSymbol";
 
 class Builder implements OperatorBuilder<U> {
@@ -25,7 +25,7 @@ class ScriptLast extends AbstractKeywordOperator {
     }
     transform(expr: U): [TFLAGS, U] {
         if (this.isKind(expr)) {
-            return [TFLAG_DIFF, this.$.getBinding(RESERVED_KEYWORD_LAST)];
+            return [TFLAG_DIFF, this.$.getBinding(RESERVED_KEYWORD_LAST, nil)];
         }
         return [TFLAG_NONE, expr];
     }

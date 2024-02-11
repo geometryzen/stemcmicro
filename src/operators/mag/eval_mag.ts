@@ -1,4 +1,4 @@
-import { is_imu, is_num, is_tensor, one } from "math-expression-atoms";
+import { is_imu, is_num, is_sym, is_tensor, is_uom, one } from "math-expression-atoms";
 import { car, cdr, Cons, is_atom, is_cons } from "math-expression-tree";
 import { absfunc, add, denominator, divide, DOLLAR_E, elementwise, expfunc, head, imag, multiply, multiply_factors, numerator, pop, power, push, push_integer, push_rational, real, rect, rest, value_of } from "../../eigenmath/eigenmath";
 import { isminusone } from "../../eigenmath/isminusone";
@@ -53,6 +53,7 @@ function mag_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const z = pop($);
     try {
         if (is_atom(z)) {
+            // Every atom should be handled, there should be no fall-through.
             if (is_num(z)) {
                 push(z, $);
                 absfunc(env, ctrl, $);
@@ -60,6 +61,15 @@ function mag_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             }
             if (is_imu(z)) {
                 push(one, $);
+                return;
+            }
+            if (is_sym(z)) {
+                // We assume that the symbol is a real number.
+                push(z, $);
+                return;
+            }
+            if (is_uom(z)) {
+                push(z, $);
                 return;
             }
         }

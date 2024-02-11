@@ -1,11 +1,10 @@
+import { Sym } from "math-expression-atoms";
+import { Cons1, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { UNIT } from "../../runtime/constants";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
-import { Cons1 } from "../helpers/Cons1";
 import { unit } from "./transform-unit";
 
 class Builder implements OperatorBuilder<U> {

@@ -1,6 +1,6 @@
+import { U } from "math-expression-tree";
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { Box } from "../runtime/Box";
-import { U } from "../tree/tree";
 import { TreeTransformer } from "./Transformer";
 
 export class TransformerPipeline implements TreeTransformer {

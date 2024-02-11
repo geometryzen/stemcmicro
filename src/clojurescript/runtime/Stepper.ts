@@ -69,8 +69,8 @@ export class Thing {
 export interface Scope {
     thing: Thing;
     evaluate(opr: Native, ...args: U[]): U;
-    hasBinding(sym: Sym): boolean;
-    getBinding(sym: string | Sym): U;
+    hasBinding(sym: Sym, target: Cons): boolean;
+    getBinding(sym: Sym, target: Cons): U;
     setBinding(sym: Sym, binding: U): void;
     hasUserFunction(sym: Sym): boolean;
     getUserFunction(sym: Sym): U;

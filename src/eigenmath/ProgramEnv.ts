@@ -1,14 +1,14 @@
 import { Sym } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { Cons, U } from "math-expression-tree";
 
 export interface ProgramEnv {
     clearBindings(): void;
     executeProlog(script: string[]): void;
-    getBinding(name: Sym): U;
+    getBinding(opr: Sym, target: Cons): U;
     getUserFunction(name: Sym): U;
-    hasBinding(name: Sym): boolean;
+    hasBinding(opr: Sym, target: Cons): boolean;
     hasUserFunction(name: Sym): boolean;
-    setBinding(name: Sym, binding: U): void;
+    setBinding(opr: Sym, binding: U): void;
     setUserFunction(name: Sym, userfunc: U): void;
     defineUserSymbol(name: Sym): void;
 }

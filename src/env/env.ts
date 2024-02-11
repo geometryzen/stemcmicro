@@ -1,33 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Boo, Cell, CellHost, create_sym, Err, Flt, is_boo, is_cell, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
+import { Boo, Cell, CellHost, create_sym, Err, Flt, is_boo, is_cell, is_flt, is_rat, is_sym, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprEngineListener } from '../..';
 import { AtomListener, UndeclaredVars } from '../api/api';
-import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
 import { Eval_function } from "../Eval_function";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_for_atom, hash_info, hash_nonop_cons } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { algebra } from "../operators/algebra/algebra";
-import { setq } from '../operators/assign/assign_any_any';
-import { Eval_dotdot } from '../operators/dotdot/Eval_dotdot';
 import { Eval_lambda_in_fn_syntax } from '../operators/fn/Eval_fn';
-import { JsObjectExtension } from '../operators/jsobject/JsObjectExtension';
 import { is_lambda } from "../operators/lambda/is_lambda";
-import { Eval_let } from '../operators/let/Eval_let';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { SyntaxKind } from "../parser/parser";
 import { ProgrammingError } from '../programming/ProgrammingError';
-import { ASSIGN, COMPONENT, FN, FUNCTION, LET } from "../runtime/constants";
+import { FN, FUNCTION } from "../runtime/constants";
 import { execute_definitions } from '../runtime/init';
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { Lambda } from "../tree/lambda/Lambda";
 import { visit } from '../visitor/visit';
 import { Visitor } from '../visitor/Visitor';
+import { DerivedEnv } from './DerivedEnv';
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
 import { CompareFn, ConsExpr, Directive, directive_from_flag, ExprComparator, Extension, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
@@ -50,7 +46,7 @@ const ISZERO = native_sym(Native.iszero);
 
 function make_user_symbol_runner(sym: Sym) {
     return ($: ExtensionEnv) => {
-        const binding = $.getBinding(sym);
+        const binding = $.getBinding(sym, nil);
         if (is_nil(binding) || sym.equals(binding)) {
             return sym;
         }
@@ -120,434 +116,6 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
         };
         // console.lg(`EnvConfig: ${config.allowUndeclaredVars}`);
         return config;
-    }
-}
-
-/**
- * Evaluates each item in the `argList` and returns (opr ...), 
- */
-function evaluate_args(opr: Sym, argList: Cons, $: ExtensionEnv): Cons {
-    // We must evaluate all the operands in this scope before letting the base to the gruntwork of multiplication
-    // const values = argList.map(x=>$.valueOf(x));
-    // cons(opr, values);
-    const args = [...argList].map(x => $.valueOf(x));
-    return items_to_cons(opr, ...args);
-}
-
-/**
- * The ExtensionEnv was originally implemented for a scripting language with a single global scope.
- * By using this DerivedEnv over the create_env function we can incrementally migrate to an architecture
- * that supports nested scopes.
- */
-export class DerivedEnv implements ExtensionEnv {
-    readonly #baseEnv: ExtensionEnv;
-    readonly #bindings: Map<string, U> = new Map();
-    readonly #userfunc: Map<string, U> = new Map();
-    readonly listeners: ExprEngineListener[] = [];
-    constructor(baseEnv: ExtensionEnv) {
-        this.#baseEnv = baseEnv;
-    }
-    addAtomListener(subscriber: AtomListener): void {
-        this.#baseEnv.addAtomListener(subscriber);
-    }
-    removeAtomListener(subscriber: AtomListener): void {
-        this.#baseEnv.removeAtomListener(subscriber);
-    }
-    getCellHost(): CellHost {
-        return this.#baseEnv.getCellHost();
-    }
-    setCellHost(host: CellHost): void {
-        this.#baseEnv.setCellHost(host);
-    }
-    getProlog(): readonly string[] {
-        throw new Error('getProlog method not implemented.');
-    }
-    getPrintHandler(): PrintHandler {
-        return this.#baseEnv.getPrintHandler();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setPrintHandler(handler: PrintHandler): void {
-        this.#baseEnv.setPrintHandler(handler);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    abs(expr: U): U {
-        throw new Error('abs method not implemented.');
-    }
-    algebra(metric: Tensor<U>, labels: Tensor<U>): Tensor<U> {
-        throw new Error('algebra method not implemented.');
-    }
-    add(...args: U[]): U {
-        throw new Error('add method not implemented.');
-    }
-    arccos(expr: U): U {
-        throw new Error('arccos method not implemented.');
-    }
-    arcsin(expr: U): U {
-        throw new Error('arcsin method not implemented.');
-    }
-    arctan(expr: U): U {
-        throw new Error('arctan method not implemented.');
-    }
-    arg(expr: U): U {
-        throw new Error('arg method not implemented.');
-    }
-    clock(expr: U): U {
-        throw new Error('clock method not implemented.');
-    }
-    conj(expr: U): U {
-        throw new Error('conj method not implemented.');
-    }
-    cos(expr: U): U {
-        throw new Error('cos method not implemented.');
-    }
-    clearBindings(): void {
-        this.#bindings.clear();
-        this.#baseEnv.clearBindings();
-    }
-    clearOperators(): void {
-        this.#baseEnv.clearOperators();
-    }
-    compareFn(sym: Sym): CompareFn {
-        throw new Error('compareFn method not implemented.');
-    }
-    component(tensor: Tensor<U>, indices: U): U {
-        throw new Error('component method not implemented.');
-    }
-    defineConsTransformer(opr: Sym, consExpr: ConsExpr): void {
-        this.#baseEnv.defineConsTransformer(opr, consExpr);
-    }
-    defineFunction(match: U, lambda: LambdaExpr): void {
-        throw new Error('defineFunction method not implemented.');
-    }
-    defineKeyword(sym: Sym, runner: KeywordRunner): void {
-        this.#baseEnv.defineKeyword(sym, runner);
-    }
-    defineOperator(builder: OperatorBuilder<U>): void {
-        this.#baseEnv.defineOperator(builder);
-    }
-    defineAssociative(opr: Sym, id: Rat): void {
-        this.#baseEnv.defineAssociative(opr, id);
-    }
-    defineUserSymbol(name: Sym): void {
-        this.#baseEnv.defineUserSymbol(name);
-    }
-    derivedEnv(): ExtensionEnv {
-        return new DerivedEnv(this);
-    }
-    divide(lhs: U, rhs: U): U {
-        throw new Error('divide method not implemented.');
-    }
-    equals(lhs: U, rhs: U): boolean {
-        throw new Error('equals method not implemented.');
-    }
-    evaluate(opr: Native, ...args: U[]): U {
-        throw new Error('evaluate method not implemented.');
-    }
-    executeProlog(prolog: readonly string[]): void {
-        throw new Error('executeProlog method not implemented.');
-    }
-    exp(expr: U): U {
-        throw new Error('exp method not implemented.');
-    }
-    factor(expr: U): U {
-        throw new Error('factor method not implemented.');
-    }
-    factorize(poly: U, x: U): U {
-        throw new Error('factorize method not implemented.');
-    }
-    float(expr: U): U {
-        throw new Error('float method not implemented.');
-    }
-    getCustomDirective(directive: string): boolean {
-        throw new Error('getCustomDirective method not implemented.');
-    }
-    getDirective(directive: number): number {
-        return this.#baseEnv.getDirective(directive);
-    }
-    getSymbolPredicates(sym: Sym): Predicates {
-        throw new Error('getSymbolPredicates method not implemented.');
-    }
-    getSymbolPrintName(sym: Sym): string {
-        return this.#baseEnv.getSymbolPrintName(sym);
-    }
-    getSymbolUsrFunc(sym: Sym): U {
-        throw new Error('getSymbolYsrFunc method not implemented.');
-    }
-    getSymbolsInfo(): { sym: Sym; value: U; }[] {
-        // TODO: Symbols in the bindings?
-        return this.#baseEnv.getSymbolsInfo();
-    }
-    buildOperators(): void {
-        this.#baseEnv.buildOperators();
-    }
-    im(expr: U): U {
-        throw new Error('im method not implemented.');
-    }
-    inner(lhs: U, rhs: U): U {
-        throw new Error('inner method not implemented.');
-    }
-    is(predicate: Sym, expr: U): boolean {
-        throw new Error('is method not implemented.');
-    }
-    iscomplex(expr: U): boolean {
-        throw new Error('iscomplex method not implemented.');
-    }
-    isExpanding(): boolean {
-        throw new Error('isExpanding method not implemented.');
-    }
-    isFactoring(): boolean {
-        throw new Error('isFactorin method not implemented.');
-    }
-    isimag(expr: U): boolean {
-        throw new Error('isimag method not implemented.');
-    }
-    isinfinite(expr: U): boolean {
-        throw new Error('isinfinite method not implemented.');
-    }
-    isinfinitesimal(expr: U): boolean {
-        throw new Error('isinfinitesimal method not implemented.');
-    }
-    isminusone(expr: U): boolean {
-        throw new Error('isminusone method not implemented.');
-    }
-    isnegative(expr: U): boolean {
-        throw new Error('isnegative method not implemented.');
-    }
-    isone(expr: U): boolean {
-        if (is_nil(expr)) {
-            return false;
-        }
-        throw new Error(`isone ${expr} method not implemented.`);
-    }
-    ispositive(expr: U): boolean {
-        throw new Error('ispositive method not implemented.');
-    }
-    isreal(expr: U): boolean {
-        throw new Error('isreal method not implemented.');
-    }
-    isscalar(expr: U): boolean {
-        throw new Error('iscalar method not implemented.');
-    }
-    iszero(expr: U): boolean {
-        // console.lg("DerivedEnv.iszero", `${expr}`);
-        if (is_flt(expr)) {
-            return expr.isZero();
-        }
-        else if (is_nil(expr)) {
-            return false;
-        }
-        throw new Error(`iszero ${expr} method not implemented.`);
-    }
-    log(expr: U): U {
-        throw new Error('log method not implemented.');
-    }
-    multiply(...args: U[]): U {
-        throw new Error('multiply method not implemented.');
-    }
-    negate(expr: U): U {
-        throw new Error('negate method not implemented.');
-    }
-    extensionFor(expr: U): Extension<U> | undefined {
-        throw new Error('extensionFor method not implemented.');
-    }
-    operatorFor(expr: U): Operator<U> | undefined {
-        throw new Error('operatorFor method not implemented.');
-    }
-    outer(...args: U[]): U {
-        throw new Error('outer method not implemented.');
-    }
-    polar(expr: U): U {
-        throw new Error('polar method not implemented.');
-    }
-    power(base: U, expo: U): U {
-        throw new Error('power method not implemented.');
-    }
-    re(expr: U): U {
-        throw new Error('re method not implemented.');
-    }
-    rect(expr: U): U {
-        throw new Error('rect method not implemented.');
-    }
-    remove(varName: Sym): void {
-        throw new Error('remove method not implemented.');
-    }
-    setCustomDirective(directive: string, value: boolean): void {
-        throw new Error('setCustomDirective method not implemented.');
-    }
-    pushDirective(directive: number, value: number): void {
-        this.#baseEnv.pushDirective(directive, value);
-    }
-    popDirective(): void {
-        this.#baseEnv.popDirective();
-    }
-    setSymbolOrder(sym: Sym, order: ExprComparator): void {
-        this.#baseEnv.setSymbolOrder(sym, order);
-    }
-    setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void {
-        throw new Error('setSymbolPredicates method not implemented.');
-    }
-    setSymbolPrintName(sym: Sym, printName: string): void {
-        throw new Error('setSymbolPrintName method not implemented.');
-    }
-    setSymbolUsrFunc(sym: Sym, usrfunc: U): void {
-        this.#userfunc.set(sym.key(), usrfunc);
-    }
-    simplify(expr: U): U {
-        throw new Error('simplify method not implemented.');
-    }
-    sin(expr: U): U {
-        throw new Error('sin method not implemented.');
-    }
-    sqrt(expr: U): U {
-        throw new Error('sqrt method not implemented.');
-    }
-    st(expr: U): U {
-        throw new Error('st method not implemented.');
-    }
-    subst(newExpr: U, oldExpr: U, expr: U): U {
-        throw new Error('subst method not implemented.');
-    }
-    subtract(lhs: U, rhs: U): U {
-        throw new Error('subtract method not implemented.');
-    }
-    toInfixString(expr: U): string {
-        return this.#baseEnv.toInfixString(expr);
-    }
-    toLatexString(expr: U): string {
-        return this.#baseEnv.toLatexString(expr);
-    }
-    toSExprString(expr: U): string {
-        return this.#baseEnv.toSExprString(expr);
-    }
-    transform(expr: U): [number, U] {
-        const value = this.valueOf(expr);
-        try {
-            if (value.equals(expr)) {
-                expr.addRef();
-                return [TFLAG_NONE, expr];
-            }
-            else {
-                value.addRef();
-                return [TFLAG_DIFF, value];
-            }
-        }
-        finally {
-            value.release();
-        }
-    }
-    valueOf(expr: U): U {
-        if (is_cons(expr)) {
-            const opr = expr.opr;
-            try {
-                const DOTDOT = create_sym("..");
-                if (is_sym(opr)) {
-                    if (opr.equals(ASSIGN)) {
-                        return setq(expr.lhs, expr.rhs, assert_sym_any_any(expr), this);
-                    }
-                    else if (opr.equals(COMPONENT)) {
-                        return this.#baseEnv.valueOf(expr);
-                    }
-                    else if (opr.equals(DOTDOT)) {
-                        return Eval_dotdot(expr, this);
-                    }
-                    else if (opr.equals(LET)) {
-                        return Eval_let(expr, this);
-                    }
-                    else {
-                        return this.#baseEnv.valueOf(evaluate_args(opr, expr.argList, this));
-                    }
-                }
-            }
-            finally {
-                opr.release();
-            }
-        }
-        else if (is_atom(expr)) {
-            if (is_boo(expr)) {
-                return expr;
-            }
-            else if (is_flt(expr)) {
-                return expr;
-            }
-            else if (is_jsobject(expr)) {
-                // This is the idea until we can do a lookup of the extension.
-                const extension = new JsObjectExtension();
-                return extension.valueOf(expr, this);
-            }
-            else if (is_keyword(expr)) {
-                return expr;
-            }
-            else if (is_map(expr)) {
-                return this.#baseEnv.valueOf(expr);
-            }
-            else if (is_rat(expr)) {
-                return expr;
-            }
-            else if (is_str(expr)) {
-                return expr;
-            }
-            else if (is_sym(expr)) {
-                const key = expr.key();
-                if (this.#bindings.has(key)) {
-                    return this.#bindings.get(key)!;
-                }
-                else {
-                    return this.#baseEnv.valueOf(expr);
-                }
-            }
-            else if (is_tensor(expr)) {
-                // We really need to be able to ask for the Extension because that abstraction
-                // does not bind early to the ExtensionEnv.
-                // const handler = this.#baseEnv.operatorFor(expr)!;
-                // handler..valueOf(expr)
-                // 
-                return this.#baseEnv.valueOf(expr);
-            }
-            else {
-                // In the general case we look for the Extension to correctly evaluate the atonm in the current scope.
-                const extension = this.#baseEnv.extensionFor(expr);
-                if (extension) {
-                    return extension.valueOf(expr, this);
-                }
-                else {
-                    // This we be OK provided that the atom has no internal structure e.g. Map, Tensor
-                    return expr;
-                }
-            }
-        }
-        throw new Error(`DerivedEnv.valueOf ${expr} method not implemented.`);
-    }
-    getBinding(name: Sym): U {
-        // console.lg("DerivedEnv.getBinding", `${name}`);
-        const key = name.key();
-        if (this.#bindings.has(key)) {
-            return this.#bindings.get(key)!;
-        }
-        else {
-            return this.#baseEnv.getBinding(name);
-        }
-    }
-
-    getUserFunction(sym: Sym): U {
-        throw new Error('getUserFunction method not implemented.');
-    }
-    hasBinding(sym: Sym): boolean {
-        return this.#baseEnv.hasBinding(sym);
-    }
-    hasUserFunction(sym: Sym): boolean {
-        if (this.#userfunc.has(sym.key())) {
-            return true;
-        }
-        else {
-            return this.#baseEnv.hasUserFunction(sym);
-        }
-    }
-    setBinding(sym: Sym, binding: U): void {
-        // console.lg("DerivedEnv.setBinding", `${sym}`, `${binding}`);
-        this.#bindings.set(sym.key(), binding);
-    }
-    setUserFunction(sym: Sym, usrfunc: U): void {
-        this.#userfunc.set(sym.key(), usrfunc);
     }
 }
 
@@ -691,16 +259,16 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     /**
      * The operators in buckets that are determined by the phase and operator hash.
      */
-    const ops_by_mode: { [hash: string]: Operator<U>[] }[] = [];
+    const operators_by_mode: { [hash: string]: Operator<U>[] }[] = [];
     for (const mode of MODE_SEQUENCE) {
-        ops_by_mode[mode] = {};
+        operators_by_mode[mode] = {};
     }
     /**
      * The cons operators in buckets determined by the phase and operator key.
      */
-    const cons_by_mode: { [key: string]: Operator<Cons>[] }[] = [];
+    const cons_operators_by_mode: { [key: string]: Operator<Cons>[] }[] = [];
     for (const mode of MODE_SEQUENCE) {
-        cons_by_mode[mode] = {};
+        cons_operators_by_mode[mode] = {};
     }
 
     let printHandler: PrintHandler = new NoopPrintHandler();
@@ -717,14 +285,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     function currentOpsByHash(): { [hash: string]: Operator<U>[] } {
         if (native_directives.get(Directive.expanding)) {
-            const ops = ops_by_mode[MODE_EXPANDING];
+            const ops = operators_by_mode[MODE_EXPANDING];
             if (typeof ops === 'undefined') {
                 throw new ProgrammingError();
             }
             return ops;
         }
         if (native_directives.get(Directive.factoring)) {
-            const ops = ops_by_mode[MODE_FACTORING];
+            const ops = operators_by_mode[MODE_FACTORING];
             if (typeof ops === 'undefined') {
                 throw new ProgrammingError();
             }
@@ -735,7 +303,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     function currentConsByOperator(): { [operator: string]: Operator<Cons>[] } {
         if (native_directives.get(Directive.expanding)) {
-            const cons = cons_by_mode[MODE_EXPANDING];
+            const cons = cons_operators_by_mode[MODE_EXPANDING];
             if (cons) {
                 return cons;
             }
@@ -744,7 +312,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         }
         if (native_directives.get(Directive.factoring)) {
-            const cons = cons_by_mode[MODE_FACTORING];
+            const cons = cons_operators_by_mode[MODE_FACTORING];
             if (cons) {
                 return cons;
             }
@@ -947,11 +515,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         clearOperators(): void {
             builders.length = 0;
             for (const mode of MODE_SEQUENCE) {
-                const ops = ops_by_mode[mode];
+                const ops = operators_by_mode[mode];
                 for (const hash in ops) {
                     ops[hash] = [];
                 }
-                const cons = cons_by_mode[mode];
+                const cons = cons_operators_by_mode[mode];
                 for (const key in cons) {
                     cons[key] = [];
                 }
@@ -1054,37 +622,38 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             for (const builder of builders) {
                 const op: Operator<U> = builder.create($, config);
                 if (dependencies_satisfied(op.dependencies, config.dependencies)) {
-                    // No problem.
-                }
-                else {
-                    // console.lg(`Ignoring ${op.name} which depends on ${JSON.stringify(op.dependencies)}`);
-                    continue;
-                }
-                // If an operator does not restrict the modes to which it applies then it applies to all modes.
-                const phaseFlags = typeof op.phases === 'number' ? op.phases : MODE_FLAGS_ALL;
-                for (const mode of MODE_SEQUENCE) {
-                    if (phaseFlags & mode) {
-                        if (op.hash) {
-                            const ops = ops_by_mode[mode];
-                            if (!Array.isArray(ops[op.hash])) {
-                                ops[op.hash] = [op];
+                    // If an operator does not restrict the modes to which it applies then it applies to all modes.
+                    const phaseFlags = typeof op.phases === 'number' ? op.phases : MODE_FLAGS_ALL;
+                    for (const mode of MODE_SEQUENCE) {
+                        if (phaseFlags & mode) {
+                            if (op.hash) {
+                                const ops = operators_by_mode[mode];
+                                if (!Array.isArray(ops[op.hash])) {
+                                    ops[op.hash] = [op];
+                                }
+                                else {
+                                    ops[op.hash].push(op);
+                                }
                             }
                             else {
-                                ops[op.hash].push(op);
+                                throw new SystemError(`operator MUST have a 'hash' property.`);
                             }
-                        }
-                        else {
-                            throw new SystemError(`operator MUST have a 'hash' property.`);
-                        }
-                        if (op.iscons()) {
-                            // The generic ConsExtension is unable to provide an operator. 
-                            const operator: string = op.operator().key();
-                            const cons = cons_by_mode[mode];
-                            if (!Array.isArray(cons[operator])) {
-                                cons[operator] = [op];
-                            }
-                            else {
-                                cons[operator].push(op);
+                            if (op.iscons()) {
+                                // The generic ConsExtension is unable to provide an operator.
+                                const opr: Sym = op.operator();
+                                try {
+                                    const key: string = opr.key();
+                                    const cons = cons_operators_by_mode[mode];
+                                    if (!Array.isArray(cons[key])) {
+                                        cons[key] = [op];
+                                    }
+                                    else {
+                                        cons[key].push(op);
+                                    }
+                                }
+                                finally {
+                                    opr.release();
+                                }
                             }
                         }
                     }
@@ -1095,7 +664,43 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             builders.length = 0;
             // Inspect which operators are assigned to which buckets...
             for (const mode of MODE_SEQUENCE) {
-                const ops = ops_by_mode[mode];
+                // console.lg("----------------------------------------");
+                const cons = cons_operators_by_mode[mode];
+                for (const key in cons) {
+                    const cons_operators = cons[key];
+                    const symbols = new Map<string, Sym>();
+                    for (let i = 0; i < cons_operators.length; i++) {
+                        const cons_operator = cons_operators[i];
+                        const opr: Sym = cons_operator.operator();
+                        if (!symbols.has(key)) {
+                            symbols.set(key, opr);
+                        }
+                    }
+                    symbols.forEach(function (opr: Sym, key: string) {
+                        if (Array.isArray(cons_operators) && cons_operators.length > 0) {
+                            // We may not match because available are (opr Rat) and (opr U), but this hash_nonop_cons gives (opr). 
+                            const hash = hash_nonop_cons(opr);
+                            // console.lg("looking for: ", hash);
+                            let found = false;
+                            for (let i = 0; i < cons_operators.length; i++) {
+                                if (cons_operators[i].hash === hash) {
+                                    found = true;
+                                }
+                                else {
+                                    // console.log("mismatch: ", cons_operators[i].hash, "name", cons_operators[i].name);
+                                }
+                            }
+                            if (!found) {
+                                // These are potential problems because getBinding could fail to find an operator for a cons expression.
+                                // console.lg(`No matching nonop cons operator for ${opr}`);
+                            }
+                        }
+                        else {
+                            throw new ProgrammingError();
+                        }
+                    });
+                }
+                const ops = operators_by_mode[mode];
                 for (const hash in ops) {
                     const candidates: Operator<U>[] = ops[hash];
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1419,30 +1024,30 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             if (is_cons(expr)) {
                 // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
                 // to the left or right. This implies that I have distinct right and left evaluations.
-                const head = expr.head;
-                if (is_cons(head)) {
-                    const opr = head.opr;
+                const opr = expr.opr;
+                if (is_cons(opr)) {
+                    const head_opr = opr.opr;
                     try {
-                        if (opr.equals(FN)) {
+                        if (head_opr.equals(FN)) {
                             const newExpr = Eval_lambda_in_fn_syntax(expr, $);
                             return [TFLAG_DIFF, newExpr];
                         }
                         else {
                             // eslint-disable-next-line no-console
-                            console.warn("head", `${head}`);
+                            console.warn("head", `${opr}`);
                             // eslint-disable-next-line no-console
                             console.warn("expr", `${expr}`);
                             throw new ProgrammingError();
                         }
                     }
                     finally {
-                        opr.release();
+                        head_opr.release();
                     }
                 }
-                else if (is_sym(head)) {
+                else if (is_sym(opr)) {
                     // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
-                    if (symTab.hasBinding(head)) {
-                        const value = $.getBinding(head);
+                    if (symTab.hasBinding(opr)) {
+                        const value = $.getBinding(opr, expr);
                         if (is_lambda(value)) {
                             return wrap_as_transform(value.body(expr.argList, $), expr);
                         }
@@ -1451,7 +1056,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         }
                     }
                 }
-                else if (is_rat(head)) {
+                else if (is_rat(opr)) {
                     // Why do we have a special case for rat?
                     // We know that the key and hash are both 'Rat'
                     // const hash = head.name;
@@ -1460,7 +1065,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     const op = unambiguous_operator(expr.argList, ops, $);
                     if (op) {
                         // console.lg(`We found the ${op.name} operator!`);
-                        return op.evaluate(head, expr.argList);
+                        return op.evaluate(opr, expr.argList);
                     }
                     else {
                         // eslint-disable-next-line no-console
@@ -1491,7 +1096,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             const opr = expr.opr;
                             if (is_sym(opr)) {
                                 if (symTab.hasBinding(opr)) {
-                                    const binding = $.getBinding(opr);
+                                    const binding = $.getBinding(opr, expr);
                                     if (!is_nil(binding)) {
                                         if (is_cons(binding)) {
                                             // TODO: Install as a normal Operator...
@@ -1542,15 +1147,15 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             if (is_cons(expr)) {
                 // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
                 // to the left or right. This implies that I have distinct right and left evaluations.
-                const head = expr.head;
-                if (is_sym(head)) {
+                const opr = expr.opr;
+                if (is_sym(opr)) {
                     // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
-                    const value = $.getBinding(head);
+                    const value = $.getBinding(opr, expr);
                     if (is_lambda(value)) {
                         return value.body(expr.argList, $);
                     }
                 }
-                else if (is_rat(head)) {
+                else if (is_rat(opr)) {
                     // Why do we have a special case for rat?
                     // We know that the key and hash are both 'Rat'
                     // const hash = head.name;
@@ -1559,7 +1164,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     const op = unambiguous_operator(expr.argList, ops, $);
                     if (op) {
                         // console.lg(`We found the ${op.name} operator!`);
-                        return op.valueOf(head);
+                        return op.valueOf(opr);
                     }
                     else {
                         // eslint-disable-next-line no-console
@@ -1587,9 +1192,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     else {
                         // If there were no handlers registered for the given key, look for a user-defined function.
                         if (is_cons(expr)) {
-                            const opr = expr.opr;
                             if (is_sym(opr)) {
-                                const binding = $.getBinding(opr);
+                                const binding = $.getBinding(opr, expr);
                                 if (!is_nil(binding)) {
                                     if (is_cons(binding)) {
                                         // TOOD: Install as a normal Operator.

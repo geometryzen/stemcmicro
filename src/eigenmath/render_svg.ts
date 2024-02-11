@@ -1,10 +1,9 @@
-import { Blade, Boo, create_flt, create_sym, Flt, is_blade, is_boo, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, Sym, Tensor, Uom } from "math-expression-atoms";
+import { Blade, Boo, create_flt, create_sym, Flt, Imu, is_blade, is_boo, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, Sym, Tensor, Uom } from "math-expression-atoms";
 import { is_native, Native, native_sym } from "math-expression-native";
 import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { is_imu } from "../operators/imu/is_imu";
 import { str_extension } from "../operators/str/str_extension";
 import { cadddr, caddr, cadr, cddddr, cddr } from "../tree/helpers";
-import { Imu } from "../tree/imu/Imu";
 import { bignum_itoa } from "./bignum_itoa";
 import { count_denominators } from "./count_denominators";
 import { find_denominator } from "./find_denominator";
@@ -313,10 +312,16 @@ class SvgProgramStack implements ProgramStack {
     concat(exprs: U[]): void {
         throw new Error("concat method not implemented.");
     }
+    peek(): U {
+        const x = this.pop();
+        this.push(x);
+        return x;
+    }
     push(expr: U): void {
         this.#stack.push(expr);
     }
     pop(): U {
+        // TODO: Check for underflow
         return this.#stack.pop()!;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

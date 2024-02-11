@@ -1,13 +1,12 @@
-import { create_sym, Sym } from "math-expression-atoms";
+import { create_sym, is_sym, Sym } from "math-expression-atoms";
+import { Cons, is_nil, nil, U } from "math-expression-tree";
 import { Directive, Extension, ExtensionEnv, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { piAsFlt } from "../../tree/flt/Flt";
-import { Cons, is_nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_pi } from "../pi/is_pi";
 import { get_binding } from "./get_binding";
-import { is_sym } from "./is_sym";
 
 function verify_sym(x: Sym): Sym | never {
     if (is_sym(x)) {
@@ -44,7 +43,7 @@ class SymExtension implements Extension<Sym> {
             return piAsFlt;
         }
 
-        const binding = $.getBinding(sym);
+        const binding = $.getBinding(sym, nil);
 
         if (is_nil(binding) || binding.equals(sym)) {
             return sym;
@@ -90,7 +89,7 @@ class SymExtension implements Extension<Sym> {
     transform(sym: Sym): [TFLAGS, U] {
         // console.lg("SymExtension.transform", `${sym}`);
         // return [TFLAG_NONE, sym];
-        const response = get_binding(sym, this.$);
+        const response = get_binding(sym, nil, this.$);
         // console.lg("binding", render_as_infix(binding[1], this.$));
         return response;
     }

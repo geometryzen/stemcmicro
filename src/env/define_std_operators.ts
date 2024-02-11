@@ -1,4 +1,5 @@
-import { create_sym, is_blade, is_flt } from 'math-expression-atoms';
+import { create_sym, is_blade, is_flt, is_uom } from 'math-expression-atoms';
+import { nil } from 'math-expression-tree';
 import { make_micro } from '../adapters/make_micro';
 import { Eval_approxratio } from '../approxratio';
 import { MulComparator } from '../calculators/compare/compare_factor_factor';
@@ -386,8 +387,10 @@ import { sinh_rat } from '../operators/sinh/sinh_rat';
 import { sinh_sym } from '../operators/sinh/sinh_sym';
 import { sqrt_any } from '../operators/sqrt/sqrt_any';
 import { sqrt_rat } from '../operators/sqrt/sqrt_rat';
+import { eval_st } from '../operators/st/eval_st';
 import { st_add_2_any_hyp } from '../operators/st/st_add_2_any_hyp';
 import { st_any } from '../operators/st/st_any';
+import { st_hyp } from '../operators/st/st_hyp';
 import { st_mul_2_rat_any } from '../operators/st/st_mul_2_rat_any';
 import { st_rat } from '../operators/st/st_rat';
 import { st_sym } from '../operators/st/st_sym';
@@ -428,15 +431,17 @@ import { add_2_mul_2_sin_cos_mul_2_rat_mul_2_cos_sin } from '../operators/trig/a
 import { add_2_pow_2_cos_rat_pow_2_sin_rat } from '../operators/trig/add_2_pow_2_cos_rat_pow_2_sin_rat';
 import { mul_2_sin_cos } from '../operators/trig/mul_2_sin_cos';
 import { eval_typeof } from '../operators/typeof/eval_typeof';
+import { Eval_unit } from '../operators/unit/transform-unit';
 import { unit_any } from '../operators/unit/unit_any';
+import { eval_uom } from '../operators/uom/eval_uom';
 import { uom_1_str } from '../operators/uom/uom_1_str';
-import { is_uom, uom_extension } from '../operators/uom/uom_extension';
+import { uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
 import { Eval_prime } from '../prime';
 import { get_last_print_mode_symbol } from '../print/print';
 import { render_using_print_mode } from '../print/render_using_print_mode';
 import { store_text_in_binding } from '../print/store_text_in_binding';
-import { ADJ, AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DEGREE, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE, RANK } from '../runtime/constants';
+import { ADJ, AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DEGREE, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE, RANK, UNIT, UOM } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
@@ -633,7 +638,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // TODO: I don't think we should be using defineKeyword for (factor n) and factor(p, x)
     $.defineKeyword(FACTOR, function ($: ExtensionEnv): void {
-        const last = $.getBinding(RESERVED_KEYWORD_LAST);
+        const last = $.getBinding(RESERVED_KEYWORD_LAST, nil);
         const factored = $.factor(last);
         $.setBinding(RESERVED_KEYWORD_LAST, factored);
 
@@ -1049,11 +1054,15 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(sqrt_any);                                         // (sqrt U)
     $.defineConsTransformer(create_sym("sqrt"), make_micro(eval_sqrt)); // (sqrt)
 
+    // Standard part function
+    // https://en.wikipedia.org/wiki/Standard_part_function
     $.defineOperator(st_add_2_any_hyp);
     $.defineOperator(st_mul_2_rat_any);
     $.defineOperator(st_rat);
     $.defineOperator(st_sym);
     $.defineOperator(st_any);
+    $.defineOperator(st_hyp);
+    $.defineConsTransformer(native_sym(Native.st), make_micro(eval_st));
 
     $.defineOperator(subst_varargs);
     $.defineOperator(sum_varargs);
@@ -1108,8 +1117,10 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(map_extension);
 
     $.defineOperator(unit_any);
+    $.defineConsTransformer(UNIT, Eval_unit);
 
     $.defineOperator(uom_1_str);
+    $.defineConsTransformer(UOM, make_micro(eval_uom));
 
     $.defineOperator(zero_varargs);
 

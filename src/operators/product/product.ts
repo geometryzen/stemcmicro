@@ -1,10 +1,9 @@
-import { create_int, one } from 'math-expression-atoms';
+import { create_int, is_sym, one } from 'math-expression-atoms';
+import { nil, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
-import { U } from '../../tree/tree';
-import { is_sym } from '../sym/is_sym';
 
 /**
  * product(body:U, index:Sym, lower:Num, upper:Num): U
@@ -14,8 +13,8 @@ export function Eval_product(expr: U, $: ExtensionEnv): U {
     const body = cadr(expr);
 
     // 2nd arg (index)
-    const indexVariable = caddr(expr);
-    if (!is_sym(indexVariable)) {
+    const index = caddr(expr);
+    if (!is_sym(index)) {
         halt('product: 2nd arg?');
     }
 
@@ -33,18 +32,20 @@ export function Eval_product(expr: U, $: ExtensionEnv): U {
 
     // remember contents of the index
     // variable so we can put it back after the loop
-    const oldIndexVariableValue = $.getBinding(indexVariable);
+    const prev_index = $.getBinding(index, nil);
+    try {
+        let temp: U = one;
 
-    let temp: U = one;
+        for (let i = j; i <= k; i++) {
+            $.setBinding(index, create_int(i));
+            const arg2 = $.valueOf(body);
+            temp = $.multiply(temp, arg2);
+        }
 
-    for (let i = j; i <= k; i++) {
-        $.setBinding(indexVariable, create_int(i));
-        const arg2 = $.valueOf(body);
-        temp = $.multiply(temp, arg2);
+        return temp;
     }
-
-    // put back the index variable to original content
-    $.setBinding(indexVariable, oldIndexVariableValue);
-
-    return temp;
+    finally {
+        // put back the index variable to original content
+        $.setBinding(index, prev_index);
+    }
 }

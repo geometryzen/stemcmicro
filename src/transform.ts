@@ -1,16 +1,13 @@
+import { is_num, one } from 'math-expression-atoms';
+import { assert_cons, car, cdr, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { scan_meta } from './algebrite/scan';
 import { polyform } from './bake';
 import { decomp } from './decomp';
 import { Directive, ExtensionEnv } from './env/ExtensionEnv';
-import { items_to_cons } from './makeList';
-import { is_num } from './operators/num/is_num';
 import { subst } from './operators/subst/subst';
 import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from './runtime/constants';
 import { noexpand_unary } from './runtime/defs';
-import { assert_cons } from './tree/cons/assert_cons';
 import { cadr, cdddr, cddr } from './tree/helpers';
-import { one } from './tree/rat/Rat';
-import { car, cdr, is_cons, nil, U } from './tree/tree';
 
 /*
 Transform an expression using a pattern. The
@@ -207,9 +204,9 @@ interface TransformState {
  */
 function saveMetaBindings($: ExtensionEnv): TransformState {
     return {
-        METAA: $.getBinding(METAA),
-        METAB: $.getBinding(METAB),
-        METAX: $.getBinding(METAX),
+        METAA: $.getBinding(METAA, nil),
+        METAB: $.getBinding(METAB, nil),
+        METAX: $.getBinding(METAX, nil),
     };
 }
 

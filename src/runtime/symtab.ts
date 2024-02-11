@@ -83,9 +83,9 @@ export interface SymTab {
     clear(): void;
     getProps(sym: Sym): Props;
     setProps(sym: Sym, overrides: Partial<Props>): void;
-    hasBinding(sym: Sym): boolean;
-    getBinding(sym: Sym): U;
-    setBinding(sym: Sym, bindingvalue: U): void;
+    hasBinding(opr: Sym): boolean;
+    getBinding(opr: Sym): U;
+    setBinding(opr: Sym, bindingvalue: U): void;
     hasUserFunction(sym: Sym): boolean;
     getUserFunction(sym: Sym): U;
     setUserFunction(sym: Sym, usrfunc: U): void;

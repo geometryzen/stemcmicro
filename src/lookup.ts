@@ -1,7 +1,7 @@
+import { is_sym } from 'math-expression-atoms';
+import { car, Cons, is_cons, nil, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_sym } from './operators/sym/is_sym';
 import { cadr } from './tree/helpers';
-import { car, Cons, is_cons, nil, U } from './tree/tree';
 
 // now this might be a little confusing, so a
 // clarification is in order.
@@ -118,22 +118,27 @@ import { car, Cons, is_cons, nil, U } from './tree/tree';
 //       => gives z
 export function Eval_lookup(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
-    const arg0 = car(argList);
-    // TODO: 
-    if (!is_cons(arg0) && is_sym(cadr(arg0))) {
-        // TODO: The type guard does not appear to be strong enough to be safe.
-        // The solution of feedback from incorrect function arguments should be uniform.
-        // For now, we use the assertive properties of the Cons API.
-        const op = expr.car;
-        if (is_sym(op)) {
-            const binding = $.getBinding(op);
-            return binding;
+    try {
+        const arg0 = car(argList);
+        // TODO: 
+        if (!is_cons(arg0) && is_sym(cadr(arg0))) {
+            // TODO: The type guard does not appear to be strong enough to be safe.
+            // The solution of feedback from incorrect function arguments should be uniform.
+            // For now, we use the assertive properties of the Cons API.
+            const opr = expr.car;
+            if (is_sym(opr)) {
+                const binding = $.getBinding(opr, nil);
+                return binding;
+            }
+            else {
+                return nil;
+            }
         }
         else {
-            return nil;
+            return arg0;
         }
     }
-    else {
-        return arg0;
+    finally {
+        argList.release();
     }
 }

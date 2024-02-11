@@ -1,10 +1,9 @@
-import { create_int, zero } from 'math-expression-atoms';
+import { create_int, is_sym, zero } from 'math-expression-atoms';
+import { Cons, nil, U } from 'math-expression-tree';
 import { cadnr } from '../../calculators/cadnr';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
-import { Cons, U } from '../../tree/tree';
-import { is_sym } from '../sym/is_sym';
 
 /**
  * sum(body,index,lower,upper)
@@ -35,7 +34,7 @@ function sum(body: U, index: U, lower: U, upper: U, expr: Cons, $: ExtensionEnv)
 
     // remember contents of the index
     // variable so we can restore it back after the loop
-    const original = $.getBinding(index);
+    const original = $.getBinding(index, nil);
     try {
         let temp: U = zero;
         for (let i = lowerBound; i <= upperBound; i++) {

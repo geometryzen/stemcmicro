@@ -1,9 +1,8 @@
+import { epsilon, Hyp, is_hyp } from "math-expression-atoms";
 import { cons, Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
-import { epsilon, Hyp } from "../../tree/hyp/Hyp";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
-import { is_hyp } from "./is_hyp";
 
 function verify_hyp(hyp: Hyp): Hyp | never {
     if (is_hyp(hyp)) {

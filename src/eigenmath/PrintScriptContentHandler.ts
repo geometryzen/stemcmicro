@@ -1,8 +1,7 @@
-import { create_sym, Sym } from "math-expression-atoms";
+import { create_sym, is_imu, Sym } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
-import { is_nil, U } from "math-expression-tree";
+import { is_nil, nil, U } from "math-expression-tree";
 import { ExprEngineListener } from "../api/api";
-import { is_imu } from "../operators/imu/is_imu";
 import { get_binding, ScriptContentHandler, ScriptVars } from "./eigenmath";
 import { iszero } from "./iszero";
 import { print_value_and_input_as_svg_or_infix } from "./print_value_and_input_as_svg_or_infix";
@@ -37,8 +36,8 @@ class PrintScriptContentHandler implements ScriptContentHandler {
     }
     output(value: U, input: U, $: ScriptVars): void {
         const ec: SvgRenderConfig = {
-            useImaginaryI: is_imu(get_binding(I_LOWER, $)),
-            useImaginaryJ: is_imu(get_binding(J_LOWER, $))
+            useImaginaryI: is_imu(get_binding(I_LOWER, nil, $)),
+            useImaginaryJ: is_imu(get_binding(J_LOWER, nil, $))
         };
         function should_annotate_symbol(x: Sym, value: U): boolean {
             if ($.hasUserFunction(x)) {
@@ -69,7 +68,7 @@ class PrintScriptContentHandler implements ScriptContentHandler {
 }
 
 function should_render_svg($: ScriptVars): boolean {
-    const tty = get_binding(TTY, $);
+    const tty = get_binding(TTY, nil, $);
     if (tty.equals(TTY) || iszero(tty)) {
         return true;
     }

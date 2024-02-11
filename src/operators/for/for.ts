@@ -1,10 +1,9 @@
-import { create_int } from 'math-expression-atoms';
+import { create_int, is_sym } from 'math-expression-atoms';
 import { Cons, nil, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
-import { is_sym } from '../sym/is_sym';
 
 // 'for' function
 
@@ -46,7 +45,7 @@ export function Eval_for(p1: Cons, $: ExtensionEnv): U {
 
     // remember contents of the index
     // variable so we can put it back after the loop
-    const p4: U = $.getBinding(loopingVariable);
+    const p4: U = $.getBinding(loopingVariable, nil);
     try {
         for (let i = j; i <= k; i++) {
             $.setBinding(loopingVariable, create_int(i));

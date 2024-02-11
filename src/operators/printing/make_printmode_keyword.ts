@@ -1,3 +1,5 @@
+import { create_sym, is_sym, Sym } from "math-expression-atoms";
+import { nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { get_last_print_mode_symbol } from "../../print/print";
@@ -5,10 +7,7 @@ import { render_using_print_mode } from "../../print/render_using_print_mode";
 import { store_text_in_binding } from "../../print/store_text_in_binding";
 import { defs, PrintMode } from "../../runtime/defs";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
-import { create_sym, Sym } from "../../tree/sym/Sym";
-import { nil, U } from "../../tree/tree";
 import { AbstractKeywordOperator } from "../helpers/KeywordSymbol";
-import { is_sym } from "../sym/is_sym";
 
 /**
  * TODO:
@@ -31,7 +30,7 @@ export class PrintKeyword extends AbstractKeywordOperator {
             const origPrintMode = defs.printMode;
             defs.setPrintMode(printMode);
             try {
-                const last = $.getBinding(RESERVED_KEYWORD_LAST);
+                const last = $.getBinding(RESERVED_KEYWORD_LAST, nil);
                 const str = render_using_print_mode(last, printMode, $);
 
                 const printHandler = this.$.getPrintHandler();

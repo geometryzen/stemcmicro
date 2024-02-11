@@ -1,17 +1,12 @@
+import { imu, is_imu, is_sym, Sym } from 'math-expression-atoms';
+import { Native, native_sym } from "math-expression-native";
+import { Cons, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ScanOptions } from '../algebrite/scan';
 import { Eval_bake } from "../bake";
 import { Directive, directive_from_flag, ExtensionEnv, flag_from_directive } from "../env/ExtensionEnv";
-import { imu } from '../env/imu';
-import { items_to_cons } from "../makeList";
-import { Native } from "../native/Native";
-import { native_sym } from "../native/native_sym";
-import { is_imu } from '../operators/imu/is_imu';
 import { subst } from '../operators/subst/subst';
-import { is_sym } from "../operators/sym/is_sym";
 import { delegate_parse_script } from "../parser/parser";
 import { TreeTransformer } from '../transform/Transformer';
-import { Sym } from "../tree/sym/Sym";
-import { Cons, is_cons, is_nil, nil, U } from '../tree/tree';
 import { Box } from "./Box";
 import { BAKE, SYMBOL_I, SYMBOL_J } from './constants';
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
@@ -203,7 +198,7 @@ export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: 
         if (nil !== transformed) {
             // It's curious that we bind SCRIPT_LAST to the transform output and not the baked output. Why?
             box.push(transformed);
-            if ($.hasBinding(BAKE) && $.isone($.getBinding(BAKE))) {
+            if ($.hasBinding(BAKE, nil) && $.isone($.getBinding(BAKE, nil))) {
                 // console.lg("Baking...");
                 let expr = Eval_bake(box.pop(), $);
                 // Hopefully a temporary fix for bake creating a non-normalized expression.
@@ -334,7 +329,7 @@ export function transform(expr: U, $: ExtensionEnv): U {
  * @param output May be the result of Eval() or the out_tree after it has been bake(d).
  * @param $ The extension environment.
  */
-function post_processing_complex_numbers(input: U, output: U, box: Box<U>, $: ExtensionEnv): void {
+function post_processing_complex_numbers(input: U, output: U, box: Box, $: ExtensionEnv): void {
     // If user asked explicitly asked to evaluate "i" or "j" and
     // they represent the imaginary unit (-1)^(1/2), then
     // show (-1)^(1/2).

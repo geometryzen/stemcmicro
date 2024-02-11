@@ -1,5 +1,5 @@
 import { Sym } from "math-expression-atoms";
-import { is_nil, U } from "math-expression-tree";
+import { Cons, is_nil, U } from "math-expression-tree";
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 
 /**
@@ -8,13 +8,13 @@ import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/Extensio
  * 1. If the binding is NIL, the sym is returned and changed is false.
  * 2. If the binding is simply the symbol itself, return sym and changed is false.
  * 3. If the binding exists and is not the same as sym, returns the binding and changed is true.
- * @param sym The symbol for which the binding is required.
+ * @param opr The symbol for which the binding is required.
  */
-export function get_binding(sym: Sym, $: ExtensionEnv): [changed: TFLAGS, retval: U] {
+export function get_binding(opr: Sym, target: Cons, $: Pick<ExtensionEnv, 'getBinding' | 'hasBinding'>): [changed: TFLAGS, retval: U] {
     // $.hasBinding
-    if ($.hasBinding(sym)) {
+    if ($.hasBinding(opr, target)) {
         // console.lg(`${sym}`, "IS bound");
-        const binding = $.getBinding(sym);
+        const binding = $.getBinding(opr, target);
         // console.lg("get_binding", render_as_infix(sym, $), "is", render_as_infix(binding, $));
 
         if (is_nil(binding)) {
@@ -22,7 +22,7 @@ export function get_binding(sym: Sym, $: ExtensionEnv): [changed: TFLAGS, retval
             // return [TFLAG_NONE, sym];
         }
 
-        if (sym.equals(binding)) {
+        if (opr.equals(binding)) {
             return [TFLAG_NONE, binding];
         }
         else {
@@ -31,8 +31,8 @@ export function get_binding(sym: Sym, $: ExtensionEnv): [changed: TFLAGS, retval
     }
     else {
         // console.lg(`${sym}`, "is NOT bound");
-        const binding = $.getBinding(sym);
-        if (sym.equals(binding)) {
+        const binding = $.getBinding(opr, target);
+        if (opr.equals(binding)) {
             return [TFLAG_NONE, binding];
         }
         else {

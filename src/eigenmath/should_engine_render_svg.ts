@@ -1,10 +1,10 @@
-import { is_nil } from "math-expression-tree";
+import { is_nil, nil } from "math-expression-tree";
 import { Concept, ExprEngine } from "../api/api";
 import { iszero } from "./iszero";
 
 export function should_engine_render_svg($: ExprEngine): boolean {
     const sym = $.symbol(Concept.TTY);
-    const tty = $.getBinding(sym);
+    const tty = $.getBinding(sym, nil);
     if (is_nil(tty)) {
         // Unbound in Native engine.
         return true;

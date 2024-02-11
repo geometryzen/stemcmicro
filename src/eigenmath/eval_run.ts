@@ -64,8 +64,8 @@ export function make_eval_run(io: ProgramIO) {
             const input = $.pop();
             const result = evaluate_expression(input, env, ctrl, $);
             const ec: SvgRenderConfig = {
-                useImaginaryI: is_imu(get_binding(I_LOWER, env)),
-                useImaginaryJ: is_imu(get_binding(J_LOWER, env))
+                useImaginaryI: is_imu(get_binding(I_LOWER, nil, env)),
+                useImaginaryJ: is_imu(get_binding(J_LOWER, nil, env))
             };
             print_value_and_input_as_svg_or_infix(result, input, should_render_svg(env), ec, io.listeners, make_should_annotate(env));
             if (!is_nil(result)) {

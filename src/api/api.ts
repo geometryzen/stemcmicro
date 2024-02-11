@@ -114,9 +114,9 @@ export interface ExprEngine {
     simplify(expr: U): U;
     valueOf(expr: U): U;
 
-    getBinding(name: Sym): U;
-    hasBinding(name: Sym): boolean;
-    setBinding(name: Sym, binding: U): void;
+    getBinding(opr: Sym, target: Cons): U;
+    hasBinding(opr: Sym, target: Cons): boolean;
+    setBinding(opr: Sym, binding: U): void;
 
     hasUserFunction(name: Sym): boolean;
     getUserFunction(name: Sym): U;
@@ -208,7 +208,7 @@ class ExtensionEnvVisitor implements Visitor {
     keyword(keyword: Keyword): void {
     }
     sym(name: Sym): void {
-        if (!this.#env.hasBinding(name)) {
+        if (!this.#env.hasBinding(name, nil)) {
             this.#env.defineUserSymbol(name);
         }
     }
@@ -357,17 +357,17 @@ class MicroEngine implements ExprEngine {
     executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[]; } {
         return execute_script(sourceText, this.#options, this.#env);
     }
-    hasBinding(sym: Sym): boolean {
-        assert_sym(sym);
-        return this.#env.hasBinding(sym);
+    hasBinding(opr: Sym, target: Cons): boolean {
+        assert_sym(opr);
+        return this.#env.hasBinding(opr, target);
     }
-    getBinding(sym: Sym): U {
-        assert_sym(sym);
-        return this.#env.getBinding(sym);
+    getBinding(opr: Sym, target: Cons): U {
+        assert_sym(opr);
+        return this.#env.getBinding(opr, target);
     }
-    setBinding(sym: Sym, binding: U): void {
-        assert_sym(sym);
-        this.#env.setBinding(sym, binding);
+    setBinding(opr: Sym, binding: U): void {
+        assert_sym(opr);
+        this.#env.setBinding(opr, binding);
     }
     hasUserFunction(sym: Sym): boolean {
         assert_sym(sym);
@@ -496,9 +496,9 @@ class ClojureScriptEngine implements ExprEngine {
     executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[]; } {
         return execute_script(sourceText, {}, this.#env);
     }
-    hasBinding(sym: Sym): boolean {
-        assert_sym(sym);
-        return this.#env.hasBinding(sym);
+    hasBinding(opr: Sym, target: Cons): boolean {
+        assert_sym(opr);
+        return this.#env.hasBinding(opr, target);
     }
     hasUserFunction(sym: Sym): boolean {
         assert_sym(sym);
@@ -537,13 +537,13 @@ class ClojureScriptEngine implements ExprEngine {
         const module = items_to_cons(create_sym('module'), ...trees);
         return { module, errors };
     }
-    getBinding(sym: Sym): U {
-        assert_sym(sym);
-        return this.#env.getBinding(sym);
+    getBinding(opr: Sym, target: Cons): U {
+        assert_sym(opr);
+        return this.#env.getBinding(opr, target);
     }
-    setBinding(sym: Sym, binding: U): void {
-        assert_sym(sym);
-        this.#env.setBinding(sym, binding);
+    setBinding(opr: Sym, binding: U): void {
+        assert_sym(opr);
+        this.#env.setBinding(opr, binding);
     }
     simplify(expr: U): U {
         return simplify(expr, this.#env);
@@ -783,13 +783,13 @@ class EigenmathEngine implements ExprEngine {
         return { module, errors: emErrorHandler.errors };
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getBinding(sym: Sym): U {
+    getBinding(sym: Sym, target: Cons): U {
         assert_sym(sym);
-        return get_binding(sym, this.#scriptVars);
+        return get_binding(sym, target, this.#scriptVars);
     }
-    hasBinding(sym: Sym): boolean {
+    hasBinding(sym: Sym, target: Cons): boolean {
         assert_sym(sym);
-        const answer: boolean = this.#scriptVars.hasBinding(sym);
+        const answer: boolean = this.#scriptVars.hasBinding(sym, target);
         return answer;
     }
     setBinding(sym: Sym, binding: U): void {

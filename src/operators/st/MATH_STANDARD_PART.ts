@@ -1,5 +1,4 @@
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
+import { Native, native_sym } from "math-expression-native";
 
 /**
  * Standard part function

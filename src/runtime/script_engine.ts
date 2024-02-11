@@ -1,19 +1,17 @@
-import { create_int } from "math-expression-atoms";
+import { assert_sym, create_int, create_sym, Sym } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
+import { Cons, U } from "math-expression-tree";
 import { define_math_constant_pi, define_metric_prefixes_for_si_units, define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api/api";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ALL_FEATURES, Directive, ExtensionEnv, flag_from_directive, Predicates } from "../env/ExtensionEnv";
 import { simplify } from "../operators/simplify/simplify";
-import { assert_sym } from "../operators/sym/assert_sym";
 import { ParseOptions, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";
 import { render_as_infix } from "../print/render_as_infix";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
-import { create_sym, Sym } from "../tree/sym/Sym";
-import { U } from "../tree/tree";
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { move_top_of_stack } from "./defs";
 import { execute_script, transform_tree } from "./execute";
@@ -120,7 +118,7 @@ export interface ScriptContext {
     clearBindings(): void;
     defineFunction(pattern: U, impl: LambdaExpr): void;
     getSymbolProps(sym: Sym): Predicates;
-    getBinding(sym: Sym): U;
+    getBinding(opr: Sym, target: Cons): U;
     getSymbolsInfo(): { sym: Sym, value: U }[]
     evaluate(tree: U, options?: ExprTransformOptions): { value: U, prints: string[], errors: Error[] };
     executeProlog(prolog: string[]): void;
@@ -211,9 +209,9 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
         getSymbolProps(sym: Sym): Predicates {
             return $.getSymbolPredicates(sym);
         },
-        getBinding(sym: Sym): U {
-            assert_sym(sym);
-            return $.getBinding(sym);
+        getBinding(opr: Sym, target: Cons): U {
+            assert_sym(opr);
+            return $.getBinding(opr, target);
         },
         getSymbolsInfo(): { sym: Sym, value: U }[] {
             return $.getSymbolsInfo();

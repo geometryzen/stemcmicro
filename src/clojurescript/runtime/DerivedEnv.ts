@@ -2,7 +2,7 @@
 import { Rat, Sym, Tensor } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
-import { U } from "math-expression-tree";
+import { Cons, U } from "math-expression-tree";
 import { CompareFn, ConsExpr, Directive, ExprComparator, KeywordRunner, OperatorBuilder, Predicates, PrintHandler } from "../../env/ExtensionEnv";
 import { Scope, Thing } from "./Stepper";
 
@@ -10,8 +10,8 @@ export class DerivedScope implements Scope {
     constructor(readonly parentEnv: Scope, readonly strict: boolean, readonly thing: Thing) {
 
     }
-    hasBinding(sym: Sym): boolean {
-        return this.parentEnv.hasBinding(sym);
+    hasBinding(sym: Sym, target: Cons): boolean {
+        return this.parentEnv.hasBinding(sym, target);
     }
     hasUserFunction(sym: Sym): boolean {
         return this.parentEnv.hasUserFunction(sym);
@@ -112,10 +112,10 @@ export class DerivedScope implements Scope {
     getSymbolPrintName(sym: Sym): string {
         throw new Error("Method not implemented.");
     }
-    getBinding(sym: string | Sym): U {
-        return this.parentEnv.getBinding(sym);
+    getBinding(sym: Sym, target: Cons): U {
+        return this.parentEnv.getBinding(sym, target);
     }
-    getUserFunction(sym: string | Sym): U {
+    getUserFunction(sym: Sym): U {
         throw new Error("Method not implemented.");
     }
     getSymbolsInfo(): { sym: Sym; value: U; }[] {

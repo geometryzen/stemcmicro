@@ -25,4 +25,7 @@ describe("uom", function () {
         check('watt', 'W');
         check('weber', 'Wb');
     });
+    it("mag", function () {
+        check('mag(second)', 's');
+    });
 });

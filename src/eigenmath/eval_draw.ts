@@ -1,9 +1,7 @@
-import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_num, is_tensor, Sym } from "math-expression-atoms";
-import { Cons, nil, U } from "math-expression-tree";
+import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_imu, is_num, is_tensor, Sym } from "math-expression-atoms";
+import { assert_cons, Cons, nil, U } from "math-expression-tree";
 import { ConsFunction } from "../adapters/ConsFunction";
 import { Directive } from "../env/ExtensionEnv";
-import { is_imu } from "../operators/imu/is_imu";
-import { assert_cons } from "../tree/cons/assert_cons";
 import { broadcast, duplicate, eval_nonstop, floatfunc, get_binding, head, lookup, rest, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
@@ -130,8 +128,8 @@ export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
                     const outbuf: string[] = [];
 
                     const ec: SvgRenderConfig = {
-                        useImaginaryI: is_imu(get_binding(I_LOWER, env)),
-                        useImaginaryJ: is_imu(get_binding(J_LOWER, env))
+                        useImaginaryI: is_imu(get_binding(I_LOWER, nil, env)),
+                        useImaginaryJ: is_imu(get_binding(J_LOWER, nil, env))
                     };
                     emit_graph(points, $, dc, ec, outbuf);
 

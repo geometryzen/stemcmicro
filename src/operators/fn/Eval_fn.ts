@@ -1,5 +1,5 @@
 import { assert_tensor, is_num, is_str, is_sym, is_tensor, Tensor } from 'math-expression-atoms';
-import { car, cdr, Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
+import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { StackU } from '../../env/StackU';
 import { zip } from '../../functional/zip';
@@ -58,7 +58,7 @@ export function Eval_lambda_in_fn_syntax(expr: Cons, $: ExtensionEnv): U {
         // Use "derivative" instead of "d" if there is no user function "d"
         // TODO: This needs to be checked because of the way getSymbolValue behaves.
         // TODO: Checking to see if a binding is the symbol is an unreliable way to see if the symbol is undefined.
-        if (opr.equals(SYMBOL_D) && $.getBinding(SYMBOL_D).equals(SYMBOL_D)) {
+        if (opr.equals(SYMBOL_D) && $.getBinding(SYMBOL_D, nil).equals(SYMBOL_D)) {
             return Eval_derivative(expr, $);
         }
 
@@ -197,7 +197,7 @@ function rewrite_args_recursive(stack: StackU, $: ExtensionEnv) {
 
     // Get the symbol's content, if _that_
     // matches then do the substitution
-    p3 = $.getBinding(p1);
+    p3 = $.getBinding(p1, nil);
     stack.push(p3);
     if (p1 !== p3) {
         stack.push(p2); // subst. list

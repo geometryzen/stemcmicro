@@ -1,6 +1,6 @@
 import { booT, create_sym, is_blade, is_boo, is_err, is_flt, is_keyword, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Keyword, one, Rat, Sym, Tensor, zero } from 'math-expression-atoms';
 import { is_native, Native, native_sym } from 'math-expression-native';
-import { car, cdr, Cons, is_atom, is_cons, U } from 'math-expression-tree';
+import { car, cdr, Cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { Directive } from '../env/ExtensionEnv';
@@ -75,7 +75,7 @@ export interface PrintConfig {
     factorize(poly: U, x: U): U;
     pushDirective(directive: number, value: number): void;
     popDirective(): void;
-    getBinding(sym: Sym): U;
+    getBinding(opr: Sym, target: Cons): U;
     getDirective(directive: number): number;
     getSymbolPrintName(sym: Sym): string;
     isone(expr: U): boolean;
@@ -1254,7 +1254,7 @@ function should_tweak_exponent_syntax(base: U, $: PrintConfig): boolean {
     if (is_sym(base)) {
         if (base.equals(create_sym('x'))) {
             const sym = PRINT_LEAVE_X_ALONE;
-            const binding = $.getBinding(sym);
+            const binding = $.getBinding(sym, nil);
             if (binding.equals(sym) || binding.isnil) {
                 // There is no override, therefore tweak!
                 return true;
@@ -1302,7 +1302,7 @@ function print_power(base: U, expo: U, $: PrintConfig) {
         }
     }
 
-    if (equaln($.getBinding(PRINT_LEAVE_E_ALONE), 1) && is_base_of_natural_logarithm(base)) {
+    if (equaln($.getBinding(PRINT_LEAVE_E_ALONE, nil), 1) && is_base_of_natural_logarithm(base)) {
         if (defs.codeGen) {
             str += print_str('Math.exp(');
             str += print_expo_of_denom(expo, $);

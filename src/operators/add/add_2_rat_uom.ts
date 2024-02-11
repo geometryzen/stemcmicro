@@ -1,14 +1,9 @@
-import { Uom } from "math-expression-atoms";
+import { is_rat, is_uom, Rat, Sym, Uom } from "math-expression-atoms";
+import { Cons, Cons2, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_UOM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
-import { Rat } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-import { is_rat } from "../rat/is_rat";
-import { is_uom } from "../uom/uom_extension";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {

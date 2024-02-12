@@ -6,7 +6,7 @@ import { COSH } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { cadr } from '../../tree/helpers';
 
-export function Eval_arccosh(expr: Cons, $: ExtensionEnv): U {
+export function eval_arccosh(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
     try {
         const arg = argList.head;

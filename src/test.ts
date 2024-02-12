@@ -215,7 +215,7 @@ Logical-and of predicate expressions.
 */
 
 // and definition
-export function Eval_and(p1: Cons, $: ExtensionEnv): U {
+export function eval_and(p1: Cons, $: ExtensionEnv): U {
     const wholeAndExpression = p1;
     let andPredicates = cdr(wholeAndExpression);
     let somePredicateUnknown = false;

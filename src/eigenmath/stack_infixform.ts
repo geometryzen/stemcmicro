@@ -6,7 +6,7 @@ import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
 import { ProgramStack } from "./ProgramStack";
 
-export function eval_infixform(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_infixform(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     $.push(cadr(p1));
     value_of(env, ctrl, $);
     p1 = $.pop();

@@ -3,9 +3,9 @@ import { Stack } from "../../env/Stack";
 import { State } from "./Stepper";
 
 /**
- * (op a1 a2 a3)
+ * (op a1 a2)
  */
- export function Eval_3_args(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+ export function step_2_args(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {

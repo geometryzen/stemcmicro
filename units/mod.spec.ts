@@ -10,8 +10,8 @@ describe("mod", function () {
             dependencies: ['Flt']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "2");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "2");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "2.0");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "2.0");
         engine.release();
     });
 });

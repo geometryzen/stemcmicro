@@ -29,8 +29,7 @@ const testeq = native_sym(Native.testeq);
 // define C p5
 // define Y p6
 
-export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
-    // console.lg(`Eval_roots expr=${render_as_sexpr(expr, $)}`);
+export function eval_roots(expr: Cons, $: ExtensionEnv): U {
     // A == B -> A - B
     const arg1 = cadr(expr);
     let poly: U;

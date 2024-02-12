@@ -97,40 +97,6 @@ describe("examples", function () {
         assert.strictEqual(is_rat(values[0]), true);
         engine.release();
     });
-    /*
-    xit("PythonScript", function () {
-        const lines: string[] = [
-            `1 + 2 + 3 + 4`
-        ];
-        const engineOptions: Partial<EngineConfig> = {
-            syntaxKind: SyntaxKind.PythonScript,
-            prolog: []
-        };
-        const engine: ExprEngine = create_engine(engineOptions);
-
-        const parseOptions: Partial<ParseConfig> = {
-            useCaretForExponentiation: false,
-            useParenForTensors: false
-        };
-
-        const sourceText = lines.join('\n');
-        const { trees, errors } = engine.parse(sourceText, parseOptions);
-
-        assert.strictEqual(errors.length, 0);
-
-        const values: U[] = [];
-        for (const tree of trees) {
-            const value = engine.valueOf(tree);
-            if (!is_nil(value)) {
-                values.push(value);
-            }
-        }
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `10`);
-        assert.strictEqual(is_rat(values[0]), true);
-        engine.release();
-    });
-    */
     it("STEMCscript", function () {
         const lines: string[] = [
             `joule / coulomb`

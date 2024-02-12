@@ -1,11 +1,8 @@
-import { Cons, items_to_cons, nil, U } from "math-expression-tree";
+import { Cons, nil, U } from "math-expression-tree";
 import { Stack } from "../../env/Stack";
 import { State } from "./Stepper";
 
-/**
- * (op a1 a2 a3 ...)
- */
-export function Eval_v_args(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+export function step_module(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {
@@ -25,7 +22,9 @@ export function Eval_v_args(expr: Cons, stack: Stack<State>, state: State): Stat
     if (n > 0) {
         state.argValues[n - 1] = state.value;
     }
-    stack.pop();
-    const value = state.$.valueOf(items_to_cons(expr.opr, ...state.argValues));
-    stack.top.value = value;
+    state.done = true;
+    stack.top.inputs = [...args];
+    stack.top.values = state.argValues;
+    // Don't pop the stateStack.
+    // Leave the root scope on the tree in case the program is appended to.
 }

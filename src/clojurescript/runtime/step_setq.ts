@@ -35,7 +35,7 @@ type EXP = Cons2<Sym, LHS, RHS>;
 /**
  * This stepper function for assignment is special in that the LHS of the assignment is not evaluated.
  */
-export function eval_setq(x: Cons, stack: Stack<State>, state: State): State | undefined {
+export function step_setq(x: Cons, stack: Stack<State>, state: State): State | undefined {
     const expr: EXP = assert_sym_any_any(x);
     const lhs = expr.lhs;
     if (is_cons(lhs)) {

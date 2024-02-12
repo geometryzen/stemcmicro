@@ -2,7 +2,7 @@ import { Err, is_flt, is_sym } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { subtract } from '../../calculators/sub/subtract';
-import { eigenmath_eval_arg } from '../../eigenmath/eigenmath';
+import { stack_arg } from '../../eigenmath/eigenmath';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { StackU } from '../../env/StackU';
 import { equaln, is_num_and_equal_one_half, is_num_and_gt_zero } from '../../is';
@@ -91,9 +91,9 @@ function arg(z: U, $: ExtensionEnv): U {
 
 }
 
-export function Eval_arg(expr: Cons, env: ExtensionEnv): U {
+export function eval_arg(expr: Cons, env: ExtensionEnv): U {
     const $ = new StackU();
-    eigenmath_eval_arg(expr, env, env, $);
+    stack_arg(expr, env, env, $);
     return $.pop();
 }
 

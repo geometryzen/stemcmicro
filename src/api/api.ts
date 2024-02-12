@@ -6,7 +6,7 @@ import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
 import { make_eval_draw } from '../eigenmath/eval_draw';
-import { eval_infixform } from '../eigenmath/eval_infixform';
+import { stack_infixform } from '../eigenmath/stack_infixform';
 import { make_eval_print } from '../eigenmath/eval_print';
 import { make_eval_run } from '../eigenmath/eval_run';
 import { InfixOptions, to_infix } from '../eigenmath/infixform';
@@ -740,7 +740,7 @@ class EigenmathEngine implements ExprEngine {
         // const allowUndeclaredVars = allow_undeclared_vars(options, true);
         this.#scriptVars.init();
         this.#scriptVars.define_cons_function(create_sym("draw"), make_eval_draw(this.#scriptVars));
-        this.#scriptVars.define_cons_function(create_sym("infixform"), eval_infixform);
+        this.#scriptVars.define_cons_function(create_sym("infixform"), stack_infixform);
         this.#scriptVars.define_cons_function(create_sym("print"), make_eval_print(this.#scriptVars));
         this.#scriptVars.define_cons_function(create_sym("run"), make_eval_run(this.#scriptVars));
         if (options.prolog) {

@@ -1,7 +1,8 @@
 import { check } from "./check";
 
 describe("tanh", function () {
-    xit("001", function () {
-        check("tanh(x)", "");
+    it("001", function () {
+        check("tanh(x)", "tanh(x)");
+        check("tanh(0)", "0");
     });
 });

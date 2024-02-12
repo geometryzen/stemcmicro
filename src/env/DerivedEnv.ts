@@ -4,7 +4,7 @@ import { LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
 import { Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
 import { AtomListener, ExprEngineListener } from "../api/api";
-import { assert_sym_any_any } from "../clojurescript/runtime/eval_setq";
+import { assert_sym_any_any } from "../clojurescript/runtime/step_setq";
 import { setq } from "../operators/assign/assign_any_any";
 import { Eval_dotdot } from "../operators/dotdot/Eval_dotdot";
 import { JsObjectExtension } from "../operators/jsobject/JsObjectExtension";

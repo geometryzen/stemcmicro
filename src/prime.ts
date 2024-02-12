@@ -1,9 +1,9 @@
 import { create_int, Rat } from 'math-expression-atoms';
+import { Cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { nativeInt } from './nativeInt';
 import { MAXPRIMETAB, primetab } from './runtime/constants';
 import { halt } from './runtime/defs';
-import { Cons, U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
 //
@@ -14,7 +14,7 @@ import { Cons, U } from './tree/tree';
 //  Output:    nth prime
 //
 //-----------------------------------------------------------------------------
-export function Eval_prime(primeExpr: Cons, $: ExtensionEnv): Rat {
+export function eval_prime(primeExpr: Cons, $: ExtensionEnv): Rat {
     return prime($.valueOf(primeExpr.argList.head));
 }
 

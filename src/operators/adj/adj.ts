@@ -4,7 +4,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { assert_square_matrix_tensor } from '../../tensor';
 import { cofactor } from '../cofactor/cofactor';
 
-export function Eval_adj(expr: Cons, $: ExtensionEnv): U {
+export function eval_adj(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
     try {
         return lambda_adj(argList, $);

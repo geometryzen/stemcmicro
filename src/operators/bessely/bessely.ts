@@ -1,13 +1,10 @@
+import { create_flt, is_flt, negOne } from 'math-expression-atoms';
+import { Cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
 import { BESSELY } from '../../runtime/constants';
-import { create_flt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
-import { negOne } from '../../tree/rat/Rat';
-import { U } from '../../tree/tree';
-import { is_flt } from '../flt/is_flt';
 
 /* bessely =====================================================================
 
@@ -25,7 +22,7 @@ General description
 Bessel function of second kind.
 
 */
-export function Eval_bessely(p1: U, $: ExtensionEnv): U {
+export function Eval_bessely(p1: Cons, $: ExtensionEnv): U {
     return bessely($.valueOf(cadr(p1)), $.valueOf(caddr(p1)), $);
 }
 

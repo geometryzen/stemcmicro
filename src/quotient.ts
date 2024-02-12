@@ -12,7 +12,7 @@ import { SYMBOL_X } from './runtime/constants';
  * 
  * The remainder can be calculated by p - q * quotient(p,q)
  */
-export function Eval_quotient(expr: Cons, $: ExtensionEnv): U {
+export function eval_quotient(expr: Cons, $: ExtensionEnv): U {
     const p = $.valueOf(expr.item1);
     const q = $.valueOf(expr.item2);
     const X = $.valueOf(expr.item3);

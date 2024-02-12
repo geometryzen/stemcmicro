@@ -19,7 +19,7 @@ class Builder implements OperatorBuilder<U> {
 type ARG = U;
 type EXP = Cons1<Sym, ARG>;
 
-function Eval_det(expr: Cons, $: ExtensionEnv): U {
+export function Eval_det(expr: Cons, $: ExtensionEnv): U {
     const arg = $.valueOf(cadr(expr)) as Tensor;
     return det(arg, $);
 }

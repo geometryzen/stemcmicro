@@ -3,9 +3,9 @@ import { Stack } from "../../env/Stack";
 import { State } from "./Stepper";
 
 /**
- * taylor(f,x,n,a)
+ * (op a1)
  */
-export function Eval_taylor(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+export function step_1_args(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {

@@ -1,18 +1,12 @@
+import { bigInt, create_flt, is_flt, is_num, is_rat, negOne, Rat } from 'math-expression-atoms';
+import { items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { items_to_cons } from './makeList';
 import { mdiv } from './mmul';
-import { is_flt } from './operators/flt/is_flt';
-import { is_num } from './operators/num/is_num';
-import { is_rat } from './operators/rat/is_rat';
 import { is_num_and_negative } from './predicates/is_negative_number';
 import { FLOOR } from './runtime/constants';
-import { create_flt } from './tree/flt/Flt';
 import { cadr } from './tree/helpers';
-import { bigInt } from './tree/rat/big-integer';
-import { negOne, Rat } from './tree/rat/Rat';
-import { U } from './tree/tree';
 
-export function Eval_floor(p1: U, $: ExtensionEnv): U {
+export function eval_floor(p1: U, $: ExtensionEnv): U {
     const result = yfloor($.valueOf(cadr(p1)), $);
     return result;
 }

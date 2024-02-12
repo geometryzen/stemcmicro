@@ -3,7 +3,7 @@ import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from 'math-expression-
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { StackU } from '../../env/StackU';
 import { zip } from '../../functional/zip';
-import { Eval_derivative } from '../../operators/derivative/Eval_derivative';
+import { eval_derivative } from '../../operators/derivative/Eval_derivative';
 import { EVAL, FN, SYMBOL_D } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { cadr, cddr } from '../../tree/helpers';
@@ -59,7 +59,7 @@ export function Eval_lambda_in_fn_syntax(expr: Cons, $: ExtensionEnv): U {
         // TODO: This needs to be checked because of the way getSymbolValue behaves.
         // TODO: Checking to see if a binding is the symbol is an unreliable way to see if the symbol is undefined.
         if (opr.equals(SYMBOL_D) && $.getBinding(SYMBOL_D, nil).equals(SYMBOL_D)) {
-            return Eval_derivative(expr, $);
+            return eval_derivative(expr, $);
         }
 
         const binding = is_fn_expr(opr) ? opr : $.valueOf(opr);

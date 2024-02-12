@@ -1,9 +1,11 @@
-import { Native } from "math-expression-native";
-import { Cons, nil, U } from "math-expression-tree";
+import { Cons, items_to_cons, nil, U } from "math-expression-tree";
 import { Stack } from "../../env/Stack";
 import { State } from "./Stepper";
 
-export function Eval_abs(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+/**
+ * ==, !=, >, >=, <, <=
+ */
+export function step_relational_expr(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {
@@ -24,6 +26,6 @@ export function Eval_abs(expr: Cons, stack: Stack<State>, state: State): State |
         state.argValues[n - 1] = state.value;
     }
     stack.pop();
-    const value = state.$.evaluate(Native.abs, ...state.argValues);
+    const value = state.$.valueOf(items_to_cons(expr.opr, ...state.argValues));
     stack.top.value = value;
 }

@@ -7,7 +7,7 @@ import { ProgramStack } from "../../eigenmath/ProgramStack";
 import { cadr } from "../../tree/helpers";
 import { create_uom, is_uom_name } from "./uom";
 
-export function eval_uom(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_uom(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(cadr(expr), $);
     value_of(env, ctrl, $);

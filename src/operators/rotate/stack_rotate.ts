@@ -9,7 +9,7 @@ import { cadr, cddr } from "../../tree/helpers";
 
 const PI = native_sym(Native.PI);
 
-export function eval_rotate(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_rotate(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(cadr(p1), $);
     value_of(env, ctrl, $);

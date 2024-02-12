@@ -4,7 +4,7 @@ import { ProgramControl } from "../../eigenmath/ProgramControl";
 import { ProgramEnv } from "../../eigenmath/ProgramEnv";
 import { ProgramStack } from "../../eigenmath/ProgramStack";
 
-export function eval_hadamard(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_hadamard(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const argList = expr.argList;
     try {
         const head = argList.head;

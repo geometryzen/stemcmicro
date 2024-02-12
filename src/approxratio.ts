@@ -9,10 +9,9 @@ import { APPROXRATIO } from './runtime/constants';
 /*
  Guesses a rational for each float in the passed expression
 */
-export function Eval_approxratio(expr: Cons, $: ExtensionEnv): U {
+export function eval_approxratio(expr: Cons, $: ExtensionEnv): U {
     // Evaluating the expression gets it into canonical order.
     const arg = $.valueOf(expr.argList.head);
-    // console.lg("Eval_approxratio", $.toInfixString(arg));
     return approxratio(arg, $);
 }
 

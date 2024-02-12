@@ -10,7 +10,7 @@ Remove terms that involve a given symbol or expression. For example...
 
   filter(x^2 + x + 1, x^2)  =>  x + 1
 */
-export function Eval_filter(p1: Cons, $: Pick<ExtensionEnv, 'add' | 'valueOf'>): U {
+export function eval_filter(p1: Cons, $: Pick<ExtensionEnv, 'add' | 'valueOf'>): U {
     p1 = cdr(p1);
     let result = $.valueOf(car(p1));
 

@@ -31,6 +31,7 @@
         "tests": "mocha 'tests/**/*.ts' --sort",
         "units": "mocha 'units/**/*.spec.ts' --sort",
         "test-polar": "mocha 'tests/polar.ts'",
+        "example-bessely": "mocha 'examples/bessely.spec.ts'",
         "example-degree": "mocha 'examples/degree.spec.ts'",
         "example-hadamard": "mocha 'examples/hadamard.spec.ts'",
         "example-hilbert": "mocha 'examples/hilbert.spec.ts'",

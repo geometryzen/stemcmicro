@@ -60,8 +60,7 @@ for (let i = 0; i < NROOTS_YMAX; i++) {
  * @param $ 
  * @returns 
  */
-export function Eval_nroots(expr: Cons, $: ExtensionEnv): U {
-    // console.lg("Eval_nroots", render_as_infix(expr, $));
+export function eval_nroots(expr: Cons, $: ExtensionEnv): U {
     let X: U = $.valueOf(caddr(expr));
     let P = $.valueOf(cadr(expr));
     // console.lg("P", render_as_infix(P, $));

@@ -30,8 +30,7 @@ For example, the number of five card hands is choose(52,5)
                      k! (n - k)!
 ```
 */
-export function Eval_choose(expr: Cons, $: ExtensionEnv): U {
-    // console.lg(`Eval_choose ${$.toListString(expr)}`);
+export function eval_choose(expr: Cons, $: ExtensionEnv): U {
     const cdr_expr = expr.cdr;
     const N = $.valueOf(car(cdr_expr));
     // console.lg(`N => ${$.toListString(N)}`);

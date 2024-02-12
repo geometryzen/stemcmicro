@@ -5,7 +5,7 @@ import { State } from "./Stepper";
 /**
  * zero(i,j,...)
  */
-export function Eval_zero(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+export function step_zero(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {

@@ -9,7 +9,7 @@ import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
 import { gcd } from '../gcd/gcd';
 
-export function Eval_rationalize(expr: Cons, $: ExtensionEnv): U {
+export function eval_rationalize(expr: Cons, $: ExtensionEnv): U {
     // const infix = render_as_infix(expr, $);
     // console.lg("infix", infix);
     const arg = cadr(expr);

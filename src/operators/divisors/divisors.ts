@@ -32,22 +32,22 @@ function signum(n: number): 1 | -1 | 0 {
 //
 //-----------------------------------------------------------------------------
 export function divisors(term: U, $: ExtensionEnv): U {
-    const factors = ydivisors(term, $);
+    const factors: U[] = ydivisors(term, $);
     const n = factors.length;
     return new Tensor([n], sort_factors(factors, $));
 }
 
-export function ydivisors(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): U[] {
+export function ydivisors(term: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): U[] {
     const stack: U[] = [];
     // push all of the term's factors
-    if (is_num(p1)) {
-        stack.push(...factor_small_number(nativeInt(p1)));
+    if (is_num(term)) {
+        stack.push(...factor_small_number(nativeInt(term)));
     }
-    else if (is_cons(p1) && is_add(p1)) {
-        stack.push(...__factor_add(p1, $));
+    else if (is_cons(term) && is_add(term)) {
+        stack.push(...__factor_add(term, $));
     }
-    else if (is_multiply(p1)) {
-        p1 = cdr(p1);
+    else if (is_multiply(term)) {
+        let p1 = cdr(term);
         if (is_num(car(p1))) {
             stack.push(...factor_small_number(nativeInt(car(p1))));
             p1 = cdr(p1);
@@ -62,11 +62,11 @@ export function ydivisors(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'is
             stack.push(...mapped.flat());
         }
     }
-    else if (is_power(p1)) {
-        stack.push(cadr(p1), caddr(p1));
+    else if (is_power(term)) {
+        stack.push(cadr(term), caddr(term));
     }
     else {
-        stack.push(p1, one);
+        stack.push(term, one);
     }
 
     const k = stack.length;

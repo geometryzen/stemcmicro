@@ -6,7 +6,7 @@ import { integral } from '../integral/integral_helpers';
 import { is_num } from '../num/is_num';
 import { derivative } from './derivative';
 
-export function Eval_derivative(expr: Cons, $: ExtensionEnv): U {
+export function eval_derivative(expr: Cons, $: ExtensionEnv): U {
     // eslint-disable-next-line no-console
     // console.lg(`Eval_derivative(expr=${render_as_sexpr(expr, $)})`);
     // console.lg(`car(expr.cdr)=${render_as_sexpr(car(expr.cdr), $)})`);

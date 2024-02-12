@@ -1,7 +1,7 @@
 import { check } from "./check";
 
-describe("mod", function () {
+describe("round", function () {
     it("001", function () {
-        check("mod(5,3/8)", "1/8");
+        check("round(1/2)", "1");
     });
 });

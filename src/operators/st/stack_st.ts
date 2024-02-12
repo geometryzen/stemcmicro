@@ -6,7 +6,7 @@ import { ProgramEnv } from "../../eigenmath/ProgramEnv";
 import { ProgramStack } from "../../eigenmath/ProgramStack";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
-export function eval_st(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_st(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(expr, $);          //  [expr]
     rest($);                //  [argList]
     head($);                //  [argList.head]

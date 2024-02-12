@@ -1,10 +1,10 @@
+import { U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { filter } from './filter';
 import { guess } from './guess';
 import { divide } from './helpers/divide';
 import { degree } from './operators/degree/degree';
 import { caddr, cadr } from './tree/helpers';
-import { U } from './tree/tree';
 
 /*
  Return the leading coefficient of a polynomial.
@@ -19,7 +19,7 @@ Result
 
 The result is undefined if P is not a polynomial.
 */
-export function Eval_leading(p1: U, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'power' | 'valueOf'>): U {
+export function eval_leading(p1: U, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'power' | 'valueOf'>): U {
     const P = $.valueOf(cadr(p1));
     p1 = $.valueOf(caddr(p1));
     const X = p1.isnil ? guess(P) : p1;

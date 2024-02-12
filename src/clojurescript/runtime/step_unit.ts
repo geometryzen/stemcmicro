@@ -5,7 +5,7 @@ import { State } from "./Stepper";
 /**
  * unit(n)
  */
-export function Eval_unit(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+export function step_unit(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {

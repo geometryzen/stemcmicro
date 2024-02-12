@@ -1,13 +1,11 @@
-import { create_int, zero } from 'math-expression-atoms';
+import { create_int, is_tensor, Tensor, zero } from 'math-expression-atoms';
+import { Cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { cadr } from '../../tree/helpers';
-import { Tensor } from '../../tree/tensor/Tensor';
-import { U } from '../../tree/tree';
-import { is_tensor } from '../tensor/is_tensor';
 
 // shape of tensor
-export function Eval_shape(p1: U, $: ExtensionEnv): U {
+export function eval_shape(p1: Cons, $: ExtensionEnv): U {
     const result = shape($.valueOf(cadr(p1)), $);
     return result;
 }

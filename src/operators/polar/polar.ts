@@ -10,7 +10,7 @@ Convert complex z to polar form
 
   polar(z) = abs(z) * exp(i * arg(z))
 */
-export function Eval_polar(expr: Cons, $: ExtensionEnv): U {
+export function eval_polar(expr: Cons, $: ExtensionEnv): U {
     const z = $.valueOf(expr.argList.head);
     return polar(z, $);
 }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Boo, Cell, CellHost, create_sym, Err, Flt, is_boo, is_cell, is_flt, is_rat, is_sym, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
+import { assert_sym, Boo, Cell, CellHost, create_sym, Err, Flt, is_boo, is_cell, is_flt, is_lambda, is_rat, is_sym, Keyword, Lambda, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
@@ -11,8 +11,6 @@ import { hash_for_atom, hash_info, hash_nonop_cons } from "../hashing/hash_info"
 import { is_poly_expanded_form } from "../is";
 import { algebra } from "../operators/algebra/algebra";
 import { Eval_lambda_in_fn_syntax } from '../operators/fn/Eval_fn';
-import { is_lambda } from "../operators/lambda/is_lambda";
-import { assert_sym } from '../operators/sym/assert_sym';
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { SyntaxKind } from "../parser/parser";
 import { ProgrammingError } from '../programming/ProgrammingError';
@@ -20,7 +18,6 @@ import { FN, FUNCTION } from "../runtime/constants";
 import { execute_definitions } from '../runtime/init';
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
-import { Lambda } from "../tree/lambda/Lambda";
 import { visit } from '../visitor/visit';
 import { Visitor } from '../visitor/Visitor';
 import { DerivedEnv } from './DerivedEnv';

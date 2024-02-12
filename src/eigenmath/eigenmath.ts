@@ -16,7 +16,7 @@ import { eval_degree } from '../operators/degree/degree';
 import { eval_hadamard, hadamard } from '../operators/hadamard/eval_hadamard';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_lambda } from '../operators/lambda/is_lambda';
-import { eval_mag, mag } from '../operators/mag/eval_mag';
+import { mag, stack_mag } from '../operators/mag/stack_mag';
 import { eval_rotate } from '../operators/rotate/evaL_rotate';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { eval_uom } from '../operators/uom/eval_uom';
@@ -913,7 +913,7 @@ function equal(p1: U, p2: U): boolean {
     return cmp(p1, p2) === 0;
 }
 
-function eval_abs(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_abs(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(expr), $);
     value_of(env, ctrl, $);
     absfunc(env, ctrl, $);
@@ -999,7 +999,7 @@ export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
     list(2, $);
 }
 
-function eval_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const h = $.length;
     ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
     try {
@@ -2483,7 +2483,7 @@ function eval_check(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramS
     $.push(nil); // no result is printed
 }
 
-function eval_circexp(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_circexp(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     circexp(env, ctrl, $);
@@ -2592,7 +2592,7 @@ function eval_clear(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Progra
     push(nil, $); // result
 }
 
-function eval_clock(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_clock(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     clockfunc(env, ctrl, $);
@@ -2830,7 +2830,7 @@ function contract(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
     push(T, $);
 }
 
-function eval_cos(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_cos(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     cosfunc(env, ctrl, $);
@@ -3806,7 +3806,7 @@ function d_tensor_scalar(p1: Tensor, p2: U, env: ProgramEnv, ctrl: ProgramContro
     push(p3, $);
 }
 
-function eval_det(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_det(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     det(env, ctrl, $);
@@ -4193,7 +4193,7 @@ function eval_exit(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Program
     push(nil, $);
 }
 
-function eval_exp(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_exp(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     expfunc(env, ctrl, $);
@@ -4205,7 +4205,7 @@ export function expfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
     power(env, ctrl, $);
 }
 
-function eval_expcos(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_expcos(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     expcos(env, ctrl, $);
@@ -4232,7 +4232,7 @@ function expcos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     add(env, ctrl, $);
 }
 
-function eval_expcosh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_expcosh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     expcosh(env, ctrl, $);
@@ -4250,7 +4250,7 @@ function expcosh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     multiply(env, ctrl, $);
 }
 
-function eval_expsin(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_expsin(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     expsin(env, ctrl, $);
@@ -4281,7 +4281,7 @@ function expsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     subtract(env, ctrl, $);
 }
 
-function eval_expsinh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_expsinh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     expsinh(env, ctrl, $);
@@ -4300,7 +4300,7 @@ function expsinh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 }
 // tan(z) = (i - i exp(2 i z)) / (exp(2 i z) + 1)
 
-function eval_exptan(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_exptan(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     exptan(env, ctrl, $);
@@ -4328,7 +4328,7 @@ function exptan(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     divide(env, ctrl, $);
 }
 
-function eval_exptanh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_exptanh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     exptanh(env, ctrl, $);
@@ -4598,7 +4598,7 @@ function eval_for(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramS
     push(nil, $); // return value
 }
 
-function eval_imag(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_imag(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     imag(env, ctrl, $);
@@ -6023,7 +6023,7 @@ function integral_search_nib(h: number, F: U, I: U, C: U, env: ProgramEnv, ctrl:
     return 0;					// no
 }
 
-function eval_inv(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_inv(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     inv(env, ctrl, $);
@@ -6129,7 +6129,7 @@ export function kronecker(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
     push(ab, $);
 }
 
-function eval_log(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_log(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const argList = expr.argList;
     try {
         const x = argList.head;
@@ -6310,7 +6310,7 @@ function eval_minor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramS
     det(env, ctrl, $);
 }
 
-function eval_minormatrix(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_minormatrix(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(cadr(p1), $);
     value_of(env, ctrl, $);
@@ -6882,7 +6882,7 @@ function eval_or(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStac
     push_integer(0, $);
 }
 
-function eval_outer(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_outer(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     p1 = cddr(p1);
@@ -7393,7 +7393,7 @@ function rationalize(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
     multiply_noexpand(env, ctrl, $);
 }
 
-function eval_real(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_real(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     real(env, ctrl, $);
@@ -7426,7 +7426,7 @@ export function real(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
     }
 }
 
-function eval_rect(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_rect(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     rect(env, ctrl, $);
@@ -8255,8 +8255,8 @@ function simplify_pass3(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
     push(p1, $);
 }
 
-function eval_sin(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
+export function stack_sin(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    push(cadr(expr), $);
     value_of(env, ctrl, $);
     sinfunc(env, ctrl, $);
 }
@@ -8477,7 +8477,7 @@ function sinfunc_sum(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     list(2, $);
 }
 
-function eval_sinh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_sinh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     sinhfunc(env, ctrl, $);
@@ -13290,8 +13290,8 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.defineUserSymbol(ARG8);
         this.defineUserSymbol(ARG9);
 
-        this.define_cons_function(ABS, eval_abs);
-        this.define_cons_function(ADD, eval_add);
+        this.define_cons_function(ABS, stack_abs);
+        this.define_cons_function(ADD, stack_add);
         this.define_cons_function(ADJ, eval_adj);
         this.define_cons_function(ALGEBRA, eval_algebra);
         this.define_cons_function(ARCCOS, eval_arccos);
@@ -13305,18 +13305,18 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.define_cons_function(BINDING, eval_binding);
         this.define_cons_function(CEILING, eval_ceiling);
         this.define_cons_function(CHECK, eval_check);
-        this.define_cons_function(CIRCEXP, eval_circexp);
+        this.define_cons_function(CIRCEXP, stack_circexp);
         this.define_cons_function(CLEAR, eval_clear);
-        this.define_cons_function(CLOCK, eval_clock);
+        this.define_cons_function(CLOCK, stack_clock);
         this.define_cons_function(COFACTOR, eval_cofactor);
         this.define_cons_function(CONJ, eval_conj);
         this.define_cons_function(CONTRACT, eval_contract);
-        this.define_cons_function(COS, eval_cos);
+        this.define_cons_function(COS, stack_cos);
         this.define_cons_function(COSH, eval_cosh);
         this.define_cons_function(DEFINT, eval_defint);
         this.define_cons_function(DEGREE, make_stack(eval_degree));
         this.define_cons_function(DENOMINATOR, eval_denominator);
-        this.define_cons_function(DET, eval_det);
+        this.define_cons_function(DET, stack_det);
         this.define_cons_function(DERIVATIVE, eval_derivative);
         this.define_cons_function(DIM, eval_dim);
         this.define_cons_function(DO, eval_do);
@@ -13326,25 +13326,25 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.define_cons_function(ERFC, eval_erfc);
         this.define_cons_function(EVAL, eval_eval);
         this.define_cons_function(EXIT, eval_exit);
-        this.define_cons_function(EXP, eval_exp);
-        this.define_cons_function(EXPCOS, eval_expcos);
-        this.define_cons_function(EXPCOSH, eval_expcosh);
-        this.define_cons_function(EXPSIN, eval_expsin);
-        this.define_cons_function(EXPSINH, eval_expsinh);
-        this.define_cons_function(EXPTAN, eval_exptan);
-        this.define_cons_function(EXPTANH, eval_exptanh);
+        this.define_cons_function(EXP, stack_exp);
+        this.define_cons_function(EXPCOS, stack_expcos);
+        this.define_cons_function(EXPCOSH, stack_expcosh);
+        this.define_cons_function(EXPSIN, stack_expsin);
+        this.define_cons_function(EXPSINH, stack_expsinh);
+        this.define_cons_function(EXPTAN, stack_exptan);
+        this.define_cons_function(EXPTANH, stack_exptanh);
         this.define_cons_function(FACTORIAL, eval_factorial);
         this.define_cons_function(FLOAT, eval_float);
         this.define_cons_function(FLOOR, eval_floor);
         this.define_cons_function(INTEGRAL, eval_integral);
-        this.define_cons_function(LOG, eval_log);
+        this.define_cons_function(LOG, stack_log);
         this.define_cons_function(MULTIPLY, eval_multiply);
         this.define_cons_function(POWER, eval_power);
         this.define_cons_function(ROTATE, eval_rotate);
         this.define_cons_function(INDEX, eval_index);
         this.define_cons_function(ASSIGN, eval_assign);
-        this.define_cons_function(SIN, eval_sin);
-        this.define_cons_function(SINH, eval_sinh);
+        this.define_cons_function(SIN, stack_sin);
+        this.define_cons_function(SINH, stack_sinh);
         this.define_cons_function(SQRT, eval_sqrt);
         this.define_cons_function(TAN, eval_tan);
         this.define_cons_function(TANH, eval_tanh);
@@ -13357,13 +13357,13 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
 
         this.define_cons_function(FOR, eval_for);
         this.define_cons_function(HADAMARD, eval_hadamard);
-        this.define_cons_function(IMAG, eval_imag);
+        this.define_cons_function(IMAG, stack_imag);
         this.define_cons_function(INNER, eval_inner);
-        this.define_cons_function(INV, eval_inv);
+        this.define_cons_function(INV, stack_inv);
         this.define_cons_function(KRONECKER, eval_kronecker);
-        this.define_cons_function(MAG, eval_mag);
+        this.define_cons_function(MAG, stack_mag);
         this.define_cons_function(MINOR, eval_minor);
-        this.define_cons_function(MINORMATRIX, eval_minormatrix);
+        this.define_cons_function(MINORMATRIX, stack_minormatrix);
         this.define_cons_function(MOD, eval_mod);
         this.define_cons_function(NOEXPAND, eval_noexpand);
         this.define_cons_function(NOT, eval_not);
@@ -13371,15 +13371,15 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.define_cons_function(NUMBER, eval_number);
         this.define_cons_function(NUMERATOR, eval_numerator);
         this.define_cons_function(OR, eval_or);
-        this.define_cons_function(OUTER, eval_outer);
+        this.define_cons_function(OUTER, stack_outer);
         this.define_cons_function(POLAR, eval_polar);
         this.define_cons_function(PREFIXFORM, eval_prefixform);
         this.define_cons_function(PRODUCT, eval_product);
         this.define_cons_function(QUOTE, eval_quote);
         this.define_cons_function(RANK, eval_rank);
         this.define_cons_function(RATIONALIZE, eval_rationalize);
-        this.define_cons_function(REAL, eval_real);
-        this.define_cons_function(RECT, eval_rect);
+        this.define_cons_function(REAL, stack_real);
+        this.define_cons_function(RECT, stack_rect);
         this.define_cons_function(ROOTS, eval_roots);
         this.define_cons_function(SGN, eval_sgn);
         this.define_cons_function(SIMPLIFY, eval_simplify);

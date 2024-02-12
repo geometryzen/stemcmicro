@@ -1,12 +1,14 @@
 
-import { is_sym, Sym } from "math-expression-atoms";
+import { create_sym, is_num, is_sym, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
 import { U } from "math-expression-tree";
-import { Native } from "../native/Native";
-import { native_sym } from "../native/native_sym";
-import { is_num } from "../operators/num/is_num";
 import { is_power } from "../runtime/helpers";
 
 const MATH_E = native_sym(Native.E);
+/**
+ * Used by Eigenmath
+ */
+const DOLLAR_E = create_sym("$e");
 
 /**
  * @param expr The base found in e.g. (pow base exponent).
@@ -14,7 +16,7 @@ const MATH_E = native_sym(Native.E);
 export function is_base_of_natural_logarithm(expr: U): expr is Sym & { __key: 'math.E' } {
     if (is_sym(expr)) {
         // console.lg("is_base_of_natural_logarithm", expr.toString());
-        return MATH_E.equals(expr);
+        return (MATH_E.equals(expr) || DOLLAR_E.equals(expr));
     }
     else if (is_power(expr)) {
         const base = expr.lhs;

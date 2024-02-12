@@ -22,7 +22,7 @@ import { add_tensor_tensor } from "../tensor/tensor_extension";
 
 const ADD = native_sym(Native.add);
 
-export function Eval_add(expr: Cons, $: ExtensionEnv): U {
+export function eval_add(expr: Cons, $: ExtensionEnv): U {
     // console.lg("Eval_add", $.toInfixString(expr));
     const args = expr.argList;
     const vals = args.map($.valueOf);

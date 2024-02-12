@@ -33,6 +33,7 @@
         "test-polar": "mocha 'tests/polar.ts'",
         "example-degree": "mocha 'examples/degree.spec.ts'",
         "example-hadamard": "mocha 'examples/hadamard.spec.ts'",
+        "example-hilbert": "mocha 'examples/hilbert.spec.ts'",
         "example-hyp": "mocha 'examples/hyp.spec.ts'",
         "example-imu": "mocha 'examples/imu.spec.ts'",
         "example-mag": "mocha 'examples/mag.spec.ts'",

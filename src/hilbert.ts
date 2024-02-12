@@ -1,30 +1,24 @@
-import { create_int } from 'math-expression-atoms';
+import { create_int, Sym, Tensor } from 'math-expression-atoms';
+import { Cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { inverse } from './helpers/inverse';
 import { nativeInt } from './nativeInt';
 import { HILBERT } from './runtime/constants';
-import { Sym } from './tree/sym/Sym';
-import { Tensor } from './tree/tensor/Tensor';
-import { Cons, items_to_cons, U } from './tree/tree';
 
-//-----------------------------------------------------------------------------
-//
-//  Create a Hilbert matrix
-//
-//  Input:    Dimension
-//
-//  Output:    Hilbert matrix
-//
-//  Example:
-//
-//  > hilbert(5)
-//  ((1,1/2,1/3,1/4),(1/2,1/3,1/4,1/5),(1/3,1/4,1/5,1/6),(1/4,1/5,1/6,1/7))
-//
-//-----------------------------------------------------------------------------
-//define AELEM(i, j) A->u.tensor->elem[i * n + j]
-export function hilbert(N: U, $: ExtensionEnv): Cons | Sym | Tensor {
+/**
+ * Hilbert matrix
+ * 
+ * Hij = 1 / (i + j -1)
+ * 
+ * https://en.wikipedia.org/wiki/Hilbert_matrix
+ * 
+ * @param N 
+ * @param $ 
+ * @returns 
+ */
+export function hilbert(N: U, $: Pick<ExtensionEnv, 'valueOf'>): Cons | Sym | Tensor {
     const n = nativeInt(N);
-    if (n < 2) {
+    if (n < 0) {
         return items_to_cons(HILBERT, N);
     }
     const dims = [n, n];

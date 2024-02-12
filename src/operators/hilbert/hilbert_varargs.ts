@@ -1,9 +1,8 @@
+import { Cons, U } from "math-expression-tree";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { hilbert } from "../../hilbert";
 import { HILBERT } from "../../runtime/constants";
-import { cadr } from "../../tree/helpers";
-import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
 class Builder implements OperatorBuilder<U> {
@@ -11,8 +10,26 @@ class Builder implements OperatorBuilder<U> {
         return new Op($);
     }
 }
-export function Eval_hilbert(p1: U, $: ExtensionEnv): U {
-    return hilbert($.valueOf(cadr(p1)), $);
+export function eval_hilbert(expr: Cons, $: ExtensionEnv): U {
+    const argList = expr.argList;
+    try {
+        const head = argList.head;
+        try {
+            const n = $.valueOf(head);
+            try {
+                return hilbert(n, $);
+            }
+            finally {
+                n.release();
+            }
+        }
+        finally {
+            head.release();
+        }
+    }
+    finally {
+        argList.release();
+    }
 }
 
 class Op extends FunctionVarArgs implements Operator<Cons> {
@@ -27,7 +44,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_hilbert(expr, $);
+        const retval = eval_hilbert(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

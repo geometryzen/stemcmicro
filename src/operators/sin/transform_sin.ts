@@ -14,8 +14,33 @@ import { half, three, two } from '../../tree/rat/Rat';
 import { car, Cons, is_cons, U } from "../../tree/tree";
 import { is_flt } from '../flt/is_flt';
 
+export function eval_sin(expr: Cons, $: ExtensionEnv): U {
+    const argList = expr.argList;
+    try {
+        const head = argList.head;
+        try {
+            const x = $.valueOf(head);
+            try {
+                if (is_add(x)) {
+                    return sine_of_angle_sum(x, expr, $)[1];
+                }
+                return sine_of_angle(x, expr, $)[1];
+            }
+            finally {
+                x.release();
+            }
+        }
+        finally {
+            head.release();
+        }
+    }
+    finally {
+        argList.release();
+    }
+
+}
+
 export function transform_sin(x: U, origExpr: U, $: ExtensionEnv): [TFLAGS, U] {
-    // console.lg(`transform_sin x=${x}, origExpr=${origExpr}`);
     if (is_add(x)) {
         // sin of a sum can be further decomposed into
         //sin(alpha+beta) = sin(alpha)*cos(beta)+sin(beta)*cos(alpha)

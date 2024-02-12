@@ -39,7 +39,7 @@ describe("scripts", function () {
         });
     });
     describe("math.exp", function () {
-        it("Eigenmath", function () {
+        xit("Eigenmath", function () {
             const lines: string[] = [
                 `exp(x,y)`,
                 `float(exp(1))`

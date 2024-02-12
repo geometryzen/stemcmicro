@@ -8,7 +8,7 @@ import { ProgramStack } from "../../eigenmath/ProgramStack";
 import { ADD, MULTIPLY, POWER } from "../../runtime/constants";
 import { caddr, cadr } from "../../tree/helpers";
 
-export function eval_mag(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_mag(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(expr, $);          //  [expr]
     rest($);                //  [argList]
     head($);                //  [argList.head]

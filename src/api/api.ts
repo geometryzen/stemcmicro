@@ -5,14 +5,14 @@ import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
+import { InfixOptions, to_infix } from '../eigenmath/infixform';
 import { make_stack_draw } from '../eigenmath/make_stack_draw';
-import { stack_infixform } from '../eigenmath/stack_infixform';
 import { make_stack_print } from '../eigenmath/make_stack_print';
 import { make_stack_run } from '../eigenmath/make_stack_run';
-import { InfixOptions, to_infix } from '../eigenmath/infixform';
 import { print_value_and_input_as_svg_or_infix } from '../eigenmath/print_value_and_input_as_svg_or_infix';
 import { render_svg, SvgRenderConfig } from '../eigenmath/render_svg';
 import { should_engine_render_svg } from '../eigenmath/should_engine_render_svg';
+import { stack_infixform } from '../eigenmath/stack_infixform';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, directive_from_flag, ExtensionEnv } from '../env/ExtensionEnv';
 import { create_algebra_as_blades } from '../operators/algebra/create_algebra_as_tensor';
@@ -253,6 +253,13 @@ export function define_spacetime_algebra($: ExtensionEnv): void {
     $.setBinding(create_sym("e3"), blades[3]);
 }
 
+export function define_geometric30_algebra($: ExtensionEnv): void {
+    const blades = create_algebra_as_blades([create_int(1), create_int(1), create_int(1)], ["ex", "ey", "ez"], $);
+    $.setBinding(create_sym("ex"), blades[0]);
+    $.setBinding(create_sym("ey"), blades[1]);
+    $.setBinding(create_sym("ez"), blades[2]);
+}
+
 export function define_si_units($: ExtensionEnv): void {
     for (let i = 0; i < UOM_NAMES.length; i++) {
         $.setBinding(create_sym(UOM_NAMES[i]), create_uom(UOM_NAMES[i]));
@@ -345,6 +352,7 @@ class MicroEngine implements ExprEngine {
         });
         define_math_constant_pi(this.#env);
         define_spacetime_algebra(this.#env);
+        define_geometric30_algebra(this.#env);
         define_si_units(this.#env);
         define_metric_prefixes_for_si_units(this.#env);
     }

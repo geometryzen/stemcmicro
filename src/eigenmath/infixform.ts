@@ -1,4 +1,4 @@
-import { create_sym, Flt, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Tensor } from "math-expression-atoms";
+import { Flt, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Tensor } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { car, cdr, Cons, is_atom, is_cons, is_nil, U } from "math-expression-tree";
 import { is_imu } from "../operators/imu/is_imu";
@@ -28,10 +28,7 @@ const TESTGE = native_sym(Native.testge);
 const TESTGT = native_sym(Native.testgt);
 const TESTLE = native_sym(Native.testle);
 const TESTLT = native_sym(Native.testlt);
-/**
- * Migrate from $e to the Native.E?
- */
-const DOLLAR_E = create_sym("$e");
+const MATH_E = native_sym(Native.E);
 
 
 function infixform_subexpr(p: U, config: InfixConfig, outbuf: string[]): void {
@@ -222,7 +219,7 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
 
     // Sym
     if (is_sym(p)) {
-        if (p.equalsSym(DOLLAR_E)) {
+        if (p.equalsSym(MATH_E)) {
             infixform_write("exp(1)", config, outbuf);
         }
         else {
@@ -337,7 +334,7 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
 }
 
 function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
-    if (cadr(p).equals(DOLLAR_E)) {
+    if (cadr(p).equals(MATH_E)) {
         infixform_write("exp(", config, outbuf);
         infixform_expr(caddr(p), config, outbuf);
         infixform_write(")", config, outbuf);

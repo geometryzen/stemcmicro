@@ -1,6 +1,7 @@
 import { is_imu, is_num, is_sym, is_tensor, is_uom, one } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
 import { car, cdr, Cons, is_atom, is_cons } from "math-expression-tree";
-import { absfunc, add, denominator, divide, DOLLAR_E, elementwise, expfunc, head, imag, multiply, multiply_factors, numerator, pop, power, push, push_integer, push_rational, real, rect, rest, value_of } from "../../eigenmath/eigenmath";
+import { absfunc, add, denominator, divide, elementwise, expfunc, head, imag, multiply, multiply_factors, numerator, pop, power, push, push_integer, push_rational, real, rect, rest, value_of } from "../../eigenmath/eigenmath";
 import { isminusone } from "../../eigenmath/isminusone";
 import { ProgramControl } from "../../eigenmath/ProgramControl";
 import { ProgramEnv } from "../../eigenmath/ProgramEnv";
@@ -83,7 +84,7 @@ function mag_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
         // exponential
 
-        if (car(z).equals(POWER) && cadr(z).equals(DOLLAR_E)) {
+        if (is_cons(z) && z.opr.equals(POWER) && z.base.equals(native_sym(Native.E))) {
             push(caddr(z), $);
             real(env, ctrl, $);
             expfunc(env, ctrl, $);

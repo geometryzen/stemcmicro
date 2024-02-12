@@ -1,7 +1,7 @@
 import { assert_sym, create_int, create_sym, Sym } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
-import { define_math_constant_pi, define_metric_prefixes_for_si_units, define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api/api";
+import { define_geometric30_algebra, define_math_constant_pi, define_metric_prefixes_for_si_units, define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api/api";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ALL_FEATURES, Directive, ExtensionEnv, flag_from_directive, Predicates } from "../env/ExtensionEnv";
@@ -191,6 +191,7 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
         default: {
             define_math_constant_pi($);
             define_spacetime_algebra($);
+            define_geometric30_algebra($);
             define_si_units($);
             define_metric_prefixes_for_si_units($);
             break;

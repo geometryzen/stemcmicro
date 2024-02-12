@@ -689,10 +689,10 @@ const INDEX = native_sym(Native.component);
 const ASSIGN = native_sym(Native.assign);
 
 export const LAST = create_sym("last");
-/**
- * mathematical constant pi
- */
-const PI = native_sym(Native.PI);
+
+const MATH_E = native_sym(Native.E);
+const MATH_PI = native_sym(Native.PI);
+
 const TRACE = create_sym("trace");
 
 /**
@@ -706,7 +706,6 @@ const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
 const X_LOWER = create_sym("x");
 
-export const DOLLAR_E = create_sym("$e");
 const DOLLAR_A = create_sym("$a");
 const DOLLAR_B = create_sym("$b");
 const DOLLAR_X = create_sym("$x");
@@ -1717,7 +1716,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isoneoversqrttwo(p1)) {
         push_rational(1, 4, $);
-        push(PI, $);
+        push(MATH_PI, $);
         multiply(env, ctrl, $);
         return;
     }
@@ -1726,7 +1725,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isminusoneoversqrttwo(p1)) {
         push_rational(3, 4, $);
-        push(PI, $);
+        push(MATH_PI, $);
         multiply(env, ctrl, $);
         return;
     }
@@ -1735,7 +1734,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (iszero(p1)) {
         push_rational(1, 2, $);
-        push(PI, $);
+        push(MATH_PI, $);
         multiply(env, ctrl, $);
         return;
     }
@@ -1744,7 +1743,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isequalq(p1, 1, 2)) {
         push_rational(1, 3, $);
-        push(PI, $);
+        push(MATH_PI, $);
         multiply(env, ctrl, $);
         return;
     }
@@ -1760,7 +1759,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isequalq(p1, -1, 2)) {
         push_rational(2, 3, $);
-        push(PI, $);
+        push(MATH_PI, $);
         multiply(env, ctrl, $);
         return;
     }
@@ -1768,7 +1767,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // arccos(-1) = pi
 
     if (isminusone(p1)) {
-        push(PI, $);
+        push(MATH_PI, $);
         return;
     }
 
@@ -1903,7 +1902,7 @@ function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isoneoversqrttwo(p1)) {
         push_rational(1, 4, $);
-        push(PI, $);
+        push(MATH_PI, $);
         multiply(env, ctrl, $);
         return;
     }
@@ -1919,7 +1918,7 @@ function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isequalq(p1, 1, 2)) {
         push_rational(1, 6, $);
-        push(PI, $);
+        push(MATH_PI, $);
         multiply(env, ctrl, $);
         return;
     }
@@ -1928,7 +1927,7 @@ function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isplusone(p1)) {
         push_rational(1, 2, $);
-        push(PI, $);
+        push(MATH_PI, $);
         multiply(env, ctrl, $);
         return;
     }
@@ -2111,7 +2110,7 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: 
 
     if (iszero(Y)) {
         if (isnegativenumber(X))
-            push(PI, $);
+            push(MATH_PI, $);
         else
             push_integer(0, $);
         return;
@@ -2122,7 +2121,7 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: 
             push_rational(-1, 2, $);
         else
             push_rational(1, 2, $);
-        push(PI, $);
+        push(MATH_PI, $);
         multiply(env, ctrl, $);
         return;
     }
@@ -2183,7 +2182,7 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: 
             push_rational(1, 4, $);
     }
 
-    push(PI, $);
+    push(MATH_PI, $);
     multiply(env, ctrl, $);
 }
 
@@ -2322,7 +2321,7 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             $.push(new Err(new Str("arg of zero (0) is undefined")));
         }
         else if (isnegativenumber(z)) {
-            push(PI, $);
+            push(MATH_PI, $);
             negate(env, ctrl, $);
         }
         else {
@@ -2377,7 +2376,7 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // e ^ expr
 
-    if (is_cons(z) && z.opr.equals(POWER) && cadr(z).equals(DOLLAR_E)) {
+    if (is_cons(z) && z.opr.equals(POWER) && cadr(z).equals(MATH_E)) {
         push(caddr(z), $);
         imag(env, ctrl, $);
         return;
@@ -2620,7 +2619,7 @@ function clockfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
 
     push(p1, $);
     arg(env, ctrl, $);
-    push(PI, $);
+    push(MATH_PI, $);
     divide(env, ctrl, $);
 
     power(env, ctrl, $);
@@ -2919,7 +2918,7 @@ function cosfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // n pi ?
 
     push(p1, $);
-    push(PI, $);
+    push(MATH_PI, $);
     divide(env, ctrl, $);
     let p2 = pop($);
 
@@ -3021,7 +3020,7 @@ function cosfunc_sum(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Program
         push_integer(2, $);
         push(car(p2), $);
         multiply(env, ctrl, $);
-        push(PI, $);
+        push(MATH_PI, $);
         divide(env, ctrl, $);
         let p3 = pop($);
         if (is_rat(p3) && isinteger(p3)) {
@@ -3703,7 +3702,7 @@ function derf(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     push_integer(-1, $);
     multiply(env, ctrl, $);
     expfunc(env, ctrl, $);
-    push(PI, $);
+    push(MATH_PI, $);
     push_rational(-1, 2, $);
     power(env, ctrl, $);
     multiply(env, ctrl, $);
@@ -3723,7 +3722,7 @@ function derfc(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
     push_integer(-1, $);
     multiply(env, ctrl, $);
     expfunc(env, ctrl, $);
-    push(PI, $);
+    push(MATH_PI, $);
     push_rational(-1, 2, $);
     power(env, ctrl, $);
     multiply(env, ctrl, $);
@@ -4200,7 +4199,7 @@ export function stack_exp(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 }
 
 export function expfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(DOLLAR_E, $);
+    push(MATH_E, $);
     swap($);
     power(env, ctrl, $);
 }
@@ -4413,12 +4412,12 @@ function floatfunc_subst($: ProgramStack): void {
             return;
         }
 
-        if (expr.equals(PI)) {
+        if (expr.equals(MATH_PI)) {
             push_double(Math.PI, $);
             return;
         }
 
-        if (expr.equals(DOLLAR_E)) {
+        if (expr.equals(MATH_E)) {
             push_double(Math.E, $);
             return;
         }
@@ -4430,9 +4429,9 @@ function floatfunc_subst($: ProgramStack): void {
 
         // don't float exponential
 
-        if (car(expr).equals(POWER) && cadr(expr).equals(DOLLAR_E)) {
+        if (car(expr).equals(POWER) && cadr(expr).equals(MATH_E)) {
             push(POWER, $);
-            push(DOLLAR_E, $);
+            push(MATH_E, $);
             push(caddr(expr), $);
             floatfunc_subst($);
             list(3, $);
@@ -5941,7 +5940,7 @@ function integral_classify(p: U): number {
         return t;
     }
 
-    if (p.equals(DOLLAR_E)) {
+    if (p.equals(MATH_E)) {
         return 1;
     }
 
@@ -6196,7 +6195,7 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // log(e) -> 1
 
-    if (x.equals(DOLLAR_E)) {
+    if (x.equals(MATH_E)) {
         push_integer(1, $);
         return;
     }
@@ -6206,7 +6205,7 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         negate(env, ctrl, $);
         logfunc(env, ctrl, $);
         push(imu, $);
-        push(PI, $);
+        push(MATH_PI, $);
         multiply(env, ctrl, $);
         add(env, ctrl, $);
         return;
@@ -6961,7 +6960,7 @@ function polar(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const p2 = pop($);
     if (is_flt(p2)) {
         push_double(p2.d / Math.PI, $);
-        push(PI, $);
+        push(MATH_PI, $);
         multiply_factors(3, env, ctrl, $);
     }
     else {
@@ -7031,10 +7030,10 @@ function power_args($: ProgramStack): [base: U, expo: U] {
     const expo = pop($);
     const base = pop($);
     if (is_sym(base) && is_flt(expo)) {
-        if (base.equals(DOLLAR_E)) {
+        if (base.equals(MATH_E)) {
             return [create_flt(Math.E), expo];
         }
-        else if (base.equals(PI)) {
+        else if (base.equals(MATH_PI)) {
             return [create_flt(Math.PI), expo];
         }
     }
@@ -7203,7 +7202,7 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
 
         // BASE = e ?
 
-        if (base.equals(DOLLAR_E)) {
+        if (base.equals(MATH_E)) {
             power_natural_number(expo, env, ctrl, $);
             return;
         }
@@ -8347,7 +8346,7 @@ function sinfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // n pi ?
 
     push(p1, $);
-    push(PI, $);
+    push(MATH_PI, $);
     divide(env, ctrl, $);
     let p2 = pop($);
 
@@ -8449,7 +8448,7 @@ function sinfunc_sum(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
         push_integer(2, $);
         push(car(p2), $);
         multiply(env, ctrl, $);
-        push(PI, $);
+        push(MATH_PI, $);
         divide(env, ctrl, $);
         let p3 = pop($);
         if (is_rat(p3) && isinteger(p3)) {
@@ -8747,7 +8746,7 @@ function tanfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // n pi ?
 
     push(p1, $);
-    push(PI, $);
+    push(MATH_PI, $);
     divide(env, ctrl, $);
     let p2 = pop($);
 
@@ -8838,7 +8837,7 @@ function tanfunc_sum(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     let p2 = cdr(p1);
     while (is_cons(p2)) {
         push(car(p2), $);
-        push(PI, $);
+        push(MATH_PI, $);
         divide(env, ctrl, $);
         const p3 = pop($);
         if (is_rat(p3) && isinteger(p3)) {
@@ -8942,7 +8941,7 @@ export function stack_tau(x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pro
 function taufunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const n = pop($);
     push(two, $);
-    push(PI, $);
+    push(MATH_PI, $);
     push(n, $);
     multiply_factors(3, env, ctrl, $);
 }
@@ -10456,10 +10455,10 @@ function isdenormalpolarterm(p: U, env: ProgramEnv, ctrl: ProgramControl, $: Pro
     if (!car(p).equals(MULTIPLY))
         return 0;
 
-    if (lengthf(p) === 3 && is_imu(cadr(p)) && caddr(p).equals(PI))
+    if (lengthf(p) === 3 && is_imu(cadr(p)) && caddr(p).equals(MATH_PI))
         return 1; // exp(i pi)
 
-    if (lengthf(p) !== 4 || !is_num(cadr(p)) || !is_imu(caddr(p)) || !cadddr(p).equals(PI))
+    if (lengthf(p) !== 4 || !is_num(cadr(p)) || !is_imu(caddr(p)) || !cadddr(p).equals(MATH_PI))
         return 0;
 
     p = cadr(p); // p = coeff of term
@@ -10545,7 +10544,7 @@ export function istensor(p: U): p is Tensor {
 }
 
 function isusersymbolsomewhere(p: U, env: ProgramEnv): 0 | 1 {
-    if (is_sym(p) && env.hasUserFunction(p) && !p.equalsSym(PI) && !p.equalsSym(DOLLAR_E))
+    if (is_sym(p) && env.hasUserFunction(p) && !p.equalsSym(MATH_PI) && !p.equalsSym(MATH_E))
         return 1;
 
     if (is_cons(p)) {
@@ -10834,7 +10833,7 @@ function normalize_polar(EXPO: U, env: ProgramEnv, ctrl: ProgramControl, $: Prog
                 normalize_polar_term(EXPO, env, ctrl, $);
             else {
                 push(POWER, $);
-                push(DOLLAR_E, $);
+                push(MATH_E, $);
                 push(EXPO, $);
                 list(3, $);
             }
@@ -10901,11 +10900,11 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
                 push_integer(1, $);
             else {
                 push(POWER, $);
-                push(DOLLAR_E, $);
+                push(MATH_E, $);
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imu, $);
-                push(PI, $);
+                push(MATH_PI, $);
                 list(4, $);
                 list(3, $);
             }
@@ -10918,11 +10917,11 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
                 push(MULTIPLY, $);
                 push(imu, $);
                 push(POWER, $);
-                push(DOLLAR_E, $);
+                push(MATH_E, $);
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imu, $);
-                push(PI, $);
+                push(MATH_PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -10936,11 +10935,11 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
                 push(MULTIPLY, $);
                 push_integer(-1, $);
                 push(POWER, $);
-                push(DOLLAR_E, $);
+                push(MATH_E, $);
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imu, $);
-                push(PI, $);
+                push(MATH_PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -10959,11 +10958,11 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
                 push_integer(-1, $);
                 push(imu, $);
                 push(POWER, $);
-                push(DOLLAR_E, $);
+                push(MATH_E, $);
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imu, $);
-                push(PI, $);
+                push(MATH_PI, $);
                 list(4, $);
                 list(3, $);
                 list(4, $);
@@ -10996,11 +10995,11 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
                 push_integer(1, $);
             else {
                 push(POWER, $);
-                push(DOLLAR_E, $);
+                push(MATH_E, $);
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imu, $);
-                push(PI, $);
+                push(MATH_PI, $);
                 list(4, $);
                 list(3, $);
             }
@@ -11013,11 +11012,11 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
                 push(MULTIPLY, $);
                 push(imu, $);
                 push(POWER, $);
-                push(DOLLAR_E, $);
+                push(MATH_E, $);
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imu, $);
-                push(PI, $);
+                push(MATH_PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -11031,11 +11030,11 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
                 push(MULTIPLY, $);
                 push_integer(-1, $);
                 push(POWER, $);
-                push(DOLLAR_E, $);
+                push(MATH_E, $);
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imu, $);
-                push(PI, $);
+                push(MATH_PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -11054,11 +11053,11 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
                 push_integer(-1, $);
                 push(imu, $);
                 push(POWER, $);
-                push(DOLLAR_E, $);
+                push(MATH_E, $);
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imu, $);
-                push(PI, $);
+                push(MATH_PI, $);
                 list(4, $);
                 list(3, $);
                 list(4, $);
@@ -11106,7 +11105,7 @@ function order_factor(p: U): 1 | 2 | 3 | 4 | 5 | 6 {
     if (is_num(p))
         return 1;
 
-    if (p.equals(DOLLAR_E))
+    if (p.equals(MATH_E))
         return 5;
 
     if (car(p).equals(DERIVATIVE) || car(p).equals(D_LOWER))
@@ -11122,7 +11121,7 @@ function order_factor(p: U): 1 | 2 | 3 | 4 | 5 | 6 {
         if (is_num(p))
             return 2;
 
-        if (p.equals(DOLLAR_E))
+        if (p.equals(MATH_E))
             return 5;
 
         if (car(p).equals(DERIVATIVE) || car(p).equals(D_LOWER))
@@ -11465,7 +11464,7 @@ function power_complex_rational(_BASE: U, EXPO: U, X: U, Y: U, env: ProgramEnv, 
     push(Y, $);
     push(X, $);
     arctan(env, ctrl, $);
-    push(PI, $);
+    push(MATH_PI, $);
     divide(env, ctrl, $);
     push(EXPO, $);
     multiply(env, ctrl, $);
@@ -11720,7 +11719,7 @@ function power_natural_number(EXPO: U, env: ProgramEnv, ctrl: ProgramControl, $:
     }
 
     push(POWER, $);
-    push(DOLLAR_E, $);
+    push(MATH_E, $);
     push(EXPO, $);
     list(3, $);
 }
@@ -12062,7 +12061,7 @@ function prefixform(p: U, outbuf: string[]) {
         outbuf.push(s);
     }
     else if (is_sym(p)) {
-        if (PI.equalsSym(p)) {
+        if (MATH_PI.equalsSym(p)) {
             outbuf.push('pi');
         }
         else {
@@ -13267,8 +13266,8 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     readonly #prolog: string[] = [];
     readonly #userFunctions: Map<string, UserFunction> = new Map();
     constructor() {
-        this.defineUserSymbol(PI);
-        this.defineUserSymbol(DOLLAR_E);
+        this.defineUserSymbol(MATH_PI);
+        this.defineUserSymbol(MATH_E);
 
         this.defineUserSymbol(LAST);
         this.defineUserSymbol(TRACE);

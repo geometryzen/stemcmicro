@@ -32,8 +32,7 @@ const TESTGE = native_sym(Native.testge);
 const TESTGT = native_sym(Native.testgt);
 const TESTLE = native_sym(Native.testle);
 const TESTLT = native_sym(Native.testlt);
-
-const DOLLAR_E = create_sym("$e");
+const MATH_E = native_sym(Native.E);
 
 const HPAD = 10;
 const VPAD = 10;
@@ -888,7 +887,7 @@ function emit_numeric_exponent(p: Num, $: ProgramStack) {
 }
 
 function emit_power(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
-    if (cadr(p).equals(DOLLAR_E)) {
+    if (cadr(p).equals(MATH_E)) {
         emit_roman_string("exp", $);
         emit_args(cdr(p), $, ec);
         return;
@@ -1017,7 +1016,7 @@ function emit_symbol(sym: Sym, $: ProgramStack): void {
  */
 function emit_symbol_roman(sym: Sym, $: ProgramStack): void {
 
-    if (sym.equalsSym(DOLLAR_E)) {
+    if (sym.equalsSym(MATH_E)) {
         emit_roman_string("exp(1)", $);
         return;
     }

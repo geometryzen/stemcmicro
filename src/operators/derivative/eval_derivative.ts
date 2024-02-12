@@ -8,7 +8,6 @@ import { derivative } from './derivative';
 
 export function eval_derivative(expr: Cons, $: ExtensionEnv): U {
     // eslint-disable-next-line no-console
-    // console.lg(`Eval_derivative(expr=${render_as_sexpr(expr, $)})`);
     // console.lg(`car(expr.cdr)=${render_as_sexpr(car(expr.cdr), $)})`);
     // evaluate 1st arg to get function F
     let F = $.valueOf(car(expr.cdr));

@@ -6,7 +6,7 @@ import { StackU } from "../../env/StackU";
 /**
  * (kronecker a b ...)
  */
-export function Eval_kronecker(expr: Cons, env: ExtensionEnv): U {
+export function eval_kronecker(expr: Cons, env: ExtensionEnv): U {
     const stack = new StackU();
     const argList = expr.argList;
     try {

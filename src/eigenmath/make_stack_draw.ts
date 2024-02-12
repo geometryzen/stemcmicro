@@ -2,7 +2,7 @@ import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_imu, is
 import { assert_cons, Cons, nil, U } from "math-expression-tree";
 import { ConsFunction } from "../adapters/ConsFunction";
 import { Directive } from "../env/ExtensionEnv";
-import { broadcast, duplicate, eval_nonstop, floatfunc, get_binding, head, lookup, rest, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
+import { broadcast, duplicate, evaluate_nonstop, floatfunc, get_binding, head, lookup, rest, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
 import { ProgramIO } from "./ProgramIO";
@@ -82,7 +82,7 @@ function draw_args(argList: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Prog
     }
 }
 
-export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
+export function make_stack_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
 
     return function (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         assert_cons(expr);
@@ -157,7 +157,7 @@ function setup_trange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc
 
     let p1: U = lookup(create_sym("trange"), env);
     $.push(p1);
-    eval_nonstop(env, ctrl, $);
+    evaluate_nonstop(env, ctrl, $);
     floatfunc(env, ctrl, $);
     p1 = $.pop()!;
 
@@ -182,7 +182,7 @@ function setup_xrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc
 
     let p1: U = lookup(create_sym("xrange"), env);
     $.push(p1);
-    eval_nonstop(env, ctrl, $);
+    evaluate_nonstop(env, ctrl, $);
     floatfunc(env, ctrl, $);
     p1 = $.pop()!;
 
@@ -207,7 +207,7 @@ function setup_yrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc
 
     let p1: U = lookup(create_sym("yrange"), env);
     $.push(p1);
-    eval_nonstop(env, ctrl, $);
+    evaluate_nonstop(env, ctrl, $);
     floatfunc(env, ctrl, $);
     p1 = $.pop()!;
 
@@ -270,7 +270,7 @@ function setup_final(F: U, varName: Sym, env: ProgramEnv, ctrl: ProgramControl, 
     set_symbol(varName, create_flt(dc.tmin), nil, env);
 
     $.push(F);
-    eval_nonstop(env, ctrl, $);
+    evaluate_nonstop(env, ctrl, $);
     const Fmin = $.pop();
 
     if (!is_tensor(Fmin)) {

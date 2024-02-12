@@ -1,5 +1,5 @@
 import { create_int, is_tensor, zero } from "math-expression-atoms";
-import { Cons } from "math-expression-tree";
+import { Cons, U } from "math-expression-tree";
 import { head, rest, value_of } from "../../eigenmath/eigenmath";
 import { ProgramStack } from "../../eigenmath/ProgramStack";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
@@ -20,7 +20,7 @@ function rank($: ProgramStack): void {
     }
 }
 
-export function Eval_rank(expr: Cons, env: ExtensionEnv) {
+export function eval_rank(expr: Cons, env: ExtensionEnv): U {
     const $ = new StackU(); // ()
     $.push(expr);           // (expr)
     rest($);                // (argList)

@@ -14,7 +14,7 @@ import { subst } from '../subst/subst';
  * 
  * Returns the coefficient of x^n in polynomial p. The x argument can be omitted for polynomials in x.
  */
-export function Eval_coeff(expr: Cons, $: ExtensionEnv): U {
+export function eval_coeff(expr: Cons, $: ExtensionEnv): U {
     const p = $.valueOf(expr.item1);
     let x = $.valueOf(expr.item2);
     let n = $.valueOf(expr.item3);

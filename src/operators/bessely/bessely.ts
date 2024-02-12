@@ -22,7 +22,7 @@ General description
 Bessel function of second kind.
 
 */
-export function Eval_bessely(p1: Cons, $: ExtensionEnv): U {
+export function eval_bessely(p1: Cons, $: ExtensionEnv): U {
     return bessely($.valueOf(cadr(p1)), $.valueOf(caddr(p1)), $);
 }
 

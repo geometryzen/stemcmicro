@@ -26,8 +26,8 @@ B: 1...9
 // define B p4
 // define I p5
 // define X p6
-export function Eval_for(p1: Cons, $: ExtensionEnv): U {
-    // console.lg("Eval_for", render_as_sexpr(p1, $));
+export function eval_for(p1: Cons, $: ExtensionEnv): U {
+    // console.lg("eval_for", render_as_sexpr(p1, $));
     const loopingVariable = caddr(p1);
     if (!is_sym(loopingVariable)) {
         halt('for: 2nd arg should be the variable to loop over');

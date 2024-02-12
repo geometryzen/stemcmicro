@@ -6,7 +6,7 @@ import { car, cdr, is_cons, U } from '../../tree/tree';
 import { gcd } from '../gcd/gcd';
 
 // Find the least common multiple of two expressions.
-export function Eval_lcm(p1: U, $: ExtensionEnv): U {
+export function eval_lcm(p1: U, $: ExtensionEnv): U {
     p1 = cdr(p1);
     let result = $.valueOf(car(p1));
     if (is_cons(p1)) {

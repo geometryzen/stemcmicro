@@ -2,7 +2,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from 
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { ZERO } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
-import { Eval_zero } from "./zero";
+import { eval_zero } from "./zero";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
 class Builder implements OperatorBuilder<U> {
@@ -22,7 +22,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_zero(expr, $);
+        const retval = eval_zero(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

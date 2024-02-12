@@ -116,7 +116,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // Assignments return NIL to prevent them from being printed.
         // That's a bit unfortunate for chained assignments.
         // The kernel of the problem is the printing of expressions by default in the REPL.
-        // Notice here that Eval_assign is called with the original expression.
+        // Notice here that eval_setq is called with the original expression.
         return [TFLAG_DIFF, eval_setq(expr, $)];
     }
 }

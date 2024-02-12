@@ -19,7 +19,7 @@ General description
 Returns the cardinality of the nth index of tensor "m".
  
 */
-export function Eval_dim(dimExpr: Cons, $: ExtensionEnv): U {
+export function eval_dim(dimExpr: Cons, $: ExtensionEnv): U {
     const m = $.valueOf(cadr(dimExpr));
     const n = is_cons(cddr(dimExpr)) ? evaluate_integer(caddr(dimExpr), $) : 1;
     if (!is_tensor(m)) {

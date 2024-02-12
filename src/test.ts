@@ -19,7 +19,7 @@ const TESTEQ = native_sym(Native.testeq);
 // If the number of args is odd then the last arg is the default result.
 // Works like a switch statement. Could also be used for piecewise
 // functions? TODO should probably be called "switch"?
-export function Eval_test(expr: Cons, $: ExtensionEnv): U {
+export function eval_test(expr: Cons, $: ExtensionEnv): U {
     return _test(expr, $);
 }
 
@@ -60,7 +60,7 @@ function _test(p1: U, $: ExtensionEnv): U {
     return zero;
 }
 
-export function Eval_testne(expr: Cons, $: ExtensionEnv): U {
+export function eval_testne(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
     return $.valueOf(items_to_cons(NOT, cons(TESTEQ, argList)));
 }
@@ -70,7 +70,7 @@ export function Eval_testne(expr: Cons, $: ExtensionEnv): U {
 // If we get another NUMBER then we know they are different.
 // If we get something else, then we don't know and we return the
 // unaveluated test, which is the same as saying "maybe".
-export function Eval_testeq(expr: Cons, $: ExtensionEnv): U {
+export function eval_testeq(expr: Cons, $: ExtensionEnv): U {
     // first try without simplifyng both sides
     const orig = expr;
     const lhs = $.valueOf(orig.lhs);
@@ -113,7 +113,7 @@ export function Eval_testeq(expr: Cons, $: ExtensionEnv): U {
 }
 
 // Relational operators expect a numeric result for operand difference.
-export function Eval_testge(expr: Cons, $: ExtensionEnv): U {
+export function eval_testge(expr: Cons, $: ExtensionEnv): U {
     const orig = expr;
     const comparison = cmp_args(expr, $);
 
@@ -129,7 +129,7 @@ export function Eval_testge(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-export function Eval_testgt(expr: Cons, $: ExtensionEnv): U {
+export function eval_testgt(expr: Cons, $: ExtensionEnv): U {
     const orig = expr;
     const comparison = cmp_args(expr, $);
 
@@ -145,7 +145,7 @@ export function Eval_testgt(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-export function Eval_testle(expr: Cons, $: ExtensionEnv): U {
+export function eval_testle(expr: Cons, $: ExtensionEnv): U {
     const orig = expr;
     const comparison = cmp_args(expr, $);
 
@@ -161,7 +161,7 @@ export function Eval_testle(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-export function Eval_testlt(expr: Cons, $: ExtensionEnv): U {
+export function eval_testlt(expr: Cons, $: ExtensionEnv): U {
     const orig = expr;
     const comparison = cmp_args(expr, $);
     // console.lg(`comparison => ${comparison}`);
@@ -182,9 +182,8 @@ export function Eval_testlt(expr: Cons, $: ExtensionEnv): U {
 /**
  * not is used to implement testne by using testeq.
  */
-export function Eval_not(expr: Cons, $: ExtensionEnv): U {
+export function eval_not(expr: Cons, $: ExtensionEnv): U {
     const value = $.valueOf(replace_assign_with_testeq(expr.argList.head));
-    // console.lg("Eval_not", $.toInfixString(value));
     const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(value, $);
     if (checkResult == null) {
         // inconclusive test on predicate
@@ -261,7 +260,7 @@ export function eval_and(p1: Cons, $: ExtensionEnv): U {
 }
 
 // or definition
-export function Eval_or(p1: U, $: ExtensionEnv): U {
+export function eval_or(p1: U, $: ExtensionEnv): U {
     const wholeOrExpression = p1;
     let orPredicates = cdr(wholeOrExpression);
     let somePredicateUnknown = false;
@@ -312,7 +311,7 @@ export function Eval_or(p1: U, $: ExtensionEnv): U {
 // TODO you could be smarter here and
 // simplify both sides only in the case
 // of "relational operator: cannot determine..."
-// a bit like we do in Eval_testeq
+// a bit like we do in eval_testeq
 /**
  * Supports testge, testgt, testle, testlt
  * @param expr An binary expression containing (testxx lhs rhs) whre xx is one of ge,gt,le,lt.

@@ -25,7 +25,7 @@ General description
 Returns expression x with circular and hyperbolic functions converted to exponential forms. Sometimes this will simplify an expression.
 
 */
-export function Eval_circexp(expr: Cons, $: ExtensionEnv): U {
+export function eval_circexp(expr: Cons, $: ExtensionEnv): U {
     const result = circexp($.valueOf(cadr(expr)), $);
     return $.valueOf(result);
 }

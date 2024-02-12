@@ -3,7 +3,7 @@ import { hash_nonop_cons } from "../../hashing/hash_info";
 import { HERMITE } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { Eval_hermite } from "./eval_hermite";
+import { eval_hermite } from "./eval_hermite";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -23,7 +23,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     transform(expr: Cons): [number, U] {
         const $ = this.$;
         if ($.isExpanding()) {
-            const retval = Eval_hermite(expr, $);
+            const retval = eval_hermite(expr, $);
             const changed = !retval.equals(expr);
             return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
         }

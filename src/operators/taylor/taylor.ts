@@ -12,7 +12,7 @@ import { subst } from '../subst/subst';
 /**
  * (taylor F X N A)
  */
-export function Eval_taylor(expr: Cons, $: ExtensionEnv): U {
+export function eval_taylor(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
     try {
         const F = $.valueOf(expr.item(1));

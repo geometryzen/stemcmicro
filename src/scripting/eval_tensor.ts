@@ -58,7 +58,7 @@ Tensors are implemented...
 */
 // Called from the "eval" module to evaluate tensor elements.
 
-export function Eval_tensor(A: Tensor, $: ExtensionEnv) {
+export function eval_tensor(A: Tensor, $: ExtensionEnv) {
 
     const B = A.map((a) => $.valueOf(a));
 

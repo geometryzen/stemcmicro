@@ -22,7 +22,7 @@ type LHS = Blade;
 type RHS = Blade;
 type EXP = Cons2<Sym, LHS, RHS>;
 
-function Eval_cross_blade_blade(expr: EXP, $: ExtensionEnv): U {
+function eval_cross_blade_blade(expr: EXP, $: ExtensionEnv): U {
     const bladeL = expr.lhs;
     const bladeR = expr.rhs;
     try {
@@ -73,7 +73,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         return this.#hash;
     }
     valueOf(expr: EXP): U {
-        return Eval_cross_blade_blade(expr, this.$);
+        return eval_cross_blade_blade(expr, this.$);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {

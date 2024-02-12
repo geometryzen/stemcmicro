@@ -9,7 +9,7 @@ import { car, cdr, Cons, U } from '../../tree/tree';
 import { is_rat } from '../rat/is_rat';
 import { rationalize_factoring } from '../rationalize/rationalize';
 
-export function Eval_numerator(p1: Cons, $: ExtensionEnv): U {
+export function eval_numerator(p1: Cons, $: ExtensionEnv): U {
     return numerator($.valueOf(cadr(p1)), $);
 }
 

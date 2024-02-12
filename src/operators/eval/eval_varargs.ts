@@ -7,7 +7,7 @@ import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { subst } from "../subst/subst";
 
 /*
-function Eval_Eval(p1: U, $: ExtensionEnv): U {
+function eval_eval(p1: U, $: ExtensionEnv): U {
     let tmp = $.valueOf(cadr(p1));
     p1 = cddr(p1);
     while (is_cons(p1)) {

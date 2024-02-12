@@ -4,16 +4,16 @@ import { make_eval } from '../adapters/make_eval';
 import { eval_approxratio } from '../approxratio';
 import { MulComparator } from '../calculators/compare/compare_factor_factor';
 import { AddComparator } from '../calculators/compare/compare_term_term';
-import { Eval_index } from '../calculators/get_component';
+import { eval_index } from '../calculators/get_component';
 import { eval_choose } from '../choose';
-import { Eval_clear, Eval_clearall } from '../clear';
-import { stack_abs, stack_adj, stack_and, stack_arccosh, stack_arg, stack_binding, stack_circexp, stack_clock, stack_cos, stack_derivative, stack_det, stack_exp, stack_expcos, stack_expcosh, stack_expsin, stack_expsinh, stack_exptan, stack_exptanh, stack_floor, stack_imag, stack_index, stack_inv, stack_log, stack_minor, stack_minormatrix, stack_mod, stack_noexpand, stack_nroots, stack_outer, stack_polar, stack_rationalize, stack_real, stack_rect, stack_roots, stack_simplify, stack_sinh, stack_sqrt } from '../eigenmath/eigenmath';
+import { eval_clear, eval_clearall } from '../clear';
+import { stack_abs, stack_adj, stack_and, stack_arccosh, stack_arg, stack_binding, stack_check, stack_circexp, stack_clock, stack_cos, stack_denominator, stack_derivative, stack_det, stack_exp, stack_expcos, stack_expcosh, stack_expsin, stack_expsinh, stack_exptan, stack_exptanh, stack_floor, stack_imag, stack_index, stack_inv, stack_log, stack_minor, stack_minormatrix, stack_mod, stack_noexpand, stack_not, stack_nroots, stack_outer, stack_polar, stack_power, stack_rank, stack_rationalize, stack_real, stack_rect, stack_roots, stack_simplify, stack_sinh, stack_sqrt, stack_transpose } from '../eigenmath/eigenmath';
 import { stack_infixform } from '../eigenmath/stack_infixform';
 import { eval_filter } from '../filter';
 import { eval_floor } from '../floor';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
 import { eval_leading } from '../leading';
-import { Eval_lookup } from '../lookup';
+import { eval_lookup } from '../lookup';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { eval_nroots } from '../nroots';
@@ -55,19 +55,19 @@ import { add_2_tensor_tensor } from '../operators/add/add_2_tensor_tensor';
 import { add_2_uom_flt } from '../operators/add/add_2_uom_flt';
 import { add_2_uom_rat } from '../operators/add/add_2_uom_rat';
 import { add_2_xxx_mul_2_rm1_xxx } from '../operators/add/add_2_xxx_mul_2_rm1_xxx';
-import { eval_add } from '../operators/add/Eval_add';
+import { eval_add } from '../operators/add/eval_add';
 import { eval_adj } from '../operators/adj/adj';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
 import { arccos_varargs } from '../operators/arccos/arccos_varargs';
 import { eval_arccosh } from '../operators/arccosh/arccosh';
 import { arcsin_varargs } from '../operators/arcsin/arcsin_varargs';
-import { Eval_arcsinh } from '../operators/arcsinh/arcsinh';
-import { Eval_arctan } from '../operators/arctan/arctan';
-import { Eval_arctanh } from '../operators/arctanh/arctanh';
+import { eval_arcsinh } from '../operators/arcsinh/arcsinh';
+import { eval_arctan } from '../operators/arctan/arctan';
+import { eval_arctanh } from '../operators/arctanh/arctanh';
 import { eval_arg } from '../operators/arg/define_arg';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
-import { atom_builder } from '../operators/atom/Eval_atom';
+import { atom_builder } from '../operators/atom/eval_atom';
 import { besselj_varargs } from '../operators/besselj/besselj_varargs';
 import { bessely_varargs } from '../operators/bessely/bessely_varargs';
 import { binomial_varargs } from '../operators/binomial/binomial_varargs';
@@ -76,12 +76,12 @@ import { boo_extension } from '../operators/boo/boo_extension';
 import { ceiling_cons } from '../operators/ceiling/ceiling_cons';
 import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
 import { ceiling_rat } from '../operators/ceiling/ceiling_rat';
-import { Eval_check } from '../operators/check/Eval_check';
+import { eval_check } from '../operators/check/eval_check';
 import { circexp_any } from '../operators/circexp/circexp_any';
 import { clock_any } from '../operators/clock/clock_any';
 import { clock_imu } from '../operators/clock/clock_imu';
 import { coeff_varargs } from '../operators/coeff/coeff_varargs';
-import { Eval_coefficients } from '../operators/coeff/Eval_coefficients';
+import { eval_coefficients } from '../operators/coeff/eval_coefficients';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
 import { complex_2_any_any } from '../operators/complex/complex_2_any_any';
 import { condense_varargs } from '../operators/condense/condense_varargs';
@@ -108,23 +108,23 @@ import { def_sym_builder } from '../operators/def/def_sym';
 import { def_sym_doc_init_builder } from '../operators/def/def_sym_doc_init';
 import { def_sym_init_builder } from '../operators/def/def_sym_init';
 import { defint_builder } from '../operators/defint/defint';
-import { defn_builder } from '../operators/defn/Eval_defn';
+import { defn_builder } from '../operators/defn/eval_defn';
 import { eval_degree } from '../operators/degree/degree';
-import { denominator_builder } from '../operators/denominator/denominator_builder';
-import { deref_builder } from '../operators/deref/Eval_deref';
+import { eval_denominator } from '../operators/denominator/eval_denominator';
+import { deref_builder } from '../operators/deref/eval_deref';
 import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
 import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_any';
 import { d_to_derivative_builder } from '../operators/derivative/d_to_derivative';
-import { eval_derivative } from '../operators/derivative/Eval_derivative';
-import { Eval_det } from '../operators/det/det_any';
+import { eval_derivative } from '../operators/derivative/eval_derivative';
+import { eval_det } from '../operators/det/eval_det';
 import { map_extension } from '../operators/dictionary/dictionary_extension';
 import { dim_varargs } from '../operators/dim/dim_varargs';
 import { dirac_varargs } from '../operators/dirac/dirac_varargs';
 import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from '../operators/distrib/make_distrib_expand_law';
-import { Eval_divisors } from '../operators/divisors/divisors_varargs';
+import { eval_divisors } from '../operators/divisors/divisors_varargs';
 import { do_varargs } from '../operators/do/do_varargs';
-import { dotdot_builder } from '../operators/dotdot/Eval_dotdot';
-import { Eval_draw } from '../operators/draw/eval_draw';
+import { dotdot_builder } from '../operators/dotdot/eval_dotdot';
+import { eval_draw } from '../operators/draw/eval_draw';
 import { eigenval_varargs } from '../operators/eigen/eigenval_varargs';
 import { eigenvec_varargs } from '../operators/eigen/eigenvec_varargs';
 import { eigen_varargs } from '../operators/eigen/eigen_varargs';
@@ -149,7 +149,7 @@ import { flt_extension } from '../operators/flt/flt_extension';
 import { for_varargs } from '../operators/for/for_varargs';
 import { gamma_varargs } from '../operators/gamma/gamma_varargs';
 import { gcd_varargs } from '../operators/gcd/gcd_varargs';
-import { stack_hadamard } from '../operators/hadamard/eval_hadamard';
+import { stack_hadamard } from '../operators/hadamard/stack_hadamard';
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
 import { hermite_varargs } from '../operators/hermite/hermite_varargs';
 import { eval_hilbert, hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
@@ -176,7 +176,7 @@ import { imag_rat } from '../operators/imag/imag_rat';
 import { imag_sin } from '../operators/imag/imag_sin';
 import { imag_sym } from '../operators/imag/imag_sym';
 import { imu_extension } from '../operators/imu/Imu_extension';
-import { Eval_inner } from '../operators/inner/Eval_inner';
+import { eval_inner } from '../operators/inner/eval_inner';
 import { inner_product_builder } from '../operators/inner/inner';
 import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
 import { inner_2_any_rat } from '../operators/inner/inner_2_any_rat';
@@ -232,7 +232,7 @@ import { iszero_sym_builder } from '../operators/iszero/iszero_sym';
 import { iszero_tensor_builder } from '../operators/iszero/iszero_tensor';
 import { jsobject_extension } from '../operators/jsobject/JsObjectExtension';
 import { keyword_extension } from '../operators/keyword/KeywordExtension';
-import { Eval_kronecker } from '../operators/kronecker/Eval_kronecker';
+import { eval_kronecker } from '../operators/kronecker/eval_kronecker';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
 import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
@@ -249,7 +249,7 @@ import { log_rat } from '../operators/log/log_rat';
 import { log_sym } from '../operators/log/log_sym';
 import { log_varargs } from '../operators/log/log_varargs';
 import { stack_mag } from '../operators/mag/stack_mag';
-import { Eval_multiply } from '../operators/mul/Eval_multiply';
+import { eval_multiply } from '../operators/mul/eval_multiply';
 import { mul_2_any_flt } from '../operators/mul/mul_2_any_flt';
 import { mul_2_any_rat } from '../operators/mul/mul_2_any_rat';
 import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
@@ -294,7 +294,6 @@ import { mul_2_uom_rat } from '../operators/mul/mul_2_uom_rat';
 import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
 import { mul_2_X_pow_2_X_rat } from '../operators/mul/mul_2_X_pow_2_X_rat';
 import { nil_extension } from '../operators/nil/nil_extension';
-import { not_fn } from '../operators/not/not_fn';
 import { number_fn } from '../operators/number/number_fn';
 import { numerator_fn } from '../operators/numerator/numerator_fn';
 import { or_varargs } from '../operators/or/or_varargs';
@@ -319,15 +318,15 @@ import { pred_rat } from '../operators/pred/pred_rat';
 import { make_printmode_function } from '../operators/printing/make_printmode_keyword';
 import { make_printmode_operator } from '../operators/printing/make_printmode_operator';
 import { product_varargs } from '../operators/product/product_varargs';
-import { Eval_quote } from '../operators/quote/quote_varargs';
-import { Eval_rank } from '../operators/rank/rank';
+import { eval_quote } from '../operators/quote/quote_varargs';
+import { eval_rank } from '../operators/rank/rank';
 import { rat_extension } from '../operators/rat/rat_extension';
 import { eval_rationalize } from '../operators/rationalize/rationalize';
 import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
 import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_scalar_any';
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
-import { reaction_builder } from '../operators/reaction/Eval_reaction';
+import { reaction_builder } from '../operators/reaction/eval_reaction';
 import { real_add } from '../operators/real/real_add';
 import { real_any } from '../operators/real/real_any';
 import { real_arctan_rat } from '../operators/real/real_arctan_rat';
@@ -359,7 +358,7 @@ import { rect_pow_rat_rat } from '../operators/rect/rect_pow_rat_rat';
 import { rect_rat } from '../operators/rect/rect_rat';
 import { rect_sin } from '../operators/rect/rect_sin';
 import { rect_sym } from '../operators/rect/rect_sym';
-import { reset_builder } from '../operators/reset/Eval_reset';
+import { reset_builder } from '../operators/reset/eval_reset';
 import { stack_rotate } from '../operators/rotate/stack_rotate';
 import { eval_round } from '../operators/round/round';
 import { script_last_0 } from '../operators/script_last/script_last';
@@ -414,7 +413,7 @@ import { testlt_flt_rat } from '../operators/testlt/testlt_flt_rat';
 import { testlt_mul_2_any_any_rat } from '../operators/testlt/testlt_mul_2_any_any_rat';
 import { testlt_rat_rat } from '../operators/testlt/testlt_rat_rat';
 import { testlt_sym_rat } from '../operators/testlt/testlt_sym_rat';
-import { Eval_transpose } from '../operators/transpose/transpose';
+import { eval_transpose } from '../operators/transpose/transpose';
 import { add_2_mul_2_cos_sin_mul_2_cos_sin_factoring } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_cos_sin_factoring';
 import { add_2_mul_2_cos_sin_mul_2_cos_sin_ordering } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_cos_sin_ordering';
 import { add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_factoring } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_factoring';
@@ -426,7 +425,7 @@ import { add_2_mul_2_sin_cos_mul_2_rat_mul_2_cos_sin } from '../operators/trig/a
 import { add_2_pow_2_cos_rat_pow_2_sin_rat } from '../operators/trig/add_2_pow_2_cos_rat_pow_2_sin_rat';
 import { mul_2_sin_cos } from '../operators/trig/mul_2_sin_cos';
 import { eval_typeof } from '../operators/typeof/eval_typeof';
-import { Eval_unit } from '../operators/unit/transform-unit';
+import { eval_unit } from '../operators/unit/transform-unit';
 import { unit_any } from '../operators/unit/unit_any';
 import { stack_uom } from '../operators/uom/stack_uom';
 import { uom_1_str } from '../operators/uom/uom_1_str';
@@ -438,12 +437,12 @@ import { render_using_print_mode } from '../print/render_using_print_mode';
 import { store_text_in_binding } from '../print/store_text_in_binding';
 import { eval_quotient } from '../quotient';
 import { eval_roots } from '../roots';
-import { ADJ, AND, APPROXRATIO, CHECK, CHOOSE, CLEAR, CLEARALL, DEGREE, DOT, FACTOR, ISREAL, QUOTE, RANK, UNIT, UOM } from '../runtime/constants';
+import { ADJ, AND, APPROXRATIO, CHECK, CHOOSE, CLEAR, CLEARALL, DEGREE, DENOMINATOR, DOT, FACTOR, ISREAL, QUOTE, RANK, TRANSPOSE, UNIT, UOM } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
-import { Eval_power } from '../scripting/eval_power';
-import { eval_and, Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt, Eval_testne } from '../test';
+import { eval_power } from '../scripting/eval_power';
+import { eval_and, eval_not, eval_test, eval_testeq, eval_testge, eval_testgt, eval_testle, eval_testlt, eval_testne } from '../test';
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
 
@@ -541,7 +540,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     // $.defineOperator(pow_2_any_rat);
     // $.defineOperator(pow_2_any_any);
     // $.defineOperator(pow);
-    $.defineConsTransformer(native_sym(Native.pow), Eval_power);
+    $.defineConsTransformer(native_sym(Native.pow), eval_power);
+    $.defineConsTransformer(native_sym(Native.pow), make_eval(stack_power));
 
     $.defineOperator(mul_2_sym_blade);
     // $.defineOperator(mul_cons_sym);
@@ -611,16 +611,18 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(mul_2_blade_rat);
     $.defineOperator(mul_2_blade_blade);
     $.defineOperator(mul_2_sin_cos);
-    $.defineConsTransformer(native_sym(Native.multiply), Eval_multiply);
+    $.defineConsTransformer(native_sym(Native.multiply), eval_multiply);
 
     $.defineConsTransformer(APPROXRATIO, eval_approxratio);
     $.defineOperator(binomial_varargs);
-    $.defineConsTransformer(CHECK, Eval_check);
+
+    $.defineConsTransformer(CHECK, eval_check);
+    $.defineConsTransformer(CHECK, make_eval(stack_check));
 
     $.defineConsTransformer(CHOOSE, eval_choose);
 
-    $.defineConsTransformer(CLEAR, Eval_clear);
-    $.defineKeyword(CLEARALL, Eval_clearall);
+    $.defineConsTransformer(CLEAR, eval_clear);
+    $.defineKeyword(CLEARALL, eval_clearall);
 
     $.defineOperator(conj_add);
     $.defineOperator(conj_inner);
@@ -674,7 +676,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(inner_2_any_imu);
     $.defineOperator(inner_product_builder);
 
-    $.defineConsTransformer(create_sym("kronecker"), Eval_kronecker);
+    $.defineConsTransformer(create_sym("kronecker"), eval_kronecker);
 
     $.defineOperator(laguerre_varargs);
 
@@ -703,7 +705,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineConsTransformer(create_sym("mag"), make_eval(stack_mag));
 
-    $.defineConsTransformer(LOOKUP, Eval_lookup);
+    $.defineConsTransformer(LOOKUP, eval_lookup);
 
     $.defineConsTransformer(create_sym("mod"), make_eval(stack_mod));
 
@@ -723,7 +725,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineConsTransformer(PRIME, eval_prime);
 
-    $.defineConsTransformer(RANK, Eval_rank);
+    $.defineConsTransformer(RANK, eval_rank);
+    $.defineConsTransformer(RANK, make_eval(stack_rank));
 
     $.defineOperator(rco_2_blade_blade);
     $.defineOperator(make_lhs_distrib_expand_law(MATH_RCO, MATH_ADD));
@@ -768,11 +771,11 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineConsTransformer(native_sym(Native.arccosh), make_eval(stack_arccosh));
 
     $.defineOperator(arcsin_varargs);
-    $.defineConsTransformer(native_sym(Native.arcsinh), Eval_arcsinh);
+    $.defineConsTransformer(native_sym(Native.arcsinh), eval_arcsinh);
 
-    $.defineConsTransformer(native_sym(Native.arctan), Eval_arctan);
+    $.defineConsTransformer(native_sym(Native.arctan), eval_arctan);
 
-    $.defineConsTransformer(native_sym(Native.arctanh), Eval_arctanh);
+    $.defineConsTransformer(native_sym(Native.arctanh), eval_arctanh);
 
     // $.defineOperator(arg_abs);
     // $.defineOperator(arg_add);
@@ -809,7 +812,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineConsTransformer(create_sym("clock"), make_eval(stack_clock));
 
     $.defineOperator(coeff_varargs);
-    $.defineConsTransformer(create_sym("coefficients"), Eval_coefficients);
+    $.defineConsTransformer(create_sym("coefficients"), eval_coefficients);
     $.defineOperator(cofactor_varargs);
     $.defineOperator(complex_2_any_any);
     $.defineOperator(condense_varargs);
@@ -832,7 +835,9 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(def_sym_init_builder);
     $.defineOperator(def_sym_doc_init_builder);
     $.defineOperator(defint_builder);
-    $.defineOperator(denominator_builder);
+
+    $.defineConsTransformer(DENOMINATOR, eval_denominator);
+    $.defineConsTransformer(DENOMINATOR, make_eval(stack_denominator));
 
     $.defineOperator(defn_builder);
 
@@ -851,20 +856,20 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineConsTransformer(native_sym(Native.derivative), eval_derivative);
     $.defineConsTransformer(native_sym(Native.derivative), make_eval(stack_derivative));
 
-    $.defineConsTransformer(create_sym("det"), Eval_det);
+    $.defineConsTransformer(create_sym("det"), eval_det);
     $.defineConsTransformer(create_sym("det"), make_eval(stack_det));
 
     $.defineOperator(dotdot_builder);
 
     $.defineOperator(dim_varargs);
     $.defineOperator(dirac_varargs);
-    $.defineConsTransformer(create_sym("divisors"), Eval_divisors);
+    $.defineConsTransformer(create_sym("divisors"), eval_divisors);
 
     $.defineOperator(do_varargs);
 
-    $.defineConsTransformer(DOT, Eval_inner);
+    $.defineConsTransformer(DOT, eval_inner);
 
-    $.defineConsTransformer(create_sym("draw"), Eval_draw);
+    $.defineConsTransformer(create_sym("draw"), eval_draw);
 
     $.defineOperator(eigen_varargs);
     $.defineOperator(eigenval_varargs);
@@ -931,7 +936,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(imag_any);
     $.defineConsTransformer(create_sym("imag"), make_eval(stack_imag));
 
-    $.defineConsTransformer(create_sym("component"), Eval_index);
+    $.defineConsTransformer(create_sym("component"), eval_index);
     $.defineConsTransformer(create_sym("component"), make_eval(stack_index));
 
     $.defineOperator(infinitesimal_1_str);
@@ -989,7 +994,9 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineConsTransformer(create_sym("minor"), make_eval(stack_minor));
     $.defineConsTransformer(create_sym("minormatrix"), make_eval(stack_minormatrix));
 
-    $.defineOperator(not_fn);
+    $.defineConsTransformer(create_sym("not"), eval_not);
+    $.defineConsTransformer(create_sym("not"), make_eval(stack_not));
+
     $.defineOperator(number_fn);
     $.defineOperator(numerator_fn);
 
@@ -1021,7 +1028,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineOperator(product_varargs);
 
-    $.defineConsTransformer(QUOTE, Eval_quote);
+    $.defineConsTransformer(QUOTE, eval_quote);
     $.defineConsTransformer(create_sym("quotient"), eval_quotient);
 
     $.defineConsTransformer(create_sym("rationalize"), eval_rationalize);
@@ -1132,28 +1139,29 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineConsTransformer(create_sym('typeof'), eval_typeof);
 
-    $.defineConsTransformer(TEST, Eval_test);
+    $.defineConsTransformer(TEST, eval_test);
 
     $.defineOperator(testeq_sym_rat);
-    $.defineConsTransformer(native_sym(Native.testeq), Eval_testeq);
-    $.defineConsTransformer(native_sym(Native.testle), Eval_testle);
+    $.defineConsTransformer(native_sym(Native.testeq), eval_testeq);
+    $.defineConsTransformer(native_sym(Native.testle), eval_testle);
 
     $.defineOperator(testlt_flt_rat);
     $.defineOperator(testlt_rat_rat);
     $.defineOperator(testlt_sym_rat);
     $.defineOperator(testlt_mul_2_any_any_rat);
-    $.defineConsTransformer(native_sym(Native.testlt), Eval_testlt);
+    $.defineConsTransformer(native_sym(Native.testlt), eval_testlt);
 
-    $.defineConsTransformer(native_sym(Native.testge), Eval_testge);
+    $.defineConsTransformer(native_sym(Native.testge), eval_testge);
 
     $.defineOperator(testgt_rat_rat);
     $.defineOperator(testgt_sym_rat);
     $.defineOperator(testgt_mul_2_any_any_rat);
-    $.defineConsTransformer(native_sym(Native.testgt), Eval_testgt);
+    $.defineConsTransformer(native_sym(Native.testgt), eval_testgt);
 
-    $.defineConsTransformer(native_sym(Native.testne), Eval_testne);
+    $.defineConsTransformer(native_sym(Native.testne), eval_testne);
 
-    $.defineConsTransformer(create_sym("transpose"), Eval_transpose);
+    $.defineConsTransformer(create_sym("transpose"), eval_transpose);
+    $.defineConsTransformer(TRANSPOSE, make_eval(stack_transpose));
 
     $.defineOperator(sym_math_add);
     $.defineOperator(sym_math_mul);
@@ -1171,7 +1179,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(map_extension);
 
     $.defineOperator(unit_any);
-    $.defineConsTransformer(UNIT, Eval_unit);
+    $.defineConsTransformer(UNIT, eval_unit);
 
     $.defineOperator(uom_1_str);
     $.defineConsTransformer(UOM, make_eval(stack_uom));

@@ -8,7 +8,7 @@ import { evaluate_integer } from '../../scripting/evaluate_integer';
 /**
  * sum(body,index,lower,upper)
  */
-export function Eval_sum(expr: Cons, $: ExtensionEnv): U {
+export function eval_sum(expr: Cons, $: ExtensionEnv): U {
     const body = cadnr(expr, 1);
     const index = cadnr(expr, 2);
     const lower = cadnr(expr, 3);

@@ -43,7 +43,7 @@ function factor_args(expr: Cons, $: ExtensionEnv): [P: U, X: U, Y: U] {
  * Factor a polynomial or integer.
  * (factor P X) or (factor P X Y)
  */
-export function Eval_factor(expr: Cons, $: ExtensionEnv): U {
+export function eval_factor(expr: Cons, $: ExtensionEnv): U {
     const [P, X, Y] = factor_args(expr, $);
     const factors = factor(P, X, $);
     // console.lg("factors", $.toInfixString(factors));
@@ -74,7 +74,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_factor(expr, $);
+        const retval = eval_factor(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

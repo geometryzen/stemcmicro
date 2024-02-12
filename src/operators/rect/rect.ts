@@ -17,8 +17,8 @@ import { is_imu } from '../imu/is_imu';
  * Convert complex z to rectanglar from.
  * @param rectExpr (rect z)
  */
-export function Eval_rect(rectExpr: Cons, $: ExtensionEnv): U {
-    // console.lg("Eval_rect", $.toInfixString(rectExpr));
+export function eval_rect(rectExpr: Cons, $: ExtensionEnv): U {
+    // console.lg("eval_rect", $.toInfixString(rectExpr));
     const arg = cadnr(rectExpr, 1);
     $.pushDirective(Directive.complexAsRectangular, 1);
     try {

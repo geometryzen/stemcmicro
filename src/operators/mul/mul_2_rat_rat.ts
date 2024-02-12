@@ -13,7 +13,7 @@ type LHS = Rat;
 type RHS = Rat;
 type EXP = Cons2<Sym, LHS, RHS>;
 
-function Eval_mul_2_rat_rat(expr: EXP): Rat {
+function eval_mul_2_rat_rat(expr: EXP): Rat {
     const lhs: Rat = expr.lhs;
     const rhs: Rat = expr.rhs;
     try {
@@ -45,7 +45,7 @@ class Op extends Function2<Rat, Rat> implements Operator<EXP> {
         return this.#hash;
     }
     valueOf(expr: EXP): U {
-        return Eval_mul_2_rat_rat(expr);
+        return eval_mul_2_rat_rat(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: Rat, rhs: Rat, orig: EXP): [TFLAGS, U] {

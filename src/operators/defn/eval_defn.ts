@@ -81,7 +81,7 @@ function split_defn_args(expr: Cons): [name: Sym, doc: Str | U, attrMap: Map | U
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Eval_defn(expr: Cons, $: ExtensionEnv): U {
+function eval_defn(expr: Cons, $: ExtensionEnv): U {
     try {
         const [name, doc, attrMap, params, prepostMap, body] = split_defn_args(expr);
         try {
@@ -130,7 +130,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_defn(expr, $);
+        const retval = eval_defn(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

@@ -11,7 +11,7 @@ import { bigInt } from '../../tree/rat/big-integer';
 
 const MOD = native_sym(Native.mod);
 
-export function Eval_mod(p1: Cons, $: ExtensionEnv): U {
+export function eval_mod(p1: Cons, $: ExtensionEnv): U {
     const arg2 = $.valueOf(caddr(p1));
     const arg1 = $.valueOf(cadr(p1));
     return mod(arg1, arg2, $);

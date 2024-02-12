@@ -21,7 +21,7 @@ import { car, cdr, is_cons, nil, U } from './tree/tree';
 // unclear to me at the moment
 // why this is exposed as something that can
 // be evalled. Never called.
-export function Eval_decomp(p1: U, $: ExtensionEnv): U {
+export function eval_decomp(p1: U, $: ExtensionEnv): U {
     const arg = $.valueOf(cadr(p1));
     p1 = $.valueOf(caddr(p1));
 

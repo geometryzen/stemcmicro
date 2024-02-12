@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-export function Eval_dotdot(expr: Cons, $: ExtensionEnv): U {
+export function eval_dotdot(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
     try {
         const arg0 = argList.item(0);
@@ -101,7 +101,7 @@ class DotDotOperator extends FunctionVarArgs implements Operator<Cons> {
         throw new ProgrammingError();
     }
     override valueOf(expr: Cons): U {
-        return Eval_dotdot(expr, this.$);
+        return eval_dotdot(expr, this.$);
     }
     override transform(expr: Cons): [number, U] {
         const $ = this.$;
@@ -111,7 +111,7 @@ class DotDotOperator extends FunctionVarArgs implements Operator<Cons> {
             // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
             return retval;
         };
-        const retval = Eval_dotdot(expr, $);
+        const retval = eval_dotdot(expr, $);
         const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
         return [flag, hook('A', retval)];
     }

@@ -5,12 +5,12 @@ import { is_native, Native, native_sym } from 'math-expression-native';
 import { cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprEngineListener } from '../..';
 import { AtomListener, UndeclaredVars } from '../api/api';
-import { Eval_function } from "../Eval_function";
+import { eval_function } from "../eval_function";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_for_atom, hash_info, hash_nonop_cons } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { algebra } from "../operators/algebra/algebra";
-import { Eval_lambda_in_fn_syntax } from '../operators/fn/Eval_fn';
+import { eval_lambda_in_fn_syntax } from '../operators/fn/eval_fn';
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { SyntaxKind } from "../parser/parser";
 import { ProgrammingError } from '../programming/ProgrammingError';
@@ -1026,7 +1026,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     const head_opr = opr.opr;
                     try {
                         if (head_opr.equals(FN)) {
-                            const newExpr = Eval_lambda_in_fn_syntax(expr, $);
+                            const newExpr = eval_lambda_in_fn_syntax(expr, $);
                             return [TFLAG_DIFF, newExpr];
                         }
                         else {
@@ -1098,11 +1098,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                         if (is_cons(binding)) {
                                             // TODO: Install as a normal Operator...
                                             if (binding.opr.equals(FN)) {
-                                                const newExpr = Eval_lambda_in_fn_syntax(expr, $);
+                                                const newExpr = eval_lambda_in_fn_syntax(expr, $);
                                                 return [TFLAG_DIFF, newExpr];
                                             }
                                             else if (binding.opr.equals(FUNCTION)) {
-                                                const newExpr = Eval_function(expr, $);
+                                                const newExpr = eval_function(expr, $);
                                                 return [TFLAG_DIFF, newExpr];
                                             }
                                         }
@@ -1196,12 +1196,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                         // TOOD: Install as a normal Operator.
                                         if (binding.opr.equals(FN)) {
                                             throw new Error("TODO B");
-                                            // const newExpr = Eval_function(expr, $);
                                             // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                             // return newExpr;
                                         }
                                         else if (binding.opr.equals(FUNCTION)) {
-                                            const newExpr = Eval_function(expr, $);
+                                            const newExpr = eval_function(expr, $);
                                             // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                             return newExpr;
                                         }

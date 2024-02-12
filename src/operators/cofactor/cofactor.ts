@@ -24,7 +24,7 @@ Let c be the cofactor matrix of matrix m, i.e. tranpose(c) = adj(m).
 This function returns c[i,j].
 
 */
-export function Eval_cofactor(expr: Cons, $: ExtensionEnv): U {
+export function eval_cofactor(expr: Cons, $: ExtensionEnv): U {
     const m = $.valueOf(cadr(expr));
     if (!is_square_matrix(m)) {
         halt('cofactor: 1st arg: square matrix expected');

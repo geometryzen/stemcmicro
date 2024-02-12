@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<U> {
 type ARG = U;
 type EXP = Cons1<Sym, ARG>;
 
-export function Eval_reaction(expr: EXP, $: ExtensionEnv): U {
+export function eval_reaction(expr: EXP, $: ExtensionEnv): U {
     const argList = expr.argList;
     const expression = argList.item(0);
     try {
@@ -44,7 +44,7 @@ class Op extends Function1<ARG> {
         return this.#hash;
     }
     valueOf(expr: EXP): U {
-        return Eval_reaction(expr, this.$);
+        return eval_reaction(expr, this.$);
     }
     transform(expr: EXP): [TFLAGS, U] {
         return wrap_as_transform(this.valueOf(expr), expr);

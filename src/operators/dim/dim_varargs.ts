@@ -3,7 +3,7 @@ import { hash_nonop_cons } from "../../hashing/hash_info";
 import { DIM } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { Eval_dim } from "./dim";
+import { eval_dim } from "./dim";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -22,7 +22,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(dimExpr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_dim(dimExpr, $);
+        const retval = eval_dim(dimExpr, $);
         const changed = !retval.equals(dimExpr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

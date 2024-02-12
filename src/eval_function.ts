@@ -2,7 +2,7 @@ import { is_num, is_str, is_sym, is_tensor, Tensor } from 'math-expression-atoms
 import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { StackU } from './env/StackU';
-import { eval_derivative } from './operators/derivative/Eval_derivative';
+import { eval_derivative } from './operators/derivative/eval_derivative';
 import { EVAL, FUNCTION, SYMBOL_D } from './runtime/constants';
 import { halt } from './runtime/defs';
 import { cadr, cddr } from './tree/helpers';
@@ -36,7 +36,7 @@ General description
 Returns the partial derivative of f with respect to x. x can be a vector e.g. [x,y].
 
 */
-export function Eval_function(expr: Cons, $: ExtensionEnv): U {
+export function eval_function(expr: Cons, $: ExtensionEnv): U {
 
     // Use "derivative" instead of "d" if there is no user function "d"
     // TODO: This needs to be checked because of the way getSymbolValue behaves.

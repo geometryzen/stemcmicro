@@ -34,7 +34,7 @@ In the "for" loop i = n-1 so the recurrence relation becomes
 
   (i+1)*L(x,n,k) = (2*i+1-x+k)*L(x,n-1,k) - (i+k)*L(x,n-2,k)
 */
-export function Eval_laguerre(p1: U, $: ExtensionEnv): U {
+export function eval_laguerre(p1: U, $: ExtensionEnv): U {
     const X = $.valueOf(cadr(p1));
     const N = $.valueOf(caddr(p1));
     const p2 = $.valueOf(cadddr(p1));

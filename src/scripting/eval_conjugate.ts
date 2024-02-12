@@ -20,7 +20,7 @@ General description
 Returns the complex conjugate of z.
 
 */
-export function Eval_conjugate(expr: Cons, $: ExtensionEnv): void {
+export function eval_conjugate(expr: Cons, $: ExtensionEnv): void {
     const z = $.valueOf(cadr(expr));
     if (!z.contains(imu)) {
         // example: (-1)^(1/3)

@@ -5,7 +5,7 @@ import { subst } from "./subst";
 /**
  * subst(newExpr, oldExpr, expr)
  */
-export function Eval_subst(x: Cons, $: ExtensionEnv): U {
+export function eval_subst(x: Cons, $: ExtensionEnv): U {
     const args = x.argList;
     const newExpr = $.valueOf(args.item(0));
     const oldExpr = $.valueOf(args.item(1));

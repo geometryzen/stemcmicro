@@ -27,7 +27,7 @@ Returns the hyperbolic cosine of x
 ```
 
 */
-export function Eval_cosh(expr: Cons, $: ExtensionEnv): U {
+export function eval_cosh(expr: Cons, $: ExtensionEnv): U {
     return ycosh($.valueOf(cadr(expr)), $);
 }
 

@@ -26,7 +26,7 @@ const RE = native_sym(Native.re);
  * @param $ 
  * @returns 
  */
-export function Eval_real(expr: Cons, $: ExtensionEnv): U {
+export function eval_real(expr: Cons, $: ExtensionEnv): U {
     // Do we evaluate the arguments or real_lambda?
     return real_lambda(expr.argList, $);
 }

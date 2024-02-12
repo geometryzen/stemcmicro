@@ -12,7 +12,7 @@ import { two } from '../../tree/rat/Rat';
 /**
  * (transpose a i j)
  */
-export function Eval_transpose(expr: Cons, $: ExtensionEnv): U {
+export function eval_transpose(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
     try {
         const A = $.valueOf(argList.head);

@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<U> {
 /**
  * Evaluates (number ...) expressions.
  */
-function Eval_number(expr: Cons, $: ExtensionEnv): Rat {
+function eval_number(expr: Cons, $: ExtensionEnv): Rat {
     const p1 = $.valueOf(cadr(expr));
     return is_rat(p1) || is_flt(p1) ? one : zero;
 }
@@ -33,7 +33,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_number(expr, $);
+        const retval = eval_number(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

@@ -17,7 +17,7 @@ type LHS = Rat;
 type RHS = Blade;
 type EXP = Cons2<Sym, LHS, RHS>
 
-function Eval_mul_2_rat_blade(expr: EXP): U {
+function eval_mul_2_rat_blade(expr: EXP): U {
     const lhs = expr.lhs;
     const rhs = expr.rhs;
     try {
@@ -56,7 +56,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         return this.#hash;
     }
     valueOf(expr: EXP): U {
-        return Eval_mul_2_rat_blade(expr);
+        return eval_mul_2_rat_blade(expr);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const retval = mul_2_rat_blade(lhs, rhs, expr);

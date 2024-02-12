@@ -16,7 +16,7 @@ type LHS = U;
 type RHS = U;
 type EXP = Cons2<Sym, LHS, RHS>;
 
-function Eval_inner_product(expr: EXP, $: ExtensionEnv) {
+function eval_inner_product(expr: EXP, $: ExtensionEnv) {
     const lhs = expr.lhs;
     const rhs = expr.rhs;
     try {
@@ -87,7 +87,7 @@ class Inner extends Function2<LHS, RHS> implements Operator<EXP> {
         return this.#hash;
     }
     valueOf(expr: EXP): U {
-        return Eval_inner_product(expr, this.$);
+        return eval_inner_product(expr, this.$);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;

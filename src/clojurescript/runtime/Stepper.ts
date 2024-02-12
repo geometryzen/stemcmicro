@@ -26,7 +26,7 @@ import { step_relational_expr } from "./step_relational_expr";
 import { step_setq } from "./step_setq";
 import { step_taylor } from "./step_taylor";
 import { step_test } from "./step_test";
-import { Eval_transpose } from "./step_transpose";
+import { step_transpose } from "./step_transpose";
 import { step_unit } from "./step_unit";
 import { step_v_args } from "./step_v_args";
 import { step_zero } from "./step_zero";
@@ -461,7 +461,7 @@ export class Stepper {
         this.#stepFunctions['tau'] = step_1_args;
         this.#stepFunctions['taylor'] = step_taylor;
         this.#stepFunctions['test'] = step_test;
-        this.#stepFunctions['transpose'] = Eval_transpose;
+        this.#stepFunctions['transpose'] = step_transpose;
         this.#stepFunctions['unit'] = step_unit;
         this.#stepFunctions['uom'] = step_1_args;
         this.#stepFunctions['zero'] = step_zero;

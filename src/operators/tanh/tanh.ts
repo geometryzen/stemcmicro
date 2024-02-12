@@ -9,7 +9,7 @@ import { is_flt } from '../flt/is_flt';
 //             exp(2 x) - 1
 //  tanh(x) = --------------
 //             exp(2 x) + 1
-export function Eval_tanh(p1: U, $: ExtensionEnv): U {
+export function eval_tanh(p1: U, $: ExtensionEnv): U {
     return tanh($.valueOf(cadr(p1)), $);
 }
 

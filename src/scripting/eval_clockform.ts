@@ -25,7 +25,7 @@ import { Cons, U } from '../tree/tree';
 //   2) it's very compact
 //   3) it's a straighforward notation for roots of 1 and -1
 
-export function Eval_clock(expr: Cons, $: ExtensionEnv): U {
+export function eval_clock(expr: Cons, $: ExtensionEnv): U {
     const result = clock($.valueOf(cadr(expr)), $);
     return result;
 }

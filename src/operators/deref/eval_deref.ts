@@ -1,5 +1,5 @@
-import { Cell, create_sym, Sym } from "math-expression-atoms";
-import { Cons, nil, U } from "math-expression-tree";
+import { assert_cell, create_sym, Sym } from "math-expression-atoms";
+import { U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { Cons1 } from "../helpers/Cons1";
@@ -11,22 +11,24 @@ type EXP = Cons1<Sym, ARG>;
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        const ATOM = create_sym("atom");
+        const DEREF = create_sym("deref");
         try {
-            return new Op($, ATOM);
+            return new Op($, DEREF);
         }
         finally {
-            ATOM.release();
+            DEREF.release();
         }
     }
 }
 
-function Eval_atom(expr: Cons, $: ExtensionEnv): U {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function eval_deref(expr: EXP, $: ExtensionEnv): U {
     const arg = expr.arg;
     try {
         const value = $.valueOf(arg);
         try {
-            return new Cell(value, $.getCellHost());
+            const atom = assert_cell(value);
+            return atom.deref();
         }
         finally {
             value.release();
@@ -35,28 +37,27 @@ function Eval_atom(expr: Cons, $: ExtensionEnv): U {
     finally {
         arg.release();
     }
-    return nil;
 }
 
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly #hash: string;
-    constructor($: ExtensionEnv, ATOM: Sym) {
-        super('atom', ATOM, is_any, $);
+    constructor($: ExtensionEnv, DEREF: Sym) {
+        super('deref', DEREF, is_any, $);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
+    transform(expr: EXP): [number, U] {
         const $ = this.$;
-        const retval = Eval_atom(expr, $);
+        const retval = eval_deref(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: ARG, expr: Cons1<Sym, ARG>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         throw new Error("TODO");
     }
 }
 
-export const atom_builder = new Builder();
+export const deref_builder = new Builder();

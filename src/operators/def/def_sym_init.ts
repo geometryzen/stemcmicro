@@ -24,7 +24,7 @@ type EXP = Cons2<Sym, LHS, RHS>;
  * @param $ 
  * @returns 
  */
-function Eval_def_sym_init(expr: EXP, $: ExtensionEnv): U {
+function eval_def_sym_init(expr: EXP, $: ExtensionEnv): U {
     const argList = expr.argList;
     const [sym, doc, init] = extract_def_args(expr);
     try {
@@ -60,12 +60,12 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('def [symbol init]', DEF, is_sym, is_any, $);
     }
     valueOf(expr: EXP): U {
-        return Eval_def_sym_init(expr, this.$);
+        return eval_def_sym_init(expr, this.$);
     }
     override transform(expr: EXP): [TFLAGS, U] {
         // We override the transform method because (def ...) is a special form.
         // If we don't we run into troble because we attempt to evaluate the symbol. 
-        const retval = Eval_def_sym_init(expr, this.$);
+        const retval = eval_def_sym_init(expr, this.$);
         return [TFLAG_DIFF, retval];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

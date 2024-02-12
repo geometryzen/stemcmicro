@@ -116,7 +116,7 @@ import { cadr } from './tree/helpers';
 // when assigned to x.
 //    lookup(x)
 //       => gives z
-export function Eval_lookup(expr: Cons, $: ExtensionEnv): U {
+export function eval_lookup(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
     try {
         const arg0 = car(argList);

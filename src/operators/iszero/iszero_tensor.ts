@@ -10,8 +10,8 @@ import { Function1 } from "../helpers/Function1";
 type ARG = Tensor;
 type EXP = Cons1<Sym, ARG>;
 
-function Eval_iszero_tensor(expr: EXP, $: Pick<ExtensionEnv, 'getDirective' | 'iszero'>): U {
-    // console.lg("Eval_iszero_tensor", `${expr}`);
+function eval_iszero_tensor(expr: EXP, $: Pick<ExtensionEnv, 'getDirective' | 'iszero'>): U {
+    // console.lg("eval_iszero_tensor", `${expr}`);
     const arg = expr.arg;
     try {
         return iszero_tensor(arg, $);
@@ -55,7 +55,7 @@ class Op extends Function1<Tensor> implements Operator<EXP> {
         return this.#hash;
     }
     valueOf(expr: EXP): U {
-        return Eval_iszero_tensor(expr, this.$);
+        return eval_iszero_tensor(expr, this.$);
     }
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
         return [TFLAG_DIFF, iszero_tensor(arg, this.$)];

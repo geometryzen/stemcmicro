@@ -39,7 +39,7 @@ Then simplify the sum to get
 
 */
 // simplify factorials term-by-term
-export function Eval_simfac(p1: U, $: ExtensionEnv): void {
+export function eval_simfac(p1: U, $: ExtensionEnv): void {
     const result = simfac($.valueOf(cadr(p1)), $);
     stack_push(result);
 }

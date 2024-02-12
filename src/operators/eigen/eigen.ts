@@ -98,7 +98,7 @@ let EIG_N = 0;
 const EIG_yydd: number[] = [];
 const EIG_yyqq: number[] = [];
 
-export function Eval_eigen(expr: U, $: ExtensionEnv): U {
+export function eval_eigen(expr: U, $: ExtensionEnv): U {
     const { arg } = EIG_check_arg(expr, $);
     if (!arg) {
         halt('eigen: argument is not a square matrix');
@@ -129,7 +129,7 @@ General description
 Compute eigenvalues of m. See "eigen" for more info.
 
 */
-export function Eval_eigenval(p1: U, $: ExtensionEnv): U {
+export function eval_eigenval(p1: U, $: ExtensionEnv): U {
     return _eigenval(p1, $);
 }
 
@@ -160,7 +160,7 @@ General description
 Compute eigenvectors of m. See "eigen" for more info.
 
 */
-export function Eval_eigenvec(p1: U, $: ExtensionEnv): U {
+export function eval_eigenvec(p1: U, $: ExtensionEnv): U {
     return _eigenvec(p1, $);
 }
 

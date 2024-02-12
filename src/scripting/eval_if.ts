@@ -8,7 +8,7 @@ import { Cons } from '../tree/tree';
  * @param $ 
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function Eval_if(expr: Cons, $: ExtensionEnv): void {
+export function eval_if(expr: Cons, $: ExtensionEnv): void {
     // const args_expr = args(expr, $);
     // console.lg(`args_expr => ${args_expr}`);
     // const result = abs(Eval(cadr(expr), $), $);

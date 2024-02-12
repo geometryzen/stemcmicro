@@ -51,7 +51,7 @@ Examples:
   besselj(x,-3/2) = -(1/x) besselj(x,-1/2) - besselj(x,1/2)
 
 */
-export function Eval_besselj(p1: U, $: ExtensionEnv): U {
+export function eval_besselj(p1: U, $: ExtensionEnv): U {
     return besselj($.valueOf(cadr(p1)), $.valueOf(caddr(p1)), $);
 }
 

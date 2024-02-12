@@ -5,10 +5,10 @@ import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
-import { make_eval_draw } from '../eigenmath/eval_draw';
+import { make_stack_draw } from '../eigenmath/make_stack_draw';
 import { stack_infixform } from '../eigenmath/stack_infixform';
-import { make_eval_print } from '../eigenmath/eval_print';
-import { make_eval_run } from '../eigenmath/eval_run';
+import { make_stack_print } from '../eigenmath/make_stack_print';
+import { make_stack_run } from '../eigenmath/make_stack_run';
 import { InfixOptions, to_infix } from '../eigenmath/infixform';
 import { print_value_and_input_as_svg_or_infix } from '../eigenmath/print_value_and_input_as_svg_or_infix';
 import { render_svg, SvgRenderConfig } from '../eigenmath/render_svg';
@@ -739,10 +739,10 @@ class EigenmathEngine implements ExprEngine {
         // TODO: 
         // const allowUndeclaredVars = allow_undeclared_vars(options, true);
         this.#scriptVars.init();
-        this.#scriptVars.define_cons_function(create_sym("draw"), make_eval_draw(this.#scriptVars));
+        this.#scriptVars.define_cons_function(create_sym("draw"), make_stack_draw(this.#scriptVars));
         this.#scriptVars.define_cons_function(create_sym("infixform"), stack_infixform);
-        this.#scriptVars.define_cons_function(create_sym("print"), make_eval_print(this.#scriptVars));
-        this.#scriptVars.define_cons_function(create_sym("run"), make_eval_run(this.#scriptVars));
+        this.#scriptVars.define_cons_function(create_sym("print"), make_stack_print(this.#scriptVars));
+        this.#scriptVars.define_cons_function(create_sym("run"), make_stack_run(this.#scriptVars));
         if (options.prolog) {
             if (Array.isArray(options.prolog)) {
                 this.#scriptVars.executeProlog(options.prolog);

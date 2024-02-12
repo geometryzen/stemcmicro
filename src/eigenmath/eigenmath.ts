@@ -13,7 +13,7 @@ import { StackU } from '../env/StackU';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { eval_degree } from '../operators/degree/degree';
-import { hadamard, stack_hadamard } from '../operators/hadamard/eval_hadamard';
+import { hadamard, stack_hadamard } from '../operators/hadamard/stack_hadamard';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_lambda } from '../operators/lambda/is_lambda';
 import { mag, stack_mag } from '../operators/mag/stack_mag';
@@ -1449,7 +1449,7 @@ function adj(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(p2, $);
 }
 
-function eval_algebra(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_algebra(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(assert_cons(expr).item(1), $);
     value_of(env, ctrl, $);
     const metric = pop($);
@@ -1662,7 +1662,7 @@ export function evaluate_expression(expression: U, env: ProgramEnv, ctrl: Progra
     return pop($);
 }
 
-function eval_arccos(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
+export function stack_arccos(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     arccos(env, ctrl, $);
@@ -1838,7 +1838,7 @@ function arccosh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     list(2, $);
 }
 
-function eval_arcsin(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_arcsin(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     arcsin(env, ctrl, $);
@@ -1938,7 +1938,7 @@ function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     list(2, $);
 }
 
-function eval_arcsinh(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_arcsinh(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     arcsinh(env, ctrl, $);
@@ -2010,7 +2010,7 @@ function arcsinh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 /**
  * (arctan y x)
  */
-function eval_arctan(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_arctan(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const y = expr.item1;
     const x = expr.item2;
     push(y, $);
@@ -2187,7 +2187,7 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: 
     multiply(env, ctrl, $);
 }
 
-function eval_arctanh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_arctanh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     arctanh(env, ctrl, $);
@@ -2422,7 +2422,7 @@ export function stack_binding(expr: Cons, env: ProgramEnv, ctrl: ProgramControl,
     push(get_binding(sym, nil, env), $);
 }
 
-function eval_ceiling(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_ceiling(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     ceilingfunc(env, ctrl, $);
@@ -2474,7 +2474,7 @@ function ceilingfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
     list(2, $);
 }
 
-function eval_check(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_check(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     $.push(cadr(p1));
     evalp(env, ctrl, $);
     if (iszero($.pop())) {
@@ -2576,7 +2576,7 @@ function circexp_subst($: ProgramStack): void {
     push(p1, $);
 }
 
-function eval_clear(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
+export function stack_clear(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
     save_symbol(TRACE, env);
     save_symbol(TTY, env);
     try {
@@ -2628,7 +2628,7 @@ function clockfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
     multiply(env, ctrl, $);
 }
 
-function eval_cofactor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_cofactor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(cadr(p1), $);
     value_of(env, ctrl, $);
@@ -2658,7 +2658,7 @@ function eval_cofactor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Progr
         negate(env, ctrl, $);
 }
 
-function eval_conj(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_conj(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     conjfunc(env, ctrl, $);
@@ -2724,7 +2724,7 @@ function conjfunc_subst(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
     }
 }
 
-function eval_contract(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_contract(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
 
@@ -3049,7 +3049,7 @@ function cosfunc_sum(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Program
     list(2, $);
 }
 
-function eval_cosh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_cosh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     coshfunc(env, ctrl, $);
@@ -3116,7 +3116,7 @@ function coshfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
     list(2, $);
 }
 
-function eval_defint(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_defint(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(cadr(p1), $);
     value_of(env, ctrl, $);
@@ -3164,7 +3164,7 @@ function eval_defint(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Program
     push(F, $);
 }
 
-function eval_denominator(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_denominator(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     denominator(env, ctrl, $);
@@ -3901,7 +3901,7 @@ function det(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         add_terms(s, env, ctrl, $);
 }
 
-function eval_dim(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_dim(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(cadr(p1), $);
     value_of(env, ctrl, $);
@@ -3928,7 +3928,7 @@ function eval_dim(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
     push_integer(p2.dims[k - 1], $);
 }
 
-function eval_do(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_do(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(nil, $);
     p1 = cdr(p1);
     while (is_cons(p1)) {
@@ -3939,11 +3939,11 @@ function eval_do(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStac
     }
 }
 
-function eval_dot(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_dot(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     stack_inner(p1, env, ctrl, $);
 }
 
-function eval_eigenvec(punk: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_eigenvec(punk: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const D: number[] = [];
     const Q: number[] = [];
 
@@ -4087,7 +4087,7 @@ function eigenvec_step_nib(D: number[], Q: number[], n: number, p: number, q: nu
     D[n * q + p] = 0.0;
 }
 
-function eval_erf(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_erf(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     erffunc(env, ctrl, $);
@@ -4135,7 +4135,7 @@ function erffunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     list(2, $);
 }
 
-function eval_erfc(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_erfc(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     erfcfunc($);
@@ -4174,7 +4174,7 @@ function erfcfunc($: ProgramStack): void {
     list(2, $);
 }
 
-function eval_eval(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_eval(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     p1 = cddr(p1);
@@ -4189,7 +4189,7 @@ function eval_eval(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
     value_of(env, ctrl, $);
 }
 
-function eval_exit(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_exit(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(nil, $);
 }
 
@@ -4384,7 +4384,7 @@ function factorial(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
     list(2, $);
 }
 
-function eval_float(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_float(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     floatfunc(env, ctrl, $);
@@ -4538,7 +4538,7 @@ function floorfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
  * (for i j k a b ...)
  *      0 1 2 3 4 ...
  */
-function eval_for(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_for(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const argList = expr.argList;
     try {
@@ -5775,7 +5775,7 @@ const integral_tab: string[] = [
     "1",
 ];
 
-function eval_integral(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_integral(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(cadr(p1), $);
     value_of(env, ctrl, $);
@@ -6054,7 +6054,7 @@ function inv(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 /**
  * (kronecker a b ...)
  */
-function eval_kronecker(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_kronecker(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const argList = expr.argList;
     try {
         const a = argList.head;
@@ -6465,7 +6465,7 @@ function mod_integers(p1: Rat, p2: Rat, $: ProgramStack): void {
     push_bignum(p1.sign, a, b, $);
 }
 
-function eval_multiply(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_multiply(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const h0 = $.length;
     const argList = expr.argList;
     try {
@@ -6505,7 +6505,7 @@ export function stack_noexpand(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, 
 /**
  * This isn't actually a function that is matched, hence the ProgramFrame
  */
-export function eval_nonstop(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function evaluate_nonstop(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     if (ctrl.getDirective(Directive.nonstop)) {
         const expr = pop($);
         try {
@@ -6519,14 +6519,14 @@ export function eval_nonstop(env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
 
     ctrl.pushDirective(Directive.nonstop, 1);
     try {
-        eval_nonstop_nib(env, ctrl, $);
+        evaluate_nonstop_nib(env, ctrl, $);
     }
     finally {
         ctrl.popDirective();
     }
 }
 
-function eval_nonstop_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function evaluate_nonstop_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const save_tos = $.length - 1;
     const save_tof = frame.length;  // TODO: Why the off-by-one?
 
@@ -6541,7 +6541,7 @@ function eval_nonstop_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
     }
 }
 
-function eval_not(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_not(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(expr), $);
     evalp(env, ctrl, $);
     const p1 = pop($);
@@ -6833,7 +6833,7 @@ function urandom(): number {
     return 4.0 * Math.random() - 2.0;
 }
 
-function eval_number(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_number(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(expr), $);
     value_of(env, ctrl, $);
     const p1 = pop($);
@@ -6844,7 +6844,7 @@ function eval_number(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Progr
         push_integer(0, $);
 }
 
-function eval_numerator(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_numerator(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     numerator(env, ctrl, $);
@@ -6867,7 +6867,7 @@ export function numerator(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
     push(p1, $);
 }
 
-function eval_or(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_or(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     p1 = cdr(p1);
     while (is_cons(p1)) {
         push(car(p1), $);
@@ -6972,7 +6972,7 @@ function polar(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     multiply(env, ctrl, $);
 }
 
-function eval_power(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
+export function stack_power(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
     ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
     try {
         push(expr.base, $);
@@ -7257,7 +7257,7 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
     }
 }
 
-function eval_prefixform(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_prefixform(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(expr), $);
     value_of(env, ctrl, $);
     const p1 = pop($);
@@ -7267,7 +7267,7 @@ function eval_prefixform(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
     push_string(s, $);
 }
 
-function eval_product(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_product(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (lengthf(expr) === 2) {
         push(cadr(expr), $);
@@ -7322,14 +7322,14 @@ function eval_product(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Prog
     restore_symbol(env);
 }
 
-function eval_quote(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_quote(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $); // not evaluated
 }
 
 /**
  * (rank a)
  */
-function eval_rank(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_rank(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const argList = expr.argList;
     try {
         const a = argList.item0;
@@ -7785,7 +7785,7 @@ function reduce(h: number, n: number, A: U, env: ProgramEnv, ctrl: ProgramContro
         $.setAt(h + i, $.getAt(h + i + 1));
 }
 
-function eval_assign(x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_assign(x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(nil, $); // return value
 
@@ -8028,7 +8028,7 @@ function convert_body(A: U, $: ProgramStack): void {
     subst($);
 }
 
-function eval_sgn(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_sgn(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     sgn(env, ctrl, $);
@@ -8551,15 +8551,15 @@ export function sqrtfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
     power(env, ctrl, $);
 }
 
-function eval_status(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_status(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(nil, $);
 }
 
-function eval_stop(): never {
+export function stack_stop(): never {
     stopf("stop");
 }
 
-function eval_subst(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_subst(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadddr(p1), $);
     value_of(env, ctrl, $);
     push(caddr(p1), $);
@@ -8621,7 +8621,7 @@ function subst($: ProgramStack): void {
  * 
  * e.g. sum(i,1,5,x^i) => x^5 + x^4 + x^3 + x^2 + x
  */
-function eval_sum(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_sum(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const argList = expr.argList;
     try {
@@ -8691,7 +8691,7 @@ function eval_sum(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramS
     }
 }
 
-function eval_tan(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_tan(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     tanfunc(env, ctrl, $);
@@ -8855,7 +8855,7 @@ function tanfunc_sum(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     list(2, $);
 }
 
-function eval_tanh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_tanh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
     tanhfunc(env, ctrl, $);
@@ -8930,7 +8930,7 @@ function expect_n_arguments(x: Cons, n: number): void | never {
     }
 }
 
-function eval_tau(x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_tau(x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     expect_n_arguments(x, 1);
     const argList = x.argList;
     const arg = argList.item(0);
@@ -8947,7 +8947,7 @@ function taufunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     multiply_factors(3, env, ctrl, $);
 }
 
-function eval_taylor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_taylor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(cadr(p1), $);
     value_of(env, ctrl, $);
@@ -9016,7 +9016,7 @@ function eval_taylor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Program
     add_terms($.length - h, env, ctrl, $);
 }
 
-function eval_tensor(p1: Tensor, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function evaluate_tensor(p1: Tensor, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     p1 = copy_tensor(p1);
 
@@ -9033,7 +9033,7 @@ function eval_tensor(p1: Tensor, env: ProgramEnv, ctrl: ProgramControl, $: Progr
     promote_tensor($);
 }
 
-function eval_test(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_test(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     p1 = cdr(p1);
     while (is_cons(p1)) {
         if (!is_cons(cdr(p1))) {
@@ -9054,7 +9054,7 @@ function eval_test(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
     push(nil, $);
 }
 
-function eval_testeq(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_testeq(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(expr), $);
     value_of(env, ctrl, $);
     push(caddr(expr), $);
@@ -9068,54 +9068,58 @@ function eval_testeq(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Progr
         push_integer(0, $);
 }
 
-function eval_testge(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (cmp_args(p1, env, ctrl, $) >= 0)
+export function stack_testge(expr1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    if (cmp_args(expr1, env, ctrl, $) >= 0)
         push_integer(1, $);
     else
         push_integer(0, $);
 }
 
-function eval_testgt(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (cmp_args(p1, env, ctrl, $) > 0)
+export function stack_testgt(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    if (cmp_args(expr, env, ctrl, $) > 0)
         push_integer(1, $);
     else
         push_integer(0, $);
 }
 
-function eval_testle(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (cmp_args(p1, env, ctrl, $) <= 0)
+export function stack_testle(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    if (cmp_args(expr, env, ctrl, $) <= 0)
         push_integer(1, $);
     else
         push_integer(0, $);
 }
 
-function eval_testlt(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (cmp_args(p1, env, ctrl, $) < 0)
+export function stack_testlt(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    if (cmp_args(expr, env, ctrl, $) < 0)
         push_integer(1, $);
     else
         push_integer(0, $);
 }
 
-function cmp_args(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 0 | 1 | -1 {
-    push(cadr(p1), $);
+function cmp_args(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 0 | 1 | -1 {
+    push(cadr(expr), $);
     value_of(env, ctrl, $);
-    push(caddr(p1), $);
+    push(caddr(expr), $);
     value_of(env, ctrl, $);
     subtract(env, ctrl, $);
     simplify(env, ctrl, $);
     floatfunc(env, ctrl, $);
-    p1 = pop($);
-    if (iszero(p1))
+    const p1 = pop($);
+    if (iszero(p1)) {
         return 0;
-    if (!is_num(p1))
+    }
+    if (!is_num(p1)) {
         stopf("compare err");
-    if (isnegativenumber(p1))
+    }
+    if (isnegativenumber(p1)) {
         return -1;
-    else
+    }
+    else {
         return 1;
+    }
 }
 
-function eval_transpose(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_transpose(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(cadr(p1), $);
     value_of(env, ctrl, $);
@@ -9199,7 +9203,7 @@ function transpose(n: number, m: number, $: ProgramStack): void {
     push(p2, $);
 }
 
-function eval_unit(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_unit(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(cadr(p1), $);
     value_of(env, ctrl, $);
@@ -9226,8 +9230,7 @@ function eval_unit(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
     push(M, $);
 }
 
-function eval_user_function(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    // console.lg(`eval_user_function(${p1})`);
+export function stack_user_function(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const name = assert_sym(expr.head);
     const userfunc = get_userfunc(name, env);
@@ -9324,7 +9327,7 @@ function eval_user_function(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $
 }
 
 // TODO: It should be possible to type p1: Sym (changes to math-expression-atoms needed)
-function eval_user_symbol(name: Sym, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function evaluate_user_symbol(name: Sym, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const binding = get_binding(assert_sym(name), nil, env);
     if (name.equals(binding)) {
         push(name, $); // symbol evaluates to itself
@@ -9335,7 +9338,7 @@ function eval_user_symbol(name: Sym, env: ProgramEnv, ctrl: ProgramControl, $: P
     }
 }
 
-function eval_zero(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_zero(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     p1 = cdr(p1);
     const h = $.length;
@@ -9418,7 +9421,7 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
                             return;
                         }
                         if (env.hasUserFunction(opr)) {
-                            eval_user_function(expr, env, ctrl, $);
+                            stack_user_function(expr, env, ctrl, $);
                             return;
                         }
                     }
@@ -9439,7 +9442,7 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
                     return;
                 }
                 if (env.hasUserFunction(expr)) {
-                    eval_user_symbol(expr, env, ctrl, $);
+                    evaluate_user_symbol(expr, env, ctrl, $);
                     return;
                 }
                 push(expr, $);
@@ -9448,7 +9451,7 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
 
             // The generalization here is to evaluate all other atoms through an appropriate extension.
             if (is_tensor(expr)) {
-                eval_tensor(expr, env, ctrl, $);
+                evaluate_tensor(expr, env, ctrl, $);
                 return;
             }
 
@@ -9466,7 +9469,7 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
 function evalp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const p1 = pop($);
     if (is_cons(p1) && p1.opr.equals(ASSIGN)) {
-        eval_testeq(p1, env, ctrl, $);
+        stack_testeq(p1, env, ctrl, $);
     }
     else {
         push(p1, $);
@@ -13293,39 +13296,39 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.define_cons_function(ABS, stack_abs);
         this.define_cons_function(ADD, stack_add);
         this.define_cons_function(ADJ, stack_adj);
-        this.define_cons_function(ALGEBRA, eval_algebra);
-        this.define_cons_function(ARCCOS, eval_arccos);
+        this.define_cons_function(ALGEBRA, stack_algebra);
+        this.define_cons_function(ARCCOS, stack_arccos);
         this.define_cons_function(ARCCOSH, stack_arccosh);
-        this.define_cons_function(ARCSIN, eval_arcsin);
-        this.define_cons_function(ARCSINH, eval_arcsinh);
-        this.define_cons_function(ARCTAN, eval_arctan);
-        this.define_cons_function(ARCTANH, eval_arctanh);
+        this.define_cons_function(ARCSIN, stack_arcsin);
+        this.define_cons_function(ARCSINH, stack_arcsinh);
+        this.define_cons_function(ARCTAN, stack_arctan);
+        this.define_cons_function(ARCTANH, stack_arctanh);
         this.define_cons_function(AND, stack_and);
         this.define_cons_function(ARG, stack_arg);
         this.define_cons_function(BINDING, stack_binding);
-        this.define_cons_function(CEILING, eval_ceiling);
-        this.define_cons_function(CHECK, eval_check);
+        this.define_cons_function(CEILING, stack_ceiling);
+        this.define_cons_function(CHECK, stack_check);
         this.define_cons_function(CIRCEXP, stack_circexp);
-        this.define_cons_function(CLEAR, eval_clear);
+        this.define_cons_function(CLEAR, stack_clear);
         this.define_cons_function(CLOCK, stack_clock);
-        this.define_cons_function(COFACTOR, eval_cofactor);
-        this.define_cons_function(CONJ, eval_conj);
-        this.define_cons_function(CONTRACT, eval_contract);
+        this.define_cons_function(COFACTOR, stack_cofactor);
+        this.define_cons_function(CONJ, stack_conj);
+        this.define_cons_function(CONTRACT, stack_contract);
         this.define_cons_function(COS, stack_cos);
-        this.define_cons_function(COSH, eval_cosh);
-        this.define_cons_function(DEFINT, eval_defint);
+        this.define_cons_function(COSH, stack_cosh);
+        this.define_cons_function(DEFINT, stack_defint);
         this.define_cons_function(DEGREE, make_stack(eval_degree));
-        this.define_cons_function(DENOMINATOR, eval_denominator);
+        this.define_cons_function(DENOMINATOR, stack_denominator);
         this.define_cons_function(DET, stack_det);
         this.define_cons_function(DERIVATIVE, stack_derivative);
-        this.define_cons_function(DIM, eval_dim);
-        this.define_cons_function(DO, eval_do);
-        this.define_cons_function(DOT, eval_dot);
-        this.define_cons_function(EIGENVEC, eval_eigenvec);
-        this.define_cons_function(ERF, eval_erf);
-        this.define_cons_function(ERFC, eval_erfc);
-        this.define_cons_function(EVAL, eval_eval);
-        this.define_cons_function(EXIT, eval_exit);
+        this.define_cons_function(DIM, stack_dim);
+        this.define_cons_function(DO, stack_do);
+        this.define_cons_function(DOT, stack_dot);
+        this.define_cons_function(EIGENVEC, stack_eigenvec);
+        this.define_cons_function(ERF, stack_erf);
+        this.define_cons_function(ERFC, stack_erfc);
+        this.define_cons_function(EVAL, stack_eval);
+        this.define_cons_function(EXIT, stack_exit);
         this.define_cons_function(EXP, stack_exp);
         this.define_cons_function(EXPCOS, stack_expcos);
         this.define_cons_function(EXPCOSH, stack_expcosh);
@@ -13334,65 +13337,65 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.define_cons_function(EXPTAN, stack_exptan);
         this.define_cons_function(EXPTANH, stack_exptanh);
         this.define_cons_function(FACTORIAL, stack_factorial);
-        this.define_cons_function(FLOAT, eval_float);
+        this.define_cons_function(FLOAT, stack_float);
         this.define_cons_function(FLOOR, stack_floor);
-        this.define_cons_function(INTEGRAL, eval_integral);
+        this.define_cons_function(INTEGRAL, stack_integral);
         this.define_cons_function(LOG, stack_log);
-        this.define_cons_function(MULTIPLY, eval_multiply);
-        this.define_cons_function(POWER, eval_power);
+        this.define_cons_function(MULTIPLY, stack_multiply);
+        this.define_cons_function(POWER, stack_power);
         this.define_cons_function(ROTATE, stack_rotate);
         this.define_cons_function(INDEX, stack_index);
-        this.define_cons_function(ASSIGN, eval_assign);
+        this.define_cons_function(ASSIGN, stack_assign);
         this.define_cons_function(SIN, stack_sin);
         this.define_cons_function(SINH, stack_sinh);
         this.define_cons_function(SQRT, stack_sqrt);
-        this.define_cons_function(TAN, eval_tan);
-        this.define_cons_function(TANH, eval_tanh);
-        this.define_cons_function(TAU, eval_tau);
-        this.define_cons_function(TESTEQ, eval_testeq);
-        this.define_cons_function(TESTGE, eval_testge);
-        this.define_cons_function(TESTGT, eval_testgt);
-        this.define_cons_function(TESTLE, eval_testle);
-        this.define_cons_function(TESTLT, eval_testlt);
+        this.define_cons_function(TAN, stack_tan);
+        this.define_cons_function(TANH, stack_tanh);
+        this.define_cons_function(TAU, stack_tau);
+        this.define_cons_function(TESTEQ, stack_testeq);
+        this.define_cons_function(TESTGE, stack_testge);
+        this.define_cons_function(TESTGT, stack_testgt);
+        this.define_cons_function(TESTLE, stack_testle);
+        this.define_cons_function(TESTLT, stack_testlt);
 
-        this.define_cons_function(FOR, eval_for);
+        this.define_cons_function(FOR, stack_for);
         this.define_cons_function(HADAMARD, stack_hadamard);
         this.define_cons_function(IMAG, stack_imag);
         this.define_cons_function(INNER, stack_inner);
         this.define_cons_function(INV, stack_inv);
-        this.define_cons_function(KRONECKER, eval_kronecker);
+        this.define_cons_function(KRONECKER, stack_kronecker);
         this.define_cons_function(MAG, stack_mag);
         this.define_cons_function(MINOR, stack_minor);
         this.define_cons_function(MINORMATRIX, stack_minormatrix);
         this.define_cons_function(MOD, stack_mod);
         this.define_cons_function(NOEXPAND, stack_noexpand);
-        this.define_cons_function(NOT, eval_not);
+        this.define_cons_function(NOT, stack_not);
         this.define_cons_function(NROOTS, stack_nroots);
-        this.define_cons_function(NUMBER, eval_number);
-        this.define_cons_function(NUMERATOR, eval_numerator);
-        this.define_cons_function(OR, eval_or);
+        this.define_cons_function(NUMBER, stack_number);
+        this.define_cons_function(NUMERATOR, stack_numerator);
+        this.define_cons_function(OR, stack_or);
         this.define_cons_function(OUTER, stack_outer);
         this.define_cons_function(POLAR, stack_polar);
-        this.define_cons_function(PREFIXFORM, eval_prefixform);
-        this.define_cons_function(PRODUCT, eval_product);
-        this.define_cons_function(QUOTE, eval_quote);
-        this.define_cons_function(RANK, eval_rank);
+        this.define_cons_function(PREFIXFORM, stack_prefixform);
+        this.define_cons_function(PRODUCT, stack_product);
+        this.define_cons_function(QUOTE, stack_quote);
+        this.define_cons_function(RANK, stack_rank);
         this.define_cons_function(RATIONALIZE, stack_rationalize);
         this.define_cons_function(REAL, stack_real);
         this.define_cons_function(RECT, stack_rect);
         this.define_cons_function(ROOTS, stack_roots);
-        this.define_cons_function(SGN, eval_sgn);
+        this.define_cons_function(SGN, stack_sgn);
         this.define_cons_function(SIMPLIFY, stack_simplify);
-        this.define_cons_function(STATUS, eval_status);
-        this.define_cons_function(STOP, eval_stop);
-        this.define_cons_function(SUBST, eval_subst);
-        this.define_cons_function(SUM, eval_sum);
-        this.define_cons_function(TAYLOR, eval_taylor);
-        this.define_cons_function(TEST, eval_test);
-        this.define_cons_function(TRANSPOSE, eval_transpose);
-        this.define_cons_function(UNIT, eval_unit);
+        this.define_cons_function(STATUS, stack_status);
+        this.define_cons_function(STOP, stack_stop);
+        this.define_cons_function(SUBST, stack_subst);
+        this.define_cons_function(SUM, stack_sum);
+        this.define_cons_function(TAYLOR, stack_taylor);
+        this.define_cons_function(TEST, stack_test);
+        this.define_cons_function(TRANSPOSE, stack_transpose);
+        this.define_cons_function(UNIT, stack_unit);
         this.define_cons_function(UOM, stack_uom);
-        this.define_cons_function(ZERO, eval_zero);
+        this.define_cons_function(ZERO, stack_zero);
     }
     init(): void {
         this.#directiveStack.push(Directive.depth, 0);
@@ -13421,7 +13424,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         }
     }
     defineUserSymbol(sym: Sym): void {
-        this.#userFunctions.set(sym.key(), eval_user_symbol);
+        this.#userFunctions.set(sym.key(), evaluate_user_symbol);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getBinding(opr: Sym, target: Cons): U {

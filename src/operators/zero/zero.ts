@@ -7,7 +7,7 @@ import { create_tensor_elements } from '../../tree/tensor/create_tensor_elements
 import { Tensor } from '../../tree/tensor/Tensor';
 import { Cons, U } from '../../tree/tree';
 
-export function Eval_zero(expr: Cons, $: ExtensionEnv): U {
+export function eval_zero(expr: Cons, $: ExtensionEnv): U {
     return create_zero_tensor(expr, $);
 }
 

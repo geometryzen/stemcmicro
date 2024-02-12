@@ -3,7 +3,7 @@ import { hash_nonop_cons } from "../../hashing/hash_info";
 import { TAN } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { Eval_tan } from "./tan";
+import { eval_tan } from "./tan";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -23,7 +23,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     transform(expr: Cons): [number, U] {
         const $ = this.$;
         if ($.isExpanding()) {
-            const retval = Eval_tan(expr, $);
+            const retval = eval_tan(expr, $);
             const changed = !retval.equals(expr);
             return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
         }

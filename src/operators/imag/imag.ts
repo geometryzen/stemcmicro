@@ -8,7 +8,7 @@ import { IM } from '../../runtime/constants';
  * @param $ 
  * @returns 
  */
-export function Eval_imag(expr: Cons, $: ExtensionEnv): U {
+export function eval_imag(expr: Cons, $: ExtensionEnv): U {
 
     // Do we evaluate the arguments or real_lambda?
     return imag_lambda(expr.argList, $);

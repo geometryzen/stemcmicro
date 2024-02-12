@@ -3,7 +3,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FA
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { COEFF } from "../../runtime/constants";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { Eval_coeff } from "./coeff";
+import { eval_coeff } from "./coeff";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -23,7 +23,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_coeff(expr, $);
+        const retval = eval_coeff(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

@@ -5,7 +5,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 /**
  * (let [binding*] expr)
  */
-export function Eval_let(expr: Cons, $: ExtensionEnv): U {
+export function eval_let(expr: Cons, $: ExtensionEnv): U {
     const bindExpr = assert_tensor(expr.item(1));
     const body = expr.item(2);
     try {

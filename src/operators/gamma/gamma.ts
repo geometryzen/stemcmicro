@@ -9,7 +9,7 @@ import { half, negOne, Rat } from '../../tree/rat/Rat';
 import { car, cdr, items_to_cons, U } from '../../tree/tree';
 import { is_rat } from '../rat/is_rat';
 
-export function Eval_gamma(p1: U, $: ExtensionEnv): U {
+export function eval_gamma(p1: U, $: ExtensionEnv): U {
     return gamma($.valueOf(cadr(p1)), $);
 }
 

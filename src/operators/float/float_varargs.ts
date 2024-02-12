@@ -3,7 +3,7 @@ import { hash_nonop_cons } from "../../hashing/hash_info";
 import { FLOAT } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { Eval_float } from "./float";
+import { eval_float } from "./float";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -22,7 +22,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_float(expr, $);
+        const retval = eval_float(expr, $);
         const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
         return [flag, retval];
     }

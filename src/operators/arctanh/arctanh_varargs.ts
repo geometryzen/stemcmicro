@@ -3,7 +3,7 @@ import { hash_nonop_cons } from "../../hashing/hash_info";
 import { ARCTANH } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { Eval_arctanh } from "./arctanh";
+import { eval_arctanh } from "./arctanh";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -22,7 +22,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_arctanh(expr, $);
+        const retval = eval_arctanh(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

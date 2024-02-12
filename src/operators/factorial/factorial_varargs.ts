@@ -6,7 +6,7 @@ import { cadr } from "../../tree/helpers";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
-function Eval_factorial(p1: U, $: ExtensionEnv): U {
+function eval_factorial(p1: U, $: ExtensionEnv): U {
     return factorial($.valueOf(cadr(p1)));
 }
 
@@ -27,7 +27,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_factorial(expr, $);
+        const retval = eval_factorial(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

@@ -18,6 +18,6 @@ General description
 Returns the inverse sine of x.
  
 */
-export function Eval_arcsin(x: U, $: ExtensionEnv): U {
+export function eval_arcsin(x: U, $: ExtensionEnv): U {
     return arcsin($.valueOf(cadr(x)), $);
 }

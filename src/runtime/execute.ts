@@ -2,7 +2,7 @@ import { imu, is_imu, is_sym, Sym } from 'math-expression-atoms';
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ScanOptions } from '../algebrite/scan';
-import { Eval_bake } from "../bake";
+import { eval_bake } from "../bake";
 import { Directive, directive_from_flag, ExtensionEnv, flag_from_directive } from "../env/ExtensionEnv";
 import { subst } from '../operators/subst/subst';
 import { delegate_parse_script } from "../parser/parser";
@@ -200,7 +200,7 @@ export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: 
             box.push(transformed);
             if ($.hasBinding(BAKE, nil) && $.isone($.getBinding(BAKE, nil))) {
                 // console.lg("Baking...");
-                let expr = Eval_bake(box.pop(), $);
+                let expr = eval_bake(box.pop(), $);
                 // Hopefully a temporary fix for bake creating a non-normalized expression.
                 expr = transform(expr, $);
                 // console.lg(`baked     : ${print_list(expr, $)}`);

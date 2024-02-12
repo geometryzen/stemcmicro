@@ -53,7 +53,7 @@ function parse_args(expr: Cons, $: ExtensionEnv): [x: U, y: U] {
 /**
  * (arctan x) or (arctan y x)
  */
-export function Eval_arctan(expr: Cons, $: ExtensionEnv): U {
+export function eval_arctan(expr: Cons, $: ExtensionEnv): U {
     const [x, y] = parse_args(expr, $);
     if (y.isnil) {
         return arctan(x, $);

@@ -30,7 +30,7 @@ import { caddr, cadr } from './tree/helpers';
 //      ---- - --- + -------
 //        2     x     x + 1
 //       x
-export function Eval_expand(expr: Cons, $: ExtensionEnv): U {
+export function eval_expand(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
     const arg1 = $.valueOf(argList.head);
     const arg2 = $.valueOf(argList.argList.head);

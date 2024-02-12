@@ -10,7 +10,7 @@ import { Function1 } from "../helpers/Function1";
 type ARG = Flt;
 type EXP = Cons1<Sym, ARG>;
 
-function Eval_iszero_flt(expr: EXP, $: Pick<ExtensionEnv, 'getDirective'>): U {
+function eval_iszero_flt(expr: EXP, $: Pick<ExtensionEnv, 'getDirective'>): U {
     const arg = expr.arg;
     try {
         return iszero_flt(arg, $);
@@ -47,7 +47,7 @@ class Op extends Function1<Flt> implements Operator<EXP> {
         return this.#hash;
     }
     valueOf(expr: EXP): U {
-        return Eval_iszero_flt(expr, this.$);
+        return eval_iszero_flt(expr, this.$);
     }
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
         return [TFLAG_DIFF, iszero_flt(arg, this.$)];

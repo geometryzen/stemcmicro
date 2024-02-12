@@ -6,9 +6,9 @@ import { Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expressio
 import { AtomListener, ExprEngineListener } from "../api/api";
 import { assert_sym_any_any } from "../clojurescript/runtime/step_setq";
 import { setq } from "../operators/assign/assign_any_any";
-import { Eval_dotdot } from "../operators/dotdot/Eval_dotdot";
+import { eval_dotdot } from "../operators/dotdot/eval_dotdot";
 import { JsObjectExtension } from "../operators/jsobject/JsObjectExtension";
-import { Eval_let } from "../operators/let/Eval_let";
+import { eval_let } from "../operators/let/eval_let";
 import { ASSIGN, COMPONENT, LET } from "../runtime/constants";
 import { CompareFn, ConsExpr, ExprComparator, Extension, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 /**
@@ -337,10 +337,10 @@ export class DerivedEnv implements ExtensionEnv {
                         return this.#baseEnv.valueOf(expr);
                     }
                     else if (opr.equals(DOTDOT)) {
-                        return Eval_dotdot(expr, this);
+                        return eval_dotdot(expr, this);
                     }
                     else if (opr.equals(LET)) {
-                        return Eval_let(expr, this);
+                        return eval_let(expr, this);
                     }
                     else {
                         return this.#baseEnv.valueOf(evaluate_args(opr, expr.argList, this));

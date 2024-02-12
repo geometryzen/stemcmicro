@@ -9,7 +9,7 @@ import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { cadr } from "../../tree/helpers";
 import { create_tensor_elements_diagonal } from "../../tree/tensor/create_tensor_elements";
 
-export function Eval_unit(expr: Cons, $: ExtensionEnv): U {
+export function eval_unit(expr: Cons, $: ExtensionEnv): U {
     const n = evaluate_integer(cadr(expr), $);
 
     if (isNaN(n)) {

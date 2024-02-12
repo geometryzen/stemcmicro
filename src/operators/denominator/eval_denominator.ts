@@ -3,6 +3,6 @@ import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { cadr } from "../../tree/helpers";
 import { denominator } from "./denominator";
 
-export function Eval_denominator(expr: Cons, $: ExtensionEnv): U {
+export function eval_denominator(expr: Cons, $: ExtensionEnv): U {
     return denominator($.valueOf(cadr(expr)), $);
 }

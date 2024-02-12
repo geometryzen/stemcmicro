@@ -24,7 +24,7 @@ If i and j are omitted then 1 and 2 are used.
 contract(m) is equivalent to the trace of matrix m.
 
 */
-export function Eval_contract(contractExpr: Cons, $: ExtensionEnv): U {
+export function eval_contract(contractExpr: Cons, $: ExtensionEnv): U {
     const a = $.valueOf(contractExpr.argList.head);
     let p2: U, p3: U;
     if (nil.equals(cddr(contractExpr))) {

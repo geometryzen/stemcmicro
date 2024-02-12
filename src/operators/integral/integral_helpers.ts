@@ -391,8 +391,8 @@ function value_of_integrand(expr: U, $: ExtensionEnv): U {
 /**
  * (integral f x)
  */
-export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
-    // console.lg("Eval_integral", $.toInfixString(expr));
+export function eval_integral(expr: Cons, $: ExtensionEnv): U {
+    // console.lg("eval_integral", $.toInfixString(expr));
 
     let n = 0;
 

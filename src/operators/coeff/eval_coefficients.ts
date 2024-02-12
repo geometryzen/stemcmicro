@@ -6,7 +6,7 @@ import { coefficients } from "./coeff";
 /**
  * (coefficients p x)
  */
-export function Eval_coefficients(expr: Cons, $: ExtensionEnv): U {
+export function eval_coefficients(expr: Cons, $: ExtensionEnv): U {
     const p = $.valueOf(expr.item1);
     const x = $.valueOf(expr.item2);
     const cs: U[] = coefficients(p, x, $);

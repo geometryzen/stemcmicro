@@ -11,8 +11,8 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 // quote definition
-export function Eval_quote(expr: Cons): U {
-    assert_U(expr, "Eval_quote(expr)", "expr");
+export function eval_quote(expr: Cons): U {
+    assert_U(expr, "eval_quote(expr)", "expr");
     return expr.arg;
 }
 
@@ -26,7 +26,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         return this.#hash;
     }
     valueOf(expr: Cons): U {
-        return Eval_quote(expr);
+        return eval_quote(expr);
     }
     transform(expr: Cons): [number, U] {
         const retval = this.valueOf(expr);

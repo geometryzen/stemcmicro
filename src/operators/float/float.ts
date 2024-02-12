@@ -8,8 +8,8 @@ import { cadr } from '../../tree/helpers';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { is_pi } from '../pi/is_pi';
 
-export function Eval_float(expr: Cons, $: ExtensionEnv): U {
-    // console.lg("Eval_float", $.toInfixString(expr));
+export function eval_float(expr: Cons, $: ExtensionEnv): U {
+    // console.lg("eval_float", $.toInfixString(expr));
     const A = cadr(expr);
     // console.lg("A", $.toInfixString(A));
     const B = $.valueOf(A);

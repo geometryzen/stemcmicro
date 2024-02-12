@@ -1,5 +1,5 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { Eval_expand } from "../../expand";
+import { eval_expand } from "../../expand";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { EXPAND } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
@@ -22,7 +22,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_expand(expr, $);
+        const retval = eval_expand(expr, $);
         const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
         return [flag, retval];
     }

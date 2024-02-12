@@ -8,7 +8,7 @@ import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
 /**
  * product(body:U, index:Sym, lower:Num, upper:Num): U
  */
-export function Eval_product(expr: U, $: ExtensionEnv): U {
+export function eval_product(expr: U, $: ExtensionEnv): U {
     // 1st arg
     const body = cadr(expr);
 

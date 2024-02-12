@@ -13,7 +13,7 @@ import { is_num } from '../num/is_num';
 import { inner_tensor_tensor } from './inner_tensor_tensor';
 
 /**
- * Note: Eval_inner contains addition code such as converting (inner a1 a2 a3 ...) to binary form.
+ * Note: eval_inner contains addition code such as converting (inner a1 a2 a3 ...) to binary form.
  */
 export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

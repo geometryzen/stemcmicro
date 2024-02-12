@@ -5,7 +5,7 @@ import { cadr } from '../../tree/helpers';
 import { half } from '../../tree/rat/Rat';
 
 // Do the exponential sine function.
-export function Eval_expsin(p1: U, $: ExtensionEnv): U {
+export function eval_expsin(p1: U, $: ExtensionEnv): U {
     return expsin($.valueOf(cadr(p1)), $);
 }
 

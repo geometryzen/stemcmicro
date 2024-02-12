@@ -14,7 +14,7 @@ import { car, Cons, U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';
 
 // Tangent function of numerical and symbolic arguments
-export function Eval_tan(expr: Cons, $: ExtensionEnv): U {
+export function eval_tan(expr: Cons, $: ExtensionEnv): U {
     const result = tangent($.valueOf(cadr(expr)), $);
     return result;
 }

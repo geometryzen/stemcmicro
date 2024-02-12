@@ -15,7 +15,7 @@ import { cadnr } from "./cadnr";
 import { cdnr } from "./cdnr";
 import { index_function } from "./index_function";
 
-export function Eval_index(expr: Cons, $: ExtensionEnv): U {
+export function eval_index(expr: Cons, $: ExtensionEnv): U {
     const tensor = $.valueOf(cadnr(expr, 1));
     if (is_tensor(tensor)) {
         return get_component(tensor, cdnr(expr, 2), $);

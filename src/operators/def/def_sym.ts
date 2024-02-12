@@ -23,8 +23,7 @@ type EXP = Cons1<Sym, ARG>;
  * @param $ 
  * @returns 
  */
-function Eval_def_sym(expr: EXP, $: ExtensionEnv): U {
-    // console.lg("Eval_def_sym", `${expr}`);
+function eval_def_sym(expr: EXP, $: ExtensionEnv): U {
     const argList = expr.argList;
     const [sym, doc, init] = extract_def_args(expr);
     try {
@@ -53,11 +52,11 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
     valueOf(expr: EXP): U {
         // console.lg(this.name, "valueOf", `${expr}`);
-        return Eval_def_sym(expr, this.$);
+        return eval_def_sym(expr, this.$);
     }
     transform(expr: EXP): [TFLAGS, U] {
         // console.lg(this.name, "transform", `${expr}`);
-        const retval = Eval_def_sym(expr, this.$);
+        const retval = eval_def_sym(expr, this.$);
         return [TFLAG_DIFF, retval];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

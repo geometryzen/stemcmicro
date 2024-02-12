@@ -3,7 +3,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from 
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { DENOMINATOR } from "../../runtime/constants";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { Eval_denominator } from "./Eval_denominator";
+import { eval_denominator } from "./eval_denominator";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -22,7 +22,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_denominator(expr, $);
+        const retval = eval_denominator(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

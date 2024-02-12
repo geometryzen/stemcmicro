@@ -13,7 +13,7 @@ import { should_render_svg } from "./should_eigenmath_render_svg";
 const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
 
-export function make_eval_print(io: ProgramIO) {
+export function make_stack_print(io: ProgramIO) {
     return function (p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         p1 = cdr(p1);
         while (is_cons(p1)) {

@@ -26,7 +26,7 @@ for numeric values. In which case, "true" is returned for non-zero values.
 Potential improvements: "check" can't evaluate strings yet.
  
 */
-export function Eval_check(expr: Cons, $: ExtensionEnv): Rat | Cons {
+export function eval_check(expr: Cons, $: ExtensionEnv): Rat | Cons {
     // Don't evaluate the arguments! We don't want assignment as a side effect.
     const arg = expr.argList.head;
     const value = $.valueOf(replace_assign_with_testeq(arg));

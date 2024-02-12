@@ -3,7 +3,7 @@ import { hash_nonop_cons } from "../../hashing/hash_info";
 import { FOR } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { Eval_for } from "./for";
+import { eval_for } from "./for";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -23,7 +23,7 @@ class ForOperator extends FunctionVarArgs implements Operator<Cons> {
     transform(expr: Cons): [number, U] {
         // console.lg("ForOperator.transform", render_as_infix(expr, this.$));
         const $ = this.$;
-        const retval = Eval_for(expr, $);
+        const retval = eval_for(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

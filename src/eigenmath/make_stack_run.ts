@@ -18,7 +18,7 @@ const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
 const LAST = create_sym("last");
 
-export function make_eval_run(io: ProgramIO) {
+export function make_stack_run(io: ProgramIO) {
     /**
      * run("https://...")
      * @param expr 

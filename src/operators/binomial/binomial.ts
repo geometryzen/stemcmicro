@@ -19,7 +19,7 @@ import { is_num } from '../num/is_num';
 //
 //  The binomial coefficient vanishes for k < 0 or k > n. (A=B, p. 19)
 
-export function Eval_binomial(p1: U, $: ExtensionEnv): U {
+export function eval_binomial(p1: U, $: ExtensionEnv): U {
     const N = $.valueOf(cadr(p1));
     const K = $.valueOf(caddr(p1));
     const result = binomial(N, K, $);

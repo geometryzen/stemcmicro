@@ -3,7 +3,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from 
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { Eval_let } from "./Eval_let";
+import { eval_let } from "./eval_let";
 
 const LET = native_sym(Native.let);
 
@@ -24,7 +24,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_let(expr, $);
+        const retval = eval_let(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

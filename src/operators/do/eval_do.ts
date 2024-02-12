@@ -16,8 +16,7 @@ General description
 Evaluates each argument from left to right. Returns the result of the last argument.
  
 */
-export function Eval_do(expr: Cons, $: ExtensionEnv): U {
-    // console.lg("Eval_do", render_as_infix(expr, $));
+export function eval_do(expr: Cons, $: ExtensionEnv): U {
     let result = car(expr);
     let p1 = cdr(expr);
 

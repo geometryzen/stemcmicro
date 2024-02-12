@@ -4,7 +4,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { ARCSINH, SINH } from '../../runtime/constants';
 import { cadr } from '../../tree/helpers';
 
-export function Eval_arcsinh(x: U, $: ExtensionEnv): U {
+export function eval_arcsinh(x: U, $: ExtensionEnv): U {
     return arcsinh($.valueOf(cadr(x)), $);
 }
 

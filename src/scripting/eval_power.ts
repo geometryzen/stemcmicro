@@ -3,7 +3,7 @@ import { Cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../env/ExtensionEnv';
 import { power_v1 } from '../operators/pow/power_v1';
 
-export function Eval_power(expr: Cons, $: ExtensionEnv): U {
+export function eval_power(expr: Cons, $: ExtensionEnv): U {
     const baseArg = expr.base;
     const expoArg = expr.expo;
     const expo = $.valueOf(expoArg);

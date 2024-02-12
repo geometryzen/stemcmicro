@@ -41,7 +41,7 @@ For m > 0
 
   P(x,n,m) = (-1)^m * (1-x^2)^(m/2) * d^m/dx^m P(x,n)
 */
-export function Eval_legendre(p1: U, $: ExtensionEnv): U {
+export function eval_legendre(p1: U, $: ExtensionEnv): U {
     const X = $.valueOf(cadr(p1));
     const N = $.valueOf(caddr(p1));
     const p2 = $.valueOf(cadddr(p1));

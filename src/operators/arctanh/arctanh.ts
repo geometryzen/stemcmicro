@@ -7,7 +7,7 @@ import { cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
 import { is_flt } from '../flt/is_flt';
 
-export function Eval_arctanh(x: Cons, $: ExtensionEnv): U {
+export function eval_arctanh(x: Cons, $: ExtensionEnv): U {
     return arctanh($.valueOf(cadr(x)), $);
 }
 

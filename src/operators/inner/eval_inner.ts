@@ -80,7 +80,7 @@ But here they do the same thing.
 /**
  * 
  */
-export function Eval_inner(p1: Cons, $: ExtensionEnv): U {
+export function eval_inner(p1: Cons, $: ExtensionEnv): U {
     // if there are more than two arguments then
     // reduce it to a more standard version
     // of two arguments, which means we need to
@@ -112,7 +112,7 @@ export function Eval_inner(p1: Cons, $: ExtensionEnv): U {
         for (let i = 2; i < args.length; i++) {
             temp = items_to_cons(MATH_INNER, args[args.length - i - 1], temp);
         }
-        return Eval_inner(temp, $);
+        return eval_inner(temp, $);
     }
 
     // TODO we have to take a look at the whole

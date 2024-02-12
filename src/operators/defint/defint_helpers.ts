@@ -29,7 +29,7 @@ example, defint(f,x,a,b,y,c,d).
  * @param $ 
  * @returns 
  */
-export function Eval_defint(expr: Cons, $: ExtensionEnv): U {
+export function eval_defint(expr: Cons, $: ExtensionEnv): U {
     let F = $.valueOf(cadr(expr));
 
     // console.lg(`F=${print_expr(F, $)}`);

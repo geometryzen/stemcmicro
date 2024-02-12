@@ -3,7 +3,7 @@ import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from 'math-expression-
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { StackU } from '../../env/StackU';
 import { zip } from '../../functional/zip';
-import { eval_derivative } from '../../operators/derivative/Eval_derivative';
+import { eval_derivative } from '../derivative/eval_derivative';
 import { EVAL, FN, SYMBOL_D } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { cadr, cddr } from '../../tree/helpers';
@@ -52,7 +52,7 @@ function assert_cons(expr: U): Cons {
 /**
  * e.g. (triple 7) => ((fn [x] (* 3 x)) 7) => 21
  */
-export function Eval_lambda_in_fn_syntax(expr: Cons, $: ExtensionEnv): U {
+export function eval_lambda_in_fn_syntax(expr: Cons, $: ExtensionEnv): U {
     const opr = expr.opr;
     try {
         // Use "derivative" instead of "d" if there is no user function "d"

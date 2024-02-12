@@ -14,7 +14,7 @@ import { SystemError } from './runtime/SystemError';
  * @param $ 
  * @returns 
  */
-export function Eval_bake(expr: U, $: ExtensionEnv): U {
+export function eval_bake(expr: U, $: ExtensionEnv): U {
     return doexpand_unary(bake_internal, expr, $);
 }
 
@@ -54,7 +54,7 @@ export function bake_internal(expr: U, $: ExtensionEnv): U {
     }
     else if (is_cons(expr) && !car(expr).equals(FOR)) {
         const bakeList = items_to_cons(car(expr), ...expr.tail().map(function (x) {
-            return Eval_bake(x, $);
+            return eval_bake(x, $);
         }));
         return hook(bakeList, "F");
     }

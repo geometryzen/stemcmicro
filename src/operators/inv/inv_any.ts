@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<U> {
 type ARG = U;
 type EXP = Cons1<Sym, ARG>;
 
-export function Eval_inv(expr: Cons, $: ExtensionEnv): U {
+export function eval_inv(expr: Cons, $: ExtensionEnv): U {
     const arg = $.valueOf(cadr(expr));
     return inv(arg, $);
 }

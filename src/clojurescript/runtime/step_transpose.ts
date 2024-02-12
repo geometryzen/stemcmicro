@@ -5,7 +5,7 @@ import { State } from "./Stepper";
 /**
  * transpose(a: Tensor, i?:Rat, j?:Rat)
  */
-export function Eval_transpose(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+export function step_transpose(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {

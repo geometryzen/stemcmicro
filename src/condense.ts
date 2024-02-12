@@ -12,7 +12,7 @@ import { U } from './tree/tree';
 
 // Condense an expression by factoring common terms.
 
-export function Eval_condense(p1: U, $: ExtensionEnv): U {
+export function eval_condense(p1: U, $: ExtensionEnv): U {
     const result = condense($.valueOf(cadr(p1)), $);
     return result;
 }

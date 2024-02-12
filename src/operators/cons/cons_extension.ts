@@ -115,7 +115,7 @@ class ConsExtension implements Extension<Cons> {
     }
 }
 /*
-function Eval_binding(expr: Cons, $: ExtensionEnv) {
+function eval_binding(expr: Cons, $: ExtensionEnv) {
     const argList = expr.argList;
     if (is_cons(argList)) {
         const sym = argList.car;
@@ -132,7 +132,7 @@ function Eval_binding(expr: Cons, $: ExtensionEnv) {
 }
 */
 /*
-function Eval_factorpoly(p1: U, $: ExtensionEnv) {
+function eval_factorpoly(p1: U, $: ExtensionEnv) {
     p1 = cdr(p1);
     const arg1 = $.valueOf(car(p1));
     p1 = cdr(p1);
@@ -145,13 +145,13 @@ function Eval_factorpoly(p1: U, $: ExtensionEnv) {
 }
 */
 /*
-function Eval_invg(p1: U, $: ExtensionEnv): void {
+function eval_invg(p1: U, $: ExtensionEnv): void {
     const arg = $.valueOf(cadr(p1));
     stack_push(invg(arg, $));
 }
 */
 /*
-function Eval_isinteger(p1: U, $: ExtensionEnv) {
+function eval_isinteger(p1: U, $: ExtensionEnv) {
     p1 = $.valueOf(cadr(p1));
     const result = _isinteger(p1);
     stack_push(result);
@@ -170,14 +170,14 @@ function _isinteger(p1: U): U {
 }
 */
 /*
-function Eval_operator(p1: U, $: ExtensionEnv) {
+function eval_operator(p1: U, $: ExtensionEnv) {
     const mapped = is_cons(p1) ? p1.tail().map($.valueOf) : [];
     const result = items_to_cons(OPERATOR, ...mapped);
     stack_push(result);
 }
 */
 /*
-function Eval_stop() {
+function eval_stop() {
     throw new Error('user stop');
 }
 */

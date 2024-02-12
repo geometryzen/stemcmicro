@@ -5,7 +5,7 @@ import { Cons, U } from '../../tree/tree';
 import { is_rat } from '../rat/is_rat';
 import { mprime } from './mprime';
 
-export function Eval_isprime(expr: Cons, $: ExtensionEnv): U {
+export function eval_isprime(expr: Cons, $: ExtensionEnv): U {
     return isprime($.valueOf(cadr(expr)));
 }
 

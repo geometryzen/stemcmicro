@@ -19,7 +19,7 @@ import { is_rat } from '../rat/is_rat';
 // can also be run on polynomials, however
 // it works only on the integers and it works
 // by factoring the polynomials (not Euclidean algorithm)
-export function Eval_gcd(p1: U, $: ExtensionEnv): U {
+export function eval_gcd(p1: U, $: ExtensionEnv): U {
     p1 = cdr(p1);
     let result = $.valueOf(car(p1));
 

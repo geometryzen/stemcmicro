@@ -28,10 +28,10 @@ export function execute_eigenmath_script(sourceText: string, contentHandler: Scr
     const $: ProgramStack = vars;
     const io: ProgramIO = vars;
     vars.init();
-    vars.define_cons_function(create_sym("draw"), make_stack_draw(io));
-    vars.define_cons_function(create_sym("infixform"), stack_infixform);
-    vars.define_cons_function(create_sym("print"), make_stack_print(io));
-    vars.define_cons_function(create_sym("run"), make_stack_run(io));
+    vars.define_stack_function(create_sym("draw"), make_stack_draw(io));
+    vars.define_stack_function(create_sym("infixform"), stack_infixform);
+    vars.define_stack_function(create_sym("print"), make_stack_print(io));
+    vars.define_stack_function(create_sym("run"), make_stack_run(io));
     contentHandler.begin($);
     try {
         io.inbuf = sourceText;

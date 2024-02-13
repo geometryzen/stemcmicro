@@ -15,10 +15,10 @@ import { compute_theta_from_base_and_expo } from './compute_theta_from_base_and_
 
 const MATH_ADD = native_sym(Native.add);
 const EXP = native_sym(Native.exp);
-const IM = native_sym(Native.im);
+const IM = native_sym(Native.imag);
 const MATH_MUL = native_sym(Native.multiply);
 const MATH_POW = native_sym(Native.pow);
-const RE = native_sym(Native.re);
+const RE = native_sym(Native.real);
 
 /**
  * expr = (real arg)

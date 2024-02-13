@@ -1,10 +1,11 @@
-import { assert_cons_or_nil, cons, nil, U } from "math-expression-tree";
+import { assert_cons_or_nil, car, cdr, cons, is_atom, is_cons, nil, U } from "math-expression-tree";
+import { ProgramStack } from "../eigenmath/ProgramStack";
 import { Stack } from "./Stack";
 
 /**
  * A stack of expressions that can be used to support evaluation.
  */
-export class StackU {
+export class StackU implements ProgramStack {
     readonly #stack: Stack<U>;
     #refCount = 1;
     constructor(elements: U[] = []) {
@@ -13,6 +14,55 @@ export class StackU {
             elements[i].addRef();
         }
         this.#stack = new Stack(elements);
+    }
+    dupl(): void {
+        const x = this.pop();
+        try {
+            this.push(x);
+            this.push(x);
+        }
+        finally {
+            x.release();
+        }
+    }
+    head(): void {
+        const expr = this.pop();
+        try {
+            const head = car(expr);
+            try {
+                this.push(head);
+            }
+            finally {
+                head.release();
+            }
+        }
+        finally {
+            expr.release();
+        }
+    }
+    rest(): void {
+        const expr = this.pop();
+        try {
+            const rest = cdr(expr);
+            try {
+                this.push(rest);
+            }
+            finally {
+                rest.release();
+            }
+        }
+        finally {
+            expr.release();
+        }
+    }
+    rotateL(n: number): void {
+        this.#stack.rotateL(n);
+    }
+    rotateR(n: number): void {
+        this.#stack.rotateR(n);
+    }
+    swap(): void {
+        this.#stack.swap();
     }
     concat(exprs: U[]): void {
         for (let i = 0; i < exprs.length; i++) {
@@ -35,6 +85,15 @@ export class StackU {
     }
     get length(): number {
         return this.#stack.length;
+    }
+    set length(length: number) {
+        this.#stack.length = length;
+    }
+    get isatom(): boolean {
+        return is_atom(this.#stack.top);
+    }
+    get iscons(): boolean {
+        return is_cons(this.#stack.top);
     }
     list(n: number): void {
         this.#stack.push(nil);

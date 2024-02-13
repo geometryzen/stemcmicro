@@ -6,7 +6,7 @@ import { cons, Cons, items_to_cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
 const ADD = native_sym(Native.add);
-const RE = native_sym(Native.re);
+const RE = native_sym(Native.real);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

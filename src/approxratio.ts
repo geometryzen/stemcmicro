@@ -37,21 +37,21 @@ function approxratio(expr: U, $: ExtensionEnv): Rat | Cons | U {
 
 function approxratio_flt(value: Flt, $: ExtensionEnv): Rat | Cons {
     // TypeScript establishes that the argument actually is a float, so we could simplify here.
-    const supposedlyTheFloat = zzfloat(value, $);
-    if (is_flt(supposedlyTheFloat)) {
-        const theFloat = supposedlyTheFloat.d;
-        const splitBeforeAndAfterDot = theFloat.toString().split('.');
+    const R = zzfloat(value, $);
+    if (is_flt(R)) {
+        const r = R.d;
+        const splitBeforeAndAfterDot = r.toString().split('.');
         if (splitBeforeAndAfterDot.length === 2) {
             const numberOfDigitsAfterTheDot = splitBeforeAndAfterDot[1].length;
             const precision = 1 / Math.pow(10, numberOfDigitsAfterTheDot);
-            const theRatio = floatToRatioRoutine(theFloat, precision);
+            const theRatio = floatToRatioRoutine(r, precision);
             return rational(theRatio[0], theRatio[1]);
         }
-        return create_int(theFloat);
+        return create_int(r);
     }
 
     // we didn't manage, just leave unexpressed
-    return items_to_cons(APPROXRATIO, supposedlyTheFloat);
+    return items_to_cons(APPROXRATIO, R);
 }
 
 // original routine by John Kennedy, see

@@ -1,6 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { IM } from "../../runtime/constants";
+import { IMAG } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -20,7 +20,7 @@ type EXP = Cons1<Sym, ARG>;
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
-        super('imag', IM, is_any, $);
+        super('imag', IMAG, is_any, $);
         this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     get hash(): string {

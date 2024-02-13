@@ -5,11 +5,11 @@ import { native_sym } from "../../native/native_sym";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
+import { Function1 } from "../helpers/Function1";
 import { is_sym } from "../sym/is_sym";
 
-const IM = native_sym(Native.im);
+const IM = native_sym(Native.imag);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

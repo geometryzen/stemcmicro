@@ -9,9 +9,9 @@ import { Cons1 } from "../helpers/Cons1";
 import { is_imu } from "../imu/is_imu";
 import { CompositeOperator } from "../CompositeOperator";
 
-const RE = native_sym(Native.re);
+const RE = native_sym(Native.real);
 const MUL = native_sym(Native.multiply);
-const IM = native_sym(Native.im);
+const IM = native_sym(Native.imag);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

@@ -89,9 +89,9 @@ describe("isreal", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "re(z)");
         engine.release();
     });
-    it("im(z)", function () {
+    it("imag(z)", function () {
         const lines: string[] = [
-            `im(z)`
+            `imag(z)`
         ];
         const engine = create_script_context({
             assumes: {
@@ -101,12 +101,12 @@ describe("isreal", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "im(z)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "imag(z)");
         engine.release();
     });
-    it("re(im(z))", function () {
+    it("re(imag(z))", function () {
         const lines: string[] = [
-            `re(im(z))`
+            `re(imag(z))`
         ];
         const engine = create_script_context({
             assumes: {
@@ -116,12 +116,12 @@ describe("isreal", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "im(z)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "imag(z)");
         engine.release();
     });
-    it("re(-im(z))", function () {
+    it("re(-imag(z))", function () {
         const lines: string[] = [
-            `re(-im(z))`
+            `re(-imag(z))`
         ];
         const engine = create_script_context({
             assumes: {
@@ -131,7 +131,7 @@ describe("isreal", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "-im(z)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-imag(z)");
         engine.release();
     });
     it("re(i*z) when z is not real", function () {
@@ -147,13 +147,13 @@ describe("isreal", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "-im(z)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-imag(z)");
         engine.release();
     });
-    it("im(a+i*b)", function () {
+    it("imag(a+i*b)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `im(a+i*b)`
+            `imag(a+i*b)`
         ];
         const engine = create_script_context({
             dependencies: ['Imu']
@@ -221,10 +221,10 @@ describe("isreal", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "false");
         engine.release();
     });
-    it("im(a+i*b)", function () {
+    it("imag(a+i*b)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `im(a+i*b)`
+            `imag(a+i*b)`
         ];
         const engine = create_script_context({
             assumes: {

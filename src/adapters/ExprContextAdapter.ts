@@ -1,5 +1,5 @@
 import { Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
+import { CompareFn, ExprContext } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
 import { value_of } from "../eigenmath/eigenmath";
 import { ProgramControl } from "../eigenmath/ProgramControl";
@@ -12,6 +12,9 @@ export class ExprContextAdapter implements ExprContext {
     }
     clearBindings(): void {
         this.env.clearBindings();
+    }
+    compareFn(opr: Sym): CompareFn {
+        return this.ctrl.compareFn(opr);
     }
     executeProlog(script: string[]): void {
         this.env.executeProlog(script);

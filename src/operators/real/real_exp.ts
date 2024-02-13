@@ -11,7 +11,7 @@ import { CompositeOperator } from "../CompositeOperator";
 import { is_imu } from "../imu/is_imu";
 
 const EXP = native_sym(Native.exp);
-const RE = native_sym(Native.re);
+const RE = native_sym(Native.real);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

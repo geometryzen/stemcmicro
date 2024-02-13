@@ -1,17 +1,19 @@
-import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
-import { ExprContext, LambdaExpr } from 'math-expression-context';
+import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
+import { CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
-import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
-import { ConsFunction } from '../adapters/ConsFunction';
+import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprContextAdapter } from '../adapters/ExprContextAdapter';
 import { make_stack } from '../adapters/make_stack';
+import { StackFunction } from '../adapters/StackFunction';
 import { ExprEngineListener } from '../api/api';
 import { DirectiveStack } from '../env/DirectiveStack';
 import { Directive } from '../env/ExtensionEnv';
 import { imu } from '../env/imu';
 import { StackU } from '../env/StackU';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
+import { predicate_return_value } from '../helpers/predicate_return_value';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
+import { is_boo } from '../operators/boo/is_boo';
 import { eval_degree } from '../operators/degree/degree';
 import { hadamard, stack_hadamard } from '../operators/hadamard/stack_hadamard';
 import { is_imu } from '../operators/imu/is_imu';
@@ -52,8 +54,8 @@ function alloc_tensor<T extends U>(): Tensor<T> {
     return new Tensor<T>([], []);
 }
 
-function alloc_matrix(nrow: number, ncol: number): Tensor {
-    const p = alloc_tensor();
+function alloc_matrix<T extends U>(nrow: number, ncol: number): Tensor<T> {
+    const p = alloc_tensor<T>();
     p.dims[0] = nrow;
     p.dims[1] = ncol;
     return p;
@@ -242,34 +244,34 @@ function cddr(p: U): Cons {
     return cdr(cdr(p));
 }
 
-function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
+function cmp(lhs: U, rhs: U): Sign {
 
     if (lhs === rhs)
-        return 0;
+        return SIGN_EQ;
 
     if (lhs.isnil)
-        return -1;
+        return SIGN_LT;
 
     if (rhs.isnil)
-        return 1;
+        return SIGN_GT;
 
     if (is_num(lhs) && is_num(rhs))
         return cmp_numbers(lhs, rhs);
 
     if (is_num(lhs))
-        return -1;
+        return SIGN_LT;
 
     if (is_num(rhs))
-        return 1;
+        return SIGN_GT;
 
     if (is_str(lhs) && isstring(rhs))
         return cmp_strings(lhs.str, rhs.str);
 
     if (is_str(lhs))
-        return -1;
+        return SIGN_LT;
 
     if (is_str(rhs))
-        return 1;
+        return SIGN_GT;
 
     if (is_sym(lhs) && is_sym(rhs)) {
         // The comparison is by namespace then localName.
@@ -277,19 +279,19 @@ function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
     }
 
     if (is_sym(lhs))
-        return -1;
+        return SIGN_LT;
 
     if (is_sym(rhs))
-        return 1;
+        return SIGN_GT;
 
     if (is_tensor(lhs) && istensor(rhs))
         return cmp_tensors(lhs, rhs);
 
     if (is_tensor(lhs))
-        return -1;
+        return SIGN_LT;
 
     if (is_tensor(rhs))
-        return 1;
+        return SIGN_GT;
 
     while (is_cons(lhs) && is_cons(rhs)) {
         const t = cmp(car(lhs), car(rhs));
@@ -300,10 +302,10 @@ function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
     }
 
     if (is_cons(rhs))
-        return -1; // lengthf(p1) < lengthf(p2)
+        return SIGN_LT; // lengthf(p1) < lengthf(p2)
 
     if (is_cons(lhs))
-        return 1; // lengthf(p1) > lengthf(p2)
+        return SIGN_GT; // lengthf(p1) > lengthf(p2)
 
     if (is_uom(lhs) && is_uom(rhs)) {
         // TODO: Perhaps there is a better way to compare?
@@ -311,18 +313,18 @@ function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
     }
 
     if (is_uom(lhs)) {
-        return -1;
+        return SIGN_LT;
     }
 
     if (is_uom(rhs)) {
-        return 1;
+        return SIGN_GT;
     }
 
     // console.lg(`cmp(lhs=${lhs}, rhs=${rhs})=>0`);
-    return 0;
+    return SIGN_EQ;
 }
 
-function cmp_factors(lhs: U, rhs: U): 0 | 1 | -1 {
+function cmp_factors(lhs: U, rhs: U): Sign {
 
     const a = order_factor(lhs);
     const b = order_factor(rhs);
@@ -358,8 +360,9 @@ function cmp_factors(lhs: U, rhs: U): 0 | 1 | -1 {
 
     let c = cmp(base1, base2);
 
-    if (c === 0)
+    if (c === 0) {
         c = cmp(expo2, expo1); // swapped to reverse sort order
+    }
 
     return c;
 }
@@ -594,7 +597,7 @@ const ARCSIN = native_sym(Native.arcsin);
 const ARCSINH = native_sym(Native.arcsinh);
 const ARCTAN = native_sym(Native.arctan);
 const ARCTANH = native_sym(Native.arctanh);
-const ARG = create_sym("arg");
+const ARG = native_sym(Native.arg);
 const BINDING = create_sym("binding");
 const CEILING = create_sym("ceiling");
 const CHECK = create_sym("check");
@@ -602,7 +605,7 @@ const CIRCEXP = create_sym("circexp");
 const CLEAR = create_sym("clear");
 const CLOCK = create_sym("clock");
 const COFACTOR = create_sym("cofactor");
-const CONJ = create_sym("conj");
+const CONJ = native_sym(Native.conj);
 const CONTRACT = create_sym("contract");
 const COS = native_sym(Native.cos);
 const COSH = native_sym(Native.cosh);
@@ -630,7 +633,7 @@ const FLOAT = create_sym("float");
 const FLOOR = create_sym("floor");
 const FOR = create_sym("for");
 const HADAMARD = create_sym("hadamard");
-const IMAG = create_sym("imag");
+const IMAG = native_sym(Native.imag);
 const INNER = create_sym("inner");
 const INTEGRAL = create_sym("integral");
 const INV = create_sym("inv");
@@ -646,15 +649,14 @@ const NROOTS = create_sym("nroots");
 const NUMBER = create_sym("number");
 const NUMERATOR = create_sym("numerator");
 const OR = create_sym("or");
-const OUTER = create_sym("outer");
-const POLAR = create_sym("polar");
+const POLAR = native_sym(Native.polar);
 const PREFIXFORM = create_sym("prefixform");
 const PRODUCT = create_sym("product");
 const QUOTE = create_sym("quote");
 const RANK = create_sym("rank");
 const RATIONALIZE = create_sym("rationalize");
-const REAL = create_sym("real");
-const RECT = create_sym("rect");
+const REAL = native_sym(Native.real);
+const RECT = native_sym(Native.rect);
 const ROOTS = create_sym("roots");
 const ROTATE = create_sym("rotate");
 const SGN = create_sym("sgn");
@@ -874,8 +876,9 @@ function decomp_product(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: Pr
     const h = $.length;
     p1 = cdr(F);
     while (is_cons(p1)) {
-        if (!findf(car(p1), X))
+        if (!findf(car(p1), X)) {
             push(car(p1), $);
+        }
         p1 = cdr(p1);
     }
 
@@ -897,7 +900,7 @@ export function divide(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
     multiply(env, ctrl, $);
 }
 
-export function duplicate($: ProgramStack): void {
+function dupl($: ProgramStack): void {
     const expr = pop($);
     try {
         push(expr, $);
@@ -913,89 +916,105 @@ function equal(p1: U, p2: U): boolean {
 }
 
 export function stack_abs(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(expr), $);
+    $.push(expr);
+    $.rest();
+    $.head();
     value_of(env, ctrl, $);
     absfunc(env, ctrl, $);
 }
 
 export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    let p1 = pop($);
-
-    if (is_num(p1)) {
-        push(p1, $);
-        if (isnegativenumber(p1))
-            negate(env, ctrl, $);
-        return;
-    }
-
-    if (is_tensor(p1)) {
-        if (p1.ndim > 1) {
-            push(ABS, $);
-            push(p1, $);
-            list(2, $);
-            return;
+    const x = pop($);
+    try {
+        if (is_atom(x)) {
+            if (is_num(x)) {
+                push(x, $);
+                if (isnegativenumber(x)) {
+                    negate(env, ctrl, $);
+                }
+                return;
+            }
+            if (is_tensor(x)) {
+                if (x.ndim > 1) {
+                    push(ABS, $);
+                    push(x, $);
+                    list(2, $);
+                    return;
+                }
+                push(x, $);
+                push(x, $);
+                conjfunc(env, ctrl, $);
+                inner(env, ctrl, $);
+                push_rational(1, 2, $);
+                power(env, ctrl, $);
+                return;
+            }
+            if (is_uom(x)) {
+                push(x, $);
+                return;
+            }
         }
-        push(p1, $);
-        push(p1, $);
+
+        push(x, $);
+        push(x, $);
         conjfunc(env, ctrl, $);
-        inner(env, ctrl, $);
+        multiply(env, ctrl, $);
         push_rational(1, 2, $);
         power(env, ctrl, $);
-        return;
-    }
 
-    push(p1, $);
-    push(p1, $);
-    conjfunc(env, ctrl, $);
-    multiply(env, ctrl, $);
-    push_rational(1, 2, $);
-    power(env, ctrl, $);
-
-    const p2 = pop($);
-    push(p2, $);
-    floatfunc(env, ctrl, $);
-    const p3 = pop($);
-    if (is_flt(p3)) {
+        const p2 = pop($);
         push(p2, $);
-        if (isnegativenumber(p3))
-            negate(env, ctrl, $);
-        return;
-    }
-
-    // abs(1/a) evaluates to 1/abs(a)
-
-    if (car(p1).equals(POWER) && isnegativeterm(caddr(p1))) {
-        push(p1, $);
-        reciprocate(env, ctrl, $);
-        absfunc(env, ctrl, $);
-        reciprocate(env, ctrl, $);
-        return;
-    }
-
-    // abs(a*b) evaluates to abs(a)*abs(b)
-
-    if (car(p1).equals(MULTIPLY)) {
-        const h = $.length;
-        p1 = cdr(p1);
-        while (is_cons(p1)) {
-            push(car(p1), $);
-            absfunc(env, ctrl, $);
-            p1 = cdr(p1);
+        floatfunc(env, ctrl, $);
+        const p3 = pop($);
+        if (is_flt(p3)) {
+            push(p2, $);
+            if (isnegativenumber(p3))
+                negate(env, ctrl, $);
+            return;
         }
-        multiply_factors($.length - h, env, ctrl, $);
-        return;
-    }
 
-    if (isnegativeterm(p1) || (car(p1).equals(ADD) && isnegativeterm(cadr(p1)))) {
-        push(p1, $);
-        negate(env, ctrl, $);
-        p1 = pop($);
-    }
+        // abs(1/a) evaluates to 1/abs(a)
 
-    push(ABS, $);
-    push(p1, $);
-    list(2, $);
+        if (car(x).equals(POWER) && isnegativeterm(caddr(x))) {
+            push(x, $);
+            reciprocate(env, ctrl, $);
+            absfunc(env, ctrl, $);
+            reciprocate(env, ctrl, $);
+            return;
+        }
+
+        // abs(a*b) evaluates to abs(a)*abs(b)
+
+        if (car(x).equals(MULTIPLY)) {
+            const h = $.length;
+            let p1 = cdr(x);
+            while (is_cons(p1)) {
+                push(car(p1), $);
+                absfunc(env, ctrl, $);
+                p1 = cdr(p1);
+            }
+            multiply_factors($.length - h, env, ctrl, $);
+            return;
+        }
+
+        if (isnegativeterm(x) || (car(x).equals(ADD) && isnegativeterm(cadr(x)))) {
+            push(x, $);
+            negate(env, ctrl, $);
+            const X = pop($);
+            push(ABS, $);
+            push(X, $);
+            list(2, $);
+        }
+        else {
+            push(ABS, $);
+            push(x, $);
+            list(2, $);
+        }
+    }
+    finally {
+        x.release();
+    }
 }
 
 export function stack_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -1030,10 +1049,11 @@ function add_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramS
 
     let T = combine_tensors(h, env, ctrl, $);
 
-    combine_terms(h, $);
+    combine_terms(h, ctrl, $);
 
-    if (simplify_terms(h, env, ctrl, $))
-        combine_terms(h, $);
+    if (simplify_terms(h, env, ctrl, $)) {
+        combine_terms(h, ctrl, $);
+    }
 
     n = $.length - h;
 
@@ -1128,8 +1148,8 @@ function add_tensors(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
     push(p1, $);
 }
 
-function combine_terms(h: number, $: ProgramStack): void {
-    sort_terms(h, $);
+function combine_terms(h: number, ctrl: ProgramControl, $: ProgramStack): void {
+    sort_terms(h, ctrl, $);
     for (let i = h; i < $.length - 1; i++) {
         if (combine_terms_nib(i, i + 1, $)) {
             if (iszero($.getAt(i)))
@@ -1235,99 +1255,102 @@ function combine_terms_nib(i: number, j: number, $: ProgramStack): 1 | 0 {
     return 1;
 }
 
-function sort_terms(start: number, $: ProgramStack): void {
-    const compareFn = (lhs: U, rhs: U) => cmp_terms(lhs, rhs);
+function sort_terms(start: number, ctrl: ProgramControl, $: ProgramStack): void {
+    const compareFn = ctrl.compareFn(native_sym(Native.add));
     const sorted: U[] = $.splice(start).sort(compareFn);
     $.concat(sorted);
 }
 
-function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
+function make_terms_compare_fn(compareFactors: CompareFn): CompareFn {
+    return function (lhs: U, rhs: U): Sign {
 
-    // 1st level: imaginary terms on the right
+        // 1st level: imaginary terms on the right
 
-    let a = isimaginaryterm(p1);
-    let b = isimaginaryterm(p2);
+        let a = isimaginaryterm(lhs);
+        let b = isimaginaryterm(rhs);
 
-    if (a === 0 && b === 1)
-        return -1; // ok
+        if (a === 0 && b === 1)
+            return SIGN_LT; // ok
 
-    if (a === 1 && b === 0)
-        return 1; // out of order
+        if (a === 1 && b === 0)
+            return SIGN_GT; // out of order
 
-    // 2nd level: numericals on the right
+        // 2nd level: numericals on the right
 
-    if (is_num(p1) && is_num(p2))
-        return 0; // don't care about order, save time, don't compare
+        if (is_num(lhs) && is_num(rhs))
+            return SIGN_EQ; // don't care about order, save time, don't compare
 
-    if (is_num(p1))
-        return 1; // out of order
+        if (is_num(lhs))
+            return SIGN_GT; // out of order
 
-    if (is_num(p2))
-        return -1; // ok
+        if (is_num(rhs))
+            return SIGN_LT; // ok
 
-    // 3rd level: sort by factors
+        // 3rd level: sort by factors
 
-    a = 0;
-    b = 0;
+        a = 0;
+        b = 0;
 
-    if (car(p1).equals(MULTIPLY)) {
-        p1 = cdr(p1);
-        a = 1; // p1 is a list of factors
-        if (is_num(car(p1))) {
-            // skip over coeff
-            p1 = cdr(p1);
-            if (cdr(p1).isnil) {
-                p1 = car(p1);
-                a = 0;
+        if (car(lhs).equals(MULTIPLY)) {
+            lhs = cdr(lhs);
+            a = 1; // p1 is a list of factors
+            if (is_num(car(lhs))) {
+                // skip over coeff
+                lhs = cdr(lhs);
+                if (cdr(lhs).isnil) {
+                    lhs = car(lhs);
+                    a = 0;
+                }
             }
         }
-    }
 
-    if (car(p2).equals(MULTIPLY)) {
-        p2 = cdr(p2);
-        b = 1; // p2 is a list of factors
-        if (is_num(car(p2))) {
-            // skip over coeff
-            p2 = cdr(p2);
-            if (cdr(p2).isnil) {
-                p2 = car(p2);
-                b = 0;
+        if (car(rhs).equals(MULTIPLY)) {
+            rhs = cdr(rhs);
+            b = 1; // p2 is a list of factors
+            if (is_num(car(rhs))) {
+                // skip over coeff
+                rhs = cdr(rhs);
+                if (cdr(rhs).isnil) {
+                    rhs = car(rhs);
+                    b = 0;
+                }
             }
         }
-    }
 
-    if (a === 0 && b === 0)
-        return cmp_factors(p1, p2);
+        if (a === 0 && b === 0)
+            return compareFactors(lhs, rhs);
 
-    if (a === 0 && b === 1) {
-        let c = cmp_factors(p1, car(p2));
-        if (c === 0)
-            c = -1; // lengthf(p1) < lengthf(p2)
-        return c;
-    }
-
-    if (a === 1 && b === 0) {
-        let c = cmp_factors(car(p1), p2);
-        if (c === 0)
-            c = 1; // lengthf(p1) > lengthf(p2)
-        return c;
-    }
-
-    while (is_cons(p1) && is_cons(p2)) {
-        const c = cmp_factors(car(p1), car(p2));
-        if (c)
+        if (a === 0 && b === 1) {
+            let c: Sign = compareFactors(lhs, car(rhs));
+            if (c === SIGN_EQ) {
+                c = SIGN_LT; // lengthf(p1) < lengthf(p2)
+            }
             return c;
-        p1 = cdr(p1);
-        p2 = cdr(p2);
-    }
+        }
 
-    if (is_cons(p1))
-        return 1; // lengthf(p1) > lengthf(p2)
+        if (a === 1 && b === 0) {
+            let c = compareFactors(car(lhs), rhs);
+            if (c === SIGN_EQ)
+                c = SIGN_GT; // lengthf(p1) > lengthf(p2)
+            return c;
+        }
 
-    if (is_cons(p2))
-        return -1; // lengthf(p1) < lengthf(p2)
+        while (is_cons(lhs) && is_cons(rhs)) {
+            const c: Sign = compareFactors(car(lhs), car(rhs));
+            if (c)
+                return c;
+            lhs = cdr(lhs);
+            rhs = cdr(rhs);
+        }
 
-    return 0;
+        if (is_cons(lhs))
+            return SIGN_GT; // lengthf(p1) > lengthf(p2)
+
+        if (is_cons(rhs))
+            return SIGN_LT; // lengthf(p1) < lengthf(p2)
+
+        return SIGN_EQ;
+    };
 }
 
 function simplify_terms(h: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): number {
@@ -1365,7 +1388,6 @@ function isimaginaryterm(p: U): 0 | 1 {
     return 0;
 }
 
-// DGH
 function isimaginaryfactor(p: U): boolean | 0 {
     return car(p).equals(POWER) && isminusone(cadr(p));
 }
@@ -2267,11 +2289,11 @@ function arctanh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 }
 
 export function stack_arg(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(expr, $);              // [expr]
-    rest($);                    // [argList]
-    head($);                    // [argList.item0]
-    value_of(env, ctrl, $);     // [z]
-    arg(env, ctrl, $);          // [arg(z)]
+    $.push(expr);                // [expr]
+    $.rest();                    // [argList]
+    $.head();                    // [argList.item0]
+    value_of(env, ctrl, $);      // [z]
+    arg(env, ctrl, $);           // [arg(z)]
 }
 
 // use numerator and denominator to handle (a + i b) / (c + i d)
@@ -2354,8 +2376,8 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
                     if (isminusone(base)) {
                         const expo = z.expo;
                         try {
-                            push(native_sym(Native.PI), $);     // [pi]
-                            push(expo, $);                      // [pi expo]
+                            $.push(native_sym(Native.PI));      // [pi]
+                            $.push(expo);                       // [pi expo]
                             multiply(env, ctrl, $);             // [pi*expo]
                             return;
                         }
@@ -3949,7 +3971,7 @@ export function stack_eigenvec(punk: Cons, env: ProgramEnv, ctrl: ProgramControl
     push(cadr(punk), $);
     value_of(env, ctrl, $);
     floatfunc(env, ctrl, $);
-    let T = pop($) as Tensor;
+    let T = pop($) as Tensor<Flt>;
 
     if (!issquarematrix(T))
         stopf("eigenvec: square matrix expected");
@@ -3963,8 +3985,8 @@ export function stack_eigenvec(punk: Cons, env: ProgramEnv, ctrl: ProgramControl
 
     for (let i = 0; i < n - 1; i++) {
         for (let j = i + 1; j < n; j++) {
-            const Tij: number = (T.elems[n * i + j] as Flt).d;
-            const Tji: number = (T.elems[n * j + i] as Flt).d;
+            const Tij: number = (T.elems[n * i + j]).d;
+            const Tji: number = (T.elems[n * j + i]).d;
             if (Math.abs(Tij - Tji) > 1e-10) {
                 stopf("eigenvec: symmetrical matrix expected");
             }
@@ -3993,12 +4015,11 @@ export function stack_eigenvec(punk: Cons, env: ProgramEnv, ctrl: ProgramControl
 
     eigenvec(D, Q, n);
 
-    T = alloc_matrix(n, n);
+    T = alloc_matrix<Flt>(n, n);
 
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
-            push_double(Q[n * j + i], $); // transpose
-            T.elems[n * i + j] = pop($);
+            T.elems[n * i + j] = create_flt(Q[n * j + i]); // transpose
         }
     }
 
@@ -4455,11 +4476,11 @@ function floatfunc_subst($: ProgramStack): void {
         if (is_cons(expr)) {
             const h = $.length;
             $.push(expr);
-            head($);
+            $.head();
             let xs = expr.rest;
             while (is_cons(xs)) {
                 $.push(xs);
-                head($);
+                $.head();
                 floatfunc_subst($);
                 xs = xs.rest;
             }
@@ -4478,7 +4499,7 @@ export function stack_floor(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $
     const argList = expr.argList;
     try {
         $.push(argList);
-        head($);
+        $.head();
         value_of(env, ctrl, $);
         floorfunc(env, ctrl, $);
     }
@@ -6473,7 +6494,7 @@ export function stack_multiply(expr: Cons, env: ProgramEnv, ctrl: ProgramControl
             let factors = argList;
             while (is_cons(factors)) {
                 $.push(factors);
-                head($);
+                $.head();
                 value_of(env, ctrl, $);
                 factors = factors.rest;
             }
@@ -6540,14 +6561,30 @@ function evaluate_nonstop_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramS
     }
 }
 
+export function isfalsey(x: U): boolean {
+    if (is_boo(x)) {
+        return x.isFalse();
+    }
+    return iszero(x);
+}
+
 export function stack_not(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(expr), $);
+    $.push(expr);
+    $.rest();
+    $.head();
     evalp(env, ctrl, $);
-    const p1 = pop($);
-    if (iszero(p1))
-        push_integer(1, $);
-    else
-        push_integer(0, $);
+    const x = pop($);
+    try {
+        if (isfalsey(x)) {
+            push(predicate_return_value(true, ctrl), $);
+        }
+        else {
+            push(predicate_return_value(false, ctrl), $);
+        }
+    }
+    finally {
+        x.release();
+    }
 }
 const DELTA = 1e-6;
 const EPSILON = 1e-9;
@@ -6881,41 +6918,66 @@ export function stack_or(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pro
     push_integer(0, $);
 }
 
-export function stack_outer(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-    p1 = cddr(p1);
-    while (is_cons(p1)) {
-        push(car(p1), $);
-        value_of(env, ctrl, $);
-        outer(env, ctrl, $);
-        p1 = cdr(p1);
+export function stack_outer(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    $.push(expr);                   //  [outer(a,b,c,...)]
+    $.rest();                       //  [(a,b,c,...)]
+    $.push(one);                    //  [(a,b,c,...), 1]
+    $.swap();                       //  [1, (a,b,c,...)]
+    while ($.iscons) {
+        $.dupl();                   //  [1, (a,b,c,...), (a,b,c,...)]
+        $.rest();                   //  [1, (a,b,c,...), (b,c,...)]
+        $.rotateR(3);               //  [(b,c,...), 1, (a,b,c,...)]
+        $.head();                   //  [(b,c,...), 1, a]
+        value_of(env, ctrl, $);     //  [(b,c,...), 1, a] where both and and b have been evaluated
+        outer(env, ctrl, $);        //  [(b,c,...), (1^a)]
+        $.swap();                   //  [(1^a), (b,c,...)]
     }
+    $.pop().release();
 }
 
 function outer(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    const p2 = pop($);
-    const p1 = pop($);
+    const rhs = pop($);
+    const lhs = pop($);
 
-    if (!istensor(p1) || !istensor(p2)) {
-        push(p1, $);
-        push(p2, $);
+    if (is_atom(lhs) && is_atom(rhs)) {
+        if (is_blade(lhs)) {
+            if (is_blade(rhs)) {
+                const x = lhs.wedge(rhs);
+                push(x, $);
+                return;
+            }
+        }
+        if (is_rat(lhs)) {
+            if (is_blade(rhs)) {
+                push(native_sym(Native.multiply), $);
+                push(lhs, $);
+                push(rhs, $);
+                list(3, $);
+                value_of(env, ctrl, $);
+                return;
+            }
+        }
+    }
+
+    if (!istensor(lhs) || !istensor(rhs)) {
+        push(lhs, $);
+        push(rhs, $);
         multiply(env, ctrl, $);
         return;
     }
 
     // sync diffs
 
-    const nrow = p1.nelem;
-    const ncol = p2.nelem;
+    const nrow = lhs.nelem;
+    const ncol = rhs.nelem;
 
     const p3 = alloc_tensor();
 
     for (let i = 0; i < nrow; i++)
         for (let j = 0; j < ncol; j++) {
-            push(p1.elems[i], $);
-            push(p2.elems[j], $);
+            push(lhs.elems[i], $);
+            push(rhs.elems[j], $);
             multiply(env, ctrl, $);
             p3.elems[i * ncol + j] = pop($);
         }
@@ -6924,15 +6986,15 @@ function outer(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     let k = 0;
 
-    let n = p1.ndim;
+    let n = lhs.ndim;
 
     for (let i = 0; i < n; i++)
-        p3.dims[k++] = p1.dims[i];
+        p3.dims[k++] = lhs.dims[i];
 
-    n = p2.ndim;
+    n = rhs.ndim;
 
     for (let i = 0; i < n; i++)
-        p3.dims[k++] = p2.dims[i];
+        p3.dims[k++] = rhs.dims[i];
 
     push(p3, $);
 }
@@ -6974,10 +7036,10 @@ function polar(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 export function stack_power(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
     ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
     try {
-        push(expr.base, $);
-        push(expr.expo, $);
+        $.push(expr.base);
+        $.push(expr.expo);
         value_of(env, ctrl, $);
-        duplicate($);
+        $.dupl();
         // expo has been evaluated with a decremented expanding value.
         const expo = pop($);
         try {
@@ -7056,6 +7118,14 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
     const [base, expo] = power_args($);
     // console.lg("power", "base", `${base}`, "expo", `${expo}`);
     try {
+        if (is_atom(base)) {
+            if (is_uom(base)) {
+                if (is_rat(expo)) {
+                    $.push(base.pow(QQ.valueOf(expo.numer().toNumber(), expo.denom().toNumber())));
+                    return;
+                }
+            }
+        }
         if (is_tensor(base) && istensor(expo)) {
             push(POWER, $);
             push(base, $);
@@ -7130,7 +7200,8 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
             if (expo.isEven()) {
                 const n = expo.mul(half);
                 if (n.isEven()) {
-                    throw new ProgrammingError(`base ${base} expo ${expo}`);
+                    $.push(one);
+                    return;
                 }
                 else {
                     $.push(negOne);
@@ -7138,7 +7209,16 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
                 }
             }
             else if (expo.isOdd()) {
-                throw new ProgrammingError(`base ${base} expo ${expo}`);
+                const n = expo.succ().mul(half);
+                if (n.isEven()) {
+                    $.push(imu);
+                    negate(env, ctrl, $);
+                    return;
+                }
+                else {
+                    $.push(imu);
+                    return;
+                }
             }
             else {
                 // We've dealt with the easy integral cases.
@@ -7173,7 +7253,7 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
                 $.setAt(h + i, pop($));
             }
             if (n > 1) {
-                sort_factors(h, $);
+                sort_factors(h, ctrl, $);
                 list(n, $);
                 push(MULTIPLY, $);
                 swap($);
@@ -7203,7 +7283,7 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
         // BASE = e ?
 
         if (base.equals(MATH_E)) {
-            power_natural_number(expo, env, ctrl, $);
+            power_e_expo(expo, env, ctrl, $);
             return;
         }
 
@@ -7245,9 +7325,9 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
 
         // none of the above
 
-        push(POWER, $);
-        push(base, $);
-        push(expo, $);
+        $.push(native_sym(Native.pow));
+        $.push(base);
+        $.push(expo);
         list(3, $);
     }
     finally {
@@ -7412,9 +7492,9 @@ export function real(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
             }
         }
         // In all other cases we would be handling cons or nil
-        push(z, $);             //  [z]
+        $.push(z);              //  [z]
         rect(env, ctrl, $);     //  [x+i*y]
-        duplicate($);           //  [x+i*y,x+i*y]
+        $.dupl();               //  [x+i*y,x+i*y]
         conjfunc(env, ctrl, $); //  [x+i*y,x-i*y]
         add(env, ctrl, $);      //  [2*x]
         push_rational(1, 2, $); //  [2*x, 1/2]
@@ -8538,9 +8618,9 @@ function sinhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
 }
 
 export function stack_sqrt(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(expr, $);
-    rest($);
-    head($);
+    $.push(expr);
+    $.rest();
+    $.head();
     value_of(env, ctrl, $);
     sqrtfunc(env, ctrl, $);
 }
@@ -9346,7 +9426,7 @@ export function stack_zero(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
     while (is_cons(p1)) {
         push(car(p1), $);
         value_of(env, ctrl, $);
-        duplicate($);
+        dupl($);
         const n = pop_integer($);
         if (n < 2)
             stopf("zero: dim err");
@@ -9466,13 +9546,18 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
 }
 
 function evalp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
-    if (is_cons(p1) && p1.opr.equals(ASSIGN)) {
-        stack_testeq(p1, env, ctrl, $);
+    const expr = pop($);
+    try {
+        if (is_cons(expr) && expr.opr.equals(ASSIGN)) {
+            stack_testeq(expr, env, ctrl, $);
+        }
+        else {
+            push(expr, $);
+            value_of(env, ctrl, $);
+        }
     }
-    else {
-        push(p1, $);
-        value_of(env, ctrl, $);
+    finally {
+        expr.release();
     }
 }
 
@@ -9503,7 +9588,7 @@ function expand_sum_factors(start: number, env: ProgramEnv, ctrl: ProgramControl
     n = $.length - start;
 
     if (n > 1) {
-        sort_factors(start, $);
+        sort_factors(start, ctrl, $);
         list(n, $);
         push(MULTIPLY, $);
         swap($);
@@ -10437,47 +10522,67 @@ function iscomplexnumber(p: U): boolean {
     return isimaginarynumber(p) || (lengthf(p) === 3 && car(p).equals(ADD) && is_num(cadr(p)) && isimaginarynumber(caddr(p)));
 }
 
-function isdenormalpolar(p: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
-    if (car(p).equals(ADD)) {
-        p = cdr(p);
-        while (is_cons(p)) {
-            if (isdenormalpolarterm(car(p), env, ctrl, $))
+function isdenormalpolar(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
+    if (car(expr).equals(ADD)) {
+        expr = cdr(expr);
+        while (is_cons(expr)) {
+            if (isdenormalpolarterm(car(expr), env, ctrl, $)) {
                 return 1;
-            p = cdr(p);
+            }
+            expr = cdr(expr);
         }
         return 0;
     }
 
-    return isdenormalpolarterm(p, env, ctrl, $);
+    return isdenormalpolarterm(expr, env, ctrl, $);
 }
 
-function isdenormalpolarterm(p: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
-    if (!car(p).equals(MULTIPLY))
+function isdenormalpolarterm(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
+    if (is_cons(expr) && expr.opr.equals(MULTIPLY)) {
+        if (expr.length === 3) {
+            const lhs = expr.lhs;
+            const rhs = expr.rhs;
+            try {
+                if (lhs.equals(MATH_PI) && rhs.equals(imu)) {
+                    return 1;
+                }
+                if (lhs.equals(imu) && rhs.equals(MATH_PI)) {
+                    return 1;
+                }
+            }
+            finally {
+                lhs.release();
+                rhs.release();
+            }
+        }
+
+        if (lengthf(expr) !== 4 || !is_num(cadr(expr)) || !is_imu(caddr(expr)) || !cadddr(expr).equals(MATH_PI)) {
+            return 0;
+        }
+
+        expr = cadr(expr); // p = coeff of term
+
+        if (is_num(expr) && isnegativenumber(expr)) {
+            return 1; // p < 0
+        }
+
+        push(expr, $);
+        push_rational(-1, 2, $);
+        add(env, ctrl, $);
+        expr = pop($);
+
+        if (!(is_num(expr) && isnegativenumber(expr))) {
+            return 1; // p >= 1/2
+        }
+
         return 0;
-
-    if (lengthf(p) === 3 && is_imu(cadr(p)) && caddr(p).equals(MATH_PI))
-        return 1; // exp(i pi)
-
-    if (lengthf(p) !== 4 || !is_num(cadr(p)) || !is_imu(caddr(p)) || !cadddr(p).equals(MATH_PI))
+    }
+    else {
         return 0;
-
-    p = cadr(p); // p = coeff of term
-
-    if (is_num(p) && isnegativenumber(p))
-        return 1; // p < 0
-
-    push(p, $);
-    push_rational(-1, 2, $);
-    add(env, ctrl, $);
-    p = pop($);
-
-    if (!(is_num(p) && isnegativenumber(p)))
-        return 1; // p >= 1/2
-
-    return 0;
+    }
 }
 
-function isdoublesomewhere(p: U) {
+function isdoublesomewhere(p: U): 1 | 0 {
     if (is_flt(p))
         return 1;
 
@@ -10497,11 +10602,11 @@ function isimaginarynumber(p: U): boolean {
     return is_imu(p) || (lengthf(p) === 3 && car(p).equals(MULTIPLY) && is_num(cadr(p)) && is_imu(caddr(p)));
 }
 
-function isinteger1(p: Rat) {
+function isinteger1(p: Rat): boolean {
     return isinteger(p) && isplusone(p);
 }
 
-function isminusoneoversqrttwo(p: U) {
+function isminusoneoversqrttwo(p: U): boolean {
     return lengthf(p) === 3 && car(p).equals(MULTIPLY) && isminusone(cadr(p)) && isoneoversqrttwo(caddr(p));
 }
 
@@ -10622,8 +10727,14 @@ export function multiply_factors(n: number, env: ProgramEnv, ctrl: ProgramContro
         push(uom, $);
     }
 
-    const B = multiply_blade_factors(start, $);
-    if (is_blade(B)) {
+    const B = multiply_blade_factors(start, env, ctrl, $);
+    if (is_rat(B) && B.isOne()) {
+        // Ignore
+    }
+    else if (is_nil(B)) {
+        // Ignore
+    }
+    else {
         push(B, $);
     }
 
@@ -10736,7 +10847,7 @@ function multiply_scalar_factors(start: number, env: ProgramEnv, ctrl: ProgramCo
         case 1:
             break;
         default:
-            sort_factors(start, $); // previously sorted provisionally
+            sort_factors(start, ctrl, $); // previously sorted provisionally
             list(n, $);
             push(MULTIPLY, $);
             swap($);
@@ -10774,24 +10885,36 @@ function multiply_tensor_factors(start: number, env: ProgramEnv, ctrl: ProgramCo
     return T;
 }
 
-function multiply_blade_factors(start: number, $: ProgramStack): U {
+function multiply_blade_factors(start: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): U {
     let B: U = nil;
     let end = $.length;
     for (let i = start; i < end; i++) {
-        const p1 = $.getAt(i);
-        if (!is_blade(p1)) {
-            continue;
+        const x = $.getAt(i);
+        try {
+            if (is_blade(x)) {
+                if (is_nil(B)) {
+                    // The first time through, B is nil.
+                    B = x;
+                }
+                else {
+                    push(native_sym(Native.multiply), $);
+                    push(B, $);
+                    push(x, $);
+                    list(3, $);
+                    value_of(env, ctrl, $);
+                    B = $.pop();
+                }
+                $.splice(i, 1); // remove factor
+                i--; // use same index again
+                end--;
+            }
+            else {
+                continue;
+            }
         }
-        if (is_blade(B)) {
-            B = B.mul(p1);
+        finally {
+            x.release();
         }
-        else {
-            // The first time through, T is nil.
-            B = p1;
-        }
-        $.splice(i, 1); // remove factor
-        i--; // use same index again
-        end--;
     }
     return B;
 }
@@ -10824,6 +10947,7 @@ export function negate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
 }
 
 function normalize_polar(EXPO: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    // console.lg("normalize_polar", `${EXPO}`);
     if (car(EXPO).equals(ADD)) {
         const h = $.length;
         let p1 = cdr(EXPO);
@@ -11090,6 +11214,15 @@ function normalize_power_factors(h: number, env: ProgramEnv, ctrl: ProgramContro
     }
 }
 
+const ORDER_1 = 1;
+const ORDER_2 = 2;
+const ORDER_3 = 3;
+const ORDER_4 = 4;
+const ORDER_5 = 5;
+const ORDER_6 = 6;
+const ORDER_7 = 7;
+const ORDER_8 = 8;
+
 /**
  *  1   number
  *  2   number to power (root)
@@ -11098,37 +11231,56 @@ function normalize_power_factors(h: number, env: ProgramEnv, ctrl: ProgramContro
  *  5   exponential
  *  6   derivative
  * 
- * @param p 
+ * @param expr 
  * @returns 
  */
-function order_factor(p: U): 1 | 2 | 3 | 4 | 5 | 6 {
-    if (is_num(p))
-        return 1;
+function order_factor(expr: U): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 {
+    // console.lg("order_factor", `${expr}`);
+    if (is_atom(expr)) {
+        if (is_num(expr)) {
+            return ORDER_1;
+        }
+        if (is_blade(expr)) {
+            return ORDER_4;
+        }
+        if (is_str(expr)) {
+            return ORDER_5;
+        }
+        if (is_uom(expr)) {
+            return ORDER_6;
+        }
+        if (expr.equals(MATH_E)) {
+            return ORDER_7;
+        }
+    }
+    else if (is_cons(expr)) {
+        if (car(expr).equals(DERIVATIVE) || car(expr).equals(D_LOWER)) {
+            return ORDER_8;
+        }
 
-    if (p.equals(MATH_E))
-        return 5;
+        if (car(expr).equals(POWER)) {
 
-    if (car(p).equals(DERIVATIVE) || car(p).equals(D_LOWER))
-        return 6;
+            expr = cadr(expr); // p = base
 
-    if (car(p).equals(POWER)) {
+            if (isminusone(expr)) {
+                return ORDER_3;
+            }
 
-        p = cadr(p); // p = base
+            if (is_num(expr)) {
+                return ORDER_2;
+            }
 
-        if (isminusone(p))
-            return 3;
+            if (expr.equals(MATH_E)) {
+                return ORDER_7;
+            }
 
-        if (is_num(p))
-            return 2;
-
-        if (p.equals(MATH_E))
-            return 5;
-
-        if (car(p).equals(DERIVATIVE) || car(p).equals(D_LOWER))
-            return 6;
+            if (car(expr).equals(DERIVATIVE) || car(expr).equals(D_LOWER)) {
+                return ORDER_8;
+            }
+        }
     }
 
-    return 4;
+    return ORDER_6;
 }
 
 function partition_term($: ProgramStack): void {
@@ -11223,14 +11375,17 @@ function assert_num_to_number(p: U): number | never {
 }
 
 function pop_double($: ProgramStack): number {
-
-    const p = pop($);
-
-    if (is_num(p)) {
-        return p.toNumber();
+    const expr = pop($);
+    try {
+        if (is_num(expr)) {
+            return expr.toNumber();
+        }
+        else {
+            stopf("pop_double() number expected");
+        }
     }
-    else {
-        stopf("pop_double() number expected");
+    finally {
+        expr.release();
     }
 }
 
@@ -11351,7 +11506,7 @@ function power_complex_minus(X: U, Y: U, n: number, env: ProgramEnv, ctrl: Progr
     add(env, ctrl, $);
 }
 
-function power_complex_number(BASE: U, EXPO: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function power_complex_number(base: U, expo: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     let X: U;
     let Y: U;
 
@@ -11363,41 +11518,41 @@ function power_complex_number(BASE: U, EXPO: U, env: ProgramEnv, ctrl: ProgramCo
 
     // prefixform(i) = (power -1 1/2)
 
-    if (car(BASE).equals(ADD)) {
-        X = cadr(BASE);
-        if (caaddr(BASE).equals(MULTIPLY))
-            Y = cadaddr(BASE);
+    if (car(base).equals(ADD)) {
+        X = cadr(base);
+        if (caaddr(base).equals(MULTIPLY))
+            Y = cadaddr(base);
         else
             Y = one;
     }
-    else if (car(BASE).equals(MULTIPLY)) {
+    else if (car(base).equals(MULTIPLY)) {
         X = zero;
-        Y = cadr(BASE);
+        Y = cadr(base);
     }
     else {
         X = zero;
         Y = one;
     }
 
-    if (is_flt(X) || is_flt(Y) || is_flt(EXPO)) {
-        power_complex_double(BASE, EXPO, X, Y, env, ctrl, $);
+    if (is_flt(X) || is_flt(Y) || is_flt(expo)) {
+        power_complex_double(base, expo, X, Y, env, ctrl, $);
         return;
     }
 
-    if (!(is_rat(EXPO) && isinteger(EXPO))) {
-        power_complex_rational(BASE, EXPO, X, Y, env, ctrl, $);
+    if (!(is_rat(expo) && isinteger(expo))) {
+        power_complex_rational(base, expo, X, Y, env, ctrl, $);
         return;
     }
 
-    if (!issmallinteger(EXPO)) {
+    if (!issmallinteger(expo)) {
         push(POWER, $);
-        push(BASE, $);
-        push(EXPO, $);
+        push(base, $);
+        push(expo, $);
         list(3, $);
         return;
     }
 
-    push(EXPO, $);
+    push(expo, $);
     const n = pop_integer($);
 
     if (n > 0)
@@ -11679,20 +11834,25 @@ function normalize_clock_double(EXPO: Flt, $: ProgramStack): void {
     }
 }
 
-function power_natural_number(EXPO: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+/**
+ * (pow e expo)
+ */
+function power_e_expo(expo: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+
+    // console.lg("power_e_expo", "expo", `${expo}`);
 
     // exp(x + i y) = exp(x) (cos(y) + i sin(y))
     let x: number;
     let y: number;
 
-    if (isdoublez(EXPO)) {
-        if (car(EXPO).equals(ADD)) {
-            x = (cadr(EXPO) as Flt).d;
-            y = (cadaddr(EXPO) as Flt).d;
+    if (isdoublez(expo)) {
+        if (car(expo).equals(ADD)) {
+            x = (cadr(expo) as Flt).d;
+            y = (cadaddr(expo) as Flt).d;
         }
         else {
             x = 0.0;
-            y = (cadr(EXPO) as Flt).d;
+            y = (cadr(expo) as Flt).d;
         }
         push_double(Math.exp(x), $);
         push_double(y, $);
@@ -11708,19 +11868,22 @@ function power_natural_number(EXPO: U, env: ProgramEnv, ctrl: ProgramControl, $:
 
     // e^log(expr) = expr
 
-    if (car(EXPO).equals(LOG)) {
-        push(cadr(EXPO), $);
+    if (is_cons(expo) && expo.opr.equals(LOG)) {
+        push(expo, $);           // [(log (expr))]   or [log(expr)]
+        $.rest();                // [(expr)]
+        $.head();                // [expr]
+        push(cadr(expo), $);
         return;
     }
 
-    if (isdenormalpolar(EXPO, env, ctrl, $)) {
-        normalize_polar(EXPO, env, ctrl, $);
+    if (isdenormalpolar(expo, env, ctrl, $)) {
+        normalize_polar(expo, env, ctrl, $);
         return;
     }
 
     push(POWER, $);
     push(MATH_E, $);
-    push(EXPO, $);
+    push(expo, $);
     list(3, $);
 }
 
@@ -11846,7 +12009,7 @@ function power_numbers(base: Num, expo: Num, env: ProgramEnv, ctrl: ProgramContr
     if (n === 1)
         return;
 
-    sort_factors(h, $);
+    sort_factors(h, ctrl, $);
     list(n, $);
     push(MULTIPLY, $);
     swap($);
@@ -12154,11 +12317,11 @@ export function push(expr: U, $: ProgramStack): void {
     $.push(expr);
 }
 /*
-export function peek(tag: string, $: ProgramStack): void {
+function peek(tag: string, $: ProgramStack): void {
     const expr = $.pop();
     try {
         // eslint-disable-next-line no-console
-        // console.lg(tag, `${expr}`);
+        console.log(tag, `${expr}`);
         $.push(expr);
     }
     finally {
@@ -12167,48 +12330,10 @@ export function peek(tag: string, $: ProgramStack): void {
 }
 */
 
-/**
- * Replaces the top expr on the stack with expr.head
- */
-export function head($: ProgramStack): void {
-    const expr = $.pop();
-    try {
-        const head = car(expr);
-        try {
-            $.push(head);
-        }
-        finally {
-            head.release();
-        }
-    }
-    finally {
-        expr.release();
-    }
-}
-
-/**
- * Replaces the top expr on the stack with expr.rest
- */
-export function rest($: ProgramStack): void {
-    const expr = $.pop();
-    try {
-        const rest = cdr(expr);
-        try {
-            $.push(rest);
-        }
-        finally {
-            rest.release();
-        }
-    }
-    finally {
-        expr.release();
-    }
-}
-
 function push_double(d: number, $: ProgramStack): void {
     const n = new Flt(d);
     try {
-        push(n, $);
+        $.push(n);
     }
     finally {
         n.release();
@@ -13103,8 +13228,8 @@ function sort(n: number, $: ProgramStack): void {
     $.concat(sorted);
 }
 
-function sort_factors(start: number, $: ProgramStack): void {
-    const compareFn = (lhs: U, rhs: U) => cmp_factors(lhs, rhs);
+function sort_factors(start: number, ctrl: ProgramControl, $: ProgramStack): void {
+    const compareFn = ctrl.compareFn(native_sym(Native.multiply));
     const parts = $.splice(start);
     const t = parts.sort(compareFn);
     $.concat(t);
@@ -13256,9 +13381,9 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
      * The end index into inbuf.
      */
     trace2: number = -1;
-    stack: U[] = [];
+    readonly #stack = new StackU();
     readonly #bindings: Map<string, U> = new Map();
-    readonly #consFunctions: Map<string, ConsFunction> = new Map();
+    readonly #stackFunctions: Map<string, StackFunction> = new Map();
     usrfunc: { [key: string]: U } = {};
 
     readonly #directiveStack: DirectiveStack = new DirectiveStack();
@@ -13292,109 +13417,109 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.defineUserSymbol(ARG8);
         this.defineUserSymbol(ARG9);
 
-        this.define_cons_function(ABS, stack_abs);
-        this.define_cons_function(ADD, stack_add);
-        this.define_cons_function(ADJ, stack_adj);
-        this.define_cons_function(ALGEBRA, stack_algebra);
-        this.define_cons_function(ARCCOS, stack_arccos);
-        this.define_cons_function(ARCCOSH, stack_arccosh);
-        this.define_cons_function(ARCSIN, stack_arcsin);
-        this.define_cons_function(ARCSINH, stack_arcsinh);
-        this.define_cons_function(ARCTAN, stack_arctan);
-        this.define_cons_function(ARCTANH, stack_arctanh);
-        this.define_cons_function(AND, stack_and);
-        this.define_cons_function(ARG, stack_arg);
-        this.define_cons_function(BINDING, stack_binding);
-        this.define_cons_function(CEILING, stack_ceiling);
-        this.define_cons_function(CHECK, stack_check);
-        this.define_cons_function(CIRCEXP, stack_circexp);
-        this.define_cons_function(CLEAR, stack_clear);
-        this.define_cons_function(CLOCK, stack_clock);
-        this.define_cons_function(COFACTOR, stack_cofactor);
-        this.define_cons_function(CONJ, stack_conj);
-        this.define_cons_function(CONTRACT, stack_contract);
-        this.define_cons_function(COS, stack_cos);
-        this.define_cons_function(COSH, stack_cosh);
-        this.define_cons_function(DEFINT, stack_defint);
-        this.define_cons_function(DEGREE, make_stack(eval_degree));
-        this.define_cons_function(DENOMINATOR, stack_denominator);
-        this.define_cons_function(DET, stack_det);
-        this.define_cons_function(DERIVATIVE, stack_derivative);
-        this.define_cons_function(DIM, stack_dim);
-        this.define_cons_function(DO, stack_do);
-        this.define_cons_function(DOT, stack_dot);
-        this.define_cons_function(EIGENVEC, stack_eigenvec);
-        this.define_cons_function(ERF, stack_erf);
-        this.define_cons_function(ERFC, stack_erfc);
-        this.define_cons_function(EVAL, stack_eval);
-        this.define_cons_function(EXIT, stack_exit);
-        this.define_cons_function(EXP, stack_exp);
-        this.define_cons_function(EXPCOS, stack_expcos);
-        this.define_cons_function(EXPCOSH, stack_expcosh);
-        this.define_cons_function(EXPSIN, stack_expsin);
-        this.define_cons_function(EXPSINH, stack_expsinh);
-        this.define_cons_function(EXPTAN, stack_exptan);
-        this.define_cons_function(EXPTANH, stack_exptanh);
-        this.define_cons_function(FACTORIAL, stack_factorial);
-        this.define_cons_function(FLOAT, stack_float);
-        this.define_cons_function(FLOOR, stack_floor);
-        this.define_cons_function(INTEGRAL, stack_integral);
-        this.define_cons_function(LOG, stack_log);
-        this.define_cons_function(MULTIPLY, stack_multiply);
-        this.define_cons_function(POWER, stack_power);
-        this.define_cons_function(ROTATE, stack_rotate);
-        this.define_cons_function(INDEX, stack_index);
-        this.define_cons_function(ASSIGN, stack_assign);
-        this.define_cons_function(SIN, stack_sin);
-        this.define_cons_function(SINH, stack_sinh);
-        this.define_cons_function(SQRT, stack_sqrt);
-        this.define_cons_function(TAN, stack_tan);
-        this.define_cons_function(TANH, stack_tanh);
-        this.define_cons_function(TAU, stack_tau);
-        this.define_cons_function(TESTEQ, stack_testeq);
-        this.define_cons_function(TESTGE, stack_testge);
-        this.define_cons_function(TESTGT, stack_testgt);
-        this.define_cons_function(TESTLE, stack_testle);
-        this.define_cons_function(TESTLT, stack_testlt);
+        this.define_stack_function(ABS, stack_abs);
+        this.define_stack_function(ADD, stack_add);
+        this.define_stack_function(ADJ, stack_adj);
+        this.define_stack_function(ALGEBRA, stack_algebra);
+        this.define_stack_function(ARCCOS, stack_arccos);
+        this.define_stack_function(ARCCOSH, stack_arccosh);
+        this.define_stack_function(ARCSIN, stack_arcsin);
+        this.define_stack_function(ARCSINH, stack_arcsinh);
+        this.define_stack_function(ARCTAN, stack_arctan);
+        this.define_stack_function(ARCTANH, stack_arctanh);
+        this.define_stack_function(AND, stack_and);
+        this.define_stack_function(ARG, stack_arg);
+        this.define_stack_function(BINDING, stack_binding);
+        this.define_stack_function(CEILING, stack_ceiling);
+        this.define_stack_function(CHECK, stack_check);
+        this.define_stack_function(CIRCEXP, stack_circexp);
+        this.define_stack_function(CLEAR, stack_clear);
+        this.define_stack_function(CLOCK, stack_clock);
+        this.define_stack_function(COFACTOR, stack_cofactor);
+        this.define_stack_function(CONJ, stack_conj);
+        this.define_stack_function(CONTRACT, stack_contract);
+        this.define_stack_function(COS, stack_cos);
+        this.define_stack_function(COSH, stack_cosh);
+        this.define_stack_function(DEFINT, stack_defint);
+        this.define_stack_function(DEGREE, make_stack(eval_degree));
+        this.define_stack_function(DENOMINATOR, stack_denominator);
+        this.define_stack_function(DET, stack_det);
+        this.define_stack_function(DERIVATIVE, stack_derivative);
+        this.define_stack_function(DIM, stack_dim);
+        this.define_stack_function(DO, stack_do);
+        this.define_stack_function(DOT, stack_dot);
+        this.define_stack_function(EIGENVEC, stack_eigenvec);
+        this.define_stack_function(ERF, stack_erf);
+        this.define_stack_function(ERFC, stack_erfc);
+        this.define_stack_function(EVAL, stack_eval);
+        this.define_stack_function(EXIT, stack_exit);
+        this.define_stack_function(EXP, stack_exp);
+        this.define_stack_function(EXPCOS, stack_expcos);
+        this.define_stack_function(EXPCOSH, stack_expcosh);
+        this.define_stack_function(EXPSIN, stack_expsin);
+        this.define_stack_function(EXPSINH, stack_expsinh);
+        this.define_stack_function(EXPTAN, stack_exptan);
+        this.define_stack_function(EXPTANH, stack_exptanh);
+        this.define_stack_function(FACTORIAL, stack_factorial);
+        this.define_stack_function(FLOAT, stack_float);
+        this.define_stack_function(FLOOR, stack_floor);
+        this.define_stack_function(INTEGRAL, stack_integral);
+        this.define_stack_function(LOG, stack_log);
+        this.define_stack_function(native_sym(Native.multiply), stack_multiply);
+        this.define_stack_function(native_sym(Native.pow), stack_power);
+        this.define_stack_function(ROTATE, stack_rotate);
+        this.define_stack_function(INDEX, stack_index);
+        this.define_stack_function(ASSIGN, stack_assign);
+        this.define_stack_function(SIN, stack_sin);
+        this.define_stack_function(SINH, stack_sinh);
+        this.define_stack_function(SQRT, stack_sqrt);
+        this.define_stack_function(TAN, stack_tan);
+        this.define_stack_function(TANH, stack_tanh);
+        this.define_stack_function(TAU, stack_tau);
+        this.define_stack_function(TESTEQ, stack_testeq);
+        this.define_stack_function(TESTGE, stack_testge);
+        this.define_stack_function(TESTGT, stack_testgt);
+        this.define_stack_function(TESTLE, stack_testle);
+        this.define_stack_function(TESTLT, stack_testlt);
 
-        this.define_cons_function(FOR, stack_for);
-        this.define_cons_function(HADAMARD, stack_hadamard);
-        this.define_cons_function(IMAG, stack_imag);
-        this.define_cons_function(INNER, stack_inner);
-        this.define_cons_function(INV, stack_inv);
-        this.define_cons_function(KRONECKER, stack_kronecker);
-        this.define_cons_function(MAG, stack_mag);
-        this.define_cons_function(MINOR, stack_minor);
-        this.define_cons_function(MINORMATRIX, stack_minormatrix);
-        this.define_cons_function(MOD, stack_mod);
-        this.define_cons_function(NOEXPAND, stack_noexpand);
-        this.define_cons_function(NOT, stack_not);
-        this.define_cons_function(NROOTS, stack_nroots);
-        this.define_cons_function(NUMBER, stack_number);
-        this.define_cons_function(NUMERATOR, stack_numerator);
-        this.define_cons_function(OR, stack_or);
-        this.define_cons_function(OUTER, stack_outer);
-        this.define_cons_function(POLAR, stack_polar);
-        this.define_cons_function(PREFIXFORM, stack_prefixform);
-        this.define_cons_function(PRODUCT, stack_product);
-        this.define_cons_function(QUOTE, stack_quote);
-        this.define_cons_function(RANK, stack_rank);
-        this.define_cons_function(RATIONALIZE, stack_rationalize);
-        this.define_cons_function(REAL, stack_real);
-        this.define_cons_function(RECT, stack_rect);
-        this.define_cons_function(ROOTS, stack_roots);
-        this.define_cons_function(SGN, stack_sgn);
-        this.define_cons_function(SIMPLIFY, stack_simplify);
-        this.define_cons_function(STATUS, stack_status);
-        this.define_cons_function(STOP, stack_stop);
-        this.define_cons_function(SUBST, stack_subst);
-        this.define_cons_function(SUM, stack_sum);
-        this.define_cons_function(TAYLOR, stack_taylor);
-        this.define_cons_function(TEST, stack_test);
-        this.define_cons_function(TRANSPOSE, stack_transpose);
-        this.define_cons_function(UNIT, stack_unit);
-        this.define_cons_function(UOM, stack_uom);
-        this.define_cons_function(ZERO, stack_zero);
+        this.define_stack_function(FOR, stack_for);
+        this.define_stack_function(HADAMARD, stack_hadamard);
+        this.define_stack_function(IMAG, stack_imag);
+        this.define_stack_function(INNER, stack_inner);
+        this.define_stack_function(INV, stack_inv);
+        this.define_stack_function(KRONECKER, stack_kronecker);
+        this.define_stack_function(MAG, stack_mag);
+        this.define_stack_function(MINOR, stack_minor);
+        this.define_stack_function(MINORMATRIX, stack_minormatrix);
+        this.define_stack_function(MOD, stack_mod);
+        this.define_stack_function(NOEXPAND, stack_noexpand);
+        this.define_stack_function(NOT, stack_not);
+        this.define_stack_function(NROOTS, stack_nroots);
+        this.define_stack_function(NUMBER, stack_number);
+        this.define_stack_function(NUMERATOR, stack_numerator);
+        this.define_stack_function(OR, stack_or);
+        this.define_stack_function(native_sym(Native.outer), stack_outer);
+        this.define_stack_function(POLAR, stack_polar);
+        this.define_stack_function(PREFIXFORM, stack_prefixform);
+        this.define_stack_function(PRODUCT, stack_product);
+        this.define_stack_function(QUOTE, stack_quote);
+        this.define_stack_function(RANK, stack_rank);
+        this.define_stack_function(RATIONALIZE, stack_rationalize);
+        this.define_stack_function(REAL, stack_real);
+        this.define_stack_function(RECT, stack_rect);
+        this.define_stack_function(ROOTS, stack_roots);
+        this.define_stack_function(SGN, stack_sgn);
+        this.define_stack_function(SIMPLIFY, stack_simplify);
+        this.define_stack_function(STATUS, stack_status);
+        this.define_stack_function(STOP, stack_stop);
+        this.define_stack_function(SUBST, stack_subst);
+        this.define_stack_function(SUM, stack_sum);
+        this.define_stack_function(TAYLOR, stack_taylor);
+        this.define_stack_function(TEST, stack_test);
+        this.define_stack_function(TRANSPOSE, stack_transpose);
+        this.define_stack_function(UNIT, stack_unit);
+        this.define_stack_function(UOM, stack_uom);
+        this.define_stack_function(ZERO, stack_zero);
     }
     init(): void {
         this.#directiveStack.push(Directive.depth, 0);
@@ -13402,14 +13527,23 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.#directiveStack.push(Directive.expanding, 1);
         this.#directiveStack.push(Directive.nonstop, 0);
 
-        this.stack = [];
-
         this.#bindings.clear();
         this.usrfunc = {};
     }
     clearBindings(): void {
         this.#bindings.clear();
         this.usrfunc = {};
+    }
+    compareFn(opr: Sym): CompareFn {
+        if (opr.equalsSym(ADD)) {
+            return make_terms_compare_fn(this.compareFn(MULTIPLY));
+        }
+        else if (opr.equalsSym(MULTIPLY)) {
+            return cmp_factors;
+        }
+        else {
+            throw new Error(`ScriptVars.compareFn ${opr} method not implemented.`);
+        }
     }
     executeProlog(script: string[]): void {
         // The configuration should match the syntax in the initialization script.
@@ -13433,8 +13567,8 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         if (this.#bindings.has(key)) {
             return this.#bindings.get(key)!;
         }
-        else if (this.#consFunctions.has(key)) {
-            const consFunction: ConsFunction = this.#consFunctions.get(key)!;
+        else if (this.#stackFunctions.has(key)) {
+            const consFunction: StackFunction = this.#stackFunctions.get(key)!;
             const bodyExpr = make_lambda_expr_from_cons_function(opr, consFunction);
             return new Lambda(bodyExpr, "???");
         }
@@ -13453,7 +13587,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         if (this.#bindings.has(key)) {
             return true;
         }
-        else if (this.#consFunctions.has(key)) {
+        else if (this.#stackFunctions.has(key)) {
             return true;
         }
         else {
@@ -13474,20 +13608,20 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         value_of(this, this, this);
         return pop(this);
     }
-    define_cons_function(sym: Sym, func: ConsFunction): void {
-        this.#consFunctions.set(sym.key(), func);
+    define_stack_function(sym: Sym, func: StackFunction): void {
+        this.#stackFunctions.set(sym.key(), func);
     }
     /**
      * 
      */
     defineFunction(name: Sym, lambda: LambdaExpr): void {
         assert_sym(name);
-        const handler: ConsFunction = (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void => {
+        const handler: StackFunction = (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void => {
             const adapter = new ExprContextAdapter(env, ctrl, $);
             const retval = lambda(assert_cons(expr).argList, adapter);
             push(retval, $);
         };
-        this.define_cons_function(name, handler);
+        this.define_stack_function(name, handler);
     }
     addOutputListener(listener: ExprEngineListener): void {
         this.listeners.push(listener);
@@ -13497,10 +13631,21 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.listeners.splice(index, 1);
     }
     get length(): number {
-        return this.stack.length;
+        return this.#stack.length;
+    }
+    dupl(): void {
+        this.#stack.dupl();
     }
     concat(exprs: U[]): void {
-        this.stack = this.stack.concat(exprs);
+        for (let i = 0; i < exprs.length; i++) {
+            this.#stack.push(exprs[i]);
+        }
+    }
+    get isatom(): boolean {
+        return this.#stack.isatom;
+    }
+    get iscons(): boolean {
+        return this.#stack.iscons;
     }
     peek(): U {
         const x = this.pop();
@@ -13508,29 +13653,39 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         return x;
     }
     pop(): U {
-        if (this.stack.length === 0) {
-            throw new ProgrammingError();
-        }
-        else {
-            return this.stack.pop()!;
-        }
+        return this.#stack.pop();
     }
     push(expr: U): void {
-        this.stack.push(expr);
+        this.#stack.push(expr);
     }
     getAt(i: number): U {
-        return this.stack[i];
+        return this.#stack.getAt(i);
+    }
+    head(): void {
+        this.#stack.head();
+    }
+    rest(): void {
+        this.#stack.rest();
+    }
+    rotateL(n: number): void {
+        this.#stack.rotateL(n);
+    }
+    rotateR(n: number): void {
+        this.#stack.rotateR(n);
+    }
+    swap(): void {
+        this.#stack.swap();
     }
     setAt(i: number, expr: U): void {
-        this.stack[i] = expr;
+        this.#stack.setAt(i, expr);
     }
     splice(start: number, deleteCount?: number): U[] {
         // Beware! An explicit undefined gets converted to zero.
         if (typeof deleteCount === 'number') {
-            return this.stack.splice(start, deleteCount);
+            return this.#stack.splice(start, deleteCount);
         }
         else {
-            return this.stack.splice(start);
+            return this.#stack.splice(start);
         }
     }
     getDirective(directive: number): number {
@@ -13548,7 +13703,7 @@ const zero: Rat = create_int(0);
 const one: Rat = create_int(1);
 const minusone: Rat = create_int(-1);
 
-function make_lambda_expr_from_cons_function(sym: Sym, consFunction: ConsFunction): LambdaExpr {
+function make_lambda_expr_from_cons_function(sym: Sym, consFunction: StackFunction): LambdaExpr {
     return function (argList: Cons, ctxt: ExprContext): U {
         const $ = new StackU();
         consFunction(create_cons(sym, argList), ctxt, ctxt, $);

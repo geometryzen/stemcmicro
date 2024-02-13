@@ -3,10 +3,10 @@ import { LambdaExpr } from "math-expression-context";
 import { Cons, is_cons, U } from "math-expression-tree";
 import { hash_nonop_cons } from "../hashing/hash_info";
 import { FunctionVarArgs } from "../operators/helpers/FunctionVarArgs";
-import { ConsExpr, ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { EvalFunction, ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 
 class PluggableBuilder implements OperatorBuilder<U> {
-    constructor(private readonly opr: Sym, private readonly hash: string, private readonly evaluator: ConsExpr) {
+    constructor(private readonly opr: Sym, private readonly hash: string, private readonly evaluator: EvalFunction) {
     }
     create($: ExtensionEnv): Operator<U> {
         return new PluggableOperator(this.opr, this.hash, this.evaluator, $);
@@ -15,7 +15,7 @@ class PluggableBuilder implements OperatorBuilder<U> {
 
 class PluggableOperator extends FunctionVarArgs implements Operator<Cons> {
     readonly #hash: string;
-    constructor(opr: Sym, hash: string, private readonly evaluator: ConsExpr, $: ExtensionEnv) {
+    constructor(opr: Sym, hash: string, private readonly evaluator: EvalFunction, $: ExtensionEnv) {
         super(opr.key(), opr, $);
         // console.lg("constructor PluggableOperator", "opr", `${opr}`, "hash", `${hash}`);
         this.#hash = hash;
@@ -37,7 +37,7 @@ class PluggableOperator extends FunctionVarArgs implements Operator<Cons> {
     }
 }
 
-export function operator_from_cons_expression(opr: Sym, transformer: ConsExpr): OperatorBuilder<U> {
+export function operator_from_cons_expression(opr: Sym, transformer: EvalFunction): OperatorBuilder<U> {
     const hash = hash_nonop_cons(opr);
     return new PluggableBuilder(opr, hash, transformer);
 }
@@ -81,7 +81,7 @@ export function hash_from_match(pattern: U): string {
     }
 }
 
-function transformer_from_lambda(lambda: LambdaExpr): ConsExpr {
+function transformer_from_lambda(lambda: LambdaExpr): EvalFunction {
     return function (expr: Cons, $: ExtensionEnv) {
         // The lambda operates on the argument list.
         // The arguments in the argument list are not evaluated.

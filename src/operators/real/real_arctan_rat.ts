@@ -8,7 +8,7 @@ import { Cons1 } from "../helpers/Cons1";
 import { is_rat } from "../rat/is_rat";
 
 const ARCTAN = native_sym(Native.arctan);
-const RE = native_sym(Native.re);
+const RE = native_sym(Native.real);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

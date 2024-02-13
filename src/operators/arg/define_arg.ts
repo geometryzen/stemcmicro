@@ -24,15 +24,15 @@ import { is_pi } from '../pi/is_pi';
 import { re } from '../real/real';
 
 export const ARG = native_sym(Native.arg);
-export const IM = native_sym(Native.im);
-export const RE = native_sym(Native.re);
+export const IM = native_sym(Native.imag);
+export const RE = native_sym(Native.real);
 
 /**
  * Example of inverting the registration 
  */
 export function define_arg($: ExtensionEnv): void {
     // If we also want to control the name as it appears in the script 
-    $.defineConsTransformer(ARG, function (expr: Cons, $: ExtensionEnv): U {
+    $.defineEvalFunction(ARG, function (expr: Cons, $: ExtensionEnv): U {
         const z = cadr(expr);
         // console.lg("z", $.toInfixString(z));
         const value_of_z = $.valueOf(z);

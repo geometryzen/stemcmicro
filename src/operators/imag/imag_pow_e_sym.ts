@@ -11,7 +11,7 @@ import { assert_sym } from "../sym/assert_sym";
 import { is_sym } from "../sym/is_sym";
 
 const POW = native_sym(Native.pow);
-const IM = native_sym(Native.im);
+const IM = native_sym(Native.imag);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

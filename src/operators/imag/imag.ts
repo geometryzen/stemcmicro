@@ -1,7 +1,7 @@
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { Cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { IM } from '../../runtime/constants';
+import { IMAG } from '../../runtime/constants';
 /**
  * expr = (real arg)
  * @param expr 
@@ -29,7 +29,7 @@ export const imag_lambda: LambdaExpr = function (argList: Cons, $: ExprContext):
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function im(z: U, $: ExtensionEnv): U {
-    return items_to_cons(IM, z);
+    return items_to_cons(IMAG, z);
     /*
     // console.lg(`imag`, $.toInfixString(z));
     if (is_sym(z)) {

@@ -1,6 +1,7 @@
 import { Blade, Boo, create_flt, create_sym, Flt, Imu, is_blade, is_boo, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, Sym, Tensor, Uom } from "math-expression-atoms";
 import { is_native, Native, native_sym } from "math-expression-native";
 import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { StackU } from "../env/StackU";
 import { is_imu } from "../operators/imu/is_imu";
 import { str_extension } from "../operators/str/str_extension";
 import { cadddr, caddr, cadr, cddddr, cddr } from "../tree/helpers";
@@ -289,7 +290,31 @@ export function set_emit_small_font(): void {
 }
 
 class SvgProgramStack implements ProgramStack {
-    readonly #stack: U[] = [];
+    readonly #stack = new StackU();
+    get isatom(): boolean {
+        return this.#stack.isatom;
+    }
+    get iscons(): boolean {
+        return this.#stack.iscons;
+    }
+    dupl(): void {
+        this.#stack.dupl();
+    }
+    head(): void {
+        this.#stack.head();
+    }
+    rest(): void {
+        this.#stack.rest();
+    }
+    rotateL(n: number): void {
+        this.#stack.rotateL(n);
+    }
+    rotateR(n: number): void {
+        this.#stack.rotateR(n);
+    }
+    swap(): void {
+        this.#stack.swap();
+    }
     get frameLength(): number {
         throw new Error("Method not implemented.");
     }
@@ -305,7 +330,7 @@ class SvgProgramStack implements ProgramStack {
         return this.#stack.length;
     }
     set length(length: number) {
-        throw new Error("Method not implemented.");
+        this.#stack.length = length;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     concat(exprs: U[]): void {
@@ -320,20 +345,21 @@ class SvgProgramStack implements ProgramStack {
         this.#stack.push(expr);
     }
     pop(): U {
-        // TODO: Check for underflow
-        return this.#stack.pop()!;
+        return this.#stack.pop();
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getAt(i: number): U {
-        return this.#stack[i];
+        return this.#stack.getAt(i);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setAt(i: number, expr: U): void {
-        throw new Error("setAt method not implemented.");
+        this.#stack.setAt(i, expr);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     splice(start: number, deleteCount?: number): U[] {
-        throw new Error("splice method not implemented.");
+        if (typeof deleteCount === 'number') {
+            return this.#stack.splice(start, deleteCount);
+        }
+        else {
+            return this.#stack.splice(start);
+        }
     }
     fpop(): U {
         throw new Error("fpop method not implemented.");

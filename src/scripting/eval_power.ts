@@ -1,7 +1,7 @@
 import { Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../env/ExtensionEnv';
-import { power_v1 } from '../operators/pow/power_v1';
+import { power_base_expo } from '../operators/pow/power_base_expo';
 
 export function eval_power(expr: Cons, $: ExtensionEnv): U {
     const baseArg = expr.base;
@@ -9,7 +9,7 @@ export function eval_power(expr: Cons, $: ExtensionEnv): U {
     const expo = $.valueOf(expoArg);
     const base = $.valueOf(baseArg);
     if (base.equals(baseArg) && expo.equals(expoArg)) {
-        return power_v1(base, expo, $);
+        return power_base_expo(base, expo, $);
     }
     else {
         // Give other operators a crack based on the changed arguments.

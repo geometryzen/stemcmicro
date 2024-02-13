@@ -1,3 +1,4 @@
+import { ProgrammingError } from "../programming/ProgrammingError";
 
 export class Stack<T> {
     tos = 0;
@@ -9,8 +10,16 @@ export class Stack<T> {
     get length(): number {
         return this.#elements.length;
     }
+    set length(length: number) {
+        this.#elements.length = length;
+    }
     get top(): T {
-        return this.#elements[this.#elements.length - 1];
+        if (this.#elements.length > 0) {
+            return this.#elements[this.#elements.length - 1];
+        }
+        else {
+            throw new ProgrammingError();
+        }
     }
     getAt(i: number): T {
         return this.#elements[i];
@@ -46,6 +55,40 @@ export class Stack<T> {
             items.push(this.pop());
         }
         return items;
+    }
+    /**
+     * [a,b,c,d,e] => [a,b,d,e,c] (n=3)
+     */
+    rotateL(n: number): void {
+        const temp = new Stack<T>();
+        for (let i = 0; i < n; i++) {
+            const x = this.pop();
+            temp.push(x);           // this => [a,b], temp => [e,d,c]
+        }
+        const c = temp.pop();       // this => [a,b], temp => [e,d]
+        const k = n - 1;
+        for (let i = 0; i < k; i++) {
+            const x = temp.pop();
+            this.push(x);           // this => [a,b,d,e], temp => []
+        }
+        this.push(c);               // this => [a,b,d,e,c]
+    }
+    /**
+     * [a,b,c,d,e] => [a,b,e,c,d] (n=3)
+     */
+    rotateR(n: number): void {
+        const temp = new Stack<T>();
+        const e = this.pop();
+        const k = n - 1;
+        for (let i = 0; i < k; i++) {
+            const x = this.pop();
+            temp.push(x);           // this => [a,b], temp => [d,c]
+        }
+        temp.push(e);               // this => [a,b], temp => [d,c,e]
+        for (let i = 0; i < n; i++) {
+            const x = temp.pop();
+            this.push(x);           // this => [a,b,e,c,d]
+        }
     }
     copy(): Stack<T> {
         const elements = this.#elements.slice();

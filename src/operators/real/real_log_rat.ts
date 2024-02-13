@@ -4,7 +4,7 @@ import { Cons, Cons1, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { CompositeOperator } from "../CompositeOperator";
 
-const real = native_sym(Native.re);
+const real = native_sym(Native.real);
 const log = native_sym(Native.log);
 
 class Builder implements OperatorBuilder<U> {

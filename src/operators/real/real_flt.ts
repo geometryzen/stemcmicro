@@ -9,7 +9,7 @@ import { is_flt } from "../flt/is_flt";
 import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
 
-const RE = native_sym(Native.re);
+const RE = native_sym(Native.real);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

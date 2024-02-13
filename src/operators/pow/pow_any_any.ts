@@ -6,7 +6,7 @@ import { MATH_POW } from "../../runtime/ns_math";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
-import { power_v1 } from "./power_v1";
+import { power_base_expo } from "./power_base_expo";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -30,7 +30,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
         if ($.isExpanding()) {
-            const newExpr = power_v1(base, expo, this.$);
+            const newExpr = power_base_expo(base, expo, this.$);
             return [!newExpr.equals(expr) ? TFLAG_DIFF : TFLAG_NONE, newExpr];
         }
         else if ($.isFactoring()) {

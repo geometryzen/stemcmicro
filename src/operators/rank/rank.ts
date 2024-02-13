@@ -1,6 +1,6 @@
 import { create_int, is_tensor, zero } from "math-expression-atoms";
 import { Cons, U } from "math-expression-tree";
-import { head, rest, value_of } from "../../eigenmath/eigenmath";
+import { value_of } from "../../eigenmath/eigenmath";
 import { ProgramStack } from "../../eigenmath/ProgramStack";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";
@@ -23,8 +23,8 @@ function rank($: ProgramStack): void {
 export function eval_rank(expr: Cons, env: ExtensionEnv): U {
     const $ = new StackU(); // ()
     $.push(expr);           // (expr)
-    rest($);                // (argList)
-    head($);                // (arg)
+    $.rest();               // (argList)
+    $.head();               // (arg)
     value_of(env, env, $);  // (value)
     rank($);                // (rank)
     return $.pop();         // ()

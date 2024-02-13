@@ -1,12 +1,32 @@
-import { check } from "./check";
+import { assert } from "chai";
+import { Stack } from "../src/env/Stack";
 
-xdescribe("sandbox", function () {
+describe("sandbox", function () {
     it("001", function () {
-        check("arg(0)", "undefined");
-        check("arg(0.0)", "undefined");
-        check("arg((-1)**a)", "a*pi");
-        check("arg(1)", "0");
-        check("arg(1+sqrt(-1))", "0");  // Issues because of definition of imaginary unit?
-
+        const stack = new Stack<string>();
+        assert.strictEqual(stack.length, 0);
+        stack.push("a");
+        stack.push("b");
+        stack.push("c");
+        stack.push("d");
+        stack.push("e");
+        assert.strictEqual(stack.length, 5);
+        assert.strictEqual(stack.getAt(0), "a");
+        assert.strictEqual(stack.getAt(1), "b");
+        assert.strictEqual(stack.getAt(2), "c");
+        assert.strictEqual(stack.getAt(3), "d");
+        assert.strictEqual(stack.getAt(4), "e");
+        stack.rotateL(3);
+        assert.strictEqual(stack.getAt(0), "a");
+        assert.strictEqual(stack.getAt(1), "b");
+        assert.strictEqual(stack.getAt(2), "d");
+        assert.strictEqual(stack.getAt(3), "e");
+        assert.strictEqual(stack.getAt(4), "c");
+        stack.rotateR(3);
+        assert.strictEqual(stack.getAt(0), "a");
+        assert.strictEqual(stack.getAt(1), "b");
+        assert.strictEqual(stack.getAt(2), "c");
+        assert.strictEqual(stack.getAt(3), "d");
+        assert.strictEqual(stack.getAt(4), "e");
     });
 });

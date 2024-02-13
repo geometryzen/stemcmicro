@@ -1,8 +1,8 @@
-import { is_blade, is_num, is_str, is_sym, is_tensor, is_uom } from "math-expression-atoms";
+import { is_blade, is_imu, is_num, is_str, is_sym, is_tensor, is_uom } from "math-expression-atoms";
+import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "math-expression-context";
 import { car, cdr, is_cons, U } from "math-expression-tree";
-import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
-import { is_imu } from "../../operators/imu/is_imu";
 import { strcmp } from "../../operators/str/str_extension";
 import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";

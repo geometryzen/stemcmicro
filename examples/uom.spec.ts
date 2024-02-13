@@ -28,4 +28,7 @@ describe("uom", function () {
     it("mag", function () {
         check('mag(second)', 's');
     });
+    it("division", function () {
+        check('joule / coulomb', 'V');
+    });
 });

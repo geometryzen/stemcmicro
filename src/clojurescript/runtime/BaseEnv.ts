@@ -3,7 +3,7 @@ import { Rat, Sym, Tensor } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
 import { Cons, U } from "math-expression-tree";
-import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, KeywordRunner, OperatorBuilder, Predicates, PrintHandler } from "../../env/ExtensionEnv";
+import { CompareFn, EvalFunction, Directive, ExprComparator, ExtensionEnv, KeywordRunner, OperatorBuilder, Predicates, PrintHandler } from "../../env/ExtensionEnv";
 import { Scope, Thing } from "./Stepper";
 
 export class BaseEnv implements Scope {
@@ -65,7 +65,7 @@ export class BaseEnv implements Scope {
     component(tensor: Tensor<U>, indices: U): U {
         throw new Error("Method not implemented.");
     }
-    defineConsTransformer(opr: Sym, consExpr: ConsExpr): void {
+    defineConsTransformer(opr: Sym, consExpr: EvalFunction): void {
         throw new Error("Method not implemented.");
     }
     defineFunction(match: U, lambda: LambdaExpr): void {

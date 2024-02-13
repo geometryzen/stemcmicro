@@ -39,12 +39,12 @@ function multiply_terms(lhs: U[], rhs: U[], $: ExtensionEnv) {
     return parts;
 }
 
-export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
-    // console.lg("power_v1", `${base}`, `${expo}`);
-    if (typeof base === 'undefined') {
+export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
+    // console.lg("power_base_expo", `${base}`, `${expo}`);
+    if (typeof base === 'undefined' || base === null) {
         throw new Error("base must be defined.");
     }
-    if (typeof expo === 'undefined') {
+    if (typeof expo === 'undefined' || expo === null) {
         throw new Error("expo must be defined.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -159,10 +159,12 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
             return hook(base.pow(exponent), "J");
         }
         else if (is_flt(expo)) {
-            // TODO: I don't think units are supposed to handle non-rational components.
-            // There should be a check here that the Flt is a small integer.
-            const qq = QQ.valueOf(expo.d, 1);
-            return hook(base.pow(qq), "K");
+            if (expo.isInteger()) {
+                // TODO: I don't think units are supposed to handle non-rational components.
+                // There should be a check here that the Flt is a small integer.
+                const qq = QQ.valueOf(expo.d, 1);
+                return hook(base.pow(qq), "K");
+            }
         }
     }
 

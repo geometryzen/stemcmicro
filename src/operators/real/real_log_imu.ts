@@ -8,7 +8,7 @@ import { Cons1 } from "../helpers/Cons1";
 import { is_imu } from "../imu/is_imu";
 import { CompositeOperator } from "../CompositeOperator";
 
-const real = native_sym(Native.re);
+const real = native_sym(Native.real);
 const log = native_sym(Native.log);
 
 class Builder implements OperatorBuilder<U> {

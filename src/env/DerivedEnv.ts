@@ -3,6 +3,7 @@ import { CellHost, create_sym, is_boo, is_flt, is_jsobject, is_keyword, is_map, 
 import { LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
 import { Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
+import { StackFunction } from "../adapters/StackFunction";
 import { AtomListener, ExprEngineListener } from "../api/api";
 import { assert_sym_any_any } from "../clojurescript/runtime/step_setq";
 import { setq } from "../operators/assign/assign_any_any";
@@ -10,7 +11,7 @@ import { eval_dotdot } from "../operators/dotdot/eval_dotdot";
 import { JsObjectExtension } from "../operators/jsobject/JsObjectExtension";
 import { eval_let } from "../operators/let/eval_let";
 import { ASSIGN, COMPONENT, LET } from "../runtime/constants";
-import { CompareFn, ConsExpr, ExprComparator, Extension, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, EvalFunction, ExprComparator, Extension, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 /**
  * Evaluates each item in the `argList` and returns (opr ...), 
  */
@@ -96,17 +97,20 @@ export class DerivedEnv implements ExtensionEnv {
     clearOperators(): void {
         this.#baseEnv.clearOperators();
     }
-    compareFn(sym: Sym): CompareFn {
-        throw new Error('compareFn method not implemented.');
+    compareFn(opr: Sym): CompareFn {
+        return this.#baseEnv.compareFn(opr);
     }
     component(tensor: Tensor<U>, indices: U): U {
         throw new Error('component method not implemented.');
     }
-    defineConsTransformer(opr: Sym, consExpr: ConsExpr): void {
-        this.#baseEnv.defineConsTransformer(opr, consExpr);
+    defineEvalFunction(opr: Sym, evalFunction: EvalFunction): void {
+        this.#baseEnv.defineEvalFunction(opr, evalFunction);
     }
     defineFunction(match: U, lambda: LambdaExpr): void {
         throw new Error('defineFunction method not implemented.');
+    }
+    defineStackFunction(opr: Sym, stackFunction: StackFunction): void {
+        this.#baseEnv.defineStackFunction(opr, stackFunction);
     }
     defineKeyword(sym: Sym, runner: KeywordRunner): void {
         this.#baseEnv.defineKeyword(sym, runner);

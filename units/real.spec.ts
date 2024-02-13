@@ -3,9 +3,9 @@ import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("real", function () {
-    it("re(z)", function () {
+    it("real(z)", function () {
         const lines: string[] = [
-            `re(z)`
+            `real(z)`
         ];
         const engine = create_script_context({
             dependencies: ['Imu']
@@ -15,9 +15,9 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "z");
         engine.release();
     });
-    it("re(z) when z is not real", function () {
+    it("real(z) when z is not real", function () {
         const lines: string[] = [
-            `re(z)`
+            `real(z)`
         ];
         const engine = create_script_context({
             assumes: {
@@ -27,12 +27,12 @@ describe("real", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "re(z)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "real(z)");
         engine.release();
     });
-    xit("re(i*z) when z is not real", function () {
+    xit("real(i*z) when z is not real", function () {
         const lines: string[] = [
-            `re(i*z)`
+            `real(i*z)`
         ];
         const engine = create_script_context({
             assumes: {
@@ -48,7 +48,7 @@ describe("real", function () {
     it("exp(x*i)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `re(exp(x*i))`
+            `real(exp(x*i))`
         ];
         const engine = create_script_context({
             dependencies: ['Imu']
@@ -58,10 +58,10 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "cos(x)");
         engine.release();
     });
-    it("re(x+i*y) => x, when variables are assumed to be real.", function () {
+    it("real(x+i*y) => x, when variables are assumed to be real.", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `re(x+i*y)`
+            `real(x+i*y)`
         ];
         const engine = create_script_context({
             dependencies: ['Imu']
@@ -70,10 +70,10 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "x");
         engine.release();
     });
-    xit("re(x+i*y) => re(x)+re(i*y), when variables may be complex", function () {
+    xit("real(x+i*y) => real(x)+real(i*y), when variables may be complex", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `re(x+i*y)`
+            `real(x+i*y)`
         ];
         const engine = create_script_context({
             assumes: {
@@ -83,13 +83,13 @@ describe("real", function () {
             dependencies: ['Imu']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "re(x)+re(i*y)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "real(x)+real(i*y)");
         engine.release();
     });
-    xit("re(exp(i*x)) => cos(x)", function () {
+    xit("real(exp(i*x)) => cos(x)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `re(exp(i*x))`
+            `real(exp(i*x))`
         ];
         const engine = create_script_context({
             dependencies: ['Imu']
@@ -102,7 +102,7 @@ describe("real", function () {
     xit("", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `re(1/(x+i*y))`
+            `real(1/(x+i*y))`
         ];
         const engine = create_script_context({
             useCaretForExponentiation: true
@@ -111,10 +111,10 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "x/(x^2+y^2)");
         engine.release();
     });
-    it("re(log(i))", function () {
+    it("real(log(i))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `re(log(i))`
+            `real(log(i))`
         ];
         const engine = create_script_context({
             useCaretForExponentiation: true
@@ -123,10 +123,10 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "0");
         engine.release();
     });
-    it("clock(re(log(i)))", function () {
+    it("clock(real(log(i)))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `clock(re(log(clock(i))))`
+            `clock(real(log(clock(i))))`
         ];
         const engine = create_script_context({
             useCaretForExponentiation: true
@@ -135,11 +135,11 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "0");
         engine.release();
     });
-    it("re(i*log(3))", function () {
+    it("real(i*log(3))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `pi=tau(1/2)`,
-            `re(i*log(3))`,
+            `real(i*log(3))`,
         ];
         const engine = create_script_context({
             dependencies: ['Imu']
@@ -148,11 +148,11 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
-    it("re((-1)^(1/3))", function () {
+    it("real((-1)^(1/3))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `pi=tau(1/2)`,
-            `re((-1)^(1/3))`,
+            `real((-1)^(1/3))`,
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
@@ -165,10 +165,10 @@ describe("real", function () {
         assert.strictEqual(context.renderAsInfix(values[0]), "1/2");
         context.release();
     });
-    it("re(exp(i*x))", function () {
+    it("real(exp(i*x))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `re(exp(i*x))`
+            `real(exp(i*x))`
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
@@ -179,10 +179,10 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "cos(x)");
         engine.release();
     });
-    it("re(exp(a*i*x))", function () {
+    it("real(exp(a*i*x))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `re(exp(a*i*x))`
+            `real(exp(a*i*x))`
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
@@ -193,10 +193,10 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "cos(a*x)");
         engine.release();
     });
-    it("re(exp(i))", function () {
+    it("real(exp(i))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `re(exp(i))`
+            `real(exp(i))`
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
@@ -207,9 +207,9 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "cos(1)");
         engine.release();
     });
-    xit("re((a**2)**(1/2))", function () {
+    xit("real((a**2)**(1/2))", function () {
         const lines: string[] = [
-            `re((a**2)**(1/2))`
+            `real((a**2)**(1/2))`
         ];
         const engine = create_script_context({
         });

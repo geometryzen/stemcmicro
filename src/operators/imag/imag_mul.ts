@@ -6,7 +6,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
-const IM = native_sym(Native.im);
+const IM = native_sym(Native.imag);
 const MUL = native_sym(Native.multiply);
 
 class Builder implements OperatorBuilder<U> {

@@ -5,7 +5,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
-const RE = native_sym(Native.re);
+const RE = native_sym(Native.real);
 
 class Builder implements OperatorBuilder<U> {
     constructor(readonly innerOpr: Sym) {

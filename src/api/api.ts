@@ -747,10 +747,10 @@ class EigenmathEngine implements ExprEngine {
         // TODO: 
         // const allowUndeclaredVars = allow_undeclared_vars(options, true);
         this.#scriptVars.init();
-        this.#scriptVars.define_cons_function(create_sym("draw"), make_stack_draw(this.#scriptVars));
-        this.#scriptVars.define_cons_function(create_sym("infixform"), stack_infixform);
-        this.#scriptVars.define_cons_function(create_sym("print"), make_stack_print(this.#scriptVars));
-        this.#scriptVars.define_cons_function(create_sym("run"), make_stack_run(this.#scriptVars));
+        this.#scriptVars.define_stack_function(create_sym("draw"), make_stack_draw(this.#scriptVars));
+        this.#scriptVars.define_stack_function(create_sym("infixform"), stack_infixform);
+        this.#scriptVars.define_stack_function(create_sym("print"), make_stack_print(this.#scriptVars));
+        this.#scriptVars.define_stack_function(create_sym("run"), make_stack_run(this.#scriptVars));
         if (options.prolog) {
             if (Array.isArray(options.prolog)) {
                 this.#scriptVars.executeProlog(options.prolog);

@@ -4,6 +4,8 @@ import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprEngineListener } from '../..';
+import { make_eval } from '../adapters/make_eval';
+import { StackFunction } from '../adapters/StackFunction';
 import { AtomListener, UndeclaredVars } from '../api/api';
 import { eval_function } from "../eval_function";
 import { yyfactorpoly } from "../factorpoly";
@@ -23,7 +25,7 @@ import { Visitor } from '../visitor/Visitor';
 import { DerivedEnv } from './DerivedEnv';
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
-import { CompareFn, ConsExpr, Directive, directive_from_flag, ExprComparator, Extension, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, Directive, directive_from_flag, EvalFunction, ExprComparator, Extension, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
 import { hash_from_match, operator_from_cons_expression, opr_from_match } from "./operator_from_legacy_transformer";
@@ -522,8 +524,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
         },
-        defineConsTransformer(opr: Sym, consExpr: ConsExpr): void {
-            $.defineOperator(operator_from_cons_expression(opr, consExpr));
+        defineEvalFunction(opr: Sym, evalFunction: EvalFunction): void {
+            $.defineOperator(operator_from_cons_expression(opr, evalFunction));
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         defineFunction(match: U, impl: LambdaExpr): void {
@@ -531,6 +533,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             const opr = opr_from_match(match);
             const hash = hash_from_match(match);
             $.setBinding(opr, new Lambda(impl, hash));
+        },
+        defineStackFunction(opr: Sym, stackFunction: StackFunction): void {
+            $.defineOperator(operator_from_cons_expression(opr, make_eval(stackFunction)));
         },
         defineKeyword(sym: Sym, runner: KeywordRunner): void {
             $.defineOperator(operator_from_keyword_runner(sym, runner));
@@ -560,8 +565,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         clearBindings(): void {
             symTab.clear();
         },
-        compareFn(sym: Sym): CompareFn {
-            const order = sym_order[sym.key()];
+        compareFn(opr: Sym): CompareFn {
+            const order = sym_order[opr.key()];
             if (order) {
                 // TODO: Cache
                 return function (lhs: U, rhs: U): Sign {
@@ -570,7 +575,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
             else {
                 return function (lhs: U, rhs: U): Sign {
-                    return new StableExprComparator(sym).compare(lhs, rhs, $);
+                    return new StableExprComparator(opr).compare(lhs, rhs, $);
                 };
             }
         },
@@ -849,7 +854,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         im(expr: U): U {
-            return $.evaluate(Native.im, expr);
+            return $.evaluate(Native.imag, expr);
         },
         inner(lhs: U, rhs: U): U {
             // console.lg(`inner lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)} `);
@@ -937,7 +942,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return prolog;
         },
         re(expr: U): U {
-            return $.evaluate(Native.re, expr);
+            return $.evaluate(Native.real, expr);
         },
         rect(expr: U): U {
             return $.evaluate(Native.rect, expr);

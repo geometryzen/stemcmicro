@@ -1,10 +1,13 @@
 import { cdr, is_cons, U } from "math-expression-tree";
 
-export function lengthf(p: U): number {
+/**
+ * Beware! atoms and nil will return zero. 
+ */
+export function lengthf(expr: U): number {
     let n = 0;
-    while (is_cons(p)) {
+    while (is_cons(expr)) {
         n++;
-        p = cdr(p);
+        expr = cdr(expr);
     }
     return n;
 }

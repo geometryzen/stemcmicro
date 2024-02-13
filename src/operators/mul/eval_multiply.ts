@@ -14,8 +14,6 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { cddr } from "../../tree/helpers";
 
 export function eval_multiply(expr: Cons, $: ExtensionEnv): U {
-    // The only reason we should be here is that all other handlers for this multiplication do not match.
-    /// console.lg(`eval_multiply ${$.toInfixString(expr)}`);
     const args = expr.argList;
     const vals = args.map($.valueOf);
     return multiply_values(vals, expr, $);

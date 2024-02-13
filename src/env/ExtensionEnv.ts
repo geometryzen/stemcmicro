@@ -1,6 +1,7 @@
 import { CellHost, Rat, Sym, Tensor } from "math-expression-atoms";
 import { ExprContext, LambdaExpr } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
+import { StackFunction } from "../adapters/StackFunction";
 import { AtomListener } from "../api/api";
 import { ProgramControl } from "../eigenmath/ProgramControl";
 import { ProgramEnv } from "../eigenmath/ProgramEnv";
@@ -209,7 +210,7 @@ export interface ExprComparator {
  * Not to be confused with a LambdaExpr.
  * Here the first argument is the expression including the operator.
  */
-export type ConsExpr = (expr: Cons, $: ExtensionEnv) => U;
+export type EvalFunction = (expr: Cons, $: ExtensionEnv) => U;
 
 export type KeywordRunner = ($: ExtensionEnv) => void;
 
@@ -317,13 +318,14 @@ export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, P
     cos(expr: U): U;
     clearBindings(): void;
     clearOperators(): void;
-    compareFn(sym: Sym): CompareFn;
+    compareFn(opr: Sym): CompareFn;
     component(tensor: Tensor<U>, indices: U): U;
     /**
      * Defines the implementation of a function that is used to transform (name ...) expressions.
      */
-    defineConsTransformer(opr: Sym, consExpr: ConsExpr): void;
+    defineEvalFunction(opr: Sym, evalFunction: EvalFunction): void;
     defineFunction(match: U, lambda: LambdaExpr): void;
+    defineStackFunction(opr: Sym, stackFunction: StackFunction): void;
     /**
      * e.g. clearall 
      */

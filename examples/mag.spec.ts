@@ -11,6 +11,6 @@ describe("mag", function () {
         check("mag(sqrt(-1)**1)", "1");
     });
     it("0023", function () {
-        check("simplify(mag(exp(x+sqrt(-1)*y)))", "exp(x)");
+        check("simplify(mag(exp(x+sqrt(-1)*y)))", "e**x");
     });
 });

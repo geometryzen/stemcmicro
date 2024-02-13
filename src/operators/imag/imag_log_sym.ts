@@ -8,7 +8,7 @@ import { Cons1 } from "../helpers/Cons1";
 import { assert_sym } from "../sym/assert_sym";
 import { is_sym } from "../sym/is_sym";
 
-const imag = native_sym(Native.im);
+const imag = native_sym(Native.imag);
 const log = native_sym(Native.log);
 
 class Builder implements OperatorBuilder<U> {

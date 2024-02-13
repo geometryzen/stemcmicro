@@ -9,7 +9,7 @@ import { Cons1 } from "../helpers/Cons1";
 
 const PI = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
-const RE = native_sym(Native.re);
+const RE = native_sym(Native.real);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

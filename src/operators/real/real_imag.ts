@@ -5,8 +5,8 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
-const IM = native_sym(Native.im);
-const RE = native_sym(Native.re);
+const IM = native_sym(Native.imag);
+const RE = native_sym(Native.real);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

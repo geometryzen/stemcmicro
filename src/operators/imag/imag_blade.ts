@@ -9,7 +9,7 @@ import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
 
-export const IM = native_sym(Native.im);
+export const IM = native_sym(Native.imag);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

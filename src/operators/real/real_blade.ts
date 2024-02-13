@@ -1,7 +1,7 @@
 import { Blade, is_blade } from "math-expression-atoms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_BLADE, hash_unaop_atom } from "../../hashing/hash_info";
-import { RE } from "../../runtime/constants";
+import { REAL } from "../../runtime/constants";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -20,7 +20,7 @@ type EXP = Cons1<Sym, ARG>;
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
-        super('real_blade', RE, is_blade, $);
+        super('real_blade', REAL, is_blade, $);
         this.#hash = hash_unaop_atom(this.opr, HASH_BLADE);
     }
     get hash(): string {

@@ -6,36 +6,36 @@ import { isequalq } from "./isequalq";
 import { isminusone } from "./isminusone";
 import { lengthf } from "./lengthf";
 
-export function isdoublez(p: U): boolean {
-    if (car(p).equals(ADD)) {
+export function isdoublez(expr: U): boolean {
+    if (car(expr).equals(ADD)) {
 
-        if (lengthf(p) !== 3)
+        if (lengthf(expr) !== 3)
             return false;
 
-        if (!is_flt(cadr(p))) // x
+        if (!is_flt(cadr(expr))) // x
             return false;
 
-        p = caddr(p);
+        expr = caddr(expr);
     }
 
-    if (!car(p).equals(MULTIPLY))
+    if (!car(expr).equals(MULTIPLY))
         return false;
 
-    if (lengthf(p) !== 3)
+    if (lengthf(expr) !== 3)
         return false;
 
-    if (!is_flt(cadr(p))) // y
+    if (!is_flt(cadr(expr))) // y
         return false;
 
-    p = caddr(p);
+    expr = caddr(expr);
 
-    if (!car(p).equals(POWER))
+    if (!car(expr).equals(POWER))
         return false;
 
-    if (!isminusone(cadr(p)))
+    if (!isminusone(cadr(expr)))
         return false;
 
-    if (!isequalq(caddr(p), 1, 2))
+    if (!isequalq(caddr(expr), 1, 2))
         return false;
 
     return true;

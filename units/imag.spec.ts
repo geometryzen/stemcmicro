@@ -3,9 +3,9 @@ import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("imag", function () {
-    it("im(a)", function () {
+    it("imag(a)", function () {
         const lines: string[] = [
-            `im(a)`
+            `imag(a)`
         ];
         const engine = create_script_context({
             dependencies: ['Imu']
@@ -15,10 +15,10 @@ describe("imag", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "0");
         engine.release();
     });
-    it("im(i)", function () {
+    it("imag(i)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `im(i)`
+            `imag(i)`
         ];
         const engine = create_script_context({
             dependencies: ['Imu']
@@ -28,10 +28,10 @@ describe("imag", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "1");
         engine.release();
     });
-    it("im(i*y)", function () {
+    it("imag(i*y)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `im(i*y)`
+            `imag(i*y)`
         ];
         const engine = create_script_context({
             dependencies: ['Imu']
@@ -41,10 +41,10 @@ describe("imag", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "y");
         engine.release();
     });
-    it("im(a+i*b)", function () {
+    it("imag(a+i*b)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `im(a+i*b)`
+            `imag(a+i*b)`
         ];
         const engine = create_script_context({
             dependencies: ['Imu']
@@ -54,10 +54,10 @@ describe("imag", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "b");
         engine.release();
     });
-    xit("im(x+i*y)", function () {
+    xit("imag(x+i*y)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `im(x+i*y)`
+            `imag(x+i*y)`
         ];
         const engine = create_script_context({
             useCaretForExponentiation: true
@@ -66,10 +66,10 @@ describe("imag", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "y");
         engine.release();
     });
-    xit("im(1/(x+i*y))", function () {
+    xit("imag(1/(x+i*y))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `im(1/(x+i*y))`
+            `imag(1/(x+i*y))`
         ];
         const engine = create_script_context({
             useCaretForExponentiation: true
@@ -78,11 +78,11 @@ describe("imag", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "-y/(x^2+y^2)");
         engine.release();
     });
-    it("im((-1)^(1/3))", function () {
+    it("imag((-1)^(1/3))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `pi=tau(1/2)`,
-            `im((-1)^(1/3))`,
+            `imag((-1)^(1/3))`,
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
@@ -95,12 +95,12 @@ describe("imag", function () {
         assert.strictEqual(context.renderAsInfix(values[0]), "1/2*3^(1/2)");
         context.release();
     });
-    it("im((-1)^(1/6))", function () {
+    it("imag((-1)^(1/6))", function () {
         const lines: string[] = [
             `autofactor=0`,
             `i=sqrt(-1)`,
             `pi=tau(1)/2`,
-            `im((-1)^(1/6))`
+            `imag((-1)^(1/6))`
         ];
         const sourceText = lines.join('\n');
 
@@ -114,12 +114,12 @@ describe("imag", function () {
         assert.strictEqual(context.renderAsInfix(values[0]), "1/2");
         context.release();
     });
-    it("im((-1)^(1/6)*3^(1/2))", function () {
+    it("imag((-1)^(1/6)*3^(1/2))", function () {
         const lines: string[] = [
             `autofactor=0`,
             `i=sqrt(-1)`,
             `pi=tau(1)/2`,
-            `im((-1)^(1/6)*3^(1/2))`
+            `imag((-1)^(1/6)*3^(1/2))`
         ];
         const sourceText = lines.join('\n');
 
@@ -133,10 +133,10 @@ describe("imag", function () {
         assert.strictEqual(context.renderAsInfix(values[0]), "1/2*3^(1/2)");
         context.release();
     });
-    it("im(1/(a+i*b))", function () {
+    it("imag(1/(a+i*b))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `im(1/(a+i*b))`
+            `imag(1/(a+i*b))`
         ];
         const sourceText = lines.join('\n');
 
@@ -150,10 +150,10 @@ describe("imag", function () {
         assert.strictEqual(context.renderAsInfix(values[0]), "-b/(a^2+b^2)");
         context.release();
     });
-    it("im(exp(i*x))", function () {
+    it("imag(exp(i*x))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `im(exp(i*x))`
+            `imag(exp(i*x))`
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
@@ -164,10 +164,10 @@ describe("imag", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "sin(x)");
         engine.release();
     });
-    it("im(exp(a*i*x))", function () {
+    it("imag(exp(a*i*x))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `im(exp(a*i*x))`
+            `imag(exp(a*i*x))`
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
@@ -178,10 +178,10 @@ describe("imag", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "sin(a*x)");
         engine.release();
     });
-    it("im(exp(i))", function () {
+    it("imag(exp(i))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `im(exp(i))`
+            `imag(exp(i))`
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
@@ -192,9 +192,9 @@ describe("imag", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "sin(1)");
         engine.release();
     });
-    it("im((a**2)**(1/2))", function () {
+    it("imag((a**2)**(1/2))", function () {
         const lines: string[] = [
-            `im((a**2)**(1/2))`
+            `imag((a**2)**(1/2))`
         ];
         const engine = create_script_context({
         });

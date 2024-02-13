@@ -1,8 +1,8 @@
 import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_imu, is_num, is_tensor, Sym } from "math-expression-atoms";
 import { assert_cons, Cons, nil, U } from "math-expression-tree";
-import { ConsFunction } from "../adapters/ConsFunction";
+import { StackFunction } from "../adapters/StackFunction";
 import { Directive } from "../env/ExtensionEnv";
-import { broadcast, duplicate, evaluate_nonstop, floatfunc, get_binding, head, lookup, rest, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
+import { broadcast, evaluate_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
 import { ProgramIO } from "./ProgramIO";
@@ -54,19 +54,19 @@ function draw_args(argList: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Prog
     // Whenever a pop happens, the popped item should either be returned or released.
     // Keeping track of the stack contents is difficult but can be aided by inline comment documentation.
     $.push(argList);                        // (argList)
-    duplicate($);                           // (argList, argList)
-    head($);                                // (arg0, argList)
+    $.dupl();                               // (argList, argList)
+    $.head();                               // (arg0, argList)
     const F = $.pop();                      // (argList)
-    rest($);                                // (argList.rest)
-    duplicate($);                           // (argList.rest, argList.rest)
-    head($);                                // (arg1, argList.rest)        
+    $.rest();                               // (argList.rest)
+    $.dupl();                               // (argList.rest, argList.rest)
+    $.head();                               // (arg1, argList.rest)        
     const varName = assert_sym($.pop());    // (argList.rest)
-    rest($);                                // (argList.rest.rest)
-    duplicate($);                           // (argList.rest.rest, argList.rest.rest)
-    head($);                                // (arg2, argList.rest.rest)
+    $.rest();                               // (argList.rest.rest)
+    $.dupl();                               // (argList.rest.rest, argList.rest.rest)
+    $.head();                               // (arg2, argList.rest.rest)
     value_of(env, ctrl, $);                 // (val2, argList.rest.rest)
     const N = $.pop();                      // (argList.rest.rest)
-    rest($);                                // (argList.rest.rest.rest)
+    $.rest();                               // (argList.rest.rest.rest)
     $.pop();                                // ()
     // TODO: Perom a null check on the previously popped item.
     try {
@@ -82,7 +82,7 @@ function draw_args(argList: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Prog
     }
 }
 
-export function make_stack_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
+export function make_stack_draw(io: Pick<ProgramIO, 'listeners'>): StackFunction {
 
     return function (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         assert_cons(expr);

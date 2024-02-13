@@ -1,10 +1,9 @@
 
+import { Sym } from "math-expression-atoms";
+import { Cons, Cons2, is_cons, items_to_cons, U } from "math-expression-tree";
 import { ExtensionEnv, MODE_EXPANDING, Operator, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 
@@ -19,7 +18,7 @@ function make_is_cons_and_opr_eq_sym(lower: Sym) {
 }
 
 /**
- * (upper lhs (lower x1 x2 x3 ...))
+ * (upper lhs (lower x1 x2 x3)) => (lower (upper lhs x1) (upper lhs x2) (upper lhs x3) ...)
  */
 export class DistributiveLawExpandLeft extends Function2<LHS, RHS> implements Operator<EXPR> {
     readonly #hash: string;
@@ -32,16 +31,14 @@ export class DistributiveLawExpandLeft extends Function2<LHS, RHS> implements Op
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
+    transform2(upper: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
         const $ = this.$;
-        // console.lg(this.name, $.toInfixString(lhs), $.toInfixString(rhs));
-        const add = rhs.opr;
-        const A = lhs;
+        const lower = rhs.opr;
         const xs = rhs.tail();
         const terms = xs.map(function (x) {
-            return $.valueOf(items_to_cons(opr, A, x));
+            return $.valueOf(items_to_cons(upper, lhs, x));
         });
-        const retval = $.valueOf(items_to_cons(add, ...terms));
+        const retval = $.valueOf(items_to_cons(lower, ...terms));
         return [TFLAG_DIFF, retval];
     }
 }

@@ -8,7 +8,7 @@ import { is_power } from '../../runtime/helpers';
 /**
  * (deg p x)
  */
-export function eval_degree(expr: Cons, $: Pick<ExprContext, 'valueOf'>): U {
+export function eval_deg(expr: Cons, $: Pick<ExprContext, 'valueOf'>): U {
     const argList = expr.argList;
     try {
         const arg0 = argList.item0;

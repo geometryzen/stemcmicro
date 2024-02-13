@@ -11,7 +11,7 @@ export function is_any(expr: U): expr is U {
     return true;
 }
 
-export function assert_U(expr: unknown, context: string, argName: string): U {
+export function assert_U(expr: unknown, context: string, argName: string): U | never {
     if (typeof expr === 'undefined' || expr === null) {
         throw new Error(`${context}: Expecting ${argName} to be a U but got ${expr}.`);
     }

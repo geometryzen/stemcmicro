@@ -14,7 +14,7 @@ import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings'
 import { predicate_return_value } from '../helpers/predicate_return_value';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { is_boo } from '../operators/boo/is_boo';
-import { eval_degree } from '../operators/degree/degree';
+import { eval_deg } from '../operators/degree/degree';
 import { hadamard, stack_hadamard } from '../operators/hadamard/stack_hadamard';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_lambda } from '../operators/lambda/is_lambda';
@@ -23,7 +23,6 @@ import { stack_rotate } from '../operators/rotate/stack_rotate';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { stack_uom } from '../operators/uom/stack_uom';
 import { ProgrammingError } from '../programming/ProgrammingError';
-import { DEGREE } from '../runtime/constants';
 import { is_power } from '../runtime/helpers';
 import { assert_cons } from '../tree/cons/assert_cons';
 import { Lambda } from '../tree/lambda/Lambda';
@@ -215,7 +214,7 @@ function cancel_factor(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
             multiply(env, ctrl, $);
             p2 = cdr(p2);
         }
-        add_terms($.length - h, env, ctrl, $);
+        sum_terms($.length - h, env, ctrl, $);
         return;
     }
 
@@ -778,82 +777,83 @@ function decomp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
     }
 }
 
-function decomp_sum(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function decomp_sum(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
 
     let p2: U;
 
-    let h = $.length;
+    const N = _.length;
 
     // partition terms
 
-    let p1: U = cdr(F);
+    let xs: U = cdr(F);
 
-    while (is_cons(p1)) {
-        p2 = car(p1);
+    while (is_cons(xs)) {
+        p2 = car(xs);
         if (findf(p2, X)) {
             if (car(p2).equals(MULTIPLY)) {
-                push(p2, $);
-                push(X, $);
-                partition_term($);	// push const part then push var part
+                push(p2, _);
+                push(X, _);
+                partition_term(_);	// push const part then push var part
             }
             else {
-                push_integer(1, $);	// const part
-                push(p2, $);		// var part
+                push_integer(1, _);	// const part
+                push(p2, _);		// var part
             }
         }
-        p1 = cdr(p1);
+        xs = cdr(xs);
     }
 
     // combine const parts of matching var parts
 
-    let n = $.length - h;
+    let end = _.length - N;
 
-    for (let i = 0; i < n - 2; i += 2)
-        for (let j = i + 2; j < n; j += 2) {
-            if (!equal($.getAt(h + i + 1), $.getAt(h + j + 1))) {
+    for (let i = 0; i < end - 2; i += 2)
+        for (let j = i + 2; j < end; j += 2) {
+            if (!equal(_.getAt(N + i + 1), _.getAt(N + j + 1))) {
                 continue;
             }
-            push($.getAt(h + i), $); // add const parts
-            push($.getAt(h + j), $);
-            add(env, ctrl, $);
-            $.setAt(h + i, pop($));
-            for (let k = j; k < n - 2; k++)
-                $.setAt(h + k, $.getAt(h + k + 2));
+            _.push(_.getAt(N + i)); // add const parts
+            _.push(_.getAt(N + j));
+            sum_terms(2, env, ctrl, _);
+            _.setAt(N + i, pop(_));
+            for (let k = j; k < end - 2; k++)
+                _.setAt(N + k, _.getAt(N + k + 2));
             j -= 2; // use same j again
-            n -= 2;
-            $.splice($.length - 2); // pop
+            end -= 2;
+            _.splice(_.length - 2); // pop
         }
 
     // push const parts, decomp var parts
 
-    list($.length - h, $);
-    p1 = pop($);
+    list(_.length - N, _);
+    let parts = _.pop();
 
-    while (is_cons(p1)) {
-        push(car(p1), $); // const part
-        push(cadr(p1), $); // var part
-        push(X, $);
-        decomp(env, ctrl, $);
-        p1 = cddr(p1);
+    while (is_cons(parts)) {
+        push(car(parts), _); // const part
+        push(cadr(parts), _); // var part
+        push(X, _);
+        decomp(env, ctrl, _);
+        parts = cddr(parts);
     }
 
     // add together all constant terms
 
-    h = $.length;
-    p1 = cdr(F);
-    while (is_cons(p1)) {
-        if (!findf(car(p1), X))
-            push(car(p1), $);
-        p1 = cdr(p1);
+    const h = _.length;
+    let terms = cdr(F);
+    while (is_cons(terms)) {
+        if (!findf(car(terms), X)) {
+            _.push(car(terms));
+        }
+        terms = terms.rest;
     }
 
-    n = $.length - h;
+    const n = _.length - h;
 
     if (n > 1) {
-        list(n, $);
-        push(ADD, $);
-        swap($);
-        cons($); // makes ADD head of list
+        list(n, _);
+        _.push(ADD);
+        _.swap();
+        cons(_); // makes ADD head of list
     }
 }
 
@@ -1017,109 +1017,151 @@ export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
     }
 }
 
-export function stack_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const h = $.length;
+/**
+ * [..., (x1 x2 ... xn)] => [..., v1, v2, ..., vn] where (v1 v2 ... vn) are the values of (x1 x2 ... xn).
+ * 
+ * @returns n, the number of values in the list (x1 x2 ... xn)
+ */
+export function value_of_args(env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): number {
+    const L0 = _.length;            // [..., (x1 x2 ... xn)]
+    while (_.iscons) {
+        _.dupl();                   // [..., (x1 x2 ... xn), (x1 x2 ... xn)]
+        _.head();                   // [..., (x1 x2 ... xn), x1]
+        value_of(env, ctrl, _);     // [..., (x1 x2 ... xn), v1]
+        _.swap();                   // [..., v1, (x1 x2 ... xn)]
+        _.rest();                   // [..., v1, (x2 x3 ... xn)]
+    }
+    //                                 [..., v1, v2, ..., vn, nil]
+    // We must drop the final nil, releasing it isn't really needed.
+    _.pop().release();              // [..., v1, v2, ..., vn]
+    return _.length - L0 + 1;       // Adding 1 because we replaced the (x1 x2 ... xn)
+}
+
+function assert_stack_length(expectedLength: number, _: ProgramStack): void | never {
+    if (_.length !== expectedLength) {
+        throw new ProgrammingError();
+    }
+}
+
+/**
+ * [...] => [..., X], where X is the sum of the evaluated terms, (x1 x2 x3 ... xn).
+ */
+export function stack_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
+    // console.lg("stack_add", `${expr}`);
     ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
     try {
-        let p1 = cdr(expr);
-        while (is_cons(p1)) {
-            push(car(p1), $);
-            value_of(env, ctrl, $);
-            p1 = cdr(p1);
-        }
-        add_terms($.length - h, env, ctrl, $);
+        const L0 = _.length;
+        // By pushing the identity element for addition, zero, we ensure (+) evaluates to zero. 
+        _.push(zero);                                   // [..., 0]
+        _.push(expr);                                   // [..., 0, (+ x1 x2 ... xn)]       
+        _.rest();                                       // [..., 0, (x1 x2 ... xn)]
+        const n = value_of_args(env, ctrl, _);          // [..., 0, v1, v2, ..., vn]
+        sum_terms(n + 1, env, ctrl, _);
+        assert_stack_length(L0 + 1, _);
     }
     finally {
         ctrl.popDirective();
     }
 }
 
+/**
+ * @deprecated Use sum_terms(2) instead 
+ */
 export function add(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    add_terms(2, env, ctrl, $);
+    sum_terms(2, env, ctrl, $);
 }
 
-function add_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+/**
+ * [..., v1, v2, ..., vn] => [..., X] where X is the sum of v1 through vn
+ */
+function sum_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
 
-    if (n < 2)
+    if (n < 0) {
+        throw new ProgrammingError(`n => ${n}`);
+    }
+
+    const start = _.length - n;
+
+    flatten_terms(start, _);
+
+    let T = combine_tensors(start, env, ctrl, _);
+
+    combine_terms(start, ctrl, _);
+
+    if (simplify_terms(start, env, ctrl, _)) {
+        combine_terms(start, ctrl, _);
+    }
+
+    const k = _.length - start;
+
+    if (k === 0) {
+        if (is_tensor(T)) {
+            _.push(T);
+        }
+        else {
+            _.push(zero);
+        }
         return;
-
-    const h = $.length - n;
-
-    flatten_terms(h, $);
-
-    let T = combine_tensors(h, env, ctrl, $);
-
-    combine_terms(h, ctrl, $);
-
-    if (simplify_terms(h, env, ctrl, $)) {
-        combine_terms(h, ctrl, $);
     }
 
-    n = $.length - h;
-
-    if (n === 0) {
-        if (is_tensor(T))
-            push(T, $);
-        else
-            push_integer(0, $);
-        return;
+    if (k > 1) {
+        list(k, _);
+        _.push(ADD);
+        _.swap();
+        cons(_); // prepend ADD to list
     }
 
-    if (n > 1) {
-        list(n, $);
-        push(ADD, $);
-        swap($);
-        cons($); // prepend ADD to list
+    if (istensor(T)) {
+        const p1 = _.pop();
+
+        T = copy_tensor(T);
+
+        const nelem = T.nelem;
+
+        for (let i = 0; i < nelem; i++) {
+            _.push(T.elems[i]);
+            _.push(p1);
+            sum_terms(2, env, ctrl, _);
+            T.elems[i] = pop(_);
+        }
+
+        _.push(T);
     }
-
-    if (!istensor(T))
-        return;
-
-    const p1 = pop($);
-
-    T = copy_tensor(T);
-
-    n = T.nelem;
-
-    for (let i = 0; i < n; i++) {
-        push(T.elems[i], $);
-        push(p1, $);
-        add(env, ctrl, $);
-        T.elems[i] = pop($);
-    }
-
-    push(T, $);
 }
 
-function flatten_terms(h: number, $: ProgramStack): void {
-    const n = $.length;
-    for (let i = h; i < n; i++) {
-        let p1 = $.getAt(i);
+/**
+ * @param start The starting position on the stack.
+ */
+function flatten_terms(start: number, _: ProgramStack): void {
+    const end = _.length;
+    for (let i = start; i < end; i++) {
+        let p1 = _.getAt(i);
         if (car(p1).equals(ADD)) {
-            $.setAt(i, cadr(p1));
+            _.setAt(i, cadr(p1));
             p1 = cddr(p1);
             while (is_cons(p1)) {
-                push(car(p1), $);
+                _.push(p1);
+                _.head();
                 p1 = cdr(p1);
             }
         }
     }
 }
 
-function combine_tensors(h: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): Tensor {
+function combine_tensors(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): Tensor {
     let T: U = nil;
-    for (let i = h; i < $.length; i++) {
-        const p1 = $.getAt(i);
+    for (let i = start; i < _.length; i++) {
+        const p1 = _.getAt(i);
         if (is_tensor(p1)) {
             if (is_tensor(T)) {
-                push(T, $);
-                push(p1, $);
-                add_tensors(env, ctrl, $);
-                T = pop($);
+                push(T, _);
+                push(p1, _);
+                add_tensors(env, ctrl, _);
+                T = pop(_);
             }
             else
                 T = p1;
-            $.splice(i, 1);
+            _.splice(i, 1);
             i--; // use same index again
         }
     }
@@ -1148,19 +1190,19 @@ function add_tensors(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
     push(p1, $);
 }
 
-function combine_terms(h: number, ctrl: ProgramControl, $: ProgramStack): void {
-    sort_terms(h, ctrl, $);
-    for (let i = h; i < $.length - 1; i++) {
-        if (combine_terms_nib(i, i + 1, $)) {
-            if (iszero($.getAt(i)))
-                $.splice(i, 2); // remove 2 terms
+function combine_terms(start: number, ctrl: ProgramControl, _: ProgramStack): void {
+    sort_terms(start, ctrl, _);
+    for (let i = start; i < _.length - 1; i++) {
+        if (combine_terms_nib(i, i + 1, _)) {
+            if (iszero(_.getAt(i)))
+                _.splice(i, 2); // remove 2 terms
             else
-                $.splice(i + 1, 1); // remove 1 term
+                _.splice(i + 1, 1); // remove 1 term
             i--; // use same index again
         }
     }
-    if (h < $.length && iszero($.getAt($.length - 1)))
-        $.pop();
+    if (start < _.length && iszero(_.getAt(_.length - 1)))
+        _.pop();
 }
 
 function combine_terms_nib(i: number, j: number, $: ProgramStack): 1 | 0 {
@@ -2301,7 +2343,7 @@ export function stack_arg(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 function arg(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const z = pop($);
-    // console.lg("arg", "z => ", `${z}`);
+    // console.lg("arg", "z => ", `${ z }`);
     try {
         if (is_tensor(z)) {
             const T = copy_tensor(z);
@@ -2412,7 +2454,7 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             arg(env, ctrl, $);
             z = cdr(z);
         }
-        add_terms($.length - h, env, ctrl, $);
+        sum_terms($.length - h, env, ctrl, $);
         return;
     }
 
@@ -2820,7 +2862,7 @@ function contract(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
             push(p1.elems[k], $);
         }
 
-        add_terms(ncol, env, ctrl, $);
+        sum_terms(ncol, env, ctrl, $);
 
         T.elems[i] = pop($);
 
@@ -3436,7 +3478,7 @@ function dsum(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
         derivative(env, ctrl, $);
         p1 = cdr(p1);
     }
-    add_terms($.length - h, env, ctrl, $);
+    sum_terms($.length - h, env, ctrl, $);
 }
 
 function dproduct(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -3453,7 +3495,7 @@ function dproduct(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: Progra
         }
         multiply_factors(n, env, ctrl, $);
     }
-    add_terms(n, env, ctrl, $);
+    sum_terms(n, env, ctrl, $);
 }
 
 //	     v
@@ -3888,7 +3930,7 @@ function det(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             push(p1.elems[5], $);
             push(p1.elems[7], $);
             multiply_factors(4, env, ctrl, $);
-            add_terms(6, env, ctrl, $);
+            sum_terms(6, env, ctrl, $);
             return;
         default:
             break;
@@ -3919,7 +3961,7 @@ function det(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     if (s === 0)
         push_integer(0, $);
     else
-        add_terms(s, env, ctrl, $);
+        sum_terms(s, env, ctrl, $);
 }
 
 export function stack_dim(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -4835,7 +4877,7 @@ function inner(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
                 push(p2.elems[k * mcol + j], $);
                 multiply(env, ctrl, $);
             }
-            add_terms(ncol, env, ctrl, $);
+            sum_terms(ncol, env, ctrl, $);
             p3.elems[i * mcol + j] = pop($);
         }
     }
@@ -5882,7 +5924,7 @@ function integral(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
             integral(env, ctrl, $);
             p1 = cdr(p1);
         }
-        add_terms($.length - h, env, ctrl, $);
+        sum_terms($.length - h, env, ctrl, $);
         return;
     }
 
@@ -6254,7 +6296,7 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             }
             $.setAt(i, pop($));
         }
-        add_terms($.length - h, env, ctrl, $);
+        sum_terms($.length - h, env, ctrl, $);
         return;
     }
 
@@ -6278,7 +6320,7 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             logfunc(env, ctrl, $);
             x = cdr(x);
         }
-        add_terms($.length - h, env, ctrl, $);
+        sum_terms($.length - h, env, ctrl, $);
         return;
     }
 
@@ -7116,7 +7158,7 @@ function power_args($: ProgramStack): [base: U, expo: U] {
 export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const [base, expo] = power_args($);
-    // console.lg("power", "base", `${base}`, "expo", `${expo}`);
+    // console.lg("power", "base", `${ base }`, "expo", `${ expo }`);
     try {
         if (is_atom(base)) {
             if (is_uom(base)) {
@@ -7528,7 +7570,7 @@ export function rect(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
             rect(env, ctrl, $);
             p1 = cdr(p1);
         }
-        add_terms($.length - h, env, ctrl, $);
+        sum_terms($.length - h, env, ctrl, $);
         return;
     }
 
@@ -7887,7 +7929,7 @@ export function stack_assign(x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
         set_symbol(sym, rhs, nil, env);
     }
     else {
-        stopf(`user symbol expected sym=${sym}`);
+        stopf(`user symbol expected sym = ${sym}`);
     }
 }
 
@@ -7908,7 +7950,7 @@ function setq_indexed(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Progra
     const S = cadadr(p1);
 
     if (!(is_sym(S) && env.hasUserFunction(S))) {
-        stopf(`user symbol expected S=${S}`);
+        stopf(`user symbol expected S = ${S}`);
     }
 
     push(S, $);
@@ -8024,10 +8066,10 @@ function setq_usrfunc(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Progra
     }
     else {
         if (is_sym(F)) {
-            stopf(`user symbol expected F=${F}`);
+            stopf(`user symbol expected F = ${F}`);
         }
         else {
-            stopf(`symbol expected F=${F}`);
+            stopf(`symbol expected F = ${F}`);
         }
     }
 
@@ -8718,7 +8760,7 @@ export function stack_sum(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
                 for (let i = 0; i < n; i++) {
                     push(p1.elems[i], $);
                 }
-                add_terms(n, env, ctrl, $);
+                sum_terms(n, env, ctrl, $);
                 return;
             }
         }
@@ -8759,7 +8801,7 @@ export function stack_sum(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
                 }
             }
 
-            add_terms($.length - h, env, ctrl, $);
+            sum_terms($.length - h, env, ctrl, $);
         }
         finally {
             restore_symbol(env);
@@ -9092,7 +9134,7 @@ export function stack_taylor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
         divide(env, ctrl, $);
     }
 
-    add_terms($.length - h, env, ctrl, $);
+    sum_terms($.length - h, env, ctrl, $);
 }
 
 function evaluate_tensor(p1: Tensor, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -9471,10 +9513,10 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
                             ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) + 1);
                             try {
                                 const binding = env.getBinding(opr, expr);
-                                // console.lg("binding", `${binding}`);
+                                // console.lg("binding", `${ binding } `);
                                 try {
                                     if (is_atom(binding)) {
-                                        // console.lg("binding.type", `${binding.type}`);
+                                        // console.lg("binding.type", `${ binding.type } `);
                                     }
                                     if (is_lambda(binding)) {
                                         const ctxt = new ExprContextAdapter(env, ctrl, $);
@@ -9606,7 +9648,7 @@ function expand_sum_factors(start: number, env: ProgramEnv, ctrl: ProgramControl
         p2 = cdr(p2);
     }
 
-    add_terms($.length - start, env, ctrl, $);
+    sum_terms($.length - start, env, ctrl, $);
 }
 // N is bignum, M is rational
 
@@ -10458,7 +10500,7 @@ export function get_binding(opr: Sym, target: Cons, env: ProgramEnv): U {
     }
     /*
     if (!env.hasUserFunction(name)) {
-        stopf(`get_binding(${name}) symbol error`);
+        stopf(`get_binding(${ name }) symbol error`);
     }
     */
     const binding = env.getBinding(opr, target);
@@ -10491,7 +10533,7 @@ function get_userfunc(name: Sym, env: ProgramEnv): U {
         }
     }
     else {
-        // stopf(`symbol error ${name.key()}`);
+        // stopf(`symbol error ${ name.key() } `);
         return nil;
     }
 }
@@ -10721,7 +10763,7 @@ export function multiply_factors(n: number, env: ProgramEnv, ctrl: ProgramContro
 
     flatten_factors(start, $);
 
-    // console.lg(`after flatten factors: ${$.stack}`);
+    // console.lg(`after flatten factors: ${ $.stack } `);
     const uom = multiply_uom_factors(start, $);
     if (is_uom(uom)) {
         push(uom, $);
@@ -10741,11 +10783,11 @@ export function multiply_factors(n: number, env: ProgramEnv, ctrl: ProgramContro
     const T = multiply_tensor_factors(start, env, ctrl, $);
 
 
-    // console.lg(`after multiply tensor factors: ${$.stack}`);
+    // console.lg(`after multiply tensor factors: ${ $.stack } `);
 
     multiply_scalar_factors(start, env, ctrl, $);
 
-    // console.lg(`after multiply scalar factors: ${$.stack}`);
+    // console.lg(`after multiply scalar factors: ${ $.stack } `);
 
     if (is_tensor(T)) {
         push(T, $);
@@ -10818,7 +10860,7 @@ function multiply_scalar_factors(start: number, env: ProgramEnv, ctrl: ProgramCo
     // do again in case exp(1/2 i pi) changed to i
 
     combine_factors(start, env, ctrl, $);
-    // console.lg(`after combine factors: ${$.stack}`);
+    // console.lg(`after combine factors: ${ $.stack } `);
     normalize_power_factors(start, env, ctrl, $);
 
     const k1 = combine_numerical_factors(start, k0, $);
@@ -10947,7 +10989,7 @@ export function negate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
 }
 
 function normalize_polar(EXPO: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    // console.lg("normalize_polar", `${EXPO}`);
+    // console.lg("normalize_polar", `${ EXPO } `);
     if (car(EXPO).equals(ADD)) {
         const h = $.length;
         let p1 = cdr(EXPO);
@@ -11235,7 +11277,7 @@ const ORDER_8 = 8;
  * @returns 
  */
 function order_factor(expr: U): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 {
-    // console.lg("order_factor", `${expr}`);
+    // console.lg("order_factor", `${ expr } `);
     if (is_atom(expr)) {
         if (is_num(expr)) {
             return ORDER_1;
@@ -11370,7 +11412,7 @@ function assert_num_to_number(p: U): number | never {
         return p.toNumber();
     }
     else {
-        stopf(`assert_num_to_number() number expected ${p}`);
+        stopf(`assert_num_to_number() number expected ${p} `);
     }
 }
 
@@ -11839,7 +11881,7 @@ function normalize_clock_double(EXPO: Flt, $: ProgramStack): void {
  */
 function power_e_expo(expo: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    // console.lg("power_e_expo", "expo", `${expo}`);
+    // console.lg("power_e_expo", "expo", `${ expo } `);
 
     // exp(x + i y) = exp(x) (cos(y) + i sin(y))
     let x: number;
@@ -12130,7 +12172,7 @@ function power_double(BASE: Num, EXPO: Num, env: ProgramEnv, ctrl: ProgramContro
 // BASE is a sum of terms
 
 function power_sum(base: U, expo: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    // console.lg("power_sum", `${base}`, `${expo}`, "expanding => ", ctrl.expanding);
+    // console.lg("power_sum", `${ base } `, `${ expo } `, "expanding => ", ctrl.expanding);
 
     if (iscomplexnumber(base) && is_num(expo)) {
         power_complex_number(base, expo, env, ctrl, $);
@@ -12166,7 +12208,7 @@ function power_sum(base: U, expo: U, env: ProgramEnv, ctrl: ProgramControl, $: P
         p1 = cdr(p1);
     }
 
-    add_terms($.length - h, env, ctrl, $);
+    sum_terms($.length - h, env, ctrl, $);
 
     // continue up to power n
 
@@ -12239,10 +12281,10 @@ function prefixform(p: U, outbuf: string[]) {
         outbuf.push("[ ]");
     }
     else if (is_uom(p)) {
-        outbuf.push(`${p.toListString()}`);
+        outbuf.push(`${p.toListString()} `);
     }
     else if (is_atom(p)) {
-        outbuf.push(`${p}`);
+        outbuf.push(`${p} `);
     }
     else if (p.isnil) {
         outbuf.push(`()`);
@@ -12321,7 +12363,7 @@ function peek(tag: string, $: ProgramStack): void {
     const expr = $.pop();
     try {
         // eslint-disable-next-line no-console
-        console.log(tag, `${expr}`);
+        console.log(tag, `${ expr } `);
         $.push(expr);
     }
     finally {
@@ -12954,7 +12996,7 @@ function get_matching_token(lhs: string | number): string {
     else if (lhs === '[') {
         return ']';
     }
-    throw new Error(`get_matching_token ${lhs}`);
+    throw new Error(`get_matching_token ${lhs} `);
 }
 
 function scan_subexpr(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, io: ProgramIO, config: EigenmathParseConfig): void {
@@ -13182,7 +13224,7 @@ function scan_error(s: string, io: ProgramIO): never {
 
     broadcast(escaped, io);
 
-    stopf(`scan_error ${s}`);
+    stopf(`scan_error ${s} `);
 }
 
 function inchar(): string {
@@ -13441,7 +13483,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.define_stack_function(COS, stack_cos);
         this.define_stack_function(COSH, stack_cosh);
         this.define_stack_function(DEFINT, stack_defint);
-        this.define_stack_function(DEGREE, make_stack(eval_degree));
+        this.define_stack_function(native_sym(Native.deg), make_stack(eval_deg));
         this.define_stack_function(DENOMINATOR, stack_denominator);
         this.define_stack_function(DET, stack_det);
         this.define_stack_function(DERIVATIVE, stack_derivative);
@@ -13561,7 +13603,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getBinding(opr: Sym, target: Cons): U {
-        // console.lg("ScriptVars.getBinding", `${name}`);
+        // console.lg("ScriptVars.getBinding", `${ name } `);
         assert_sym(opr);
         const key = opr.key();
         if (this.#bindings.has(key)) {

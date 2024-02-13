@@ -1,6 +1,7 @@
 import { assert } from "chai";
 import { nil, U } from "math-expression-tree";
 import { create_engine, ExprEngineListener } from "../src/api/api";
+import { SyntaxKind } from "../src/parser/parser";
 
 class TestListener implements ExprEngineListener {
     readonly outputs: string[] = [];
@@ -8,9 +9,13 @@ class TestListener implements ExprEngineListener {
         this.outputs.push(output);
     }
 }
+export interface MungeConfig {
+    syntaxKind: SyntaxKind;
+}
 
-export function munge(sourceText: string): U {
-    const engine = create_engine();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function munge(sourceText: string, options: Partial<MungeConfig>): U {
+    const engine = create_engine(options);
     try {
         const subscriber = new TestListener();
         engine.addListener(subscriber);

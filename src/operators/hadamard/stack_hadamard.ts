@@ -1,24 +1,24 @@
 import { Cons, is_cons } from "math-expression-tree";
-import { copy_tensor, istensor, multiply, pop, push, stopf, value_of } from "../../eigenmath/eigenmath";
+import { copy_tensor, istensor, multiply, stopf, value_of } from "../../eigenmath/eigenmath";
 import { ProgramControl } from "../../eigenmath/ProgramControl";
 import { ProgramEnv } from "../../eigenmath/ProgramEnv";
 import { ProgramStack } from "../../eigenmath/ProgramStack";
 
-export function stack_hadamard(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_hadamard(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
     const argList = expr.argList;
     try {
         const head = argList.head;
         try {
-            push(head, $);
-            value_of(env, ctrl, $);
+            _.push(head);
+            value_of(env, ctrl, _);
             let xs = argList.rest;
             try {
                 while (is_cons(xs)) {
                     const x = xs.head;
                     try {
-                        push(x, $);
-                        value_of(env, ctrl, $);
-                        hadamard(env, ctrl, $);
+                        _.push(x);
+                        value_of(env, ctrl, _);
+                        hadamard(env, ctrl, _);
                         const rest = xs.rest;
                         xs.release();
                         xs = rest;
@@ -41,15 +41,15 @@ export function stack_hadamard(expr: Cons, env: ProgramEnv, ctrl: ProgramControl
     }
 }
 
-export function hadamard(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function hadamard(env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
 
-    const rhs = pop($);
-    const lhs = pop($);
+    const rhs = _.pop();
+    const lhs = _.pop();
     try {
         if (!istensor(lhs) || !istensor(rhs)) {
-            push(lhs, $);
-            push(rhs, $);
-            multiply(env, ctrl, $);
+            _.push(lhs);
+            _.push(rhs);
+            multiply(env, ctrl, _);
             return;
         }
 
@@ -70,13 +70,13 @@ export function hadamard(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
             const nelem = H.nelem;
 
             for (let i = 0; i < nelem; i++) {
-                push(lhs.elems[i], $);
-                push(rhs.elems[i], $);
-                multiply(env, ctrl, $);
-                H.elems[i] = pop($);
+                _.push(lhs.elems[i]);
+                _.push(rhs.elems[i]);
+                multiply(env, ctrl, _);
+                H.elems[i] = _.pop();
             }
 
-            push(H, $);
+            _.push(H);
         }
         finally {
             H.release();

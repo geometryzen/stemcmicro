@@ -1,10 +1,9 @@
 
+import { Sym } from "math-expression-atoms";
+import { Cons, Cons2, is_cons, items_to_cons, U } from "math-expression-tree";
 import { ExtensionEnv, MODE_EXPANDING, Operator, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 
@@ -19,7 +18,7 @@ function make_is_cons_and_opr_eq_sym(lower: Sym) {
 }
 
 /**
- * (upper (lower x1 x2 x3 ...) rhs)
+ * (upper (lower x1 x2 x3 ...) rhs) => (lower (upper x1 rhs) (upper x2 rhs) (upper x3 rhs) ...)
  */
 export class DistributiveLawExpandRight extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly #hash: string;

@@ -1,6 +1,5 @@
 import { is_sym } from "math-expression-atoms";
 import { is_cons, items_to_cons, U } from "math-expression-tree";
-import { cadnr } from "../../calculators/cadnr";
 import { ExtensionEnv, Sign } from "../../env/ExtensionEnv";
 import { render_as_infix } from "../../print/render_as_infix";
 import { render_as_latex } from "../../print/render_as_latex";
@@ -31,19 +30,19 @@ export abstract class AbstractOperator {
     subst(expr: U, oldExpr: U, newExpr: U): U {
         const $ = this.$;
 
-        if ($.equals(expr, oldExpr)) {
+        if (expr.equals(oldExpr)) {
             return newExpr;
         }
         if (is_cons(expr)) {
-            const opr = cadnr(expr, 0);
+            const opr = expr.opr;
             const subst_opr = subst(opr, oldExpr, newExpr, $);
-            if ($.equals(subst_opr, opr)) {
+            if (subst_opr.equals(opr)) {
                 // TODO: Generalize the assumption of binary.
-                const lhs = cadnr(expr, 1);
-                const rhs = cadnr(expr, 2);
+                const lhs = expr.lhs;
+                const rhs = expr.rhs;
                 const subst_lhs = subst(lhs, oldExpr, newExpr, $);
                 const subst_rhs = subst(rhs, oldExpr, newExpr, $);
-                if ($.equals(lhs, subst_lhs) && $.equals(rhs, subst_rhs)) {
+                if (lhs.equals(subst_lhs) && rhs.equals(subst_rhs)) {
                     return expr;
                 }
                 else {
@@ -51,8 +50,8 @@ export abstract class AbstractOperator {
                 }
             }
             else {
-                const lhs = cadnr(expr, 1);
-                const rhs = cadnr(expr, 2);
+                const lhs = expr.lhs;
+                const rhs = expr.rhs;
                 return items_to_cons(subst_opr, subst(lhs, oldExpr, newExpr, $), subst(rhs, oldExpr, newExpr, $));
             }
         }

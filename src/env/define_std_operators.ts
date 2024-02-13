@@ -38,7 +38,7 @@ import { def_sym_doc_init_builder } from '../operators/def/def_sym_doc_init';
 import { def_sym_init_builder } from '../operators/def/def_sym_init';
 import { defint_builder } from '../operators/defint/defint';
 import { defn_builder } from '../operators/defn/eval_defn';
-import { eval_degree } from '../operators/degree/degree';
+import { eval_deg } from '../operators/degree/degree';
 import { deref_builder } from '../operators/deref/eval_deref';
 import { d_to_derivative_builder } from '../operators/derivative/d_to_derivative';
 import { map_extension } from '../operators/dictionary/dictionary_extension';
@@ -197,9 +197,8 @@ import { render_using_print_mode } from '../print/render_using_print_mode';
 import { store_text_in_binding } from '../print/store_text_in_binding';
 import { eval_quotient } from '../quotient';
 import { eval_roots } from '../roots';
-import { AND, APPROXRATIO, CHECK, CHOOSE, CLEAR, CLEARALL, DEGREE, DOT, FACTOR, ISREAL, QUOTE, RANK, UOM } from '../runtime/constants';
+import { AND, APPROXRATIO, CHECK, CHOOSE, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, QUOTE, RANK, UOM } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
-import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
 import { eval_and, eval_test, eval_testeq, eval_testle, eval_testne } from '../test';
 import { one, zero } from '../tree/rat/Rat';
@@ -214,7 +213,13 @@ export interface DefineStandardOperatorsConfig {
 
 export function define_std_operators($: ExtensionEnv, config: DefineStandardOperatorsConfig) {
     // 
-    const MATH_ADD = native_sym(Native.add);
+    const MATH_ADD = native_sym(Native.add);        // +
+    const MATH_INNER = native_sym(Native.inner);    // |
+    const MATH_LCO = native_sym(Native.lco);        // <<
+    const MATH_MUL = native_sym(Native.multiply);   // *
+    const MATH_OUTER = native_sym(Native.outer);    // ^
+    const MATH_RCO = native_sym(Native.rco);        // >>
+
     const COS = native_sym(Native.cos);
     const EXP = native_sym(Native.exp);
     const FACTORIAL = native_sym(Native.factorial);
@@ -224,23 +229,21 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     const PRIME = native_sym(Native.prime);
     const TEST = native_sym(Native.test);
 
-    $.setSymbolOrder(native_sym(Native.add), new AddComparator());
-    $.setSymbolOrder(native_sym(Native.multiply), new MulComparator());
+    // Addition (+)
+    $.setSymbolOrder(MATH_ADD, new AddComparator());
+    $.defineAssociative(MATH_ADD, zero);
+    $.defineStackFunction(MATH_ADD, stack_add);
 
-    $.defineOperator(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
-    $.defineOperator(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
-
-    $.defineOperator(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));
-    $.defineOperator(make_rhs_distrib_expand_law(MATH_INNER, MATH_ADD));
-
-    $.defineAssociative(native_sym(Native.add), zero);
-    $.defineStackFunction(native_sym(Native.add), stack_add);
-
+    // Exponentiation (pow)
     $.defineStackFunction(native_sym(Native.pow), stack_power);
 
-    $.defineAssociative(native_sym(Native.multiply), one);
+    // Multiplication (*)
+    $.setSymbolOrder(MATH_MUL, new MulComparator());
+    $.defineAssociative(MATH_MUL, one);
+    $.defineOperator(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
+    $.defineOperator(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
     $.defineOperator(mul_2_tensor_tensor);
-    $.defineEvalFunction(native_sym(Native.multiply), eval_multiply);
+    $.defineEvalFunction(MATH_MUL, eval_multiply);
 
     $.defineEvalFunction(APPROXRATIO, eval_approxratio);
     $.defineOperator(binomial_varargs);
@@ -254,7 +257,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineStackFunction(native_sym(Native.conj), stack_conj);
 
-    $.defineEvalFunction(DEGREE, eval_degree);
+    $.defineEvalFunction(native_sym(Native.deg), eval_deg);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // TODO: I don't think we should be using defineKeyword for (factor n) and factor(p, x)
@@ -280,6 +283,9 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineStackFunction(create_sym("infixform"), stack_infixform);
 
+    // Inner Product (|)
+    $.defineOperator(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));
+    $.defineOperator(make_rhs_distrib_expand_law(MATH_INNER, MATH_ADD));
     $.defineOperator(inner_2_num_num);
     $.defineOperator(inner_2_rat_imu);
     $.defineOperator(inner_2_rat_sym);
@@ -304,6 +310,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineEvalFunction(LEADING, eval_leading);
 
+    // Left Contraction (<<)
     $.defineOperator(lco_2_blade_blade);
     $.defineOperator(make_lhs_distrib_expand_law(MATH_LCO, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_LCO, MATH_ADD));
@@ -320,16 +327,17 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(native_sym(Native.mod), stack_mod);
     $.defineStackFunction(native_sym(Native.noexpand), stack_noexpand);
 
+    // Outer Product (^)
     $.defineOperator(outer_2_blade_blade);
     $.defineOperator(outer_2_tensor_tensor);
-    $.defineOperator(make_lhs_distrib_expand_law(native_sym(Native.outer), native_sym(Native.add)));
-    $.defineOperator(make_rhs_distrib_expand_law(native_sym(Native.outer), native_sym(Native.add)));
+    $.defineOperator(make_lhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
+    $.defineOperator(make_rhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
     $.defineOperator(outer_2_mul_2_scalar_any_any);
     $.defineOperator(outer_2_sym_sym);
     $.defineOperator(outer_2_any_mul_2_scalar_any);
     $.defineOperator(outer_2_any_any);
-    $.defineAssociative(native_sym(Native.outer), one);
-    $.defineStackFunction(native_sym(Native.outer), stack_outer);
+    $.defineAssociative(MATH_OUTER, one);
+    $.defineStackFunction(MATH_OUTER, stack_outer);
 
     $.defineEvalFunction(PRIME, eval_prime);
 

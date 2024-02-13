@@ -1,7 +1,7 @@
 
+import { Sym } from "math-expression-atoms";
+import { Cons } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder } from "../../env/ExtensionEnv";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons } from "../../tree/tree";
 import { DistributiveLawExpandLeft } from "./DistributiveLawExpandLeft";
 import { DistributiveLawExpandRight } from "./DistributiveLawExpandRight";
 

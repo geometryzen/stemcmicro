@@ -42,7 +42,6 @@ export const COS = MATH_COS;
 export const COSH = create_sym('cosh');
 export const DECOMP = create_sym('decomp');
 export const DEFINT = create_sym('defint');
-export const DEGREE = create_sym('degree');
 export const DENOMINATOR = create_sym('denominator');
 export const DET = create_sym('det');
 export const DIM = create_sym('dim');

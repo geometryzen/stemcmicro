@@ -1,9 +1,8 @@
 import { Blade, is_blade, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, FEATURE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, FEATURE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
-import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 /**
  * Compares blades according to the canonical representation.
@@ -88,6 +87,10 @@ class BladeExtension implements Extension<Blade>, AtomHandler<Blade> {
     }
 }
 
-export const blade_extension = new ExtensionOperatorBuilder(function () {
-    return new BladeExtension();
-});
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new BladeExtension();
+    }
+}
+
+export const blade_extension_builder = new Builder();

@@ -37,7 +37,7 @@ export function divisors(term: U, $: ExtensionEnv): U {
     return new Tensor([n], sort_factors(factors, $));
 }
 
-export function ydivisors(term: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): U[] {
+export function ydivisors(term: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): U[] {
     const stack: U[] = [];
     // push all of the term's factors
     if (is_num(term)) {
@@ -132,7 +132,7 @@ function gen(stack: U[], h: number, k: number, $: Pick<ExtensionEnv, 'multiply' 
 //  by the exponent.
 //
 //-----------------------------------------------------------------------------
-function __factor_add(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): U[] {
+function __factor_add(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): U[] {
     // get gcd of all terms
     const temp1 = is_cons(p1) ? p1.tail().reduce(function (x, y) {
         return gcd(x, y, $);

@@ -1,7 +1,7 @@
 import { Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, U } from "math-expression-tree";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_PI } from "../../runtime/ns_math";
 import { is_pi } from "../pi/is_pi";
@@ -9,18 +9,18 @@ import { assert_sym } from "./assert_sym";
 
 const ISZERO = native_sym(Native.iszero);
 
-class Builder implements OperatorBuilder<Sym> {
-    create($: ExtensionEnv): Operator<Sym> {
-        return new SymMathPi($);
+class Builder implements ExtensionBuilder<Sym> {
+    create(): Extension<Sym> {
+        return new SymMathPi();
     }
 }
 
 /**
  * 
  */
-class SymMathPi implements Operator<Sym> {
+class SymMathPi implements Extension<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(private readonly $: ExtensionEnv) {
+    constructor() {
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
@@ -60,8 +60,8 @@ class SymMathPi implements Operator<Sym> {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(expr: Sym): string {
-        return this.$.getSymbolPrintName(MATH_PI);
+    toInfixString(expr: Sym, $: ExtensionEnv): string {
+        return $.getSymbolPrintName(MATH_PI);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toLatexString(expr: Sym): string {
@@ -69,8 +69,8 @@ class SymMathPi implements Operator<Sym> {
         return '\\pi';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(expr: Sym): string {
-        return this.$.getSymbolPrintName(MATH_PI);
+    toListString(expr: Sym, $: ExtensionEnv): string {
+        return $.getSymbolPrintName(MATH_PI);
     }
     valueOf(expr: Sym): Sym {
         return assert_sym(this.transform(expr)[1]);

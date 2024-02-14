@@ -1,21 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { assert_sym } from "math-expression-atoms";
-import { ExtensionEnv, FEATURE, Operator, TFLAGS } from "../../env/ExtensionEnv";
-import { Sym } from "../../tree/sym/Sym";
-import { cons, Cons, U } from "../../tree/tree";
-import { is_sym } from "../sym/is_sym";
+import { assert_sym, is_sym, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
+import { cons, Cons, U } from "math-expression-tree";
+import { Extension, ExtensionEnv, FEATURE, TFLAGS } from "../../env/ExtensionEnv";
 
 /**
  * 
  */
-export abstract class AbstractKeywordOperator implements Operator<Sym> {
+export abstract class AbstractKeywordOperator implements Extension<Sym> {
     readonly #keyword: Sym;
-    constructor(keyword: Sym, protected readonly $: ExtensionEnv) {
+    constructor(keyword: Sym) {
         this.#keyword = assert_sym(keyword);
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
-    test(expr: Sym, opr: Sym): boolean {
+    test(expr: Sym, opr: Sym, env: ExprContext): boolean {
         throw new Error("Method not implemented.");
     }
     abstract readonly hash: string;
@@ -29,32 +28,32 @@ export abstract class AbstractKeywordOperator implements Operator<Sym> {
     operator(): Sym {
         throw new Error();
     }
-    isKind(expr: U): expr is Sym {
+    isKind(expr: U, $: ExtensionEnv): expr is Sym {
         if (is_sym(expr)) {
             return expr.equalsSym(this.#keyword);
         }
         return false;
     }
-    subst(expr: Sym, oldExpr: U, newExpr: U): U {
+    subst(expr: Sym, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'extensionFor'>): U {
         throw new Error("Keyword.subst Symbol Method not implemented.");
     }
-    toInfixString(expr: Sym): string {
+    toInfixString(expr: Sym, $: ExtensionEnv): string {
         return expr.key();
     }
-    toLatexString(expr: Sym): string {
+    toLatexString(expr: Sym, $: ExtensionEnv): string {
         throw new Error("Keyword.toLatexString Symbol Method not implemented.");
     }
-    toListString(expr: Sym): string {
+    toListString(expr: Sym, $: ExtensionEnv): string {
         return this.#keyword.key();
     }
-    evaluate(expr: U, argList: Cons): [TFLAGS, U] {
+    evaluate(expr: U, argList: Cons, $: ExtensionEnv): [TFLAGS, U] {
         // TODO: expr should be the same as the keyword.
-        return this.transform(cons(expr, argList));
+        return this.transform(cons(expr, argList), $);
     }
-    transform(expr: U): [TFLAGS, U] {
+    transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {
         throw new Error("Keyword.transform Symbol Method not implemented.");
     }
-    valueOf(expr: Sym): U {
+    valueOf(expr: Sym, $: ExtensionEnv): U {
         throw new Error(`Keyword.valueOf(${expr.key()}) Symbol Method not implemented.`);
     }
 }

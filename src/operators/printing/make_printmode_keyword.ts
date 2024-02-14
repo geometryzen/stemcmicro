@@ -1,6 +1,6 @@
 import { create_sym, is_sym, Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { get_last_print_mode_symbol } from "../../print/print";
 import { render_using_print_mode } from "../../print/render_using_print_mode";
@@ -13,8 +13,8 @@ import { AbstractKeywordOperator } from "../helpers/KeywordSymbol";
  * TODO:
  */
 export class PrintKeyword extends AbstractKeywordOperator {
-    constructor(keyword: Sym, private readonly printMode: () => PrintMode, $: ExtensionEnv) {
-        super(keyword, $);
+    constructor(keyword: Sym, private readonly printMode: () => PrintMode) {
+        super(keyword);
     }
     get hash(): string {
         return HASH_SYM;
@@ -22,10 +22,9 @@ export class PrintKeyword extends AbstractKeywordOperator {
     get name(): string {
         return this.keyword().key();
     }
-    transform(expr: U): [TFLAGS, U] {
+    transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {
         // Because of our hash, we are being matched with any symbol.
         if (is_sym(expr) && expr.equalsSym(this.keyword())) {
-            const $ = this.$;
             const printMode: PrintMode = this.printMode();
             const origPrintMode = defs.printMode;
             defs.setPrintMode(printMode);
@@ -33,7 +32,7 @@ export class PrintKeyword extends AbstractKeywordOperator {
                 const last = $.getBinding(RESERVED_KEYWORD_LAST, nil);
                 const str = render_using_print_mode(last, printMode, $);
 
-                const printHandler = this.$.getPrintHandler();
+                const printHandler = $.getPrintHandler();
                 printHandler.print(str);
 
                 store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
@@ -48,12 +47,12 @@ export class PrintKeyword extends AbstractKeywordOperator {
     }
 }
 
-class Builder implements OperatorBuilder<U> {
+class Builder implements ExtensionBuilder<U> {
     constructor(private readonly keyword: string, private readonly printMode: () => PrintMode) {
 
     }
-    create($: ExtensionEnv): Operator<U> {
-        return new PrintKeyword(create_sym(this.keyword), this.printMode, $);
+    create(): Extension<U> {
+        return new PrintKeyword(create_sym(this.keyword), this.printMode);
     }
 }
 

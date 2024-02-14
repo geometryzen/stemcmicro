@@ -249,9 +249,6 @@ export class DerivedEnv implements ExtensionEnv {
     extensionFor(expr: U): Extension<U> | undefined {
         throw new Error('extensionFor method not implemented.');
     }
-    operatorFor(expr: U): Operator<U> | undefined {
-        throw new Error('operatorFor method not implemented.');
-    }
     outer(...args: U[]): U {
         throw new Error('outer method not implemented.');
     }
@@ -397,7 +394,7 @@ export class DerivedEnv implements ExtensionEnv {
             else if (is_tensor(expr)) {
                 // We really need to be able to ask for the Extension because that abstraction
                 // does not bind early to the ExtensionEnv.
-                // const handler = this.#baseEnv.operatorFor(expr)!;
+                // const handler = this.#baseEnv.extensionFor(expr)!;
                 // handler..valueOf(expr)
                 // 
                 return this.#baseEnv.valueOf(expr);

@@ -1,13 +1,13 @@
 import { create_sym, is_str, Str, Sym } from "math-expression-atoms";
 import { U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_STR, hash_unaop_atom } from "../../hashing/hash_info";
 import { Function1 } from "../helpers/Function1";
 import { create_uom } from "./uom";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new UomStr($);
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new UomStr();
     }
 }
 
@@ -18,8 +18,8 @@ type UOM_STRING = 'kilogram' | 'meter' | 'second' | 'coulomb' | 'ampere' | 'kelv
  */
 class UomStr extends Function1<Str> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('uom_1_str', create_sym('uom'), is_str, $);
+    constructor() {
+        super('uom_1_str', create_sym('uom'), is_str);
         this.#hash = hash_unaop_atom(create_sym('uom'), HASH_STR);
     }
     get hash(): string {

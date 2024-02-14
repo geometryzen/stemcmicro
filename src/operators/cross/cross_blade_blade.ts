@@ -1,5 +1,5 @@
 import { Blade, is_blade } from "math-expression-atoms";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
@@ -12,9 +12,9 @@ import { is_mul_2_rat_blade } from "../mul/is_mul_2_rat_blade";
 import { is_rat } from "../rat/rat_extension";
 import { MATH_VECTOR_CROSS_PRODUCT } from "./MATH_VECTOR_CROSS_PRODUCT";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new Op();
     }
 }
 
@@ -62,22 +62,21 @@ function cross_blade_blade(lhs: Blade, rhs: Blade, $: ExtensionEnv): U {
 /**
  * cross(A,B) = -1 * dual(A^B), were '^' denotes the outer product of vectors.
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> implements Extension<EXP> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
-    constructor($: ExtensionEnv) {
-        super('cross_blade_blade', MATH_VECTOR_CROSS_PRODUCT, is_blade, is_blade, $);
+    constructor() {
+        super('cross_blade_blade', MATH_VECTOR_CROSS_PRODUCT, is_blade, is_blade);
         this.#hash = hash_binop_atom_atom(MATH_VECTOR_CROSS_PRODUCT, HASH_BLADE, HASH_BLADE);
     }
     get hash(): string {
         return this.#hash;
     }
-    valueOf(expr: EXP): U {
-        return eval_cross_blade_blade(expr, this.$);
+    valueOf(expr: EXP, $: ExtensionEnv): U {
+        return eval_cross_blade_blade(expr, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         const retval = cross_blade_blade(lhs, rhs, $);
         if (retval.equals(expr)) {
             return [TFLAG_NONE, retval];

@@ -1,12 +1,12 @@
 import { is_sym, Sym } from "math-expression-atoms";
 import { Cons, Cons1, is_cons, items_to_cons, U } from "math-expression-tree";
-import { ExtensionEnv, FEATURE, Operator, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";
 
-export abstract class Function1<T extends U> extends FunctionVarArgs implements Operator<Cons1<Sym, T>> {
-    constructor(name: string, opr: Sym, private readonly guard: GUARD<U, T>, $: ExtensionEnv) {
-        super(name, opr, $);
+export abstract class Function1<T extends U> extends FunctionVarArgs implements Extension<Cons1<Sym, T>> {
+    constructor(name: string, opr: Sym, private readonly guard: GUARD<U, T>) {
+        super(name, opr);
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
@@ -32,16 +32,15 @@ export abstract class Function1<T extends U> extends FunctionVarArgs implements 
             return void 0;
         }
     }
-    transform(expr: Cons): [TFLAGS, U] {
+    transform(expr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const m = this.match(expr);
         if (m) {
-            const $ = this.$;
             const arg = $.valueOf(m.arg);
             if (!arg.equals(m.arg)) {
                 return [TFLAG_DIFF, $.valueOf(items_to_cons(m.opr, arg))];
             }
             else {
-                return this.transform1(m.opr, m.arg, m);
+                return this.transform1(m.opr, m.arg, m, $);
             }
         }
         return [TFLAG_NONE, expr];
@@ -52,5 +51,5 @@ export abstract class Function1<T extends U> extends FunctionVarArgs implements 
      * @param arg The unevaluated arg typed according to the matches that have been made.
      * @param expr The original expression typed according to the matches that have been made.
      */
-    abstract transform1(opr: Sym, arg: T, expr: Cons1<Sym, T>): [TFLAGS, U];
+    abstract transform1(opr: Sym, arg: T, expr: Cons1<Sym, T>, $: ExtensionEnv): [TFLAGS, U];
 }

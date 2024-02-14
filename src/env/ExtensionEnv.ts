@@ -415,12 +415,6 @@ export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, P
     negate(expr: U): U;
     extensionFor(expr: U): Extension<U> | undefined;
     /**
-     * Returns the operator for interacting with the expression.
-     * Operator(s) are reference counted and so the operator MUST be released when no longer needed.
-     * User-defined atoms may not have an operator.
-     */
-    operatorFor(expr: U): Operator<U> | undefined;
-    /**
      *
      */
     outer(...args: U[]): U;
@@ -531,10 +525,6 @@ export interface Operator<T extends U> {
     toInfixString(expr: T): string;
     toLatexString(expr: T): string;
     toListString(expr: T): string;
-    /**
-     * Applies the procedure managed by this extension to the argList.
-     * @param argList
-     */
     evaluate(opr: T, argList: Cons): [TFLAGS, U];
     /**
      * Evaluates the expression and also returns some information about the returned expression.
@@ -554,12 +544,12 @@ export interface Extension<T extends U> {
     iscons(): this is Extension<Cons>;
     operator(): Sym;
     isKind(expr: U, $: ExtensionEnv): boolean;
-    subst(expr: T, oldExpr: U, newExpr: U, $: ExtensionEnv): U;
+    subst(expr: T, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'extensionFor'>): U;
     test(expr: T, opr: Sym, env: ExprContext): boolean;
     toInfixString(expr: T, $: ExtensionEnv): string;
     toLatexString(expr: T, $: ExtensionEnv): string;
     toListString(expr: T, $: ExtensionEnv): string;
-    evaluate(expr: T, argList: Cons, $: ExtensionEnv): [TFLAGS, U];
+    evaluate(opr: T, argList: Cons, $: ExtensionEnv): [TFLAGS, U];
     transform(expr: T, $: ExtensionEnv): [TFLAGS, U];
     valueOf(expr: T, $: ExtensionEnv): U;
 }

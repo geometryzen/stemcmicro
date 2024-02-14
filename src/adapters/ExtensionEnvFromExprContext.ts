@@ -7,7 +7,7 @@ import { AtomListener, ExprEngineListener } from "../api/api";
 import { CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler } from "../env/ExtensionEnv";
 import { StackFunction } from "./StackFunction";
 
-export class ExtensionEnvAdapter implements ExtensionEnv {
+export class ExtensionEnvFromExprContext implements ExtensionEnv {
     constructor(readonly ctxt: ExprContext) {
 
     }
@@ -207,9 +207,6 @@ export class ExtensionEnvAdapter implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     extensionFor(expr: U): Extension<U> | undefined {
-        throw new Error("Method not implemented.");
-    }
-    operatorFor(expr: U): Operator<U> | undefined {
         throw new Error("Method not implemented.");
     }
     outer(...args: U[]): U {

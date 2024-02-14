@@ -1,19 +1,16 @@
+import { is_num, is_rat, one } from 'math-expression-atoms';
+import { car, cdr, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { compare_num_num } from '../../calculators/compare/compare_num_num';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { isunivarpolyfactoredorexpandedform } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
-import { items_to_cons } from '../../makeList';
 import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { MULTIPLY } from '../../runtime/constants';
 import { doexpand_binary } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
-import { one } from '../../tree/rat/Rat';
-import { car, cdr, is_cons, U } from '../../tree/tree';
 import { factorize } from '../factor/factor';
-import { is_num } from '../num/is_num';
-import { is_rat } from '../rat/is_rat';
 
 // Greatest common denominator
 // can also be run on polynomials, however
@@ -29,11 +26,11 @@ export function eval_gcd(p1: U, $: ExtensionEnv): U {
     return result;
 }
 
-export function gcd(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'popDirective' | 'pushDirective' | 'subtract' | 'valueOf'>): U {
+export function gcd(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'popDirective' | 'pushDirective' | 'subtract' | 'valueOf'>): U {
     return doexpand_binary(gcd_main, p1, p2, $);
 }
 
-function gcd_main(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'subtract' | 'valueOf' | 'popDirective' | 'pushDirective'>): U {
+function gcd_main(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'subtract' | 'valueOf' | 'popDirective' | 'pushDirective'>): U {
     if (p1.equals(p2)) {
         return p1;
     }
@@ -83,7 +80,7 @@ export function areunivarpolysfactoredorexpandedform(p1: U, p2: U): U | undefine
     }
 }
 
-function gcd_polys(p1: U, p2: U, polyVar: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'subtract' | 'valueOf' | 'popDirective' | 'pushDirective'>) {
+function gcd_polys(p1: U, p2: U, polyVar: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'subtract' | 'valueOf' | 'popDirective' | 'pushDirective'>) {
     p1 = factorize(p1, polyVar, $ as ExtensionEnv);
     p2 = factorize(p2, polyVar, $ as ExtensionEnv);
 
@@ -101,7 +98,7 @@ function gcd_polys(p1: U, p2: U, polyVar: U, $: Pick<ExtensionEnv, 'add' | 'fact
     return gcd_powers_with_same_base(p1, p2, $);
 }
 
-function gcd_product_product(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'subtract' | 'valueOf' | 'popDirective' | 'pushDirective'>): U {
+function gcd_product_product(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'subtract' | 'valueOf' | 'popDirective' | 'pushDirective'>): U {
 
     const p3: U = cdr(p1);
     const p4: U = cdr(p2);
@@ -209,7 +206,7 @@ function gcd_powers_with_same_base(base1: U, base2: U, $: Pick<ExtensionEnv, 'mu
 }
 
 // in this case gcd is used as a composite function, i.e. gcd(gcd(gcd...
-function gcd_sum_sum(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
+function gcd_sum_sum(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
 
     if (length_of_cons_otherwise_zero(p1) !== length_of_cons_otherwise_zero(p2)) {
         return one;
@@ -233,7 +230,7 @@ function gcd_sum_sum(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | '
     return one;
 }
 
-function gcd_sum(p: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
+function gcd_sum(p: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
     return is_cons(p) ? p.tail().reduce(function (x, y) {
         return gcd(x, y, $);
     }) : car(cdr(p));
@@ -250,13 +247,13 @@ function gcd_term_term(p1: U, p2: U): U {
 }
 */
 
-function gcd_sum_product(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'subtract' | 'valueOf' | 'popDirective' | 'pushDirective'>): U {
+function gcd_sum_product(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'subtract' | 'valueOf' | 'popDirective' | 'pushDirective'>): U {
     return is_cons(p1)
         ? p1.tail().reduce((a: U, b: U) => $.multiply(a, gcd(b, p2, $)), one)
         : one;
 }
 
-function gcd_product_sum(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'subtract' | 'valueOf' | 'popDirective' | 'pushDirective'>): U {
+function gcd_product_sum(p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'subtract' | 'valueOf' | 'popDirective' | 'pushDirective'>): U {
     return is_cons(p2)
         ? p2.tail().reduce((a: U, b: U) => $.multiply(a, gcd(p1, b, $)), one)
         : one;

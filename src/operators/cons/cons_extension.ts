@@ -1,8 +1,7 @@
 import { is_sym, Sym } from "math-expression-atoms";
 import { cons, Cons, is_cons, is_nil, nil, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { to_infix_string } from "../../print/to_infix_string";
-import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 /**
  * Cons, like Sym is actually fundamental to the tree (not an Extension).
@@ -96,12 +95,12 @@ class ConsExtension implements Extension<Cons> {
         // then at this point we must have a symbol, or maybe a list containing stuff that does not have a symbol
         // in the operator position.
         if (!is_sym(op)) {
-            const operator = $.operatorFor(op);
+            const extension = $.extensionFor(op);
             if (is_nil(expr.cdr)) {
                 // We are being asked to evaluate a list containing a single item.
                 // That's just the evaluation of the item.
-                if (operator) {
-                    return hook(operator.valueOf(op), "A");
+                if (extension) {
+                    return hook(extension.valueOf(op, $), "A");
                 }
                 else {
                     return hook(op, "B");
@@ -184,6 +183,10 @@ function eval_stop() {
 }
 */
 
-export const cons_extension = new ExtensionOperatorBuilder(function () {
-    return new ConsExtension();
-});
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new ConsExtension();
+    }
+}
+
+export const cons_extension = new Builder();

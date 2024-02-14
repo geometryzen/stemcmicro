@@ -1,17 +1,17 @@
 
 import { Sym } from "math-expression-atoms";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_NIL } from "../../hashing/hash_info";
 import { cons, Cons, nil, U } from "../../tree/tree";
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new NilExtension($);
+class Builder implements ExtensionBuilder<Cons> {
+    create(): Extension<Cons> {
+        return new NilExtension();
     }
 }
 
-class NilExtension implements Operator<Cons> {
-    constructor(private readonly $: ExtensionEnv) {
+class NilExtension implements Extension<Cons> {
+    constructor() {
         // Nothing to see here.
     }
     phases?: number | undefined;

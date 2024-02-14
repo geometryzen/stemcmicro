@@ -4,6 +4,7 @@ import { AtomHandler, ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprEngineListener } from '../..';
+import { ExtensionEnvFromExprContext } from '../adapters/ExtensionEnvFromExprContext';
 import { make_eval } from '../adapters/make_eval';
 import { StackFunction } from '../adapters/StackFunction';
 import { AtomListener, UndeclaredVars } from '../api/api';
@@ -22,11 +23,10 @@ import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { visit } from '../visitor/visit';
 import { Visitor } from '../visitor/Visitor';
-import { AtomHandlerExtension } from './AtomHandlerAdapter';
 import { DerivedEnv } from './DerivedEnv';
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
-import { CompareFn, Directive, directive_from_flag, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, Directive, directive_from_flag, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
 import { hash_from_match, operator_from_cons_expression, opr_from_match } from "./operator_from_legacy_transformer";
@@ -255,20 +255,20 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      */
     const userSymbols: Map<string, Sym> = new Map();
 
-    const builders: OperatorBuilder<U>[] = [];
+    const builders: ExtensionBuilder<U>[] = [];
     /**
      * The operators in buckets that are determined by the phase and operator hash.
      */
-    const operators_by_mode: { [hash: string]: Operator<U>[] }[] = [];
+    const extensions_by_mode: { [hash: string]: Extension<U>[] }[] = [];
     for (const mode of MODE_SEQUENCE) {
-        operators_by_mode[mode] = {};
+        extensions_by_mode[mode] = {};
     }
     /**
      * The cons operators in buckets determined by the phase and operator key.
      */
-    const cons_operators_by_mode: { [key: string]: Operator<Cons>[] }[] = [];
+    const cons_extensions_by_mode: { [key: string]: Extension<Cons>[] }[] = [];
     for (const mode of MODE_SEQUENCE) {
-        cons_operators_by_mode[mode] = {};
+        cons_extensions_by_mode[mode] = {};
     }
 
     let printHandler: PrintHandler = new NoopPrintHandler();
@@ -283,16 +283,16 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const sym_order: Record<string, ExprComparator> = {};
 
-    function currentOpsByHash(): { [hash: string]: Operator<U>[] } {
+    function currentOpsByHash(): { [hash: string]: Extension<U>[] } {
         if (native_directives.get(Directive.expanding)) {
-            const ops = operators_by_mode[MODE_EXPANDING];
+            const ops = extensions_by_mode[MODE_EXPANDING];
             if (typeof ops === 'undefined') {
                 throw new ProgrammingError();
             }
             return ops;
         }
         if (native_directives.get(Directive.factoring)) {
-            const ops = operators_by_mode[MODE_FACTORING];
+            const ops = extensions_by_mode[MODE_FACTORING];
             if (typeof ops === 'undefined') {
                 throw new ProgrammingError();
             }
@@ -301,9 +301,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         return {};
     }
 
-    function currentConsByOperator(): { [operator: string]: Operator<Cons>[] } {
+    function currentConsByOperator(): { [operator: string]: Extension<Cons>[] } {
         if (native_directives.get(Directive.expanding)) {
-            const cons = cons_operators_by_mode[MODE_EXPANDING];
+            const cons = cons_extensions_by_mode[MODE_EXPANDING];
             if (cons) {
                 return cons;
             }
@@ -312,7 +312,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         }
         if (native_directives.get(Directive.factoring)) {
-            const cons = cons_operators_by_mode[MODE_FACTORING];
+            const cons = cons_extensions_by_mode[MODE_FACTORING];
             if (cons) {
                 return cons;
             }
@@ -325,11 +325,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     function selectAtomExtension<A extends Atom>(atom: A): Extension<A> | undefined {
         const hash = hash_for_atom(atom);
-        const ops = currentOpsByHash()[hash];
+        const ops = currentOpsByHash()[hash] as Extension<A>[];
         if (Array.isArray(ops) && ops.length > 0) {
             for (const op of ops) {
-                if (op.isKind(atom)) {
-                    return new AtomHandlerExtension(op as Operator<A>);
+                if (op.isKind(atom, $)) {
+                    return op;
                 }
             }
             throw new SystemError(`No matching operator for hash ${hash}`);
@@ -339,31 +339,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         }
     }
 
-    /**
-     * TODO: It should be possible to separate ConsOperator and AtomOperator?
-     * @param atom The expression is the atom.
-     * @returns The operator for the atom.
-     */
-    function selectAtomOperator(atom: Atom): Operator<Atom> | undefined {
-        const hash = hash_for_atom(atom);
-        const ops = currentOpsByHash()[hash];
-        if (Array.isArray(ops) && ops.length > 0) {
-            for (const op of ops) {
-                if (op.isKind(atom)) {
-                    return op as Operator<Atom>;
-                }
-            }
-            throw new SystemError(`No matching operator for hash ${hash}`);
-        }
-        else {
-            return void 0;
-        }
-    }
-
-    /**
-     * TODO: The NilExtension is actually typed as Operator<Cons>
-     */
-    function selectNilOperator(): Operator<U> | undefined {
+    function selectNilExtension(): Extension<U> | undefined {
         // We could simply create a Nil operator and cache it.
         // How many do you need?
         // TODO: DRY. What is the hash for Nil?
@@ -371,7 +347,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         const ops = currentOpsByHash()[hash];
         if (Array.isArray(ops) && ops.length > 0) {
             for (const op of ops) {
-                if (op.isKind(nil)) {
+                if (op.isKind(nil, $)) {
                     return op;
                 }
             }
@@ -413,8 +389,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return symTab.getBinding(name);
             }
             else {
-                const currents: { [operator: string]: Operator<U>[] } = currentConsByOperator();
-                const cons: Operator<U>[] = currents[name.key()];
+                const currents: { [operator: string]: Extension<U>[] } = currentConsByOperator();
+                const cons: Extension<U>[] = currents[name.key()];
                 if (Array.isArray(cons) && cons.length > 0) {
                     // We may not match because available are (opr Rat) and (opr U), but this hash_nonop_cons gives (opr). 
                     const hash = hash_nonop_cons(name);
@@ -422,7 +398,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     for (let i = 0; i < cons.length; i++) {
                         if (cons[i].hash === hash) {
                             const operator = cons[i];
-                            const bodyExpr = make_lambda_expr_from_operator(name, operator);
+                            const bodyExpr = make_lambda_expr_from_extension(name, operator);
                             return new Lambda(bodyExpr, "???");
                         }
                         else {
@@ -454,8 +430,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return true;
             }
             else {
-                const currents: { [operator: string]: Operator<U>[] } = currentConsByOperator();
-                const cons: Operator<U>[] = currents[name.key()];
+                const currents: { [operator: string]: Extension<U>[] } = currentConsByOperator();
+                const cons: Extension<U>[] = currents[name.key()];
                 if (Array.isArray(cons) && cons.length > 0) {
                     return true;
                 }
@@ -512,11 +488,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         clearOperators(): void {
             builders.length = 0;
             for (const mode of MODE_SEQUENCE) {
-                const ops = operators_by_mode[mode];
+                const ops = extensions_by_mode[mode];
                 for (const hash in ops) {
                     ops[hash] = [];
                 }
-                const cons = cons_operators_by_mode[mode];
+                const cons = cons_extensions_by_mode[mode];
                 for (const key in cons) {
                     cons[key] = [];
                 }
@@ -551,10 +527,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             $.buildOperators();
         },
         defineExtension(builder: ExtensionBuilder<U>): void {
-            throw new ProgrammingError("ExtensionEnv.defineExtension method not implemented.");
+            builders.push(builder);
         },
         defineOperator(builder: OperatorBuilder<U>): void {
-            builders.push(builder);
+            throw new ProgrammingError("ExtensionEnv.defineOperator method not implemented.");
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         defineAssociative(opr: Sym, id: Rat): void {
@@ -623,14 +599,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         buildOperators(): void {
             for (const builder of builders) {
-                const op: Operator<U> = builder.create($, config);
+                const op: Extension<U> = builder.create(config);
                 if (dependencies_satisfied(op.dependencies, config.dependencies)) {
                     // If an operator does not restrict the modes to which it applies then it applies to all modes.
                     const phaseFlags = typeof op.phases === 'number' ? op.phases : MODE_FLAGS_ALL;
                     for (const mode of MODE_SEQUENCE) {
                         if (phaseFlags & mode) {
                             if (op.hash) {
-                                const ops = operators_by_mode[mode];
+                                const ops = extensions_by_mode[mode];
                                 if (!Array.isArray(ops[op.hash])) {
                                     ops[op.hash] = [op];
                                 }
@@ -646,7 +622,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                 const opr: Sym = op.operator();
                                 try {
                                     const key: string = opr.key();
-                                    const cons = cons_operators_by_mode[mode];
+                                    const cons = cons_extensions_by_mode[mode];
                                     if (!Array.isArray(cons[key])) {
                                         cons[key] = [op];
                                     }
@@ -668,7 +644,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // Inspect which operators are assigned to which buckets...
             for (const mode of MODE_SEQUENCE) {
                 // console.lg("----------------------------------------");
-                const cons = cons_operators_by_mode[mode];
+                const cons = cons_extensions_by_mode[mode];
                 for (const key in cons) {
                     const cons_operators = cons[key];
                     const symbols = new Map<string, Sym>();
@@ -703,9 +679,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         }
                     });
                 }
-                const ops = operators_by_mode[mode];
+                const ops = extensions_by_mode[mode];
                 for (const hash in ops) {
-                    const candidates: Operator<U>[] = ops[hash];
+                    const candidates: Extension<U>[] = ops[hash];
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     for (const candidate of candidates) {
                         // console.lg(`${hash} is implemented by "${candidate.name}" in mode ${JSON.stringify(decodeMode(mode))}.`);
@@ -881,14 +857,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return selectAtomExtension(atom)!;
         },
         extensionFor(expr: U): Extension<U> | undefined {
-            if (is_atom(expr)) {
-                return selectAtomExtension(expr);
-            }
-            else {
-                throw new ProgrammingError();
-            }
-        },
-        operatorFor(expr: U): Operator<U> | undefined {
             if (is_cons(expr)) {
                 const head = expr.head;
                 try {
@@ -902,7 +870,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         const ops = currentOpsByHash()[hash];
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
-                                if (op.isKind(expr)) {
+                                if (op.isKind(expr, $)) {
                                     // console.lg("op", render_as_infix(expr, $), op.name);
                                     return op;
                                 }
@@ -923,10 +891,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
             else if (is_atom(expr)) {
-                return selectAtomOperator(expr);
+                return selectAtomExtension(expr);
             }
             else if (is_nil(expr)) {
-                return selectNilOperator();
+                return selectNilExtension();
             }
             else {
                 throw new ProgrammingError();
@@ -999,27 +967,27 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return $.add(lhs, $.negate(rhs));
         },
         toInfixString(expr: U): string {
-            const op = $.operatorFor(expr);
+            const op = $.extensionFor(expr);
             if (op) {
-                return op.toInfixString(expr);
+                return op.toInfixString(expr, $);
             }
             else {
                 return `${expr}`;
             }
         },
         toLatexString(expr: U): string {
-            const op = $.operatorFor(expr);
+            const op = $.extensionFor(expr);
             if (op) {
-                return op.toLatexString(expr);
+                return op.toLatexString(expr, $);
             }
             else {
                 return `${expr}`;
             }
         },
         toSExprString(x: U): string {
-            const op = $.operatorFor(x);
+            const op = $.extensionFor(x);
             if (op) {
-                return op.toListString(x);
+                return op.toListString(x, $);
             }
             else {
                 throw new Error(`No operator found for expression of type ${JSON.stringify(x.name)}`);
@@ -1066,12 +1034,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     // Why do we have a special case for rat?
                     // We know that the key and hash are both 'Rat'
                     // const hash = head.name;
-                    const ops: Operator<U>[] = currentOpsByHash()['Rat'];
+                    const ops: Extension<U>[] = currentOpsByHash()['Rat'];
                     // TODO: The operator will be acting on the argList, not the entire expression.
                     const op = unambiguous_operator(expr.argList, ops, $);
                     if (op) {
                         // console.lg(`We found the ${op.name} operator!`);
-                        return op.evaluate(opr, expr.argList);
+                        return op.evaluate(opr, expr.argList, $);
                     }
                     else {
                         // eslint-disable-next-line no-console
@@ -1090,7 +1058,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     if (Array.isArray(ops)) {
                         const op = unambiguous_operator(expr, ops, $);
                         if (op) {
-                            const composite = op.transform(expr);
+                            const composite = op.transform(expr, $);
                             // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite[1])} flags: ${composite[0]}`);
                             // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
                             return composite;
@@ -1132,9 +1100,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
             else {
                 // If it's not a list or nil, then it's an atom.
-                const op = $.operatorFor(expr);
+                const op = $.extensionFor(expr);
                 if (op) {
-                    return op.transform(expr);
+                    return op.transform(expr, $);
                 }
                 else {
                     return [TFLAG_NONE, expr];
@@ -1165,12 +1133,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     // Why do we have a special case for rat?
                     // We know that the key and hash are both 'Rat'
                     // const hash = head.name;
-                    const ops: Operator<U>[] = currentOpsByHash()['Rat'];
+                    const ops: Extension<U>[] = currentOpsByHash()['Rat'];
                     // TODO: The operator will be acting on the argList, not the entire expression.
                     const op = unambiguous_operator(expr.argList, ops, $);
                     if (op) {
                         // console.lg(`We found the ${op.name} operator!`);
-                        return op.valueOf(opr);
+                        return op.valueOf(opr, $);
                     }
                     else {
                         // eslint-disable-next-line no-console
@@ -1189,7 +1157,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     if (Array.isArray(ops)) {
                         const op = unambiguous_operator(expr, ops, $);
                         if (op) {
-                            const composite = op.valueOf(expr);
+                            const composite = op.valueOf(expr, $);
                             // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite)}`);
                             // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite)}`);
                             return composite;
@@ -1230,9 +1198,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
             else {
                 // If it's not a list or nil, then it's an atom.
-                const op = $.operatorFor(expr);
+                const op = $.extensionFor(expr);
                 if (op) {
-                    return op.valueOf(expr);
+                    return op.valueOf(expr, $);
                 }
                 else {
                     return expr;
@@ -1303,11 +1271,11 @@ function dependencies_satisfied(deps: FEATURE[] | undefined, includes: FEATURE[]
     }
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function unambiguous_operator(expr: Cons, ops: Operator<U>[], $: ExtensionEnv): Operator<U> | undefined {
+function unambiguous_operator(expr: Cons, ops: Extension<U>[], $: ExtensionEnv): Extension<U> | undefined {
     // console.lg(`unambiguous_operator for ${$.toInfixString(expr)} from ${ops.length} choice(s).`);
-    const candidates: Operator<U>[] = [];
+    const candidates: Extension<U>[] = [];
     for (const op of ops) {
-        if (op.isKind(expr)) {
+        if (op.isKind(expr, $)) {
             candidates.push(op);
         }
     }
@@ -1331,10 +1299,10 @@ function unambiguous_operator(expr: Cons, ops: Operator<U>[], $: ExtensionEnv): 
 /**
  * 
  */
-function make_lambda_expr_from_operator(name: Sym, operator: Operator<U>): LambdaExpr {
-    // FIXME: Dropping the $ shows that we should be using Extension, not Operator.
-    return (argList: Cons, $: ExprContext): U => {
-        return operator.valueOf(cons(name, argList));
+function make_lambda_expr_from_extension(name: Sym, extension: Extension<U>): LambdaExpr {
+    return (argList: Cons, ctxt: ExprContext): U => {
+        const $ = new ExtensionEnvFromExprContext(ctxt);
+        return extension.valueOf(cons(name, argList), $);
     };
 }
 

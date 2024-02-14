@@ -1,4 +1,4 @@
-import { Directive, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -9,18 +9,17 @@ import { is_sym } from "./is_sym";
 
 const MATH_POW = native_sym(Native.pow);
 
-class Builder implements OperatorBuilder<Sym> {
-    create($: ExtensionEnv): Operator<Sym> {
-        return new SymMathPow($);
+class Builder implements ExtensionBuilder<Sym> {
+    create(): Extension<Sym> {
+        return new SymMathPow();
     }
 }
 
 /**
  * 
  */
-class SymMathPow implements Operator<Sym> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(private readonly $: ExtensionEnv) {
+class SymMathPow implements Extension<Sym> {
+    constructor() {
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
@@ -58,8 +57,8 @@ class SymMathPow implements Operator<Sym> {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(expr: Sym): string {
-        if (this.$.getDirective(Directive.useCaretForExponentiation)) {
+    toInfixString(expr: Sym, $: ExtensionEnv): string {
+        if ($.getDirective(Directive.useCaretForExponentiation)) {
             return '^';
         }
         else {
@@ -71,8 +70,8 @@ class SymMathPow implements Operator<Sym> {
         return ' ^ ';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(expr: Sym): string {
-        return this.$.getSymbolPrintName(MATH_POW);
+    toListString(expr: Sym, $: ExtensionEnv): string {
+        return $.getSymbolPrintName(MATH_POW);
     }
     valueOf(expr: Sym): Sym {
         return assert_sym(this.transform(expr)[1]);

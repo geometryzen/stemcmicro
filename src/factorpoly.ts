@@ -1,11 +1,10 @@
-import { create_int, negOne, one, Sym, zero } from 'math-expression-atoms';
+import { create_int, imu, negOne, one, Sym, zero } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { items_to_cons, U } from 'math-expression-tree';
 import { rational } from './bignum';
 import { complex_conjugate } from './complex_conjugate';
 import { yycondense } from './condense';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { imu } from './env/imu';
 import { divide } from './helpers/divide';
 import { inverse } from './helpers/inverse';
 import { contains_floating_values_or_floatf } from './is';
@@ -38,7 +37,7 @@ import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
  * @param $ 
  * @returns factored polynomial
  */
-export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'pushDirective' | 'popDirective' | 'rect' | 'subtract' | 'valueOf'>): U {
+export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'pushDirective' | 'popDirective' | 'rect' | 'subtract' | 'valueOf'>): U {
     // console.lg("yyfactorpoly", `${($ as ExtensionEnv).toInfixString(P)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
@@ -270,7 +269,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals
  * @param cs This array is mutated as an intended side-effect and we return a value, k, such that
  * multiplication of the mutated coefficient by k recreates the original coefficients.
  */
-function rationalize_coefficients(cs: U[], $: Pick<ExtensionEnv, 'add' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'pushDirective' | 'popDirective' | 'factorize' | 'subtract' | 'valueOf'>): U {
+function rationalize_coefficients(cs: U[], $: Pick<ExtensionEnv, 'add' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'pushDirective' | 'popDirective' | 'factorize' | 'subtract' | 'valueOf'>): U {
     // console.lg("rationalize_coefficients", ($ as ExtensionEnv).toSExprString(items_to_cons(...cs)));
     // console.lg(`rationalize_coefficients ${coefficients}`);
     // LCM of all polynomial coefficients
@@ -298,7 +297,7 @@ function rationalize_coefficients(cs: U[], $: Pick<ExtensionEnv, 'add' | 'isone'
  * @param $ 
  * @returns 
  */
-function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, a: U, b: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): [success: boolean, a: U, b: U] {
+function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, a: U, b: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): [success: boolean, a: U, b: U] {
     const h = defs.tos;
 
     const an = defs.tos;

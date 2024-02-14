@@ -6,7 +6,7 @@ import { ProgramControl } from "../eigenmath/ProgramControl";
 import { ProgramEnv } from "../eigenmath/ProgramEnv";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 
-export class ExprContextAdapter implements ExprContext {
+export class ExprContextFromProgram implements ExprContext {
     constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly $: ProgramStack) {
         // Nothing to see here.
     }

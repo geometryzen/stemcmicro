@@ -1,11 +1,10 @@
 import { is_map, Map, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { print_str } from "../../print/print";
 import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
-import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 function verify_map(x: Map): Map | never {
     if (is_map(x)) {
@@ -84,12 +83,14 @@ class DictionaryExtension implements Extension<Map>, AtomHandler<Map> {
     }
 }
 
-/**
- * The dictionary Extension a.k.a Map extension.
- */
-export const map_extension = new ExtensionOperatorBuilder(function () {
-    return new DictionaryExtension();
-});
+
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new DictionaryExtension();
+    }
+}
+
+export const map_extension_builder = new Builder();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function print_dictionary(dictionary: Map, $: ExtensionEnv): string {

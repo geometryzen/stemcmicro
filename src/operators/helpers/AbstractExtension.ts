@@ -15,9 +15,9 @@ import { subst } from "../subst/subst";
  * 3. contains()
  * TODO: The hope is that the dead-code methods can be removed when refactoring is complete.
  */
-export abstract class AbstractOperator {
+export abstract class AbstractExtension {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(public readonly name: string, protected readonly $: ExtensionEnv) {
+    constructor(public readonly name: string) {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     compareFactors(lhs: U, rhs: U): Sign {
@@ -27,9 +27,7 @@ export abstract class AbstractOperator {
     compareTerms(lhs: U, rhs: U): Sign {
         throw new Error("Abtract Operator Method not implemented.");
     }
-    subst(expr: U, oldExpr: U, newExpr: U): U {
-        const $ = this.$;
-
+    subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'extensionFor'>): U {
         if (expr.equals(oldExpr)) {
             return newExpr;
         }
@@ -70,16 +68,16 @@ export abstract class AbstractOperator {
         }
         throw new SystemError();
     }
-    toInfixString(expr: U): string {
-        return render_as_infix(expr, this.$);
+    toInfixString(expr: U, $: ExtensionEnv): string {
+        return render_as_infix(expr, $);
     }
-    toLatexString(expr: U): string {
-        return render_as_latex(expr, this.$);
+    toLatexString(expr: U, $: ExtensionEnv): string {
+        return render_as_latex(expr, $);
     }
-    toListString(expr: U): string {
-        return render_as_sexpr(expr, this.$);
+    toListString(expr: U, $: ExtensionEnv): string {
+        return render_as_sexpr(expr, $);
     }
-    valueOf(expr: U): U {
-        return this.$.valueOf(expr);
+    valueOf(expr: U, $: ExtensionEnv): U {
+        return $.valueOf(expr);
     }
 }

@@ -8,7 +8,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
  * @param oldExpr 
  * @param newExpr
  */
-export function subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'operatorFor'>): U {
+export function subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'extensionFor'>): U {
     if (expr.equals(oldExpr)) {
         return newExpr;
     }
@@ -38,9 +38,9 @@ export function subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'op
         }
     }
     else {
-        const op = $.operatorFor(expr);
+        const op = $.extensionFor(expr);
         if (op) {
-            return op.subst(expr, oldExpr, newExpr);
+            return op.subst(expr, oldExpr, newExpr, $);
         }
         else {
             return expr;

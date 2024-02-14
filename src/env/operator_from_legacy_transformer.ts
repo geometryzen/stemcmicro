@@ -3,28 +3,27 @@ import { LambdaExpr } from "math-expression-context";
 import { Cons, is_cons, U } from "math-expression-tree";
 import { hash_nonop_cons } from "../hashing/hash_info";
 import { FunctionVarArgs } from "../operators/helpers/FunctionVarArgs";
-import { EvalFunction, ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { EvalFunction, Extension, ExtensionBuilder, ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 
-class PluggableBuilder implements OperatorBuilder<U> {
+class PluggableBuilder implements ExtensionBuilder<U> {
     constructor(private readonly opr: Sym, private readonly hash: string, private readonly evaluator: EvalFunction) {
     }
-    create($: ExtensionEnv): Operator<U> {
-        return new PluggableOperator(this.opr, this.hash, this.evaluator, $);
+    create(): Extension<U> {
+        return new PluggableOperator(this.opr, this.hash, this.evaluator);
     }
 }
 
-class PluggableOperator extends FunctionVarArgs implements Operator<Cons> {
+class PluggableOperator extends FunctionVarArgs implements Extension<Cons> {
     readonly #hash: string;
-    constructor(opr: Sym, hash: string, private readonly evaluator: EvalFunction, $: ExtensionEnv) {
-        super(opr.key(), opr, $);
+    constructor(opr: Sym, hash: string, private readonly evaluator: EvalFunction) {
+        super(opr.key(), opr);
         // console.lg("constructor PluggableOperator", "opr", `${opr}`, "hash", `${hash}`);
         this.#hash = hash;
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    transform(expr: Cons, $:ExtensionEnv): [number, U] {
         // console.lg("PluggableOperator.transform", "name:", JSON.stringify(this.name), "expr:", render_as_sexpr(expr, $));
         const hook = (where: string, retval: U): U => {
             // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
@@ -37,12 +36,12 @@ class PluggableOperator extends FunctionVarArgs implements Operator<Cons> {
     }
 }
 
-export function operator_from_cons_expression(opr: Sym, transformer: EvalFunction): OperatorBuilder<U> {
+export function operator_from_cons_expression(opr: Sym, transformer: EvalFunction): ExtensionBuilder<U> {
     const hash = hash_nonop_cons(opr);
     return new PluggableBuilder(opr, hash, transformer);
 }
 
-export function operator_from_lambda_expression(match: U, lambda: LambdaExpr): OperatorBuilder<U> {
+export function operator_from_lambda_expression(match: U, lambda: LambdaExpr): ExtensionBuilder<U> {
     const opr = opr_from_match(match);
     const hash = hash_from_match(match);
     const transformer = transformer_from_lambda(lambda);

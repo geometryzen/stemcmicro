@@ -1,6 +1,6 @@
 import { do_factorize_rhs } from "../../calculators/factorize/do_factorize_rhs";
 import { is_factorize_rhs } from "../../calculators/factorize/is_factorize_rhs";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { one } from "../../tree/rat/Rat";
@@ -12,8 +12,8 @@ import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
 import { is_add_2_any_any } from "./is_add_2_any_any";
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
+class Builder implements ExtensionBuilder<Cons> {
+    create($: ExtensionEnv): Extension<Cons> {
         return new Op($);
     }
 }
@@ -34,9 +34,9 @@ function cross($: ExtensionEnv) {
 /**
  * (X + Y) + Z => (X + m * A) + n * A => X + (m + n) * A, where Y = m * A, and Z = n * A.
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2X<LHS, RHS> implements Extension<EXP> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
+    constructor() {
         super('add_2_add_2_any_any_any_factorize_rhs', MATH_ADD, and(is_cons, is_add_2_any_any), is_any, cross($), $);
         this.#hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);
     }

@@ -1,14 +1,12 @@
-import { Cons3 } from "math-expression-tree";
+import { is_sym, Sym } from "math-expression-atoms";
+import { Cons3, is_cons, items_to_cons, U } from "math-expression-tree";
 import { diffFlag, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { Sym } from "../../tree/sym/Sym";
-import { is_cons, items_to_cons, U } from "../../tree/tree";
-import { is_sym } from "../sym/is_sym";
 import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";
 
 export abstract class Function3<A extends U, B extends U, C extends U> extends FunctionVarArgs {
-    constructor(name: string, opr: Sym, private readonly guardA: GUARD<U, A>, private readonly guardB: GUARD<U, B>, private readonly guardC: GUARD<U, C>, $: ExtensionEnv) {
-        super(name, opr, $);
+    constructor(name: string, opr: Sym, private readonly guardA: GUARD<U, A>, private readonly guardB: GUARD<U, B>, private readonly guardC: GUARD<U, C>) {
+        super(name, opr);
     }
     isKind(expr: U): expr is Cons3<Sym, A, B, C> {
         const m = this.match(expr);
@@ -64,7 +62,7 @@ export abstract class Function3<A extends U, B extends U, C extends U> extends F
             throw new Error(`${this.name} + ${e}`);
         }
     }
-    transform(expr: U): [TFLAGS, U] {
+    transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {
         const m = this.match(expr);
         if (m) {
             // The match ensures that the cast is OK. We could double-check using an assert.
@@ -72,7 +70,6 @@ export abstract class Function3<A extends U, B extends U, C extends U> extends F
             const argB = m.item(2) as B;
             const argC = m.item(3) as C;
             try {
-                const $ = this.$;
                 // FIXME: THis can throw an exception / return Err. So we should not really do it.
                 const [flagsA, a] = $.transform(argA);
                 const [flagsB, b] = $.transform(argB);
@@ -88,7 +85,7 @@ export abstract class Function3<A extends U, B extends U, C extends U> extends F
                         }
                     }
                     else {
-                        return this.transform3(m.opr, argA, argB, argC, m);
+                        return this.transform3(m.opr, argA, argB, argC, m, $);
                     }
                 }
                 finally {
@@ -105,5 +102,5 @@ export abstract class Function3<A extends U, B extends U, C extends U> extends F
         }
         return [TFLAG_NONE, expr];
     }
-    abstract transform3(opr: Sym, a: A, b: B, c: C, expr: Cons3<Sym, A, B, C>): [TFLAGS, U];
+    abstract transform3(opr: Sym, a: A, b: B, c: C, expr: Cons3<Sym, A, B, C>, $: ExtensionEnv): [TFLAGS, U];
 }

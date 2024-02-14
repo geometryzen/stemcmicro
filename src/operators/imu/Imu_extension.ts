@@ -2,20 +2,20 @@
 import { imu, Imu, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, U } from "math-expression-tree";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_IMU } from "../../hashing/hash_info";
 import { MATH_IMU } from "../../runtime/ns_math";
 
 const ISZERO = native_sym(Native.iszero);
 
-class Builder implements OperatorBuilder<Imu> {
-    create($: ExtensionEnv): Operator<Imu> {
-        return new ImuExtension($);
+class Builder implements ExtensionBuilder<Imu> {
+    create(): Extension<Imu> {
+        return new ImuExtension();
     }
 }
 
-class ImuExtension implements Operator<Imu> {
-    constructor(private readonly $: ExtensionEnv) {
+class ImuExtension implements Extension<Imu> {
+    constructor() {
         // Nothing to see here.
     }
     phases?: number | undefined;
@@ -63,8 +63,8 @@ class ImuExtension implements Operator<Imu> {
         return '\\imath';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(expr: Imu): string {
-        return this.$.getSymbolPrintName(MATH_IMU);
+    toListString(expr: Imu, $: ExtensionEnv): string {
+        return $.getSymbolPrintName(MATH_IMU);
     }
     evaluate(expr: Imu, argList: Cons): [TFLAGS, U] {
         // console.lg(this.name, "evaluate");
@@ -87,4 +87,4 @@ class ImuExtension implements Operator<Imu> {
     }
 }
 
-export const imu_extension = new Builder();
+export const imu_extension_builder = new Builder();

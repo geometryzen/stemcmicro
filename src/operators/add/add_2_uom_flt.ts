@@ -1,5 +1,5 @@
 import { is_uom, Uom } from "math-expression-atoms";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_UOM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
@@ -19,10 +19,10 @@ type LHS = Uom;
 type RHS = Flt;
 type EXP = Cons2<Sym, LHS, RHS>;
 
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> implements Extension<EXP> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Flt', 'Uom'];
-    constructor($: ExtensionEnv) {
+    constructor() {
         super('add_2_uom_flt', MATH_ADD, is_uom, is_flt, $);
         this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_UOM, HASH_FLT);
     }

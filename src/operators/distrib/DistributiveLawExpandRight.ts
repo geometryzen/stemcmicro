@@ -1,7 +1,7 @@
 
 import { Sym } from "math-expression-atoms";
 import { Cons, Cons2, is_cons, items_to_cons, U } from "math-expression-tree";
-import { ExtensionEnv, MODE_EXPANDING, Operator, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, MODE_EXPANDING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { Function2 } from "../helpers/Function2";
@@ -20,25 +20,23 @@ function make_is_cons_and_opr_eq_sym(lower: Sym) {
 /**
  * (upper (lower x1 x2 x3 ...) rhs) => (lower (upper x1 rhs) (upper x2 rhs) (upper x3 rhs) ...)
  */
-export class DistributiveLawExpandRight extends Function2<LHS, RHS> implements Operator<EXP> {
+export class DistributiveLawExpandRight extends Function2<LHS, RHS> implements Extension<EXP> {
     readonly #hash: string;
     readonly phases = MODE_EXPANDING;
-    constructor($: ExtensionEnv, upper: Sym, lower: Sym) {
-        super(`${upper.key()} right-distributive over ${lower.key()}`, upper, make_is_cons_and_opr_eq_sym(lower), is_any, $);
+    constructor(upper: Sym, lower: Sym) {
+        super(`${upper.key()} right-distributive over ${lower.key()}`, upper, make_is_cons_and_opr_eq_sym(lower), is_any);
         this.#hash = hash_binop_cons_atom(upper, lower, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(upper: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
+    transform2(upper: Sym, lhs: LHS, rhs: RHS, orig: EXP, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const hook = (retval: U, description: string): U => {
             // console.lg(this.name, `lhs => ${this.$.toInfixString(lhs)} rhs => ${this.$.toInfixString(rhs)}`, this.$.toInfixString(retval), description);
             return retval;
         };
-        const $ = this.$;
         const lower = lhs.opr;
         const Z = rhs;
         const xs = lhs.tail();

@@ -1,9 +1,8 @@
 import { is_keyword, Keyword, Sym } from "math-expression-atoms";
 import { AtomHandler } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
-import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 function verify_keyword(x: Keyword): Keyword | never {
     if (is_keyword(x)) {
@@ -75,6 +74,10 @@ class KeywordExtension implements Extension<Keyword>, AtomHandler<Keyword> {
     }
 }
 
-export const keyword_extension = new ExtensionOperatorBuilder(function () {
-    return new KeywordExtension();
-});
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new KeywordExtension();
+    }
+}
+
+export const keyword_extension_builder = new Builder();

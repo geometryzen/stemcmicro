@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { mmul } from "../../mmul";
 import { SGN } from "../../runtime/constants";
@@ -8,16 +8,16 @@ import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_rat } from "../rat/is_rat";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new SgnRat($);
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new SgnRat();
     }
 }
 
-class SgnRat extends Function1<Rat> implements Operator<U> {
+class SgnRat extends Function1<Rat> implements Extension<U> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('sgn_rat', SGN, is_rat, $);
+    constructor() {
+        super('sgn_rat', SGN, is_rat);
         this.#hash = hash_unaop_atom(this.opr, HASH_RAT);
     }
     get hash(): string {

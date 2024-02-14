@@ -2,7 +2,7 @@ import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, cre
 import { AtomHandler, CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { assert_cons_or_nil, Atom, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
-import { ExprContextAdapter } from '../adapters/ExprContextAdapter';
+import { ExprContextFromProgram } from '../adapters/ExprContextFromProgram';
 import { make_stack } from '../adapters/make_stack';
 import { StackFunction } from '../adapters/StackFunction';
 import { ExprEngineListener } from '../api/api';
@@ -9536,7 +9536,7 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
                                         // console.lg("binding.type", `${ binding.type } `);
                                     }
                                     if (is_lambda(binding)) {
-                                        const ctxt = new ExprContextAdapter(env, ctrl, $);
+                                        const ctxt = new ExprContextFromProgram(env, ctrl, $);
                                         const value = binding.body(expr.rest, ctxt);
                                         try {
                                             $.push(value);
@@ -13683,7 +13683,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     defineFunction(name: Sym, lambda: LambdaExpr): void {
         assert_sym(name);
         const handler: StackFunction = (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void => {
-            const adapter = new ExprContextAdapter(env, ctrl, $);
+            const adapter = new ExprContextFromProgram(env, ctrl, $);
             const retval = lambda(assert_cons(expr).argList, adapter);
             push(retval, $);
         };

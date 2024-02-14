@@ -1,9 +1,8 @@
 import { create_int, is_uom, Sym, Uom } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
-import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 class UomExtension implements Extension<Uom>, AtomHandler<Uom> {
     constructor() {
@@ -69,9 +68,10 @@ class UomExtension implements Extension<Uom>, AtomHandler<Uom> {
     }
 }
 
-/**
- * The Extension for Unit of Measure.
- */
-export const uom_extension = new ExtensionOperatorBuilder(function () {
-    return new UomExtension();
-});
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new UomExtension();
+    }
+}
+
+export const uom_extension_builder = new Builder();

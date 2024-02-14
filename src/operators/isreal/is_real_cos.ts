@@ -1,30 +1,27 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { create_boo } from "../../tree/boo/Boo";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
+import { create_boo, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, U } from "math-expression-tree";
+import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { CompositeOperator } from "../CompositeOperator";
 
 const is_real = native_sym(Native.isreal);
 const cosine = native_sym(Native.cos);
 
-class Builder implements OperatorBuilder<U> {
+class Builder implements ExtensionBuilder<U> {
     constructor(readonly innerOpr: Sym) {
 
     }
-    create($: ExtensionEnv): Operator<U> {
-        return new Op(this.innerOpr, $);
+    create(): Extension<U> {
+        return new Op(this.innerOpr);
     }
 }
 
 class Op extends CompositeOperator {
-    constructor(innerOpr: Sym, $: ExtensionEnv) {
-        super(is_real, innerOpr, $);
+    constructor(innerOpr: Sym) {
+        super(is_real, innerOpr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, innerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const x = innerExpr.argList.head;
         return [TFLAG_DIFF, create_boo($.isreal(x))];
     }

@@ -1,13 +1,12 @@
 import { is_tensor, Sym, Tensor } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, nil, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_TENSOR } from "../../hashing/hash_info";
 import { print_tensor } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
 import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
-import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { simplify } from "../simplify/simplify";
 import { subst } from "../subst/subst";
 
@@ -176,6 +175,10 @@ class TensorExtension implements Extension<Tensor>, AtomHandler<Tensor>{
 
 export const tensor_extension = new TensorExtension();
 
-export const tensor_operator_builder = new ExtensionOperatorBuilder(function () {
-    return tensor_extension;
-});
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new TensorExtension();
+    }
+}
+
+export const tensor_extension_builder = new Builder();

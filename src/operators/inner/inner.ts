@@ -1,14 +1,13 @@
 
 import { is_blade } from "math-expression-atoms";
+import { Cons2, items_to_cons, U } from "math-expression-tree";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { remove_factors } from "../../calculators/remove_factors";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { items_to_cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 
@@ -77,20 +76,19 @@ function inner_product(lhs: U, rhs: U, $: ExtensionEnv): U {
  * The inner product is not associative (where you put the parens matters).
  * So it only makes sense to implement a strictly binary operator.
  */
-class Inner extends Function2<LHS, RHS> implements Operator<EXP> {
+class Inner extends Function2<LHS, RHS> implements Extension<EXP> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('inner_product', MATH_INNER, is_any, is_any, $);
+    constructor() {
+        super('inner_product', MATH_INNER, is_any, is_any);
         this.#hash = hash_binop_atom_atom(MATH_INNER, HASH_ANY, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
-    valueOf(expr: EXP): U {
-        return eval_inner_product(expr, this.$);
+    valueOf(expr: EXP, $: ExtensionEnv): U {
+        return eval_inner_product(expr, $);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg("ENTERING", this.name, decodeMode($.getMode()), render_as_infix(expr, this.$));
         const hook = (where: string, retval: U): U => {
             // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_infix(orig, this.$), "=>", render_as_infix(retval, $));
@@ -125,9 +123,9 @@ class Inner extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Inner($);
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new Inner();
     }
 }
 

@@ -1,21 +1,20 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { create_sym, Sym } from "math-expression-atoms";
+import { Cons, Cons1, U } from "math-expression-tree";
+import { Extension, ExtensionBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { create_sym, Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
-import { Cons1 } from "../helpers/Cons1";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Succ($);
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new Succ();
     }
 }
 
-class Succ extends Function1<U> implements Operator<Cons> {
+class Succ extends Function1<U> implements Extension<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('succ_any', create_sym('succ'), is_any, $);
+    constructor() {
+        super('succ_any', create_sym('succ'), is_any);
         this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     get hash(): string {

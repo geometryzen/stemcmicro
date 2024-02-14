@@ -1,4 +1,4 @@
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -6,18 +6,18 @@ import { cons, Cons, U } from "../../tree/tree";
 import { assert_sym } from "./assert_sym";
 import { is_sym } from "./is_sym";
 
-class Builder implements OperatorBuilder<Sym> {
-    create($: ExtensionEnv): Operator<Sym> {
-        return new SymMathMul($);
+class Builder implements ExtensionBuilder<Sym> {
+    create(): Extension<Sym> {
+        return new SymMathMul();
     }
 }
 
 /**
  * 
  */
-class SymMathMul implements Operator<Sym> {
+class SymMathMul implements Extension<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(private readonly $: ExtensionEnv) {
+    constructor() {
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
@@ -37,37 +37,37 @@ class SymMathMul implements Operator<Sym> {
     get name(): string {
         return 'SymMathMul';
     }
-    evaluate(expr: U, argList: Cons): [TFLAGS, U] {
-        return this.transform(cons(expr, argList));
+    evaluate(opr: Sym, argList: Cons, $: ExtensionEnv): [TFLAGS, U] {
+        return $.transform(cons(opr, argList));
     }
-    transform(expr: U): [TFLAGS, U] {
-        return [this.isKind(expr) ? TFLAG_HALT : TFLAG_NONE, expr];
+    transform(opr: Sym): [TFLAGS, U] {
+        return [this.isKind(opr) ? TFLAG_HALT : TFLAG_NONE, opr];
     }
     isKind(expr: U): expr is Sym {
         return is_sym(expr) && MATH_MUL.equals(expr);
     }
-    subst(expr: Sym, oldExpr: U, newExpr: U): U {
-        if (expr.equals(oldExpr)) {
+    subst(opr: Sym, oldExpr: U, newExpr: U): U {
+        if (opr.equals(oldExpr)) {
             return newExpr;
         }
         else {
-            return expr;
+            return opr;
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(expr: Sym): string {
+    toInfixString(opr: Sym, $: ExtensionEnv): string {
         return '*';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toLatexString(expr: Sym): string {
+    toLatexString(opr: Sym, $: ExtensionEnv): string {
         return '*';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(expr: Sym): string {
-        return this.$.getSymbolPrintName(MATH_MUL);
+    toListString(opr: Sym, $: ExtensionEnv): string {
+        return $.getSymbolPrintName(MATH_MUL);
     }
-    valueOf(expr: Sym): Sym {
-        return assert_sym(this.transform(expr)[1]);
+    valueOf(opr: Sym): Sym {
+        return assert_sym(this.transform(opr)[1]);
     }
 }
 

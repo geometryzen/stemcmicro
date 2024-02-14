@@ -2,10 +2,9 @@ import { Cell, is_cell, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_CELL } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
-import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 const ISZERO = native_sym(Native.iszero);
 
@@ -75,6 +74,10 @@ class CellExtension implements Extension<Cell>, AtomHandler<Cell> {
     }
 }
 
-export const cell_extension = new ExtensionOperatorBuilder(function () {
-    return new CellExtension();
-});
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new CellExtension();
+    }
+}
+
+export const cell_extension_builder = new Builder();

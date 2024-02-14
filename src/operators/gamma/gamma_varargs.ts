@@ -1,27 +1,27 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { eval_gamma } from "./gamma";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Extension, ExtensionBuilder, ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { GAMMA } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+import { eval_gamma } from "./gamma";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
+class Builder implements ExtensionBuilder<U> {
+    create(config: Readonly<EnvConfig>): Extension<U> {
+        return new Op(config);
     }
 }
 
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends FunctionVarArgs implements Extension<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('gamma', GAMMA, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('gamma', GAMMA);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
         const retval = eval_gamma(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];

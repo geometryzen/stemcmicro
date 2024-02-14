@@ -5,8 +5,8 @@ import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";
 
 export abstract class Function2<L extends U, R extends U> extends FunctionVarArgs {
-    constructor(name: string, opr: Sym, private readonly guardL: GUARD<U, L>, private readonly guardR: GUARD<U, R>, $: ExtensionEnv) {
-        super(name, opr, $);
+    constructor(name: string, opr: Sym, private readonly guardL: GUARD<U, L>, private readonly guardR: GUARD<U, R>) {
+        super(name, opr);
     }
     isKind(expr: U): expr is Cons2<Sym, L, R> {
         const m = this.match(expr);
@@ -48,11 +48,10 @@ export abstract class Function2<L extends U, R extends U> extends FunctionVarArg
             throw new Error(`${this.name} + ${e}`);
         }
     }
-    transform(expr: U): [TFLAGS, U] {
+    transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {
         const m = this.match(expr);
         if (m) {
-            const $ = this.$;
-            // FIXME: THis can throw an exception / return Err. So we should not really do it.
+            // FIXME: This can throw an exception / return Err. So we should not really do it.
             const [flagsL, lhs] = $.transform(m.lhs);
             const [flagsR, rhs] = $.transform(m.rhs);
             /*
@@ -69,7 +68,7 @@ export abstract class Function2<L extends U, R extends U> extends FunctionVarArg
                 return [TFLAG_DIFF, $.valueOf(items_to_cons(m.opr, lhs, rhs))];
             }
             else {
-                return this.transform2(m.opr, m.lhs, m.rhs, m);
+                return this.transform2(m.opr, m.lhs, m.rhs, m, $);
             }
         }
         return [TFLAG_NONE, expr];
@@ -81,5 +80,5 @@ export abstract class Function2<L extends U, R extends U> extends FunctionVarArg
      * @param rhs The unevaluated right hand side typed according to the matches that have been made.
      * @param expr The original expression typed according to the matches that have been made.
      */
-    abstract transform2(opr: Sym, lhs: L, rhs: R, expr: Cons2<Sym, L, R>): [TFLAGS, U];
+    abstract transform2(opr: Sym, lhs: L, rhs: R, expr: Cons2<Sym, L, R>, $: ExtensionEnv): [TFLAGS, U];
 }

@@ -1,22 +1,22 @@
 import { is_flt, Sym } from 'math-expression-atoms';
 import { Cons1, U } from 'math-expression-tree';
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from '../../env/ExtensionEnv';
+import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from '../../env/ExtensionEnv';
 import { HASH_ANY, hash_unaop_atom } from '../../hashing/hash_info';
 import { SGN } from '../../runtime/constants';
 import { cadr } from '../../tree/helpers';
 import { Function1 } from '../helpers/Function1';
 import { is_any } from '../helpers/is_any';
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new SgnFlt($);
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new SgnFlt();
     }
 }
 
 class SgnFlt extends Function1<U> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('sgn_any', SGN, is_any, $);
+    constructor() {
+        super('sgn_any', SGN, is_any);
         this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     get hash(): string {
@@ -36,8 +36,8 @@ class SgnFlt extends Function1<U> {
             return false;
         }
     }
-    transform1(opr: Sym, arg: U): [TFLAGS, U] {
-        return [TFLAG_DIFF, sgn(arg, this.$)];
+    transform1(opr: Sym, arg: U, expr: Cons1<Sym, U>, $: ExtensionEnv): [TFLAGS, U] {
+        return [TFLAG_DIFF, sgn(arg, $)];
     }
 }
 

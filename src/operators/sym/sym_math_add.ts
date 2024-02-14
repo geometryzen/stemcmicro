@@ -1,21 +1,21 @@
 import { is_sym, Sym } from "math-expression-atoms";
 import { cons, Cons, U } from "math-expression-tree";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 
-class Builder implements OperatorBuilder<Sym> {
-    create($: ExtensionEnv): Operator<Sym> {
-        return new SymMathAdd($);
+class Builder implements ExtensionBuilder<Sym> {
+    create(): Extension<Sym> {
+        return new SymMathAdd();
     }
 }
 
 /**
  * 
  */
-class SymMathAdd implements Operator<Sym> {
+class SymMathAdd implements Extension<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(private readonly $: ExtensionEnv) {
+    constructor() {
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
@@ -43,36 +43,38 @@ class SymMathAdd implements Operator<Sym> {
             return false;
         }
     }
-    subst(expr: Sym, oldExpr: U, newExpr: U): U {
-        if (expr.equals(oldExpr)) {
+    subst(opr: Sym, oldExpr: U, newExpr: U): U {
+        if (opr.equals(oldExpr)) {
             return newExpr;
         }
         else {
-            return expr;
+            return opr;
         }
     }
-    toInfixString(): string {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toInfixString(opr: Sym, $: ExtensionEnv): string {
         return '+';
     }
-    toLatexString(): string {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toLatexString(opr: Sym, $: ExtensionEnv): string {
         return '+';
     }
-    toListString(): string {
-        return this.$.getSymbolPrintName(MATH_ADD);
+    toListString(opr: Sym, $: ExtensionEnv): string {
+        return $.getSymbolPrintName(MATH_ADD);
     }
-    evaluate(opr: U, argList: Cons): [TFLAGS, U] {
-        return this.transform(cons(opr, argList));
+    evaluate(opr: Sym, argList: Cons, $: ExtensionEnv): [TFLAGS, U] {
+        return $.transform(cons(opr, argList));
     }
-    transform(expr: U): [TFLAGS, U] {
-        if (is_sym(expr) && MATH_ADD.equalsSym(expr)) {
-            return [TFLAG_HALT, expr];
+    transform(opr: Sym): [TFLAGS, U] {
+        if (is_sym(opr) && MATH_ADD.equalsSym(opr)) {
+            return [TFLAG_HALT, opr];
         }
         else {
-            return [TFLAG_NONE, expr];
+            return [TFLAG_NONE, opr];
         }
     }
-    valueOf(expr: Sym): Sym {
-        return expr;
+    valueOf(opr: Sym): Sym {
+        return opr;
     }
 }
 

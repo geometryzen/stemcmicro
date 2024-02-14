@@ -1,18 +1,15 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons1, U } from "math-expression-tree";
+import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
 import { half } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 
-export const MATH_SQRT = native_sym(Native.sqrt);
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Sqrt($);
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new Sqrt();
     }
 }
 
@@ -21,16 +18,16 @@ class Builder implements OperatorBuilder<U> {
  */
 class Sqrt extends Function1<U> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('sqrt_any', MATH_SQRT, is_any, $);
+    constructor() {
+        super('sqrt_any', native_sym(Native.sqrt), is_any);
         this.#hash = hash_unaop_atom(this.opr, HASH_ANY);   // (sqrt U)
     }
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: U): [TFLAGS, U] {
+    transform1(opr: Sym, arg: U, expr: Cons1<Sym, U>, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(arg));
-        return [TFLAG_DIFF, this.$.power(arg, half)];
+        return [TFLAG_DIFF, $.power(arg, half)];
     }
 }
 

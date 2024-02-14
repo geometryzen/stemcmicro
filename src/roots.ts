@@ -1,15 +1,13 @@
-import { create_int, is_rat, negOne, one, Tensor } from 'math-expression-atoms';
+import { create_int, imu, is_rat, negOne, one, Tensor } from 'math-expression-atoms';
+import { Native, native_sym } from 'math-expression-native';
 import { car, Cons, nil, U } from 'math-expression-tree';
 import { rational } from './bignum';
 import { add_terms } from './calculators/add/add_terms';
 import { compare_expr_expr } from './calculators/compare/compare_expr_expr';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { imu } from './env/imu';
 import { guess } from './guess';
 import { divide } from './helpers/divide';
 import { is_complex_number, is_poly_expanded_form } from './is';
-import { Native } from './native/Native';
-import { native_sym } from './native/native_sym';
 import { coefficients } from './operators/coeff/coeff';
 import { factorize } from './operators/factor/factor';
 import { simplify } from './operators/simplify/simplify';
@@ -88,7 +86,7 @@ function is_simple_root(ks: U[], $: ExtensionEnv): boolean {
  * Computes the coefficients of the polynomial then divides each by the highest power coefficient.
  * The coefficients are returned in the order [c0, c1, c2, ..., 1] where c0 is the constant coefficient.
  */
-function normalized_coeff(poly: U, x: U, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'negate' | 'operatorFor' | 'valueOf' | 'pushDirective' | 'popDirective'>): U[] {
+function normalized_coeff(poly: U, x: U, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'negate' | 'extensionFor' | 'valueOf' | 'pushDirective' | 'popDirective'>): U[] {
     const cs = coefficients(poly, x, $);
     const highest = cs[cs.length - 1];
     return cs.map((c) => divide(c, highest, $));

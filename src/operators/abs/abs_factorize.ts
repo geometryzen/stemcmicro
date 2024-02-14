@@ -1,22 +1,18 @@
-import { ExtensionEnv, FEATURE, MODE_FACTORING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { is_rat, Rat, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, Cons2, is_cons, items_to_cons, U } from "math-expression-tree";
+import { Extension, ExtensionBuilder, FEATURE, MODE_FACTORING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
 import { MATH_POW } from "../../runtime/ns_math";
-import { Rat } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_pow_2_any_rat } from "../pow/is_pow_2_any_rat";
-import { is_rat } from "../rat/rat_extension";
 
 export const abs = native_sym(Native.abs);
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
+class Builder implements ExtensionBuilder<Cons> {
+    create(): Extension<Cons> {
+        return new Op();
     }
 }
 
@@ -32,11 +28,11 @@ const guardR = is_rat;
 /**
  * (pow (pow x 2) 1/2) => abs(x)
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> implements Extension<EXP> {
     readonly #hash: string;
     readonly phases = MODE_FACTORING;
-    constructor($: ExtensionEnv) {
-        super('abs_factorize', MATH_POW, guardL, guardR, $);
+    constructor() {
+        super('abs_factorize', MATH_POW, guardL, guardR);
         this.#hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
     }
     dependencies?: FEATURE[] | undefined;

@@ -14,12 +14,12 @@ import { eval_lookup } from '../lookup';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
-import { cell_extension } from '../operators/atom/atom_extension';
+import { cell_extension_builder } from '../operators/atom/atom_extension';
 import { atom_builder } from '../operators/atom/eval_atom';
 import { besselj_varargs } from '../operators/besselj/besselj_varargs';
 import { bessely_varargs } from '../operators/bessely/bessely_varargs';
 import { binomial_varargs } from '../operators/binomial/binomial_varargs';
-import { blade_extension } from '../operators/blade/blade_extension';
+import { blade_extension_builder } from '../operators/blade/blade_extension';
 import { boo_extension } from '../operators/boo/boo_extension';
 import { ceiling_cons } from '../operators/ceiling/ceiling_cons';
 import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
@@ -42,7 +42,7 @@ import { defn_builder } from '../operators/defn/eval_defn';
 import { eval_deg } from '../operators/degree/degree';
 import { deref_builder } from '../operators/deref/eval_deref';
 import { d_to_derivative_builder } from '../operators/derivative/d_to_derivative';
-import { map_extension } from '../operators/dictionary/dictionary_extension';
+import { map_extension_builder } from '../operators/dictionary/dictionary_extension';
 import { dim_varargs } from '../operators/dim/dim_varargs';
 import { dirac_varargs } from '../operators/dirac/dirac_varargs';
 import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from '../operators/distrib/make_distrib_expand_law';
@@ -55,7 +55,7 @@ import { eigenvec_varargs } from '../operators/eigen/eigenvec_varargs';
 import { eigen_varargs } from '../operators/eigen/eigen_varargs';
 import { erf_varargs } from '../operators/erf/erf_varargs';
 import { erfc_varargs } from '../operators/erfc/erfc_varargs';
-import { err_extension } from '../operators/err/err_extension';
+import { err_extension_builder } from '../operators/err/err_extension';
 import { eval_varargs } from '../operators/eval/eval_varargs';
 import { expand_extension } from '../operators/expand/expand_extension';
 import { factor_varargs } from '../operators/factor/factor_varargs';
@@ -68,9 +68,9 @@ import { gcd_varargs } from '../operators/gcd/gcd_varargs';
 import { stack_hadamard } from '../operators/hadamard/stack_hadamard';
 import { hermite_varargs } from '../operators/hermite/hermite_varargs';
 import { eval_hilbert } from '../operators/hilbert/hilbert_varargs';
-import { hyp_extension } from '../operators/hyp/hyp_extension';
+import { hyp_extension_builder } from '../operators/hyp/hyp_extension';
 import { infinitesimal_1_str } from '../operators/hyp/infinitesimal_1_str';
-import { imu_extension } from '../operators/imu/Imu_extension';
+import { imu_extension_builder } from '../operators/imu/Imu_extension';
 import { eval_inner } from '../operators/inner/eval_inner';
 import { inner_product_builder } from '../operators/inner/inner';
 import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
@@ -126,7 +126,7 @@ import { iszero_rat_builder } from '../operators/iszero/iszero_rat';
 import { iszero_sym_builder } from '../operators/iszero/iszero_sym';
 import { iszero_tensor_builder } from '../operators/iszero/iszero_tensor';
 import { jsobject_extension } from '../operators/jsobject/JsObjectExtension';
-import { keyword_extension } from '../operators/keyword/KeywordExtension';
+import { keyword_extension_builder } from '../operators/keyword/KeywordExtension';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
 import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
@@ -177,7 +177,7 @@ import { subst_varargs } from '../operators/subst/subst_varargs';
 import { succ_any } from '../operators/succ/succ_any';
 import { succ_rat } from '../operators/succ/succ_rat';
 import { sum_varargs } from '../operators/sum/sum_varargs';
-import { sym_extension } from '../operators/sym/sym_extension';
+import { sym_extension_builder } from '../operators/sym/sym_extension';
 import { sym_math_add } from '../operators/sym/sym_math_add';
 import { sym_math_mul } from '../operators/sym/sym_math_mul';
 import { sym_math_pi } from '../operators/sym/sym_math_pi';
@@ -185,13 +185,13 @@ import { sym_math_pow } from '../operators/sym/sym_math_pow';
 import { symbol_varargs } from '../operators/symbol/symbol_varargs';
 import { tan_varargs } from '../operators/tan/tan_varargs';
 import { tanh_varargs } from '../operators/tanh/tanh_varargs';
-import { tau } from '../operators/tau/tau';
+import { tau_builder } from '../operators/tau/tau';
 import { taylor_varargs } from '../operators/taylor/taylor_varargs';
-import { tensor_operator_builder } from '../operators/tensor/tensor_extension';
+import { tensor_extension_builder } from '../operators/tensor/tensor_extension';
 import { eval_typeof } from '../operators/typeof/eval_typeof';
 import { stack_uom } from '../operators/uom/stack_uom';
-import { uom_extension } from '../operators/uom/uom_extension';
-import { zero_varargs } from '../operators/zero/zero_varargs';
+import { uom_extension_builder } from '../operators/uom/uom_extension';
+import { eval_zero } from '../operators/zero/zero';
 import { eval_prime } from '../prime';
 import { get_last_print_mode_symbol } from '../print/print';
 import { render_using_print_mode } from '../print/render_using_print_mode';
@@ -241,13 +241,13 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     // Multiplication (*)
     $.setSymbolOrder(MATH_MUL, new MulComparator());
     $.defineAssociative(MATH_MUL, one);
-    $.defineOperator(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
-    $.defineOperator(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
-    $.defineOperator(mul_2_tensor_tensor);
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
+    $.defineExtension(mul_2_tensor_tensor);
     $.defineEvalFunction(MATH_MUL, eval_multiply);
 
     $.defineEvalFunction(APPROXRATIO, eval_approxratio);
-    $.defineOperator(binomial_varargs);
+    $.defineExtension(binomial_varargs);
 
     $.defineStackFunction(CHECK, stack_check);
 
@@ -276,17 +276,17 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineEvalFunction(FILTER, eval_filter);
 
-    $.defineOperator(gamma_varargs);
+    $.defineExtension(gamma_varargs);
 
-    $.defineOperator(gcd_varargs);
+    $.defineExtension(gcd_varargs);
 
-    $.defineOperator(hermite_varargs);
+    $.defineExtension(hermite_varargs);
 
     $.defineStackFunction(create_sym("infixform"), stack_infixform);
 
     // Inner Product (|)
-    $.defineOperator(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));
-    $.defineOperator(make_rhs_distrib_expand_law(MATH_INNER, MATH_ADD));
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_INNER, MATH_ADD));
     $.defineOperator(inner_2_num_num);
     $.defineOperator(inner_2_rat_imu);
     $.defineOperator(inner_2_rat_sym);
@@ -301,7 +301,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(inner_2_any_real);
     $.defineOperator(inner_2_any_rat);
     $.defineOperator(inner_2_any_imu);
-    $.defineOperator(inner_product_builder);
+    $.defineExtension(inner_product_builder);
 
     $.defineStackFunction(native_sym(Native.kronecker), stack_kronecker);
 
@@ -312,10 +312,10 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineEvalFunction(LEADING, eval_leading);
 
     // Left Contraction (<<)
-    $.defineOperator(lco_2_blade_blade);
-    $.defineOperator(make_lhs_distrib_expand_law(MATH_LCO, MATH_ADD));
-    $.defineOperator(make_rhs_distrib_expand_law(MATH_LCO, MATH_ADD));
-    $.defineOperator(lco_2_any_any);
+    $.defineExtension(lco_2_blade_blade);
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_LCO, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_LCO, MATH_ADD));
+    $.defineExtension(lco_2_any_any);
 
     $.defineOperator(legendre_varargs);
     $.defineOperator(let_varargs);
@@ -331,8 +331,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     // Outer Product (^)
     $.defineOperator(outer_2_blade_blade);
     $.defineOperator(outer_2_tensor_tensor);
-    $.defineOperator(make_lhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
-    $.defineOperator(make_rhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
     $.defineOperator(outer_2_mul_2_scalar_any_any);
     $.defineOperator(outer_2_sym_sym);
     $.defineOperator(outer_2_any_mul_2_scalar_any);
@@ -346,8 +346,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(RANK, stack_rank);
 
     $.defineOperator(rco_2_blade_blade);
-    $.defineOperator(make_lhs_distrib_expand_law(MATH_RCO, MATH_ADD));
-    $.defineOperator(make_rhs_distrib_expand_law(MATH_RCO, MATH_ADD));
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_RCO, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_RCO, MATH_ADD));
     $.defineOperator(rco_2_mul_2_scalar_any_any);
     $.defineOperator(rco_2_any_mul_2_scalar_any);
     $.defineOperator(rco_2_any_any);
@@ -361,7 +361,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(native_sym(Native.abs), stack_abs);
     $.defineStackFunction(native_sym(Native.adj), stack_adj);
 
-    $.defineOperator(algebra_2_tensor_tensor);
+    $.defineExtension(algebra_2_tensor_tensor);
 
     $.defineEvalFunction(AND, eval_and);
     $.defineStackFunction(create_sym("and"), stack_and);
@@ -387,15 +387,15 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineOperator(ceiling_flt);
     $.defineOperator(ceiling_rat);
-    $.defineOperator(ceiling_cons);
+    $.defineExtension(ceiling_cons);
 
     $.defineStackFunction(native_sym(Native.circexp), stack_circexp);
 
     $.defineStackFunction(native_sym(Native.clock), stack_clock);
 
-    $.defineOperator(coeff_varargs);
+    $.defineExtension(coeff_varargs);
     $.defineEvalFunction(create_sym("coefficients"), eval_coefficients);
-    $.defineOperator(cofactor_varargs);
+    $.defineExtension(cofactor_varargs);
     $.defineOperator(complex_2_any_any);
     $.defineOperator(condense_varargs);
     $.defineOperator(contract_varargs);
@@ -403,9 +403,9 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(native_sym(Native.cos), stack_cos);
     $.defineStackFunction(native_sym(Native.cosh), stack_cosh);
 
-    $.defineOperator(cross_blade_blade_builder);
-    $.defineOperator(make_lhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
-    $.defineOperator(make_rhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
+    $.defineExtension(cross_blade_blade_builder);
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
     $.defineOperator(cross_any_any);
 
     $.defineOperator(def_sym_builder);
@@ -503,10 +503,10 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineOperator(is_real_abs);
     $.defineOperator(is_real_add);
-    $.defineOperator(isreal_holomorphic(COS));
-    $.defineOperator(isreal_holomorphic(EXP));
-    $.defineOperator(isreal_holomorphic(FACTORIAL));
-    $.defineOperator(is_real_cos);
+    $.defineExtension(isreal_holomorphic(COS));
+    $.defineExtension(isreal_holomorphic(EXP));
+    $.defineExtension(isreal_holomorphic(FACTORIAL));
+    $.defineExtension(is_real_cos);
     $.defineOperator(is_real_flt);
     $.defineOperator(is_real_imag);
     $.defineOperator(is_real_imu);
@@ -542,19 +542,19 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineStackFunction(native_sym(Native.polar), stack_polar);
 
-    $.defineOperator(make_printmode_operator('print', () => defs.printMode));
-    $.defineOperator(make_printmode_operator('printascii', () => PRINTMODE_ASCII));
-    $.defineOperator(make_printmode_operator('printhuman', () => PRINTMODE_HUMAN));
-    $.defineOperator(make_printmode_operator('printinfix', () => PRINTMODE_INFIX));
-    $.defineOperator(make_printmode_operator('printlatex', () => PRINTMODE_LATEX));
-    $.defineOperator(make_printmode_operator('printsexpr', () => PRINTMODE_SEXPR));
+    $.defineExtension(make_printmode_operator('print', () => defs.printMode));
+    $.defineExtension(make_printmode_operator('printascii', () => PRINTMODE_ASCII));
+    $.defineExtension(make_printmode_operator('printhuman', () => PRINTMODE_HUMAN));
+    $.defineExtension(make_printmode_operator('printinfix', () => PRINTMODE_INFIX));
+    $.defineExtension(make_printmode_operator('printlatex', () => PRINTMODE_LATEX));
+    $.defineExtension(make_printmode_operator('printsexpr', () => PRINTMODE_SEXPR));
 
-    $.defineOperator(make_printmode_function('print', () => defs.printMode));
-    $.defineOperator(make_printmode_function('printascii', () => PRINTMODE_ASCII));
-    $.defineOperator(make_printmode_function('printhuman', () => PRINTMODE_HUMAN));
-    $.defineOperator(make_printmode_function('printinfix', () => PRINTMODE_INFIX));
-    $.defineOperator(make_printmode_function('printlatex', () => PRINTMODE_LATEX));
-    $.defineOperator(make_printmode_function('printsexpr', () => PRINTMODE_SEXPR));
+    $.defineExtension(make_printmode_function('print', () => defs.printMode));
+    $.defineExtension(make_printmode_function('printascii', () => PRINTMODE_ASCII));
+    $.defineExtension(make_printmode_function('printhuman', () => PRINTMODE_HUMAN));
+    $.defineExtension(make_printmode_function('printinfix', () => PRINTMODE_INFIX));
+    $.defineExtension(make_printmode_function('printlatex', () => PRINTMODE_LATEX));
+    $.defineExtension(make_printmode_function('printsexpr', () => PRINTMODE_SEXPR));
 
     $.defineOperator(product_varargs);
 
@@ -575,8 +575,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(script_last_0);
 
     $.defineOperator(sgn_flt);
-    $.defineOperator(sgn_rat);
-    $.defineOperator(sgn_any);
+    $.defineExtension(sgn_rat);
+    $.defineExtension(sgn_any);
 
     $.defineEvalFunction(native_sym(Native.shape), eval_shape);
     $.defineStackFunction(native_sym(Native.simplify), stack_simplify);
@@ -584,8 +584,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(native_sym(Native.sin), stack_sin);
     $.defineStackFunction(native_sym(Native.sinh), stack_sinh);
 
-    $.defineOperator(succ_rat);
-    $.defineOperator(succ_any);
+    $.defineExtension(succ_rat);
+    $.defineExtension(succ_any);
 
     $.defineStackFunction(native_sym(Native.sqrt), stack_sqrt);
 
@@ -609,7 +609,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(tan_varargs);
 
     $.defineOperator(tanh_varargs);
-    $.defineOperator(tau);
+    $.defineExtension(tau_builder);
 
     $.defineEvalFunction(create_sym('typeof'), eval_typeof);
 
@@ -622,30 +622,30 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineEvalFunction(native_sym(Native.testne), eval_testne);
     $.defineStackFunction(native_sym(Native.transpose), stack_transpose);
 
-    $.defineOperator(sym_math_add);
-    $.defineOperator(sym_math_mul);
-    $.defineOperator(sym_math_pow);
-    $.defineOperator(sym_math_pi);
+    $.defineExtension(sym_math_add);
+    $.defineExtension(sym_math_mul);
+    $.defineExtension(sym_math_pow);
+    $.defineExtension(sym_math_pi);
 
-    $.defineOperator(sym_extension);
-    $.defineOperator(tensor_operator_builder);
-    $.defineOperator(blade_extension);
-    $.defineOperator(cell_extension);
-    $.defineOperator(uom_extension);
-    $.defineOperator(hyp_extension);
-    $.defineOperator(err_extension);
-    $.defineOperator(imu_extension);
-    $.defineOperator(keyword_extension);
-    $.defineOperator(map_extension);
+    $.defineExtension(sym_extension_builder);
+    $.defineExtension(tensor_extension_builder);
+    $.defineExtension(blade_extension_builder);
+    $.defineExtension(cell_extension_builder);
+    $.defineExtension(uom_extension_builder);
+    $.defineExtension(hyp_extension_builder);
+    $.defineExtension(err_extension_builder);
+    $.defineExtension(imu_extension_builder);
+    $.defineExtension(keyword_extension_builder);
+    $.defineExtension(map_extension_builder);
 
     $.defineStackFunction(native_sym(Native.unit), stack_unit);
     $.defineStackFunction(UOM, stack_uom);
 
-    $.defineOperator(zero_varargs);
+    $.defineEvalFunction(native_sym(Native.zero), eval_zero);
 
     // NIL is implemented as an empty Cons, so it has to be defined before the generic Cons operator.
-    $.defineOperator(nil_extension);
+    $.defineExtension(nil_extension);
 
     // There is no fallback. We migrate everything.
-    $.defineOperator(cons_extension);
+    $.defineExtension(cons_extension);
 }

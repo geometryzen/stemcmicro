@@ -51,7 +51,7 @@ export function eval_coeff(expr: Cons, $: ExtensionEnv): U {
  * 
  * There are no gaps.
  */
-export function coefficients(expr: U, x: U, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'negate' | 'operatorFor' | 'valueOf' | 'pushDirective' | 'popDirective'>): U[] {
+export function coefficients(expr: U, x: U, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'negate' | 'extensionFor' | 'valueOf' | 'pushDirective' | 'popDirective'>): U[] {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U[], description: string): U[] {
         return retval;

@@ -1,19 +1,16 @@
-import { assert_tensor } from "math-expression-atoms";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { assert_tensor, create_sym, is_tensor, Sym, Tensor } from "math-expression-atoms";
+import { Cons, U } from "math-expression-tree";
+import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_TENSOR } from "../../hashing/hash_info";
-import { create_sym, Sym } from "../../tree/sym/Sym";
-import { Tensor } from "../../tree/tensor/Tensor";
-import { Cons, U } from "../../tree/tree";
 import { Function2 } from "../helpers/Function2";
-import { is_tensor } from "../tensor/is_tensor";
 import { algebra } from "./algebra";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
+
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new Op();
     }
 }
-
 /**
  * (algebra metric labels), where metric and labels are Tensor[U]
  * G = algebra([1,1,1],['e1','e2','e3'])
@@ -21,18 +18,17 @@ class Builder implements OperatorBuilder<U> {
  * e2 = G[2]
  * e3 = G[3]
  */
-class Op extends Function2<Tensor, Tensor> implements Operator<Cons> {
+class Op extends Function2<Tensor, Tensor> implements Extension<Cons> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
-    constructor($: ExtensionEnv) {
-        super('algebra_2_tensor_tensor', create_sym('algebra'), is_tensor, is_tensor, $);
+    constructor() {
+        super('algebra_2_tensor_tensor', create_sym('algebra'), is_tensor, is_tensor);
         this.#hash = hash_binop_atom_atom(create_sym('algebra'), HASH_TENSOR, HASH_TENSOR);
     }
     get hash(): string {
         return this.#hash;
     }
-    valueOf(expr: Cons): U {
-        const $ = this.$;
+    valueOf(expr: Cons, $: ExtensionEnv): U {
         const argList = expr.argList;
         try {
             const arg0 = argList.item(0);
@@ -43,7 +39,7 @@ class Op extends Function2<Tensor, Tensor> implements Operator<Cons> {
                 try {
                     const metric = assert_tensor(val0);
                     const labels = assert_tensor(val1);
-                    return algebra(metric, labels, this.$);
+                    return algebra(metric, labels, $);
                 }
                 finally {
                     val0.release();
@@ -59,8 +55,8 @@ class Op extends Function2<Tensor, Tensor> implements Operator<Cons> {
             argList.release();
         }
     }
-    transform2(opr: Sym, metric: Tensor<U>, labels: Tensor<U>): [TFLAGS, U] {
-        return [TFLAG_DIFF, algebra(metric, labels, this.$)];
+    transform2(opr: Sym, metric: Tensor<U>, labels: Tensor<U>, orig: Cons, $: ExtensionEnv): [TFLAGS, U] {
+        return [TFLAG_DIFF, algebra(metric, labels, $)];
     }
 }
 

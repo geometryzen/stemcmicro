@@ -1,14 +1,13 @@
 import { Sym } from "math-expression-atoms";
 import { Cons, is_cons, U } from "math-expression-tree";
-import { ExtensionEnv } from "../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../hashing/hash_info";
-import { Function1 } from "./helpers/Function1";
 import { Cons1 } from "./helpers/Cons1";
+import { Function1 } from "./helpers/Function1";
 
 export abstract class CompositeOperator extends Function1<Cons> {
     readonly #hash: string;
-    constructor(outerOpr: Sym, private readonly innerOpr: Sym, $: ExtensionEnv) {
-        super(`${outerOpr}∘${innerOpr}`, outerOpr, is_cons, $);
+    constructor(outerOpr: Sym, private readonly innerOpr: Sym) {
+        super(`${outerOpr}∘${innerOpr}`, outerOpr, is_cons);
         this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     get hash(): string {

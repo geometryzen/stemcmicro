@@ -145,7 +145,7 @@ export const TESTLT = native_sym(Native.testlt);
 export const TRANSPOSE = create_sym('transpose');
 export const UNIT = create_sym('unit');
 export const UOM = create_sym('uom');
-export const ZERO = create_sym('zero');
+export const ZERO = native_sym(Native.zero);
 
 export const LAST_PRINT = create_sym('lastPrint');
 export const LAST_ASCII_PRINT = create_sym('lastAsciiPrint');

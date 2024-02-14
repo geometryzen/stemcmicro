@@ -1,31 +1,25 @@
-import { eval_eigenvec } from "./eigen";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Cons, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { EIGENVEC } from "../../runtime/constants";
-import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+import { eval_eigenvec } from "./eigen";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('eigenvec', EIGENVEC, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('eigenvec', EIGENVEC);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
         const retval = eval_eigenvec(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }
 
-export const eigenvec_varargs = new Builder();
+export const eigenvec_varargs = make_extension_builder<Cons>(Op);

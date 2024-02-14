@@ -1,32 +1,24 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { erfc } from "../erfc/erfc";
+import { create_flt, is_flt, zero } from "math-expression-atoms";
+import { Cons, items_to_cons, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { is_negative } from "../../predicates/is_negative";
 import { ERF } from "../../runtime/constants";
-import { create_flt } from "../../tree/flt/Flt";
 import { cadr } from "../../tree/helpers";
-import { zero } from "../../tree/rat/Rat";
-import { Cons, items_to_cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
+import { erfc } from "../erfc/erfc";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('erf', ERF, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('erf', ERF);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
         const retval = yerf($.valueOf(cadr(expr)), $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
@@ -49,4 +41,4 @@ function yerf(p1: U, $: ExtensionEnv): U {
     return items_to_cons(ERF, p1);
 }
 
-export const erf_varargs = new Builder();
+export const erf_varargs = make_extension_builder(Op);

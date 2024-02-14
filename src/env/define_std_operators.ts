@@ -442,11 +442,11 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineEvalFunction(create_sym("draw"), eval_draw);
 
-    $.defineOperator(eigen_varargs);
-    $.defineOperator(eigenval_varargs);
-    $.defineOperator(eigenvec_varargs);
+    $.defineExtension(eigen_varargs);
+    $.defineExtension(eigenval_varargs);
+    $.defineExtension(eigenvec_varargs);
 
-    $.defineOperator(erf_varargs);
+    $.defineExtension(erf_varargs);
     $.defineExtension(erfc_varargs);
 
     $.defineExtension(eval_varargs);

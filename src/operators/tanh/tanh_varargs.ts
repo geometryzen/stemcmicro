@@ -1,31 +1,30 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { TANH } from "../../runtime/constants";
-import { eval_tanh } from "./tanh";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+import { eval_tanh } from "./tanh";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new Op();
     }
 }
 
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends FunctionVarArgs implements Extension<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('tanh', TANH, $);
+    constructor() {
+        super('tanh', TANH);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
         const retval = eval_tanh(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }
 
-export const tanh_varargs = new Builder();
+export const tanh_varargs_builder = new Builder();

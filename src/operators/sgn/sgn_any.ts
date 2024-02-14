@@ -41,7 +41,7 @@ class SgnFlt extends Function1<U> {
     }
 }
 
-export const sgn_any = new Builder();
+export const sgn_any_builder = new Builder();
 
 export function eval_sgn(expr: U, $: ExtensionEnv): U {
     // console.lg("eval_sgn", $.toSExprString(expr));

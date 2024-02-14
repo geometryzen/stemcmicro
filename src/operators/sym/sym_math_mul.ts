@@ -71,4 +71,4 @@ class SymMathMul implements Extension<Sym> {
     }
 }
 
-export const sym_math_mul = new Builder();
+export const sym_math_mul_builder = new Builder();

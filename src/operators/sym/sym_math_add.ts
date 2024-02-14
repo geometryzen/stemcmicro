@@ -78,4 +78,4 @@ class SymMathAdd implements Extension<Sym> {
     }
 }
 
-export const sym_math_add = new Builder();
+export const sym_math_add_builder = new Builder();

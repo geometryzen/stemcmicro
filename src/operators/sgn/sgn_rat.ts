@@ -28,7 +28,7 @@ class SgnRat extends Function1<Rat> implements Extension<U> {
     }
 }
 
-export const sgn_rat = new Builder();
+export const sgn_rat_builder = new Builder();
 
 // const not_is_rat = (expr: U) => !is_rat(expr);
 /*

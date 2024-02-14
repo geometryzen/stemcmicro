@@ -77,4 +77,4 @@ class SymMathPi implements Extension<Sym> {
     }
 }
 
-export const sym_math_pi = new Builder();
+export const sym_math_pi_builder = new Builder();

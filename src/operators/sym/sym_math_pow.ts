@@ -78,4 +78,4 @@ class SymMathPow implements Extension<Sym> {
     }
 }
 
-export const sym_math_pow = new Builder();
+export const sym_math_pow_builder = new Builder();

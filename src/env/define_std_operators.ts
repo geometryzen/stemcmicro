@@ -29,7 +29,7 @@ import { eval_coefficients } from '../operators/coeff/eval_coefficients';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
 import { complex_2_any_any } from '../operators/complex/complex_2_any_any';
 import { condense_varargs } from '../operators/condense/condense_varargs';
-import { cons_extension } from '../operators/cons/cons_extension';
+import { cons_extension_builder } from '../operators/cons/cons_extension';
 import { contract_varargs } from '../operators/contract/contract_varargs';
 import { cross_any_any } from '../operators/cross/cross_any_any';
 import { cross_blade_blade_builder } from '../operators/cross/cross_blade_blade';
@@ -136,7 +136,7 @@ import { let_varargs } from '../operators/let/let_varargs';
 import { stack_mag } from '../operators/mag/stack_mag';
 import { eval_multiply } from '../operators/mul/eval_multiply';
 import { mul_2_tensor_tensor } from '../operators/mul/mul_2_tensor_tensor';
-import { nil_extension } from '../operators/nil/nil_extension';
+import { nil_extension_builder } from '../operators/nil/nil_extension';
 import { or_varargs } from '../operators/or/or_varargs';
 import { outer_2_any_any } from '../operators/outer/outer_2_any_any';
 import { outer_2_any_mul_2_scalar_any } from '../operators/outer/outer_2_any_mul_2_scalar_any';
@@ -161,9 +161,9 @@ import { reset_builder } from '../operators/reset/eval_reset';
 import { stack_rotate } from '../operators/rotate/stack_rotate';
 import { eval_round } from '../operators/round/round';
 import { script_last_0 } from '../operators/script_last/script_last';
-import { sgn_any } from '../operators/sgn/sgn_any';
-import { sgn_flt } from '../operators/sgn/sgn_flt';
-import { sgn_rat } from '../operators/sgn/sgn_rat';
+import { sgn_any_builder } from '../operators/sgn/sgn_any';
+import { sgn_flt_builder } from '../operators/sgn/sgn_flt';
+import { sgn_rat_builder } from '../operators/sgn/sgn_rat';
 import { eval_shape } from '../operators/shape/shape';
 import { stack_st } from '../operators/st/stack_st';
 import { st_add_2_any_hyp } from '../operators/st/st_add_2_any_hyp';
@@ -178,13 +178,13 @@ import { succ_any } from '../operators/succ/succ_any';
 import { succ_rat } from '../operators/succ/succ_rat';
 import { sum_varargs } from '../operators/sum/sum_varargs';
 import { sym_extension_builder } from '../operators/sym/sym_extension';
-import { sym_math_add } from '../operators/sym/sym_math_add';
-import { sym_math_mul } from '../operators/sym/sym_math_mul';
-import { sym_math_pi } from '../operators/sym/sym_math_pi';
-import { sym_math_pow } from '../operators/sym/sym_math_pow';
+import { sym_math_add_builder } from '../operators/sym/sym_math_add';
+import { sym_math_mul_builder } from '../operators/sym/sym_math_mul';
+import { sym_math_pi_builder } from '../operators/sym/sym_math_pi';
+import { sym_math_pow_builder } from '../operators/sym/sym_math_pow';
 import { symbol_varargs } from '../operators/symbol/symbol_varargs';
 import { tan_varargs } from '../operators/tan/tan_varargs';
-import { tanh_varargs } from '../operators/tanh/tanh_varargs';
+import { tanh_varargs_builder } from '../operators/tanh/tanh_varargs';
 import { tau_builder } from '../operators/tau/tau';
 import { taylor_varargs } from '../operators/taylor/taylor_varargs';
 import { tensor_extension_builder } from '../operators/tensor/tensor_extension';
@@ -574,9 +574,9 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineOperator(script_last_0);
 
-    $.defineOperator(sgn_flt);
-    $.defineExtension(sgn_rat);
-    $.defineExtension(sgn_any);
+    $.defineExtension(sgn_flt_builder);
+    $.defineExtension(sgn_rat_builder);
+    $.defineExtension(sgn_any_builder);
 
     $.defineEvalFunction(native_sym(Native.shape), eval_shape);
     $.defineStackFunction(native_sym(Native.simplify), stack_simplify);
@@ -608,7 +608,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineOperator(tan_varargs);
 
-    $.defineOperator(tanh_varargs);
+    $.defineExtension(tanh_varargs_builder);
     $.defineExtension(tau_builder);
 
     $.defineEvalFunction(create_sym('typeof'), eval_typeof);
@@ -622,10 +622,10 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineEvalFunction(native_sym(Native.testne), eval_testne);
     $.defineStackFunction(native_sym(Native.transpose), stack_transpose);
 
-    $.defineExtension(sym_math_add);
-    $.defineExtension(sym_math_mul);
-    $.defineExtension(sym_math_pow);
-    $.defineExtension(sym_math_pi);
+    $.defineExtension(sym_math_add_builder);
+    $.defineExtension(sym_math_mul_builder);
+    $.defineExtension(sym_math_pow_builder);
+    $.defineExtension(sym_math_pi_builder);
 
     $.defineExtension(sym_extension_builder);
     $.defineExtension(tensor_extension_builder);
@@ -644,8 +644,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineEvalFunction(native_sym(Native.zero), eval_zero);
 
     // NIL is implemented as an empty Cons, so it has to be defined before the generic Cons operator.
-    $.defineExtension(nil_extension);
+    $.defineExtension(nil_extension_builder);
 
     // There is no fallback. We migrate everything.
-    $.defineExtension(cons_extension);
+    $.defineExtension(cons_extension_builder);
 }

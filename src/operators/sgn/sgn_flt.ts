@@ -1,23 +1,20 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Flt, is_flt, negOne, one, Rat, Sym, zero } from "math-expression-atoms";
+import { U } from "math-expression-tree";
+import { Extension, ExtensionBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
 import { SGN } from "../../runtime/constants";
-import { Flt } from "../../tree/flt/Flt";
-import { negOne, one, Rat, zero } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
 import { Function1 } from "../helpers/Function1";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new SgnFlt($);
+class Builder implements ExtensionBuilder<U> {
+    create(): Extension<U> {
+        return new SgnFlt();
     }
 }
 
 class SgnFlt extends Function1<Flt> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('sgn_flt', SGN, is_flt, $);
+    constructor() {
+        super('sgn_flt', SGN, is_flt);
         this.#hash = hash_unaop_atom(this.opr, HASH_FLT);
     }
     get hash(): string {
@@ -28,7 +25,7 @@ class SgnFlt extends Function1<Flt> {
     }
 }
 
-export const sgn_flt = new Builder();
+export const sgn_flt_builder = new Builder();
 
 // const not_is_flt = (expr: U) => !is_flt(expr);
 /*

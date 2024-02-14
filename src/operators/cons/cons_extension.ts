@@ -189,4 +189,4 @@ class Builder implements ExtensionBuilder<U> {
     }
 }
 
-export const cons_extension = new Builder();
+export const cons_extension_builder = new Builder();

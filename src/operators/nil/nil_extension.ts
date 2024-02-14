@@ -77,4 +77,4 @@ class NilExtension implements Extension<Cons> {
     }
 }
 
-export const nil_extension = new Builder();
+export const nil_extension_builder = new Builder();

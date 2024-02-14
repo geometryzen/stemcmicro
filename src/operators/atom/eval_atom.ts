@@ -1,25 +1,14 @@
-import { Cell, create_sym, Sym } from "math-expression-atoms";
-import { Cons, nil, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Cell, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, Cons1, nil, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 
 type ARG = U;
 type EXP = Cons1<Sym, ARG>;
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        const ATOM = create_sym("atom");
-        try {
-            return new Op($, ATOM);
-        }
-        finally {
-            ATOM.release();
-        }
-    }
-}
 
 function eval_atom(expr: Cons, $: ExtensionEnv): U {
     const arg = expr.arg;
@@ -38,17 +27,16 @@ function eval_atom(expr: Cons, $: ExtensionEnv): U {
     return nil;
 }
 
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly #hash: string;
-    constructor($: ExtensionEnv, ATOM: Sym) {
-        super('atom', ATOM, is_any, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('atom', native_sym(Native.atom), is_any);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
         const retval = eval_atom(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
@@ -59,4 +47,4 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
 }
 
-export const atom_builder = new Builder();
+export const atom_builder = make_extension_builder<EXP>(Op);

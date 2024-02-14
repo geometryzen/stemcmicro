@@ -1,30 +1,30 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { create_boo, is_sym, Sym } from "math-expression-atoms";
+import { Cons1, U } from "math-expression-tree";
+import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_BOO, HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
-import { create_boo } from "../../tree/boo/Boo";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { is_sym } from "../sym/is_sym";
 
-class Builder implements OperatorBuilder<U> {
+type ARG = Sym;
+type EXP = Cons1<Sym, ARG>;
+
+class Builder implements ExtensionBuilder<EXP> {
     constructor(readonly predicate: Sym) {
     }
-    create($: ExtensionEnv): Operator<U> {
-        return new PredicateSym(this.predicate, $);
+    create(): Extension<EXP> {
+        return new PredicateSym(this.predicate);
     }
 }
 
 class PredicateSym extends Function1<Sym> {
     readonly #hash: string;
-    constructor(predicate: Sym, $: ExtensionEnv) {
-        super(`${predicate.key()}(sym: ${HASH_SYM}) => ${HASH_BOO}`, predicate, is_sym, $);
+    constructor(predicate: Sym) {
+        super(`${predicate.key()}(sym: ${HASH_SYM}) => ${HASH_BOO}`, predicate, is_sym);
         this.#hash = hash_unaop_atom(this.opr, HASH_SYM);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, arg: Sym, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         const props = $.getSymbolPredicates(arg);
         return [TFLAG_DIFF, create_boo(props.real)];
     }
@@ -33,6 +33,6 @@ class PredicateSym extends Function1<Sym> {
 /**
  * Constructs an operator for predicate(arg: Sym). 
  */
-export function make_predicate_sym_operator(predicate: Sym): OperatorBuilder<U> {
+export function make_predicate_sym_extension(predicate: Sym): ExtensionBuilder<EXP> {
     return new Builder(predicate);
 }

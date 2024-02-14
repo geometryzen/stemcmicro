@@ -260,7 +260,7 @@ export function eval_and(p1: Cons, $: ExtensionEnv): U {
 }
 
 // or definition
-export function eval_or(p1: U, $: ExtensionEnv): U {
+export function eval_or(p1: Cons, $: ExtensionEnv): U {
     const wholeOrExpression = p1;
     let orPredicates = cdr(wholeOrExpression);
     let somePredicateUnknown = false;

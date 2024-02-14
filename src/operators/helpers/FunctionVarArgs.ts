@@ -1,13 +1,13 @@
 import { Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
-import { cons, Cons, U } from "math-expression-tree";
+import { cons, Cons, is_cons, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { AbstractExtension } from "./AbstractExtension";
 
 /**
  * An operator that matches (opr ...), with a variable number of arguments.
  */
-export abstract class FunctionVarArgs extends AbstractExtension {
+export abstract class FunctionVarArgs<T extends Cons> extends AbstractExtension<T> {
     readonly #hash: string;
     readonly #operator: Sym;
     // FIXME: opr is avalable to derived classes, so why #operator?
@@ -29,8 +29,8 @@ export abstract class FunctionVarArgs extends AbstractExtension {
     operator(): Sym {
         return this.#operator;
     }
-    evaluate(opr: U, argList: Cons, $: ExtensionEnv): [number, U] {
-        const expr = cons(this.opr, argList);
+    evaluate(opr: T, argList: Cons, $: ExtensionEnv): [number, U] {
+        const expr = cons(this.opr, argList) as T;
         try {
             return this.transform(expr, $);
         }
@@ -39,15 +39,20 @@ export abstract class FunctionVarArgs extends AbstractExtension {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    test(expr: Cons, opr: Sym, env: ExprContext): boolean {
+    test(expr: T, opr: Sym, env: ExprContext): boolean {
         throw new Error("Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform(expr: Cons, $: ExtensionEnv): [number, U] {
+    transform(expr: T, $: ExtensionEnv): [number, U] {
         throw new Error(`FunctionVarArgs.transform must be implemented in ${this.name}`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isKind(expr: Cons): expr is Cons {
-        return expr.opr.equals(this.opr);
+    isKind(expr: U, $: ExtensionEnv): expr is T {
+        if (is_cons(expr)) {
+            return expr.opr.equals(this.opr);
+        }
+        else {
+            return false;
+        }
     }
 }

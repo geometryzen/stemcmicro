@@ -1,9 +1,8 @@
 import { Str, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, make_extension_builder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_STR } from "../../hashing/hash_info";
-import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 
 export function strcmp(str1: string, str2: string): Sign {
@@ -106,6 +105,4 @@ class StrExtension implements Extension<Str>, AtomHandler<Str> {
 
 export const str_extension = new StrExtension();
 
-export const str_operator_builder = new ExtensionOperatorBuilder(function () {
-    return str_extension;
-});
+export const str_extension_builder = make_extension_builder<Str>(StrExtension);

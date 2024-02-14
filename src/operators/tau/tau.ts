@@ -2,7 +2,8 @@
 import { Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons1, U } from "math-expression-tree";
-import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Extension, ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { two } from "../../tree/rat/Rat";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
@@ -10,17 +11,11 @@ import { is_any } from "../helpers/is_any";
 const PI = native_sym(Native.PI);
 const MATH_TAU = native_sym(Native.tau);
 
-class Builder implements ExtensionBuilder<U> {
-    create(): Extension<U> {
-        return new Op();
-    }
-}
-
 /**
  * (tau x) => (* 2 pi x)
  */
 class Op extends Function1<U> implements Extension<U> {
-    constructor() {
+    constructor(readonly config: Readonly<EnvConfig>) {
         super('tau_any', MATH_TAU, is_any);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -34,4 +29,4 @@ function tau_(x: U, $: Pick<ExtensionEnv, 'multiply'>): U {
     return $.multiply(two_pi, x);
 }
 
-export const tau_builder = new Builder();
+export const tau_builder = make_extension_builder(Op);

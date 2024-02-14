@@ -1,19 +1,12 @@
 import { Cell, create_sym, Sym } from "math-expression-atoms";
-import { nil, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { Cons1, nil, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, make_extension_builder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
-import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { wrap_as_transform } from "../wrap_as_transform";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        const REACTION = create_sym("reaction");
-        return new Op($, REACTION);
-    }
-}
 
 type ARG = U;
 type EXP = Cons1<Sym, ARG>;
@@ -36,18 +29,18 @@ export function eval_reaction(expr: EXP, $: ExtensionEnv): U {
 
 class Op extends Function1<ARG> {
     readonly #hash: string;
-    constructor($: ExtensionEnv, REACTION: Sym) {
-        super('reaction', REACTION, is_any, $);
-        this.#hash = hash_unaop_atom(REACTION, HASH_ANY);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('reaction', create_sym("reaction"), is_any);
+        this.#hash = hash_unaop_atom(create_sym("reaction"), HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
-    valueOf(expr: EXP): U {
-        return eval_reaction(expr, this.$);
+    valueOf(expr: EXP, $: ExtensionEnv): U {
+        return eval_reaction(expr, $);
     }
-    transform(expr: EXP): [TFLAGS, U] {
-        return wrap_as_transform(this.valueOf(expr), expr);
+    transform(expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
+        return wrap_as_transform(this.valueOf(expr, $), expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
@@ -55,4 +48,4 @@ class Op extends Function1<ARG> {
     }
 }
 
-export const reaction_builder = new Builder();
+export const reaction_builder = make_extension_builder<EXP>(Op);

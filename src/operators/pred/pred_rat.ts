@@ -1,21 +1,14 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { create_sym, is_rat, Rat, Sym } from "math-expression-atoms";
+import { U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
-import { Rat } from "../../tree/rat/Rat";
-import { create_sym, Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { is_rat } from "../rat/is_rat";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new PredRat($);
-    }
-}
-
-class PredRat extends Function1<Rat> implements Operator<U> {
+class PredRat extends Function1<Rat> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('pred_rat', create_sym('pred'), is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('pred_rat', create_sym('pred'), is_rat);
         this.#hash = hash_unaop_atom(this.opr, HASH_RAT);
     }
     get hash(): string {
@@ -26,4 +19,4 @@ class PredRat extends Function1<Rat> implements Operator<U> {
     }
 }
 
-export const pred_rat = new Builder();
+export const pred_rat = make_extension_builder(PredRat);

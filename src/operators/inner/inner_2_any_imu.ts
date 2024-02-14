@@ -1,19 +1,11 @@
-import { Imu, is_imu } from "math-expression-atoms";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Imu, is_imu, one, Sym } from "math-expression-atoms";
+import { items_to_cons, U } from "math-expression-tree";
+import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_IMU } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
-import { one } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, items_to_cons, U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LHS = U;
 type RHS = Imu;
@@ -22,17 +14,16 @@ type EXP = Cons2<Sym, LHS, RHS>;
 /**
  * X | i => (1 | X) * i
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('inner_2_any_imu', MATH_INNER, is_any, is_imu, $);
+    constructor() {
+        super('inner_2_any_imu', MATH_INNER, is_any, is_imu);
         this.#hash = hash_binop_atom_atom(MATH_INNER, HASH_ANY, HASH_IMU);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         const X = lhs;
         const i = rhs;
         const inrP = $.valueOf(items_to_cons(opr, one, X));
@@ -41,4 +32,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const inner_2_any_imu = new Builder();
+export const inner_2_any_imu = make_extension_builder<EXP>(Op);

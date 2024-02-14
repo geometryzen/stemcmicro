@@ -1,25 +1,18 @@
-import { is_cons, nil, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
+import { is_sym, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons2, is_cons, nil, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { ASSIGN } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { caadr } from "../../tree/helpers";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
-import { is_sym } from "../sym/is_sym";
 import { define_function } from "./define_function";
 import { setq_indexed } from "./setq_indexed";
 
 const COMPONENT = native_sym(Native.component);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 type LHS = U;
 type RHS = U;
 type EXP = Cons2<Sym, LHS, RHS>;
@@ -98,19 +91,18 @@ export function set_symbol(lhs: Sym, binding: U, usrfunc: U, $: Pick<ExtensionEn
 /**
  * 
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    constructor($: ExtensionEnv) {
-        super('assign_any_any', ASSIGN, is_any, is_any, $);
+class Op extends Function2<LHS, RHS> {
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('assign_any_any', ASSIGN, is_any, is_any);
     }
-    transform(expr: U): [TFLAGS, U] {
-        const m = this.match(expr);
+    transform(expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
+        const m = this.match(expr, $);
         if (m) {
-            return this.transform2(m.opr, m.lhs, m.rhs, m);
+            return this.transform2(m.opr, m.lhs, m.rhs, m, $);
         }
         return [TFLAG_NONE, expr];
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(`${this.name} ${print_expr(lhs, $)} ${ASSIGN} ${print_expr(rhs, $)}`);
         // $.setBinding(lhs, rhs);
         // Assignments return NIL to prevent them from being printed.
@@ -121,4 +113,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const assign_any_any = new Builder();
+export const assign_any_any = make_extension_builder<EXP>(Op);

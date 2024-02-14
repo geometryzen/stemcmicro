@@ -1,6 +1,6 @@
 import { is_sym, Sym } from "math-expression-atoms";
 import { cons, Cons, is_cons, is_nil, nil, U } from "math-expression-tree";
-import { Extension, ExtensionBuilder, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, make_extension_builder, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { to_infix_string } from "../../print/to_infix_string";
 
 /**
@@ -183,10 +183,4 @@ function eval_stop() {
 }
 */
 
-class Builder implements ExtensionBuilder<U> {
-    create(): Extension<U> {
-        return new ConsExtension();
-    }
-}
-
-export const cons_extension_builder = new Builder();
+export const cons_extension_builder = make_extension_builder(ConsExtension);

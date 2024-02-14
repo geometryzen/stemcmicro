@@ -1,6 +1,8 @@
-import { assert_cell, create_sym, Sym } from "math-expression-atoms";
+import { assert_cell, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
 import { U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
@@ -8,18 +10,6 @@ import { is_any } from "../helpers/is_any";
 
 type ARG = U;
 type EXP = Cons1<Sym, ARG>;
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        const DEREF = create_sym("deref");
-        try {
-            return new Op($, DEREF);
-        }
-        finally {
-            DEREF.release();
-        }
-    }
-}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function eval_deref(expr: EXP, $: ExtensionEnv): U {
@@ -39,17 +29,16 @@ function eval_deref(expr: EXP, $: ExtensionEnv): U {
     }
 }
 
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly #hash: string;
-    constructor($: ExtensionEnv, DEREF: Sym) {
-        super('deref', DEREF, is_any, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('deref', native_sym(Native.deref), is_any);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: EXP): [number, U] {
-        const $ = this.$;
+    transform(expr: EXP, $: ExtensionEnv): [number, U] {
         const retval = eval_deref(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
@@ -60,4 +49,4 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
 }
 
-export const deref_builder = new Builder();
+export const deref_builder = make_extension_builder<EXP>(Op);

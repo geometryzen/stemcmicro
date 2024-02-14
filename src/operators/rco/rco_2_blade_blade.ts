@@ -1,22 +1,17 @@
 
-import { Blade, is_blade } from "math-expression-atoms";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Blade, is_blade, Sym } from "math-expression-atoms";
+import { U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_RCO } from "../../runtime/ns_math";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
 import { Function2 } from "../helpers/Function2";
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
-class Op extends Function2<Blade, Blade> implements Operator<Cons> {
+class Op extends Function2<Blade, Blade> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('rco_2_blade_blade', MATH_RCO, is_blade, is_blade, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('rco_2_blade_blade', MATH_RCO, is_blade, is_blade);
         this.#hash = hash_binop_atom_atom(MATH_RCO, HASH_BLADE, HASH_BLADE);
     }
     get hash(): string {
@@ -27,4 +22,4 @@ class Op extends Function2<Blade, Blade> implements Operator<Cons> {
     }
 }
 
-export const rco_2_blade_blade = new Builder();
+export const rco_2_blade_blade = make_extension_builder(Op);

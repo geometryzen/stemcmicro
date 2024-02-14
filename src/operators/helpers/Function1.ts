@@ -1,10 +1,10 @@
 import { is_sym, Sym } from "math-expression-atoms";
 import { Cons, Cons1, is_cons, items_to_cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";
 
-export abstract class Function1<T extends U> extends FunctionVarArgs implements Extension<Cons1<Sym, T>> {
+export abstract class Function1<T extends U> extends FunctionVarArgs<Cons1<Sym, T>> {
     constructor(name: string, opr: Sym, private readonly guard: GUARD<U, T>) {
         super(name, opr);
     }
@@ -14,14 +14,14 @@ export abstract class Function1<T extends U> extends FunctionVarArgs implements 
     test(expr: Cons1<Sym, T>, opr: Sym): boolean {
         throw new Error("Method not implemented.");
     }
-    isKind(expr: U): expr is Cons1<Sym, T> {
-        return !!this.match(expr);
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, T> {
+        return !!this.match(expr, $);
     }
-    match(expr: U): Cons1<Sym, T> | undefined {
+    match(expr: U, $: ExtensionEnv): Cons1<Sym, T> | undefined {
         if (is_cons(expr) && expr.length === 2) {
             const opr = expr.opr;
             const arg = expr.item(1);
-            if (is_sym(opr) && this.opr.equalsSym(opr) && this.guard(arg)) {
+            if (is_sym(opr) && this.opr.equalsSym(opr) && this.guard(arg, $)) {
                 return expr as Cons1<Sym, T>;
             }
             else {
@@ -33,7 +33,7 @@ export abstract class Function1<T extends U> extends FunctionVarArgs implements 
         }
     }
     transform(expr: Cons, $: ExtensionEnv): [TFLAGS, U] {
-        const m = this.match(expr);
+        const m = this.match(expr, $);
         if (m) {
             const arg = $.valueOf(m.arg);
             if (!arg.equals(m.arg)) {

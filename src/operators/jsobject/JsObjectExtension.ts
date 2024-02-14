@@ -1,14 +1,14 @@
 import { assert_jsobject, is_jsobject, JsObject, Sym } from "math-expression-atoms";
 import { AtomHandler } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Extension, ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
-import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 export class JsObjectExtension implements Extension<JsObject>, AtomHandler<JsObject> {
     #hash: string = hash_for_atom(new JsObject({}));
-    constructor() {
+    constructor(readonly config: Readonly<EnvConfig>) {
         // Nothing to see here.
     }
     test(atom: JsObject, opr: Sym): boolean {
@@ -67,6 +67,4 @@ export class JsObjectExtension implements Extension<JsObject>, AtomHandler<JsObj
     }
 }
 
-export const jsobject_extension = new ExtensionOperatorBuilder(function () {
-    return new JsObjectExtension();
-});
+export const jsobject_extension_builder = make_extension_builder(JsObjectExtension);

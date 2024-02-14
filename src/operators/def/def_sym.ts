@@ -1,15 +1,11 @@
-import { create_sym, is_sym, Sym } from "math-expression-atoms";
-import { nil, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { is_sym, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons1, nil, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { ProgrammingError } from "../../programming/ProgrammingError";
-import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
 import { extract_def_args } from "./extract_def_args";
-
-/**
- * TODO: We need this in the Native arsenal?
- */
-const DEF = create_sym("def");
 
 type ARG = Sym;
 type EXP = Cons1<Sym, ARG>;
@@ -46,17 +42,17 @@ function def_sym(sym: Sym, $: ExtensionEnv): U {
     return nil;
 }
 
-class Op extends Function1<ARG> implements Operator<EXP> {
-    constructor($: ExtensionEnv) {
-        super('def [symbol]', DEF, is_sym, $);
+class Op extends Function1<ARG> {
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('def [symbol]', native_sym(Native.def), is_sym);
     }
-    valueOf(expr: EXP): U {
+    valueOf(expr: EXP, $: ExtensionEnv): U {
         // console.lg(this.name, "valueOf", `${expr}`);
-        return eval_def_sym(expr, this.$);
+        return eval_def_sym(expr, $);
     }
-    transform(expr: EXP): [TFLAGS, U] {
+    transform(expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name, "transform", `${expr}`);
-        const retval = eval_def_sym(expr, this.$);
+        const retval = eval_def_sym(expr, $);
         return [TFLAG_DIFF, retval];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -66,13 +62,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
 }
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  * (def symbol)
  */
-export const def_sym_builder = new Builder();
+export const def_sym_builder = make_extension_builder<EXP>(Op);

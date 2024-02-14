@@ -1,7 +1,7 @@
 import { is_map, Map, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, make_extension_builder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { print_str } from "../../print/print";
 import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
@@ -83,14 +83,7 @@ class DictionaryExtension implements Extension<Map>, AtomHandler<Map> {
     }
 }
 
-
-class Builder implements ExtensionBuilder<U> {
-    create(): Extension<U> {
-        return new DictionaryExtension();
-    }
-}
-
-export const map_extension_builder = new Builder();
+export const map_extension_builder = make_extension_builder(DictionaryExtension);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function print_dictionary(dictionary: Map, $: ExtensionEnv): string {

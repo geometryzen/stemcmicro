@@ -1,17 +1,11 @@
-import { Extension, ExtensionBuilder, ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { TANH } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { eval_tanh } from "./tanh";
 
-class Builder implements ExtensionBuilder<U> {
-    create(): Extension<U> {
-        return new Op();
-    }
-}
-
-class Op extends FunctionVarArgs implements Extension<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
     constructor() {
         super('tanh', TANH);
@@ -27,4 +21,4 @@ class Op extends FunctionVarArgs implements Extension<Cons> {
     }
 }
 
-export const tanh_varargs_builder = new Builder();
+export const tanh_varargs_builder = make_extension_builder(Op);

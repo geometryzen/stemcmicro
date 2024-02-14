@@ -46,8 +46,7 @@ export abstract class AbstractKeywordOperator implements Extension<Sym> {
     toListString(expr: Sym, $: ExtensionEnv): string {
         return this.#keyword.key();
     }
-    evaluate(expr: U, argList: Cons, $: ExtensionEnv): [TFLAGS, U] {
-        // TODO: expr should be the same as the keyword.
+    evaluate(expr: Sym, argList: Cons, $: ExtensionEnv): [TFLAGS, U] {
         return this.transform(cons(expr, argList), $);
     }
     transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {

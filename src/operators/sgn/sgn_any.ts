@@ -23,8 +23,8 @@ class SgnFlt extends Function1<U> {
         return this.#hash;
     }
     // This may not be needed for uniqueness because of hash in other operators.
-    isKind(expr: U): expr is Cons1<Sym, U> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, U> {
+        if (super.isKind(expr, $)) {
             if (is_flt(expr)) {
                 return false;
             }

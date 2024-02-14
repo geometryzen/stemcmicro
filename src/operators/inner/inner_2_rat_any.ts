@@ -1,9 +1,9 @@
 import { is_rat, Rat, Sym, zero } from "math-expression-atoms";
-import { Cons, items_to_cons, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Cons2, items_to_cons, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 
@@ -59,31 +59,26 @@ function inner_2_rat_any(lhs: Rat, rhs: U, $: ExtensionEnv): U {
 /**
  * 
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('inner_2_rat_any', MATH_INNER, is_rat, is_any, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('inner_2_rat_any', MATH_INNER, is_rat, is_any);
         this.#hash = hash_binop_atom_atom(MATH_INNER, HASH_RAT, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
-    valueOf(expr: EXP) {
-        return eval_inner_2_rat_any(expr, this.$);
+    valueOf(expr: EXP, $: ExtensionEnv) {
+        return eval_inner_2_rat_any(expr, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
-        const retval = eval_inner_2_rat_any(orig, this.$);
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP, $: ExtensionEnv): [TFLAGS, U] {
+        const retval = eval_inner_2_rat_any(orig, $);
         // We know that the expression will always be transformed.
         // Should we assert this as a postcondition (with a flag to optimize)?
         return [TFLAG_DIFF, retval];
     }
 }
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
+export const inner_2_rat_any_builder = make_extension_builder<EXP>(Op);
 
-export const inner_2_rat_any_builder = new Builder();

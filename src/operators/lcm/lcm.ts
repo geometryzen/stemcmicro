@@ -1,4 +1,4 @@
-import { car, cdr, is_cons, U } from 'math-expression-tree';
+import { car, cdr, Cons, is_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { inverse } from '../../helpers/inverse';
@@ -6,7 +6,7 @@ import { doexpand_binary } from '../../runtime/defs';
 import { gcd } from '../gcd/gcd';
 
 // Find the least common multiple of two expressions.
-export function eval_lcm(p1: U, $: ExtensionEnv): U {
+export function eval_lcm(p1: Cons, $: ExtensionEnv): U {
     p1 = cdr(p1);
     let result = $.valueOf(car(p1));
     if (is_cons(p1)) {

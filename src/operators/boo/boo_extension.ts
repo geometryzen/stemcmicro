@@ -1,8 +1,7 @@
 import { Boo, booT, is_boo, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
+import { Extension, ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 
 export class BooExtension implements Extension<Boo>, AtomHandler<Boo> {
     constructor() {
@@ -60,6 +59,4 @@ export class BooExtension implements Extension<Boo>, AtomHandler<Boo> {
     }
 }
 
-export const boo_extension = new ExtensionOperatorBuilder(function () {
-    return new BooExtension();
-});
+export const boo_extension = make_extension_builder<Boo>(BooExtension);

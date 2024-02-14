@@ -4,15 +4,15 @@ import { diffFlag, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../en
 import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";
 
-export abstract class Function3<A extends U, B extends U, C extends U> extends FunctionVarArgs {
+export abstract class Function3<A extends U, B extends U, C extends U> extends FunctionVarArgs<Cons3<Sym, A, B, C>> {
     constructor(name: string, opr: Sym, private readonly guardA: GUARD<U, A>, private readonly guardB: GUARD<U, B>, private readonly guardC: GUARD<U, C>) {
         super(name, opr);
     }
-    isKind(expr: U): expr is Cons3<Sym, A, B, C> {
-        const m = this.match(expr);
+    isKind(expr: U, $: ExtensionEnv): expr is Cons3<Sym, A, B, C> {
+        const m = this.match(expr, $);
         return !!m;
     }
-    match(expr: U): Cons3<Sym, A, B, C> | undefined {
+    match(expr: U, $: ExtensionEnv): Cons3<Sym, A, B, C> | undefined {
         try {
             if (is_cons(expr) && expr.length === 4) {
                 const opr = expr.opr;
@@ -22,9 +22,9 @@ export abstract class Function3<A extends U, B extends U, C extends U> extends F
                 try {
                     if (is_sym(opr)) {
                         if (this.opr.equalsSym(opr)) {
-                            if (this.guardA(a)) {
-                                if (this.guardB(b)) {
-                                    if (this.guardC(c)) {
+                            if (this.guardA(a, $)) {
+                                if (this.guardB(b, $)) {
+                                    if (this.guardC(c, $)) {
                                         return expr as Cons3<Sym, A, B, C>;
                                     }
                                     else {
@@ -63,7 +63,7 @@ export abstract class Function3<A extends U, B extends U, C extends U> extends F
         }
     }
     transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {
-        const m = this.match(expr);
+        const m = this.match(expr, $);
         if (m) {
             // The match ensures that the cast is OK. We could double-check using an assert.
             const argA = m.item(1) as A;

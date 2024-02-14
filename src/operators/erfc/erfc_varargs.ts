@@ -1,31 +1,22 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { erfc } from "./erfc";
+import { create_flt, is_flt, one } from "math-expression-atoms";
+import { Cons, items_to_cons, U } from "math-expression-tree";
+import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { ERFC } from "../../runtime/constants";
-import { create_flt } from "../../tree/flt/Flt";
 import { cadr } from "../../tree/helpers";
-import { one } from "../../tree/rat/Rat";
-import { Cons, items_to_cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+import { erfc } from "./erfc";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('erfc', ERFC, $);
+    constructor() {
+        super('erfc', ERFC);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
         const retval = yerfc($.valueOf(cadr(expr)), $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
@@ -45,4 +36,4 @@ function yerfc(p1: U, $: ExtensionEnv): U {
     return items_to_cons(ERFC, p1);
 }
 
-export const erfc_varargs = new Builder();
+export const erfc_varargs = make_extension_builder(Op);

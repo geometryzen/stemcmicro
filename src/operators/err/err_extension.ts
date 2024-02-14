@@ -1,7 +1,7 @@
 import { Err, is_err, Sym } from "math-expression-atoms";
 import { AtomHandler } from "math-expression-context";
 import { cons, Cons, nil, U } from 'math-expression-tree';
-import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 
 const ENGLISH_UNDEFINED = 'undefined';
@@ -77,10 +77,4 @@ export class ErrExtension implements Extension<Err>, AtomHandler<Err> {
     }
 }
 
-class Builder implements ExtensionBuilder<U> {
-    create(): Extension<U> {
-        return new ErrExtension();
-    }
-}
-
-export const err_extension_builder = new Builder();
+export const err_extension_builder = make_extension_builder(ErrExtension);

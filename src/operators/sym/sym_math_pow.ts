@@ -1,25 +1,18 @@
-import { Directive, Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { assert_sym, is_sym, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, cons, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Directive, Extension, ExtensionEnv, FEATURE, make_extension_builder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, cons, U } from "../../tree/tree";
-import { assert_sym } from "./assert_sym";
-import { is_sym } from "./is_sym";
 
 const MATH_POW = native_sym(Native.pow);
-
-class Builder implements ExtensionBuilder<Sym> {
-    create(): Extension<Sym> {
-        return new SymMathPow();
-    }
-}
 
 /**
  * 
  */
 class SymMathPow implements Extension<Sym> {
-    constructor() {
+    constructor(readonly config: Readonly<EnvConfig>) {
+        // We actually know config.useCaretForExponentiation already! 
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
@@ -78,4 +71,4 @@ class SymMathPow implements Extension<Sym> {
     }
 }
 
-export const sym_math_pow_builder = new Builder();
+export const sym_math_pow_builder = make_extension_builder(SymMathPow);

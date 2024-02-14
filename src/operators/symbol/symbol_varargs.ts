@@ -1,34 +1,26 @@
-import { ExtensionEnv, Operator, OperatorBuilder, Predicates, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { create_sym, is_str, is_tensor } from "math-expression-atoms";
+import { Cons, is_nil, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Extension, ExtensionEnv, make_extension_builder, Predicates, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_nonop_cons, HASH_STR, HASH_TENSOR } from "../../hashing/hash_info";
 import { convert_tensor_to_primitives } from "../../helpers/convert_tensor_to_primitives";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { create_sym } from "../../tree/sym/Sym";
-import { Cons, is_nil, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { is_str } from "../str/is_str";
-import { is_tensor } from "../tensor/is_tensor";
 
 const SYMBOL = native_sym(Native.symbol);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends FunctionVarArgs<Cons> implements Extension<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('symbol_varargs', SYMBOL, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('symbol_varargs', SYMBOL);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(symbolExpr: Cons): [number, U] {
-        const $ = this.$;
-        const argList = symbolExpr.argList;
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
+        const argList = expr.argList;
         const descriptionStr = $.valueOf(argList.head);
         if (is_str(descriptionStr)) {
             const predicatesTensor = argList.cdr.head;
@@ -91,4 +83,4 @@ function primitives_to_pairs(primitives: (boolean | string)[]): [string, boolean
     return pairs;
 }
 
-export const symbol_varargs = new Builder();
+export const symbol_varargs = make_extension_builder(Op);

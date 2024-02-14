@@ -15,7 +15,7 @@ import { subst } from "../subst/subst";
  * 3. contains()
  * TODO: The hope is that the dead-code methods can be removed when refactoring is complete.
  */
-export abstract class AbstractExtension {
+export abstract class AbstractExtension<T extends U> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(public readonly name: string) {
     }
@@ -27,7 +27,7 @@ export abstract class AbstractExtension {
     compareTerms(lhs: U, rhs: U): Sign {
         throw new Error("Abtract Operator Method not implemented.");
     }
-    subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'extensionFor'>): U {
+    subst(expr: T, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'extensionFor'>): U {
         if (expr.equals(oldExpr)) {
             return newExpr;
         }
@@ -68,16 +68,16 @@ export abstract class AbstractExtension {
         }
         throw new SystemError();
     }
-    toInfixString(expr: U, $: ExtensionEnv): string {
+    toInfixString(expr: T, $: ExtensionEnv): string {
         return render_as_infix(expr, $);
     }
-    toLatexString(expr: U, $: ExtensionEnv): string {
+    toLatexString(expr: T, $: ExtensionEnv): string {
         return render_as_latex(expr, $);
     }
-    toListString(expr: U, $: ExtensionEnv): string {
+    toListString(expr: T, $: ExtensionEnv): string {
         return render_as_sexpr(expr, $);
     }
-    valueOf(expr: U, $: ExtensionEnv): U {
+    valueOf(expr: T, $: ExtensionEnv): U {
         return $.valueOf(expr);
     }
 }

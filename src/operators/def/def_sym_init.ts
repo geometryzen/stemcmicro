@@ -1,15 +1,11 @@
-import { create_sym, Err, is_sym, Str, Sym } from "math-expression-atoms";
-import { nil, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Cons2 } from "../helpers/Cons2";
+import { Err, is_sym, Str, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons2, nil, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { extract_def_args } from "./extract_def_args";
-
-/**
- * TODO: We need this in the Native arsenal?
- */
-const DEF = create_sym("def");
 
 type LHS = Sym;
 type RHS = U;
@@ -55,17 +51,17 @@ function def_sym_init(sym: Sym, init: U, $: ExtensionEnv): U {
     }
 }
 
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    constructor($: ExtensionEnv) {
-        super('def [symbol init]', DEF, is_sym, is_any, $);
+class Op extends Function2<LHS, RHS> {
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('def [symbol init]', native_sym(Native.def), is_sym, is_any);
     }
-    valueOf(expr: EXP): U {
-        return eval_def_sym_init(expr, this.$);
+    valueOf(expr: EXP, $: ExtensionEnv): U {
+        return eval_def_sym_init(expr, $);
     }
-    override transform(expr: EXP): [TFLAGS, U] {
+    override transform(expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         // We override the transform method because (def ...) is a special form.
         // If we don't we run into troble because we attempt to evaluate the symbol. 
-        const retval = eval_def_sym_init(expr, this.$);
+        const retval = eval_def_sym_init(expr, $);
         return [TFLAG_DIFF, retval];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -76,13 +72,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  * (def symbol init)
  */
-export const def_sym_init_builder = new Builder();
+export const def_sym_init_builder = make_extension_builder<EXP>(Op);

@@ -1,33 +1,27 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { MATH_MUL, MATH_RCO } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, items_to_cons, U } from "../../tree/tree";
+import { items_to_cons, U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { is_mul_2_scalar_any } from "../mul/is_mul_2_scalar_any";
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
-
 /**
  * x >> (a * y) => a * (x >> y)
  */
-class Op extends Function2<U, Cons2<Sym, U, U>> implements Operator<Cons> {
+class Op extends Function2<U, Cons2<Sym, U, U>> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('rco_2_any_mul_2_scalar_any', MATH_RCO, is_any, is_mul_2_scalar_any($), $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('rco_2_any_mul_2_scalar_any', MATH_RCO, is_any, is_mul_2_scalar_any);
         this.#hash = hash_binop_atom_cons(MATH_RCO, HASH_ANY, MATH_MUL);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: U, rhs: Cons2<Sym, U, U>): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: U, rhs: Cons2<Sym, U, U>, expr: unknown, $: ExtensionEnv): [TFLAGS, U] {
         const x = lhs;
         const a = rhs.lhs;
         const y = rhs.rhs;
@@ -37,4 +31,4 @@ class Op extends Function2<U, Cons2<Sym, U, U>> implements Operator<Cons> {
     }
 }
 
-export const rco_2_any_mul_2_scalar_any = new Builder();
+export const rco_2_any_mul_2_scalar_any = make_extension_builder(Op);

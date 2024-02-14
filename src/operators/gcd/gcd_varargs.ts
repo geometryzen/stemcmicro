@@ -1,7 +1,7 @@
+import { Cons, U } from "math-expression-tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { GCD } from "../../runtime/constants";
-import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { eval_gcd } from "./gcd";
 
@@ -11,7 +11,7 @@ class Builder implements ExtensionBuilder<U> {
     }
 }
 
-class Op extends FunctionVarArgs implements Extension<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
     constructor() {
         super('gcd', GCD);

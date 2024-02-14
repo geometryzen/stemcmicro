@@ -1,21 +1,10 @@
 import { assert_map, assert_sym, assert_tensor, Err, is_err, is_map, is_str, is_tensor, Map, Str, Sym, Tensor } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, items_to_cons, nil, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        const DEFN = native_sym(Native.defn);
-        try {
-            return new Op($, DEFN);
-        }
-        finally {
-            DEFN.release();
-        }
-    }
-}
 
 function split_defn_args(expr: Cons): [name: Sym, doc: Str | U, attrMap: Map | U, params: Tensor<U>, prepost: U, body: U] {
     const argList = expr.argList;
@@ -119,22 +108,21 @@ function eval_defn(expr: Cons, $: ExtensionEnv): U {
  * [name doc-string? attr-map? [params*] prepost-map? body]
  * [name doc-string? attr-map? ([params*] prepost-map? body) + attr-map?]
  */
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv, DEFN: Sym) {
-        super('defn', DEFN, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('defn', native_sym(Native.defn));
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
         const retval = eval_defn(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }
 
-export const defn_builder = new Builder();
+export const defn_builder = make_extension_builder(Op);
 

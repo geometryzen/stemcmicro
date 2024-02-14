@@ -1,5 +1,5 @@
 import { create_int, is_sym, one } from 'math-expression-atoms';
-import { nil, U } from 'math-expression-tree';
+import { Cons, nil, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
@@ -8,7 +8,7 @@ import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
 /**
  * product(body:U, index:Sym, lower:Num, upper:Num): U
  */
-export function eval_product(expr: U, $: ExtensionEnv): U {
+export function eval_product(expr: Cons, $: ExtensionEnv): U {
     // 1st arg
     const body = cadr(expr);
 

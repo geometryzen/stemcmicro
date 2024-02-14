@@ -486,9 +486,7 @@ export const MODE_FLAGS_ALL = MODE_EXPANDING | MODE_FACTORING;
 export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTORING;
 
 /**
- * Use to evaluate any kind of expression.
- * This is the means of extending the system to include other atoms.
- * Every object in the system is an opaque handle.
+ * @deprecated Migrate to Extension
  */
 export interface Operator<T extends U> {
     readonly name?: string;
@@ -552,4 +550,21 @@ export interface Extension<T extends U> {
     evaluate(opr: T, argList: Cons, $: ExtensionEnv): [TFLAGS, U];
     transform(expr: T, $: ExtensionEnv): [TFLAGS, U];
     valueOf(expr: T, $: ExtensionEnv): U;
+}
+
+interface ExtensionConstructor<T extends U> {
+    new(config: Readonly<EnvConfig>): Extension<T>;
+}
+
+class Builder<T extends U> implements ExtensionBuilder<T> {
+    constructor(readonly extension: ExtensionConstructor<T>) {
+
+    }
+    create(config: Readonly<EnvConfig>): Extension<T> {
+        return new this.extension(config);
+    }
+}
+
+export function make_extension_builder<T extends U>(extension: ExtensionConstructor<T>): ExtensionBuilder<T> {
+    return new Builder<T>(extension);
 }

@@ -1,7 +1,7 @@
 import { create_int, is_uom, Sym, Uom } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
 
 class UomExtension implements Extension<Uom>, AtomHandler<Uom> {
@@ -68,10 +68,4 @@ class UomExtension implements Extension<Uom>, AtomHandler<Uom> {
     }
 }
 
-class Builder implements ExtensionBuilder<U> {
-    create(): Extension<U> {
-        return new UomExtension();
-    }
-}
-
-export const uom_extension_builder = new Builder();
+export const uom_extension_builder = make_extension_builder(UomExtension);

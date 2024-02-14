@@ -3,9 +3,7 @@ import { Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 
 /**
- * A poor-mans way of implementing an OperatorBuilder is to take an existing Extension
- * and wrap it. That's what this class does. Use it for existing extensions, migrating
- * to a first-class implementation of OperatorBuilder.
+ * @deprecated Migrate to ExtensionBuilder. 
  */
 export class ExtensionOperatorBuilder<T extends U> implements OperatorBuilder<T> {
     /**

@@ -1,6 +1,6 @@
 import { assert_str, create_sym, Err, is_str, is_sym, Str, Sym } from "math-expression-atoms";
 import { Cons3, nil, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Function3 } from "../helpers/Function3";
 import { is_any } from "../helpers/is_any";
 import { extract_def_args } from "./extract_def_args";
@@ -55,17 +55,17 @@ function def_sym_doc_init(sym: Sym, doc: Str, init: U, $: ExtensionEnv): U {
     }
 }
 
-class Op extends Function3<A, B, C> implements Operator<EXP> {
-    constructor($: ExtensionEnv) {
-        super('def [symbol doc-string init]', DEF, is_sym, is_str, is_any, $);
+class Op extends Function3<A, B, C> {
+    constructor() {
+        super('def [symbol doc-string init]', DEF, is_sym, is_str, is_any);
     }
-    valueOf(expr: EXP): U {
-        return eval_def_sym_doc_init(expr, this.$);
+    valueOf(expr: EXP, $: ExtensionEnv): U {
+        return eval_def_sym_doc_init(expr, $);
     }
-    override transform(expr: EXP): [TFLAGS, U] {
+    override transform(expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         // We override the transform method because (def ...) is a special form.
         // If we don't we run into troble because we attempt to evaluate the symbol. 
-        const retval = eval_def_sym_doc_init(expr, this.$);
+        const retval = eval_def_sym_doc_init(expr, $);
         return [TFLAG_DIFF, retval];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -76,13 +76,7 @@ class Op extends Function3<A, B, C> implements Operator<EXP> {
     }
 }
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  * (def symbol doc-string init)
  */
-export const def_sym_doc_init_builder = new Builder();
+export const def_sym_doc_init_builder = make_extension_builder<EXP>(Op);

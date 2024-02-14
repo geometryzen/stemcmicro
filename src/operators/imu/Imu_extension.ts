@@ -2,17 +2,11 @@
 import { imu, Imu, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, make_extension_builder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_IMU } from "../../hashing/hash_info";
 import { MATH_IMU } from "../../runtime/ns_math";
 
 const ISZERO = native_sym(Native.iszero);
-
-class Builder implements ExtensionBuilder<Imu> {
-    create(): Extension<Imu> {
-        return new ImuExtension();
-    }
-}
 
 class ImuExtension implements Extension<Imu> {
     constructor() {
@@ -87,4 +81,4 @@ class ImuExtension implements Extension<Imu> {
     }
 }
 
-export const imu_extension_builder = new Builder();
+export const imu_extension_builder = make_extension_builder(ImuExtension);

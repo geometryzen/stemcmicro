@@ -1,15 +1,13 @@
+import { create_flt, is_flt, zero } from 'math-expression-atoms';
+import { car, Cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { ARCTANH, TANH } from '../../runtime/constants';
-import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
-import { zero } from '../../tree/rat/Rat';
-import { car, items_to_cons, U } from '../../tree/tree';
-import { is_flt } from '../flt/is_flt';
 
 //             exp(2 x) - 1
 //  tanh(x) = --------------
 //             exp(2 x) + 1
-export function eval_tanh(p1: U, $: ExtensionEnv): U {
+export function eval_tanh(p1: Cons, $: ExtensionEnv): U {
     return tanh($.valueOf(cadr(p1)), $);
 }
 

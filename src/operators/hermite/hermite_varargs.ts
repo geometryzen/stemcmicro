@@ -1,17 +1,11 @@
-import { Extension, ExtensionBuilder, ExtensionEnv, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Cons, U } from "math-expression-tree";
+import { Extension, ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { HERMITE } from "../../runtime/constants";
-import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { eval_hermite } from "./eval_hermite";
 
-class Builder implements ExtensionBuilder<U> {
-    create(): Extension<U> {
-        return new Op();
-    }
-}
-
-class Op extends FunctionVarArgs implements Extension<Cons> {
+class Op extends FunctionVarArgs<Cons> implements Extension<Cons> {
     readonly #hash: string;
     constructor() {
         super('hermite', HERMITE);
@@ -32,4 +26,4 @@ class Op extends FunctionVarArgs implements Extension<Cons> {
     }
 }
 
-export const hermite_varargs = new Builder();
+export const hermite_varargs = make_extension_builder<Cons>(Op);

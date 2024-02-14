@@ -1,21 +1,12 @@
 
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { is_tensor, Sym, Tensor } from "math-expression-atoms";
+import { Cons2, U } from "math-expression-tree";
+import { ExtensionEnv, FEATURE, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_TENSOR } from "../../hashing/hash_info";
 import { MAXDIM } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { MATH_OUTER } from "../../runtime/ns_math";
-import { Sym } from "../../tree/sym/Sym";
-import { is_tensor } from "../tensor/is_tensor";
-import { Tensor } from "../../tree/tensor/Tensor";
-import { Cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 export function outer_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): U {
     const ndim = p1.ndim + p2.ndim;
@@ -40,20 +31,19 @@ type LHS = Tensor;
 type RHS = Tensor;
 type EXP = Cons2<Sym, LHS, RHS>;
 
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = [];
-    constructor($: ExtensionEnv) {
-        super('outer_2_tensor_tensor', MATH_OUTER, is_tensor, is_tensor, $);
+    constructor() {
+        super('outer_2_tensor_tensor', MATH_OUTER, is_tensor, is_tensor);
         this.#hash = hash_binop_atom_atom(MATH_OUTER, HASH_TENSOR, HASH_TENSOR);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         return [TFLAG_DIFF, outer_tensor_tensor(lhs, rhs, $)];
     }
 }
 
-export const outer_2_tensor_tensor = new Builder();
+export const outer_2_tensor_tensor = make_extension_builder<EXP>(Op);

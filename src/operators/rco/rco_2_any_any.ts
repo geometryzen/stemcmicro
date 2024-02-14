@@ -1,23 +1,17 @@
 
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Sym } from "math-expression-atoms";
+import { Cons2, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { make_extension_builder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_RCO } from "../../runtime/ns_math";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
-
-class Op extends Function2<U, U> implements Operator<Cons> {
+class Op extends Function2<U, U> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('rco_2_any_any', MATH_RCO, is_any, is_any, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('rco_2_any_any', MATH_RCO, is_any, is_any);
         this.#hash = hash_binop_atom_atom(MATH_RCO, HASH_ANY, HASH_ANY);
     }
     get hash(): string {
@@ -28,4 +22,4 @@ class Op extends Function2<U, U> implements Operator<Cons> {
     }
 }
 
-export const rco_2_any_any = new Builder();
+export const rco_2_any_any = make_extension_builder(Op);

@@ -14,6 +14,7 @@ import { eval_lookup } from '../lookup';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
+import { cell_extension } from '../operators/atom/atom_extension';
 import { atom_builder } from '../operators/atom/eval_atom';
 import { besselj_varargs } from '../operators/besselj/besselj_varargs';
 import { bessely_varargs } from '../operators/bessely/bessely_varargs';
@@ -150,7 +151,7 @@ import { make_printmode_operator } from '../operators/printing/make_printmode_op
 import { product_varargs } from '../operators/product/product_varargs';
 import { eval_quote } from '../operators/quote/quote_varargs';
 import { eval_rank } from '../operators/rank/rank';
-import { rat_extension } from '../operators/rat/rat_extension';
+import { rat_extension_builder } from '../operators/rat/rat_extension';
 import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
 import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_scalar_any';
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
@@ -352,7 +353,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(rco_2_any_any);
 
     $.defineOperator(boo_extension);
-    $.defineOperator(rat_extension);
+    $.defineOperator(rat_extension_builder);
     $.defineOperator(flt_extension);
     $.defineOperator(str_operator_builder);
     $.defineOperator(jsobject_extension);
@@ -629,6 +630,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(sym_extension);
     $.defineOperator(tensor_operator_builder);
     $.defineOperator(blade_extension);
+    $.defineOperator(cell_extension);
     $.defineOperator(uom_extension);
     $.defineOperator(hyp_extension);
     $.defineOperator(err_extension);

@@ -1,10 +1,12 @@
 
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { imu } from "../../env/imu";
+import { imu, Imu, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { cons, Cons, U } from "math-expression-tree";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_IMU } from "../../hashing/hash_info";
 import { MATH_IMU } from "../../runtime/ns_math";
-import { Imu } from "../../tree/imu/Imu";
-import { cons, Cons, U } from "../../tree/tree";
+
+const ISZERO = native_sym(Native.iszero);
 
 class Builder implements OperatorBuilder<Imu> {
     create($: ExtensionEnv): Operator<Imu> {
@@ -15,6 +17,14 @@ class Builder implements OperatorBuilder<Imu> {
 class ImuExtension implements Operator<Imu> {
     constructor(private readonly $: ExtensionEnv) {
         // Nothing to see here.
+    }
+    phases?: number | undefined;
+    dependencies?: FEATURE[] | undefined;
+    test(expr: Imu, opr: Sym): boolean {
+        if (opr.equalsSym(ISZERO)) {
+            return false;
+        }
+        throw new Error(`ImuExtension.test ${opr} method not implemented.`);
     }
     iscons(): false {
         return false;

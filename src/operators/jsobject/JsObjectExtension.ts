@@ -1,14 +1,18 @@
-import { assert_jsobject, is_jsobject, JsObject } from "math-expression-atoms";
+import { assert_jsobject, is_jsobject, JsObject, Sym } from "math-expression-atoms";
+import { AtomHandler } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
-export class JsObjectExtension implements Extension<JsObject> {
+export class JsObjectExtension implements Extension<JsObject>, AtomHandler<JsObject> {
     #hash: string = hash_for_atom(new JsObject({}));
     constructor() {
         // Nothing to see here.
+    }
+    test(atom: JsObject, opr: Sym): boolean {
+        throw new Error(`${this.name}.dispatch(${atom},${opr}) method not implemented.`);
     }
     iscons(): false {
         return false;

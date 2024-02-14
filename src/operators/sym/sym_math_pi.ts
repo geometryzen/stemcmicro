@@ -1,10 +1,13 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { cons, Cons, U } from "math-expression-tree";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_PI } from "../../runtime/ns_math";
-import { Sym } from "../../tree/sym/Sym";
-import { cons, Cons, U } from "../../tree/tree";
 import { is_pi } from "../pi/is_pi";
 import { assert_sym } from "./assert_sym";
+
+const ISZERO = native_sym(Native.iszero);
 
 class Builder implements OperatorBuilder<Sym> {
     create($: ExtensionEnv): Operator<Sym> {
@@ -18,6 +21,14 @@ class Builder implements OperatorBuilder<Sym> {
 class SymMathPi implements Operator<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(private readonly $: ExtensionEnv) {
+    }
+    phases?: number | undefined;
+    dependencies?: FEATURE[] | undefined;
+    test(expr: Sym, opr: Sym): boolean {
+        if (opr.equalsSym(ISZERO)) {
+            return false;
+        }
+        throw new Error(`SymMathPi.test ${opr} Method not implemented.`);
     }
     iscons(): false {
         return false;

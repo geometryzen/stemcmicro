@@ -1,9 +1,10 @@
-import { is_map, Map } from "math-expression-atoms";
+import { is_map, Map, Sym } from "math-expression-atoms";
+import { AtomHandler, ExprContext } from "math-expression-context";
+import { cons, Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { print_str } from "../../print/print";
 import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
-import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 function verify_map(x: Map): Map | never {
@@ -15,14 +16,17 @@ function verify_map(x: Map): Map | never {
     }
 }
 
-class DictionaryExtension implements Extension<Map> {
+class DictionaryExtension implements Extension<Map>, AtomHandler<Map> {
     // Create an exemplar of the atom we control to discover it's name for hashing purposes.
     readonly #atom: Map = verify_map(new Map([]));
     readonly #hash: string = hash_for_atom(verify_map(this.#atom));
     readonly dependencies: FEATURE[] = ['Map'];
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor($: ExtensionEnv) {
+    constructor() {
         // Nothing to see here.
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(atom: Map, opr: Sym, env: ExprContext): boolean {
+        return false;
     }
     iscons(): false {
         return false;
@@ -77,16 +81,14 @@ class DictionaryExtension implements Extension<Map> {
         finally {
             defs.setPrintMode(printMode);
         }
-
-        throw new Error("DictionaryExtension.toListString() method not implemented.");
     }
 }
 
 /**
  * The dictionary Extension a.k.a Map extension.
  */
-export const map_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new DictionaryExtension($);
+export const map_extension = new ExtensionOperatorBuilder(function () {
+    return new DictionaryExtension();
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -1,7 +1,8 @@
+import { Str, Sym } from "math-expression-atoms";
+import { AtomHandler, ExprContext } from "math-expression-context";
+import { cons, Cons, U } from "math-expression-tree";
 import { Extension, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_STR } from "../../hashing/hash_info";
-import { Str } from "../../tree/str/Str";
-import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 
@@ -21,9 +22,13 @@ export function is_str(arg: unknown): arg is Str {
     return arg instanceof Str;
 }
 
-class StrExtension implements Extension<Str> {
+class StrExtension implements Extension<Str>, AtomHandler<Str> {
     constructor() {
         // Nothing to see here.
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(atom: Str, opr: Sym, env: ExprContext): boolean {
+        return false;
     }
     iscons(): false {
         return false;
@@ -37,10 +42,11 @@ class StrExtension implements Extension<Str> {
     get name(): string {
         return 'StrExtension';
     }
-    valueOf(str: Str): U {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    valueOf(str: Str, $: ExprContext): U {
         return str;
     }
-    isKind(arg: unknown): arg is Str {
+    isKind(arg: U): arg is Str {
         return is_str(arg);
     }
     subst(expr: Str, oldExpr: U, newExpr: U): U {

@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CellHost, Rat, Sym, Tensor } from "math-expression-atoms";
-import { ExprContext, LambdaExpr } from "math-expression-context";
+import { AtomHandler, ExprContext, LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
-import { Cons, U } from "math-expression-tree";
+import { Atom, Cons, U } from "math-expression-tree";
 import { AtomListener, ExprEngineListener } from "../api/api";
-import { CompareFn, EvalFunction, ExprComparator, Extension, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler } from "../env/ExtensionEnv";
+import { CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler } from "../env/ExtensionEnv";
 import { StackFunction } from "./StackFunction";
 
 export class ExtensionEnvAdapter implements ExtensionEnv {
     constructor(readonly ctxt: ExprContext) {
 
+    }
+    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
+        throw new Error("Method not implemented.");
     }
     addAtomListener(subscriber: AtomListener): void {
         throw new Error("Method not implemented.");
@@ -87,6 +90,9 @@ export class ExtensionEnvAdapter implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     defineOperator(builder: OperatorBuilder<U>): void {
+        throw new Error("Method not implemented.");
+    }
+    defineExtension(builder: ExtensionBuilder<U>): void {
         throw new Error("Method not implemented.");
     }
     defineAssociative(opr: Sym, id: Rat): void {

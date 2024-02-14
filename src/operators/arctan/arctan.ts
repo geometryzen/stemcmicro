@@ -69,34 +69,34 @@ export function eval_arctan(expr: Cons, $: ExtensionEnv): U {
  * Note that the arguments to this function pass the y-coordinate first and the x-coordinate second.
  * @param y The coordinate of the point.
  * @param x The coordinate of the point.
- * @param $ 
+ * @param _ 
  * @returns the angle in the plane (in radians) between the positive x-axis and the ray from (0,0) to the point(x,y).
  * The angle is in the rsange -pi to pi, inclusive. Thus we measure the counterclockwise angle.
  */
-function arctan2(y: U, x: U, $: ExtensionEnv): U {
+function arctan2(y: U, x: U, _: ExtensionEnv): U {
     // console.lg("arctan2", $.toInfixString(y), $.toInfixString(x));
 
     if (is_tensor(y)) {
-        return y.map((e) => arctan2(e, x, $));
+        return y.map((e) => arctan2(e, x, _));
     }
 
     if (is_num(x) && is_num(y)) {
-        return arctan_numbers(x, y, $);
+        return arctan_numbers(x, y, _);
     }
 
     // arctan(z) = -1/2 i log((i - z) / (i + z))
-    if (!iszero(x) && (isdoublez(x) || isdoublez(y))) {
-        const z = $.divide(y, x);
-        const i_minus_z = $.subtract(imu, z);
-        const i_plus_z = $.add(imu, z);
-        const arg = $.divide(i_minus_z, i_plus_z);
+    if (!iszero(x, _) && (isdoublez(x) || isdoublez(y))) {
+        const z = _.divide(y, x);
+        const i_minus_z = _.subtract(imu, z);
+        const i_plus_z = _.add(imu, z);
+        const arg = _.divide(i_minus_z, i_plus_z);
         const s = items_to_cons(native_sym(Native.log), arg);
         return items_to_cons(native_sym(Native.multiply), create_rat(-1, 2), imu, s);
     }
 
     // arctan(-y,x) = -arctan(y,x)
     if (isnegativeterm(y)) {
-        return $.negate(items_to_cons(native_sym(Native.arctan), $.negate(y), x));
+        return _.negate(items_to_cons(native_sym(Native.arctan), _.negate(y), x));
     }
 
     if (is_cons(y) && is_sym(y.opr) && is_native(y.opr, Native.tan) && isplusone(x)) {
@@ -107,9 +107,9 @@ function arctan2(y: U, x: U, $: ExtensionEnv): U {
     return items_to_cons(native_sym(Native.arctan), y, x);
 }
 
-function arctan_numbers(x: Num, y: Num, env: ExtensionEnv): U {
+function arctan_numbers(x: Num, y: Num, _: ExtensionEnv): U {
     const $ = new StackU();
-    eigenmath_arctan_numbers(x, y, env, env, $);
+    eigenmath_arctan_numbers(x, y, _, _, $);
     return $.pop();
 }
 

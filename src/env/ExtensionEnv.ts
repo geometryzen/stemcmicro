@@ -56,9 +56,9 @@ export function keepFlag(flags: TFLAGS): boolean {
 /**
  * Corresponds to the 'name' property on an Atom.
  */
-export type FEATURE = 'Blade' | 'Boo' | 'Flt' | 'Imu' | 'Map' | 'Rat' | 'Sym' | 'Tensor' | 'Uom';
+export type FEATURE = 'Blade' | 'Boo' | 'Cell' | 'Flt' | 'Imu' | 'Map' | 'Rat' | 'Sym' | 'Tensor' | 'Uom';
 
-export const ALL_FEATURES: FEATURE[] = ['Blade', 'Boo', 'Flt', 'Imu', 'Map', 'Rat', 'Sym', 'Tensor', 'Uom'];
+export const ALL_FEATURES: FEATURE[] = ['Blade', 'Boo', 'Cell', 'Flt', 'Imu', 'Map', 'Rat', 'Sym', 'Tensor', 'Uom'];
 
 /**
  * Determines how an expression is evaluated.
@@ -330,7 +330,11 @@ export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, P
      * e.g. clearall 
      */
     defineKeyword(sym: Sym, runner: KeywordRunner): void;
+    /**
+     * @deprecated Migrate to defineExtension(...)
+     */
     defineOperator(builder: OperatorBuilder<U>): void;
+    defineExtension(builder: ExtensionBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
     defineUserSymbol(name: Sym): void;
     derivedEnv(): ExtensionEnv;
@@ -460,6 +464,10 @@ export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, P
  * and when the other method are called (they all contain at least one argument that matches T),
  * it determines the possible dynamic types for T.
  */
+export interface ExtensionBuilder<T extends U> {
+    create(config: Readonly<EnvConfig>): Extension<T>;
+}
+
 export interface OperatorBuilder<T extends U> {
     create($: ExtensionEnv, config: Readonly<EnvConfig>): Operator<T>;
 }
@@ -519,6 +527,7 @@ export interface Operator<T extends U> {
      */
     isKind(expr: U): expr is T;
     subst(expr: T, oldExpr: U, newExpr: U): U;
+    test(expr: T, opr: Sym): boolean;
     toInfixString(expr: T): string;
     toLatexString(expr: T): string;
     toListString(expr: T): string;
@@ -546,6 +555,7 @@ export interface Extension<T extends U> {
     operator(): Sym;
     isKind(expr: U, $: ExtensionEnv): boolean;
     subst(expr: T, oldExpr: U, newExpr: U, $: ExtensionEnv): U;
+    test(expr: T, opr: Sym, env: ExprContext): boolean;
     toInfixString(expr: T, $: ExtensionEnv): string;
     toLatexString(expr: T, $: ExtensionEnv): string;
     toListString(expr: T, $: ExtensionEnv): string;

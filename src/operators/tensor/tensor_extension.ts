@@ -1,15 +1,15 @@
-import { Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { is_tensor, Sym, Tensor } from "math-expression-atoms";
+import { AtomHandler, ExprContext } from "math-expression-context";
+import { cons, Cons, nil, U } from "math-expression-tree";
+import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_TENSOR } from "../../hashing/hash_info";
 import { print_tensor } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
 import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
-import { Tensor } from "../../tree/tensor/Tensor";
-import { cons, Cons, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { simplify } from "../simplify/simplify";
 import { subst } from "../subst/subst";
-import { is_tensor } from "./is_tensor";
 
 function equal_elements(as: U[], bs: U[], $: ExtensionEnv): boolean {
     const length = as.length;
@@ -79,9 +79,15 @@ export function outer_tensor_tensor(lhs: Tensor, rhs: Tensor, $: ExtensionEnv): 
     return new Tensor(sizes, elems);
 }
 
-class TensorExtension implements Extension<Tensor> {
+class TensorExtension implements Extension<Tensor>, AtomHandler<Tensor>{
     constructor() {
         // Nothing to see here.
+    }
+    phases?: number | undefined;
+    dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(atom: Tensor, opr: Sym, env: ExprContext): boolean {
+        throw new Error(`${this.name}.dispatch(${atom},${opr}) method not implemented.`);
     }
     iscons(): false {
         return false;
@@ -95,8 +101,8 @@ class TensorExtension implements Extension<Tensor> {
     get name(): string {
         return 'TensorExtension';
     }
-    isKind(arg: unknown): arg is Tensor {
-        return arg instanceof Tensor;
+    isKind(arg: U): arg is Tensor {
+        return is_tensor(arg);
     }
     subst(expr: Tensor, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
         if (is_tensor(oldExpr) && expr.equals(oldExpr)) {

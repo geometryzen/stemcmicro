@@ -1,9 +1,9 @@
-import { eval_cosh } from "./cosh";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { COSH } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+import { eval_cosh } from "./cosh";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -17,6 +17,8 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         super('cosh', COSH, $);
         this.#hash = hash_nonop_cons(this.opr);
     }
+    phases?: number | undefined;
+    dependencies?: FEATURE[] | undefined;
     get hash(): string {
         return this.#hash;
     }

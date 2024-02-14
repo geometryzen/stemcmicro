@@ -1,5 +1,6 @@
 
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Sym } from "math-expression-atoms";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_NIL } from "../../hashing/hash_info";
 import { cons, Cons, nil, U } from "../../tree/tree";
 
@@ -12,6 +13,12 @@ class Builder implements OperatorBuilder<Cons> {
 class NilExtension implements Operator<Cons> {
     constructor(private readonly $: ExtensionEnv) {
         // Nothing to see here.
+    }
+    phases?: number | undefined;
+    dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(expr: Cons, opr: Sym): boolean {
+        throw new Error("Method not implemented.");
     }
     iscons(): false {
         return false;

@@ -1,3 +1,4 @@
+export { code_from_native_sym, is_native_sym, Native, NATIVE_MAX, NATIVE_MIN, native_sym } from 'math-expression-native';
 export {
     AtomListener,
     Concept,

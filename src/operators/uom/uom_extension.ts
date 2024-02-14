@@ -1,13 +1,18 @@
-import { create_int, is_uom, Uom } from "math-expression-atoms";
+import { create_int, is_uom, Sym, Uom } from "math-expression-atoms";
+import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
-class UomExtension implements Extension<Uom> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor($: ExtensionEnv) {
+class UomExtension implements Extension<Uom>, AtomHandler<Uom> {
+    constructor() {
         // Nothing to see here.
+    }
+    phases?: number | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(uom: Uom, opr: Sym, env: ExprContext): boolean {
+        return false;
     }
     iscons(): false {
         return false;
@@ -31,31 +36,27 @@ class UomExtension implements Extension<Uom> {
     isKind(arg: U): arg is Uom {
         return is_uom(arg);
     }
-    subst(expr: Uom, oldExpr: U, newExpr: U): U {
+    subst(uom: Uom, oldExpr: U, newExpr: U): U {
         if (is_uom(oldExpr)) {
-            if (expr.equals(oldExpr)) {
+            if (uom.equals(oldExpr)) {
                 return newExpr;
             }
         }
-        return expr;
+        return uom;
     }
     toInfixString(uom: Uom): string {
-        // console.lg(`UomExtension.toInfixString()`);
         return uom.toInfixString();
     }
     toLatexString(uom: Uom): string {
-        // console.lg(`UomExtension.toLaTeXString()`);
         return uom.toInfixString();
     }
     toListString(uom: Uom): string {
-        // console.lg(`UomExtension.toListString()`);
         return uom.toString(10, false);
     }
     evaluate(expr: U, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(expr, argList));
     }
     transform(expr: U): [TFLAGS, U] {
-        // console.lg(`UomExtension.transform()`);
         if (is_uom(expr)) {
             if (expr.isOne()) {
                 return [TFLAG_DIFF, create_int(1)];
@@ -71,6 +72,6 @@ class UomExtension implements Extension<Uom> {
 /**
  * The Extension for Unit of Measure.
  */
-export const uom_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new UomExtension($);
+export const uom_extension = new ExtensionOperatorBuilder(function () {
+    return new UomExtension();
 });

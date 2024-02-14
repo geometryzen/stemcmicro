@@ -69,7 +69,7 @@ class PrintScriptContentHandler implements ScriptContentHandler {
 
 function should_render_svg($: ScriptVars): boolean {
     const tty = get_binding(TTY, nil, $);
-    if (tty.equals(TTY) || iszero(tty)) {
+    if (tty.equals(TTY) || iszero(tty, $)) {
         return true;
     }
     else {

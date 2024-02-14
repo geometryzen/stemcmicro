@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { assert_sym, Boo, Cell, CellHost, create_sym, Err, Flt, is_boo, is_cell, is_flt, is_lambda, is_rat, is_sym, Keyword, Lambda, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
-import { ExprContext, LambdaExpr } from 'math-expression-context';
+import { AtomHandler, ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
-import { cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
+import { Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprEngineListener } from '../..';
 import { make_eval } from '../adapters/make_eval';
 import { StackFunction } from '../adapters/StackFunction';
@@ -22,10 +22,11 @@ import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { visit } from '../visitor/visit';
 import { Visitor } from '../visitor/Visitor';
+import { AtomHandlerExtension } from './AtomHandlerAdapter';
 import { DerivedEnv } from './DerivedEnv';
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
-import { CompareFn, Directive, directive_from_flag, EvalFunction, ExprComparator, Extension, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, Directive, directive_from_flag, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
 import { hash_from_match, operator_from_cons_expression, opr_from_match } from "./operator_from_legacy_transformer";
@@ -322,23 +323,20 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         return {};
     }
 
-    function selectAtomExtension(atom: U): Extension<U> | undefined {
-        throw new ProgrammingError();
-        /*
+    function selectAtomExtension<A extends Atom>(atom: A): Extension<A> | undefined {
         const hash = hash_for_atom(atom);
         const ops = currentOpsByHash()[hash];
         if (Array.isArray(ops) && ops.length > 0) {
             for (const op of ops) {
                 if (op.isKind(atom)) {
-                    return op;
+                    return new AtomHandlerExtension(op as Operator<A>);
                 }
             }
             throw new SystemError(`No matching operator for hash ${hash}`);
         }
         else {
-            return void 0;
+            throw new ProgrammingError(`Missing Extension for atom type ${atom.type}.`);
         }
-        */
     }
 
     /**
@@ -346,13 +344,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      * @param atom The expression is the atom.
      * @returns The operator for the atom.
      */
-    function selectAtomOperator(atom: U): Operator<U> | undefined {
+    function selectAtomOperator(atom: Atom): Operator<Atom> | undefined {
         const hash = hash_for_atom(atom);
         const ops = currentOpsByHash()[hash];
         if (Array.isArray(ops) && ops.length > 0) {
             for (const op of ops) {
                 if (op.isKind(atom)) {
-                    return op;
+                    return op as Operator<Atom>;
                 }
             }
             throw new SystemError(`No matching operator for hash ${hash}`);
@@ -551,6 +549,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // Leaving it for now as it does no harm and may have utility later.
             $.defineKeyword(name, make_user_symbol_runner(name));
             $.buildOperators();
+        },
+        defineExtension(builder: ExtensionBuilder<U>): void {
+            throw new ProgrammingError("ExtensionEnv.defineExtension method not implemented.");
         },
         defineOperator(builder: OperatorBuilder<U>): void {
             builders.push(builder);
@@ -875,6 +876,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
          */
         negate(x: U): U {
             return $.multiply(negOne, x);
+        },
+        handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
+            return selectAtomExtension(atom)!;
         },
         extensionFor(expr: U): Extension<U> | undefined {
             if (is_atom(expr)) {

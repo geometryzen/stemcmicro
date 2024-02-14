@@ -1,4 +1,4 @@
-import { ExtensionEnv, MODE_EXPANDING, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, MODE_EXPANDING, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
@@ -24,6 +24,11 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('abs_any', ABS, is_any, $);
+    }
+    dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(expr: EXP, opr: Sym): boolean {
+        throw new Error("Method not implemented.");
     }
     /*
     isKind(expr: U): expr is EXP {

@@ -1,5 +1,5 @@
 import { booT, Cell, CellHost, create_flt, create_int, create_str, create_sym, create_tensor, epsilon, Err, et, imu, is_keyword, is_rat, is_str, is_sym, Map, Sym } from "math-expression-atoms";
-import { is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { Atom, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { create_uom } from "../operators/uom/uom";
 
 const KIND_NIL = 0;
@@ -21,7 +21,7 @@ type INFO = { kind: KIND, parts: string[] };
  * The atom argument MUST satisfy is_atom(atom). 
  * @param atom An exemplar atom for which the hash string is required.
  */
-export function hash_for_atom(atom: U): string | never {
+export function hash_for_atom(atom: Atom): string | never {
     if (is_atom(atom)) {
         // TODO: Change this to atom.type...
         return atom.name;
@@ -54,7 +54,7 @@ export const HASH_FLT = hash_for_atom(create_flt(1));
 export const HASH_HYP = hash_for_atom(epsilon);
 export const HASH_IMU = hash_for_atom(imu);
 export const HASH_RAT = hash_for_atom(create_int(1));
-export const HASH_STR = hash_for_atom(create_str(""));  // JsString is currently an alias for Str.
+export const HASH_STR = hash_for_atom(create_str("") as Atom);  // JsString is currently an alias for Str.
 export const HASH_SYM = hash_for_atom(create_sym('x'));
 export const HASH_TENSOR = hash_for_atom(create_tensor([]));
 export const HASH_UOM = hash_for_atom(create_uom('second'));

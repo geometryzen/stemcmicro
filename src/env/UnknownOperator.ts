@@ -8,6 +8,9 @@ export class UnknownConsOperator implements Operator<Cons> {
     constructor(private readonly $: ExtensionEnv) {
         this.name = "unknown";
     }
+    test(expr: Cons, opr: Sym): boolean {
+        throw new Error("Method not implemented.");
+    }
     key?: string | undefined;
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;

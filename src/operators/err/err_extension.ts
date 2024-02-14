@@ -1,4 +1,5 @@
-import { Err } from "math-expression-atoms";
+import { Err, is_err, Sym } from "math-expression-atoms";
+import { AtomHandler } from "math-expression-context";
 import { cons, Cons, nil, U } from 'math-expression-tree';
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
@@ -22,10 +23,9 @@ export function error_compare(lhs: Err, rhs: Err): Sign {
 }
 */
 
-export class ErrExtension implements Extension<Err> {
+export class ErrExtension implements Extension<Err>, AtomHandler<Err> {
     readonly #hash = hash_for_atom(new Err(nil));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor($: ExtensionEnv) {
+    constructor() {
         // Nothing to see here.
     }
     get hash(): string {
@@ -33,6 +33,9 @@ export class ErrExtension implements Extension<Err> {
     }
     get name(): string {
         return 'ErrExtension';
+    }
+    test(atom: Err, opr: Sym): boolean {
+        throw new Error(`${this.name}.dispatch(${atom},${opr}) method not implemented.`);
     }
     iscons(): false {
         return false;
@@ -50,8 +53,8 @@ export class ErrExtension implements Extension<Err> {
     valueOf(expr: Err, $: ExtensionEnv): U {
         throw new Error("ErrExtension.valueOf method not implemented.");
     }
-    isKind(arg: unknown): arg is Err {
-        return arg instanceof Err;
+    isKind(arg: U): arg is Err {
+        return is_err(arg);
     }
     subst(expr: Err, oldExpr: U, newExpr: U): U {
         if (this.isKind(oldExpr)) {
@@ -75,6 +78,6 @@ export class ErrExtension implements Extension<Err> {
     }
 }
 
-export const err_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new ErrExtension($);
+export const err_extension = new ExtensionOperatorBuilder(function () {
+    return new ErrExtension();
 });

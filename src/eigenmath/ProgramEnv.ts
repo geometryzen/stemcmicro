@@ -1,5 +1,6 @@
 import { Sym } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
+import { AtomHandler } from "math-expression-context";
+import { Atom, Cons, U } from "math-expression-tree";
 
 export interface ProgramEnv {
     clearBindings(): void;
@@ -11,4 +12,5 @@ export interface ProgramEnv {
     setBinding(opr: Sym, binding: U): void;
     setUserFunction(name: Sym, userfunc: U): void;
     defineUserSymbol(name: Sym): void;
+    handlerFor<A extends Atom>(atom: A): AtomHandler<A>;
 }

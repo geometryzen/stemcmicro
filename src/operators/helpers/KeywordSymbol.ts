@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { assert_sym } from "math-expression-atoms";
-import { ExtensionEnv, Operator, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { cons, Cons, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
@@ -12,6 +12,11 @@ export abstract class AbstractKeywordOperator implements Operator<Sym> {
     readonly #keyword: Sym;
     constructor(keyword: Sym, protected readonly $: ExtensionEnv) {
         this.#keyword = assert_sym(keyword);
+    }
+    phases?: number | undefined;
+    dependencies?: FEATURE[] | undefined;
+    test(expr: Sym, opr: Sym): boolean {
+        throw new Error("Method not implemented.");
     }
     abstract readonly hash: string;
     abstract readonly name: string;

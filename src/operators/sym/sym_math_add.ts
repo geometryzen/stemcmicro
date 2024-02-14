@@ -1,6 +1,6 @@
 import { is_sym, Sym } from "math-expression-atoms";
 import { cons, Cons, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 
@@ -16,6 +16,12 @@ class Builder implements OperatorBuilder<Sym> {
 class SymMathAdd implements Operator<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(private readonly $: ExtensionEnv) {
+    }
+    phases?: number | undefined;
+    dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(expr: Sym, opr: Sym): boolean {
+        throw new Error("Method not implemented.");
     }
     iscons(): false {
         return false;

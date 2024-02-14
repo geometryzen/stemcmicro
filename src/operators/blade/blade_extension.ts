@@ -1,7 +1,8 @@
 import { Blade, is_blade, Sym } from "math-expression-atoms";
-import { Extension, ExtensionEnv, FEATURE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { AtomHandler, ExprContext } from "math-expression-context";
+import { cons, Cons, U } from "math-expression-tree";
+import { Extension, FEATURE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
-import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 /**
@@ -29,10 +30,13 @@ export function compare_blade_blade(lhs: Blade, rhs: Blade): Sign {
     return SIGN_EQ;
 }
 
-class BladeExtension implements Extension<Blade> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor($: ExtensionEnv) {
+class BladeExtension implements Extension<Blade>, AtomHandler<Blade> {
+    constructor() {
         // Nothing to see here.
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(atom: Blade, opr: Sym, env: ExprContext): boolean {
+        return false;
     }
     iscons(): boolean {
         return false;
@@ -50,7 +54,7 @@ class BladeExtension implements Extension<Blade> {
     get dependencies(): FEATURE[] {
         return ['Blade'];
     }
-    isKind(arg: unknown): arg is Blade {
+    isKind(arg: U): arg is Blade {
         return is_blade(arg);
     }
     subst(expr: Blade, oldExpr: U, newExpr: U): U {
@@ -84,6 +88,6 @@ class BladeExtension implements Extension<Blade> {
     }
 }
 
-export const blade_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new BladeExtension($);
+export const blade_extension = new ExtensionOperatorBuilder(function () {
+    return new BladeExtension();
 });

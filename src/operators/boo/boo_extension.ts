@@ -1,12 +1,16 @@
-import { Boo, booT } from "math-expression-atoms";
+import { Boo, booT, is_boo, Sym } from "math-expression-atoms";
+import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
-export class BooExtension implements Extension<Boo> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor($: ExtensionEnv) {
+export class BooExtension implements Extension<Boo>, AtomHandler<Boo> {
+    constructor() {
         // Nothing to see here.
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(atom: Boo, opr: Sym, env: ExprContext): boolean {
+        return false;
     }
     iscons(): false {
         return false;
@@ -38,7 +42,7 @@ export class BooExtension implements Extension<Boo> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKind(arg: U): arg is Boo {
-        return arg instanceof Boo;
+        return is_boo(arg);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     subst(expr: Boo, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
@@ -56,6 +60,6 @@ export class BooExtension implements Extension<Boo> {
     }
 }
 
-export const boo_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new BooExtension($);
+export const boo_extension = new ExtensionOperatorBuilder(function () {
+    return new BooExtension();
 });

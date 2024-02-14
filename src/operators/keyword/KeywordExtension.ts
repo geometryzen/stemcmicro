@@ -1,4 +1,5 @@
-import { is_keyword, Keyword } from "math-expression-atoms";
+import { is_keyword, Keyword, Sym } from "math-expression-atoms";
+import { AtomHandler } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
@@ -13,14 +14,16 @@ function verify_keyword(x: Keyword): Keyword | never {
     }
 }
 
-class KeywordExtension implements Extension<Keyword> {
+class KeywordExtension implements Extension<Keyword>, AtomHandler<Keyword> {
     readonly #hash = hash_for_atom(new Keyword('a', 'ns'));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(private readonly $: ExtensionEnv) {
+    constructor() {
         // Nothing to see here.
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
+    test(atom: Keyword, opr: Sym): boolean {
+        throw new Error(`${this.name}.dispatch(${atom},${opr}) method not implemented.`);
+    }
     iscons(): false {
         return false;
     }
@@ -72,6 +75,6 @@ class KeywordExtension implements Extension<Keyword> {
     }
 }
 
-export const keyword_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new KeywordExtension($);
+export const keyword_extension = new ExtensionOperatorBuilder(function () {
+    return new KeywordExtension();
 });

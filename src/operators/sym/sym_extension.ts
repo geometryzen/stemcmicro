@@ -1,4 +1,5 @@
 import { create_sym, is_sym, Sym } from "math-expression-atoms";
+import { AtomHandler, ExprContext } from "math-expression-context";
 import { Cons, is_nil, nil, U } from "math-expression-tree";
 import { Directive, Extension, ExtensionEnv, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
@@ -17,11 +18,14 @@ function verify_sym(x: Sym): Sym | never {
     }
 }
 
-class SymExtension implements Extension<Sym> {
+class SymExtension implements Extension<Sym>, AtomHandler<Sym> {
     readonly #hash = hash_for_atom(verify_sym(create_sym('foo')));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(private readonly $: ExtensionEnv) {
+    constructor() {
         // Nothing to see here.
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(atom: Sym, opr: Sym, env: ExprContext): boolean {
+        return false;
     }
     iscons(): false {
         return false;
@@ -72,8 +76,8 @@ class SymExtension implements Extension<Sym> {
     toLatexString(sym: Sym): string {
         return sym.key();
     }
-    toListString(sym: Sym): string {
-        const token = this.$.getSymbolPrintName(sym);
+    toListString(sym: Sym, $: ExtensionEnv): string {
+        const token = $.getSymbolPrintName(sym);
         if (token) {
             return token;
         }
@@ -86,15 +90,15 @@ class SymExtension implements Extension<Sym> {
         // Dead code?
         throw new ProgrammingError();
     }
-    transform(sym: Sym): [TFLAGS, U] {
+    transform(sym: Sym, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg("SymExtension.transform", `${sym}`);
         // return [TFLAG_NONE, sym];
-        const response = get_binding(sym, nil, this.$);
+        const response = get_binding(sym, nil, $);
         // console.lg("binding", render_as_infix(binding[1], this.$));
         return response;
     }
 }
 
-export const sym_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new SymExtension($);
+export const sym_extension = new ExtensionOperatorBuilder(function () {
+    return new SymExtension();
 });

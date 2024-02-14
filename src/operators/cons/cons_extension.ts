@@ -1,8 +1,8 @@
+import { is_sym, Sym } from "math-expression-atoms";
+import { cons, Cons, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { to_infix_string } from "../../print/to_infix_string";
-import { cons, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
-import { is_sym } from "../sym/is_sym";
 
 /**
  * Cons, like Sym is actually fundamental to the tree (not an Extension).
@@ -13,9 +13,11 @@ import { is_sym } from "../sym/is_sym";
  * define where Cons appears when sorting elements. Also, less special-case code for Cons. 
  */
 class ConsExtension implements Extension<Cons> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor($: ExtensionEnv) {
+    constructor() {
         // Nothing to see here.
+    }
+    test(expr: Cons, opr: Sym): boolean {
+        throw new Error(`${this.name}.dispatch(${expr},${opr}) method not implemented.`);
     }
     iscons(): false {
         return false;
@@ -182,6 +184,6 @@ function eval_stop() {
 }
 */
 
-export const cons_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new ConsExtension($);
+export const cons_extension = new ExtensionOperatorBuilder(function () {
+    return new ConsExtension();
 });

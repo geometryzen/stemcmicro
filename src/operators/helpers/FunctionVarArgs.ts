@@ -38,6 +38,10 @@ export abstract class FunctionVarArgs extends AbstractOperator {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(expr: Cons, opr: Sym): boolean {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform(expr: Cons, $: ExtensionEnv): [number, U] {
         throw new Error(`FunctionVarArgs.transform must be implemented in ${this.name}`);
     }

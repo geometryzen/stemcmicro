@@ -1,6 +1,6 @@
 import { Sym } from "math-expression-atoms";
+import { Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { Cons, U } from "../../tree/tree";
 
 /**
  * A poor-mans way of implementing an OperatorBuilder is to take an existing Extension
@@ -21,13 +21,15 @@ export class ExtensionOperatorBuilder<T extends U> implements OperatorBuilder<T>
 }
 
 /**
- * In general, we delegate to a method on the Extension with the same name and with an additional
- * $: ExtensionEnv parameter. Anything different is a code smell.
+ * @deprecated Migrate from Operator<U> to Extension<U>
  */
 class ExtensionOperator<T extends U> implements Operator<T> {
     constructor(private readonly extension: Extension<T>, private readonly $: ExtensionEnv) {
         // Nothing going on here because this is a crude adaption of the Extension.
         // This would be a good place to cache symbols that will be needed later.
+    }
+    test(expr: T, opr: Sym): boolean {
+        return this.extension.test(expr, opr, this.$);
     }
     iscons(): boolean {
         return this.extension.iscons();

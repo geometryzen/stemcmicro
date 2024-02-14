@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CellHost, create_sym, is_boo, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor, Rat, Sym, Tensor } from "math-expression-atoms";
-import { LambdaExpr } from "math-expression-context";
+import { AtomHandler, LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
-import { Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
+import { Atom, Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
 import { StackFunction } from "../adapters/StackFunction";
 import { AtomListener, ExprEngineListener } from "../api/api";
 import { assert_sym_any_any } from "../clojurescript/runtime/step_setq";
@@ -11,7 +11,7 @@ import { eval_dotdot } from "../operators/dotdot/eval_dotdot";
 import { JsObjectExtension } from "../operators/jsobject/JsObjectExtension";
 import { eval_let } from "../operators/let/eval_let";
 import { ASSIGN, COMPONENT, LET } from "../runtime/constants";
-import { CompareFn, EvalFunction, ExprComparator, Extension, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 /**
  * Evaluates each item in the `argList` and returns (opr ...), 
  */
@@ -81,6 +81,9 @@ export class DerivedEnv implements ExtensionEnv {
     arg(expr: U): U {
         throw new Error('arg method not implemented.');
     }
+    buildOperators(): void {
+        this.#baseEnv.buildOperators();
+    }
     clock(expr: U): U {
         throw new Error('clock method not implemented.');
     }
@@ -117,6 +120,9 @@ export class DerivedEnv implements ExtensionEnv {
     }
     defineOperator(builder: OperatorBuilder<U>): void {
         this.#baseEnv.defineOperator(builder);
+    }
+    defineExtension(builder: ExtensionBuilder<U>): void {
+        this.#baseEnv.defineExtension(builder);
     }
     defineAssociative(opr: Sym, id: Rat): void {
         this.#baseEnv.defineAssociative(opr, id);
@@ -170,8 +176,8 @@ export class DerivedEnv implements ExtensionEnv {
         // TODO: Symbols in the bindings?
         return this.#baseEnv.getSymbolsInfo();
     }
-    buildOperators(): void {
-        this.#baseEnv.buildOperators();
+    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
+        return this.#baseEnv.handlerFor(atom);
     }
     im(expr: U): U {
         throw new Error('im method not implemented.');

@@ -1,7 +1,7 @@
 import { Boo, Cell, create_int, create_rat, create_sym, Flt, is_flt, is_rat, is_sym, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
-import { LambdaExpr } from 'math-expression-context';
+import { AtomHandler, LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
-import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
+import { Atom, Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
@@ -10,6 +10,7 @@ import { make_stack_draw } from '../eigenmath/make_stack_draw';
 import { make_stack_print } from '../eigenmath/make_stack_print';
 import { make_stack_run } from '../eigenmath/make_stack_run';
 import { print_value_and_input_as_svg_or_infix } from '../eigenmath/print_value_and_input_as_svg_or_infix';
+import { ProgramEnv } from '../eigenmath/ProgramEnv';
 import { render_svg, SvgRenderConfig } from '../eigenmath/render_svg';
 import { should_engine_render_svg } from '../eigenmath/should_engine_render_svg';
 import { stack_infixform } from '../eigenmath/stack_infixform';
@@ -101,7 +102,7 @@ export interface ExprEngineListener {
     output(output: string): void;
 }
 
-export interface ExprEngine {
+export interface ExprEngine extends ProgramEnv {
     clearBindings(): void;
     executeProlog(prolog: string[]): void;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
@@ -356,6 +357,12 @@ class MicroEngine implements ExprEngine {
         define_si_units(this.#env);
         define_metric_prefixes_for_si_units(this.#env);
     }
+    defineUserSymbol(name: Sym): void {
+        this.#env.defineUserSymbol(name);
+    }
+    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
+        return this.#env.handlerFor(atom);
+    }
     clearBindings(): void {
         this.#env.clearBindings();
     }
@@ -494,6 +501,12 @@ class ClojureScriptEngine implements ExprEngine {
             useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
             prolog: options.prolog
         });
+    }
+    defineUserSymbol(name: Sym): void {
+        this.#env.defineUserSymbol(name);
+    }
+    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
+        return this.#env.handlerFor(atom);
     }
     clearBindings(): void {
         this.#env.clearBindings();
@@ -760,6 +773,12 @@ class EigenmathEngine implements ExprEngine {
             }
         }
     }
+    defineUserSymbol(name: Sym): void {
+        this.#scriptVars.defineUserSymbol(name);
+    }
+    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
+        return this.#scriptVars.handlerFor(atom);
+    }
     clearBindings(): void {
         this.#scriptVars.clearBindings();
     }
@@ -884,6 +903,14 @@ class PythonEngine implements ExprEngine {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(options: Partial<EngineConfig>) {
 
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    defineUserSymbol(name: Sym): void {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
+        throw new Error('Method not implemented.');
     }
     clearBindings(): void {
         throw new Error('clearBindings method not implemented.');

@@ -1,7 +1,7 @@
 import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
-import { CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
+import { AtomHandler, CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
-import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
+import { assert_cons_or_nil, Atom, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprContextAdapter } from '../adapters/ExprContextAdapter';
 import { make_stack } from '../adapters/make_stack';
 import { StackFunction } from '../adapters/StackFunction';
@@ -19,6 +19,7 @@ import { hadamard, stack_hadamard } from '../operators/hadamard/stack_hadamard';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_lambda } from '../operators/lambda/is_lambda';
 import { mag, stack_mag } from '../operators/mag/stack_mag';
+import { rat_extension } from '../operators/rat/rat_extension';
 import { stack_rotate } from '../operators/rotate/stack_rotate';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { stack_uom } from '../operators/uom/stack_uom';
@@ -447,7 +448,7 @@ function coeffs(P: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
         subtract(env, ctrl, $);
         P = pop($);
 
-        if (iszero(P))
+        if (iszero(P, env))
             break;
 
         push(P, $);
@@ -580,10 +581,16 @@ function complexity(p: U): number {
  * 
  * b must be cons or nil.
  */
-function cons($: ProgramStack): void {
+function cons($: Pick<ProgramStack, 'push' | 'pop'>): void {
     const b = assert_cons_or_nil(pop($));
     const a = pop($);
-    push(create_cons(a, b), $);
+    try {
+        push(create_cons(a, b), $);
+    }
+    finally {
+        a.release();
+        b.release();
+    }
 }
 
 const ABS = native_sym(Native.abs);
@@ -1050,13 +1057,13 @@ export function stack_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: 
     // console.lg("stack_add", `${expr}`);
     ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
     try {
-        const L0 = _.length;
+        const L0 = _.length;                            // [...]
         // By pushing the identity element for addition, zero, we ensure (+) evaluates to zero. 
         _.push(zero);                                   // [..., 0]
         _.push(expr);                                   // [..., 0, (+ x1 x2 ... xn)]       
         _.rest();                                       // [..., 0, (x1 x2 ... xn)]
         const n = value_of_args(env, ctrl, _);          // [..., 0, v1, v2, ..., vn]
-        sum_terms(n + 1, env, ctrl, _);
+        sum_terms(n + 1, env, ctrl, _);                 // [..., X]
         assert_stack_length(L0 + 1, _);
     }
     finally {
@@ -1086,10 +1093,10 @@ function sum_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramS
 
     let T = combine_tensors(start, env, ctrl, _);
 
-    combine_terms(start, ctrl, _);
+    combine_terms(start, env, ctrl, _);
 
     if (simplify_terms(start, env, ctrl, _)) {
-        combine_terms(start, ctrl, _);
+        combine_terms(start, env, ctrl, _);
     }
 
     const k = _.length - start;
@@ -1190,50 +1197,57 @@ function add_tensors(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
     push(p1, $);
 }
 
-function combine_terms(start: number, ctrl: ProgramControl, _: ProgramStack): void {
+function combine_terms(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
     sort_terms(start, ctrl, _);
     for (let i = start; i < _.length - 1; i++) {
-        if (combine_terms_nib(i, i + 1, _)) {
-            if (iszero(_.getAt(i)))
+        if (combine_terms_nib(i, i + 1, env, ctrl, _)) {
+            if (iszero(_.getAt(i), env))
                 _.splice(i, 2); // remove 2 terms
             else
                 _.splice(i + 1, 1); // remove 1 term
             i--; // use same index again
         }
     }
-    if (start < _.length && iszero(_.getAt(_.length - 1)))
+    if (start < _.length && iszero(_.getAt(_.length - 1), env)) {
         _.pop();
+    }
 }
 
-function combine_terms_nib(i: number, j: number, $: ProgramStack): 1 | 0 {
+function combine_terms_nib(i: number, j: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): boolean {
 
-    let p1 = $.getAt(i);
-    let p2 = $.getAt(j);
+    const lhs = _.getAt(i);
+    const rhs = _.getAt(j);
 
-    if (iszero(p2))
-        return 1;
+    // console.lg("combine_terms_nib", `${lhs}`, `${rhs}`);
 
-    if (iszero(p1)) {
-        $.setAt(i, p2);
-        return 1;
+    // We really can't do this properly without appealing to some
+    if (iszero(rhs, env)) {
+        return true;
     }
 
-    if (is_num(p1) && is_num(p2)) {
-        add_numbers(p1, p2, $);
-        $.setAt(i, pop($));
-        return 1;
+    if (iszero(lhs, env)) {
+        _.setAt(i, rhs);
+        return true;
     }
 
-    if (is_num(p1) || is_num(p2))
-        return 0; // cannot add number and something else
+    if (is_num(lhs) && is_num(rhs)) {
+        add_numbers(lhs, rhs, _);
+        _.setAt(i, pop(_));
+        return true;
+    }
+
+    if (is_num(lhs) || is_num(rhs)) {
+        return false; // cannot add number and something else
+    }
 
     let coeff1: U = one;
     let coeff2: U = one;
 
     let denorm = 0;
 
-    if (car(p1).equals(MULTIPLY)) {
-        p1 = cdr(p1);
+    let p1 = lhs;
+    if (car(lhs).equals(MULTIPLY)) {
+        p1 = cdr(lhs);
         denorm = 1;
         if (is_num(car(p1))) {
             coeff1 = car(p1);
@@ -1245,8 +1259,9 @@ function combine_terms_nib(i: number, j: number, $: ProgramStack): 1 | 0 {
         }
     }
 
-    if (car(p2).equals(MULTIPLY)) {
-        p2 = cdr(p2);
+    let p2 = rhs;
+    if (car(rhs).equals(MULTIPLY)) {
+        p2 = cdr(rhs);
         if (is_num(car(p2))) {
             coeff2 = car(p2);
             p2 = cdr(p2);
@@ -1255,46 +1270,47 @@ function combine_terms_nib(i: number, j: number, $: ProgramStack): 1 | 0 {
         }
     }
 
-    if (!equal(p1, p2))
-        return 0;
+    if (!equal(p1, p2)) {
+        return false;
+    }
 
-    add_numbers(coeff1, coeff2, $);
+    add_numbers(coeff1, coeff2, _);
 
-    coeff1 = pop($);
+    coeff1 = pop(_);
 
-    if (iszero(coeff1)) {
-        $.setAt(i, coeff1);
-        return 1;
+    if (iszero(coeff1, env)) {
+        _.setAt(i, coeff1);
+        return true;
     }
 
     if (isplusone(coeff1) && !is_flt(coeff1)) {
         if (denorm) {
-            push(MULTIPLY, $);
-            push(p1, $); // p1 is a list, not an atom
-            cons($); // prepend MULTIPLY
+            push(MULTIPLY, _);
+            push(p1, _); // p1 is a list, not an atom
+            cons(_); // prepend MULTIPLY
         }
         else
-            push(p1, $);
+            push(p1, _);
     }
     else {
         if (denorm) {
-            push(MULTIPLY, $);
-            push(coeff1, $);
-            push(p1, $); // p1 is a list, not an atom
-            cons($); // prepend coeff1
-            cons($); // prepend MULTIPLY
+            push(MULTIPLY, _);
+            push(coeff1, _);
+            push(p1, _); // p1 is a list, not an atom
+            cons(_); // prepend coeff1
+            cons(_); // prepend MULTIPLY
         }
         else {
-            push(MULTIPLY, $);
-            push(coeff1, $);
-            push(p1, $);
-            list(3, $);
+            push(MULTIPLY, _);
+            push(coeff1, _);
+            push(p1, _);
+            list(3, _);
         }
     }
 
-    $.setAt(i, pop($));
+    _.setAt(i, pop(_));
 
-    return 1;
+    return true;
 }
 
 function sort_terms(start: number, ctrl: ProgramControl, $: ProgramStack): void {
@@ -1434,7 +1450,7 @@ function isimaginaryfactor(p: U): boolean | 0 {
     return car(p).equals(POWER) && isminusone(cadr(p));
 }
 
-function add_numbers(p1: U, p2: U, $: ProgramStack): void {
+function add_numbers(p1: U, p2: U, $: Pick<ProgramStack, 'push'>): void {
 
     if (is_rat(p1) && is_rat(p2)) {
         add_rationals(p1, p2, $);
@@ -1448,9 +1464,9 @@ function add_numbers(p1: U, p2: U, $: ProgramStack): void {
     push_double(a + b, $);
 }
 
-function add_rationals(p1: Rat, p2: Rat, $: ProgramStack): void {
-    const sum = p1.add(p2);
-    push(sum, $);
+function add_rationals(lhs: Rat, rhs: Rat, _: Pick<ProgramStack, 'push'>): void {
+    const sum = lhs.add(rhs);
+    push(sum, _);
 }
 
 export function stack_adj(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -1705,7 +1721,7 @@ export function stack_and(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
         push(car(p1), $);
         evalp(env, ctrl, $);
         const p2 = pop($);
-        if (iszero(p2)) {
+        if (iszero(p2, env)) {
             push_integer(0, $);
             return;
         }
@@ -1796,7 +1812,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // arccos(0) = 1/2 pi
 
-    if (iszero(p1)) {
+    if (iszero(p1, env)) {
         push_rational(1, 2, $);
         push(MATH_PI, $);
         multiply(env, ctrl, $);
@@ -1973,7 +1989,7 @@ function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // arcsin(0) = 0
 
-    if (iszero(p1)) {
+    if (iszero(p1, env)) {
         push_integer(0, $);
         return;
     }
@@ -2045,7 +2061,7 @@ function arcsinh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         return;
     }
 
-    if (iszero(p1)) {
+    if (iszero(p1, env)) {
         push(p1, $);
         return;
     }
@@ -2113,7 +2129,7 @@ function arctan(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // arctan(z) = -1/2 i log((i - z) / (i + z))
 
-    if (!iszero(x) && (isdoublez(x) || isdoublez(y))) {
+    if (!iszero(x, env) && (isdoublez(x) || isdoublez(y))) {
         push(y, $);
         push(x, $);
         divide(env, ctrl, $);
@@ -2157,7 +2173,7 @@ function arctan(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
 export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    if (iszero(X) && iszero(Y)) {
+    if (iszero(X, env) && iszero(Y, env)) {
         push(ARCTAN, $);
         push_integer(0, $);
         push_integer(0, $);
@@ -2172,7 +2188,7 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: 
 
     // X and Y are rational numbers
 
-    if (iszero(Y)) {
+    if (iszero(Y, env)) {
         if (isnegativenumber(X))
             push(MATH_PI, $);
         else
@@ -2180,7 +2196,7 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: 
         return;
     }
 
-    if (iszero(X)) {
+    if (iszero(X, env)) {
         if (isnegativenumber(Y))
             push_rational(-1, 2, $);
         else
@@ -2305,7 +2321,7 @@ function arctanh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         return;
     }
 
-    if (iszero(p1)) {
+    if (iszero(p1, env)) {
         push_integer(0, $);
         return;
     }
@@ -2540,7 +2556,7 @@ function ceilingfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
 export function stack_check(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     $.push(cadr(p1));
     evalp(env, ctrl, $);
-    if (iszero($.pop())) {
+    if (iszero($.pop(), env)) {
         stopf("check");
     }
     $.push(nil); // no result is printed
@@ -3155,7 +3171,7 @@ function coshfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
         return;
     }
 
-    if (iszero(p1)) {
+    if (iszero(p1, env)) {
         push_integer(1, $);
         return;
     }
@@ -3941,8 +3957,9 @@ function det(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const h = $.length;
 
     for (let m = 0; m < n; m++) {
-        if (iszero(p1.elems[m]))
+        if (iszero(p1.elems[m], env)) {
             continue;
+        }
         let k = 0;
         for (let i = 1; i < n; i++)
             for (let j = 0; j < n; j++)
@@ -4178,7 +4195,7 @@ function erffunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         return;
     }
 
-    if (iszero(p1)) {
+    if (iszero(p1, env)) {
         push_integer(0, $);
         return;
     }
@@ -4200,10 +4217,10 @@ function erffunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 export function stack_erfc(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
-    erfcfunc($);
+    erfcfunc(env, $);
 }
 
-function erfcfunc($: ProgramStack): void {
+function erfcfunc(env: ProgramEnv, $: ProgramStack): void {
 
     const p1 = pop($);
 
@@ -4212,7 +4229,7 @@ function erfcfunc($: ProgramStack): void {
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
-            erfcfunc($);
+            erfcfunc(env, $);
             T.elems[i] = pop($);
         }
         push(T, $);
@@ -4226,7 +4243,7 @@ function erfcfunc($: ProgramStack): void {
         return;
     }
 
-    if (iszero(p1)) {
+    if (iszero(p1, env)) {
         push_integer(1, $);
         return;
     }
@@ -6069,7 +6086,7 @@ function integral_search_nib(h: number, F: U, I: U, C: U, env: ProgramEnv, ctrl:
             push(C, $);			// condition ok?
             value_of(env, ctrl, $);
             let p1 = pop($);
-            if (iszero(p1))
+            if (iszero(p1, env))
                 continue;		// no, go to next j
 
             push(F, $);			// F = I?
@@ -6077,7 +6094,7 @@ function integral_search_nib(h: number, F: U, I: U, C: U, env: ProgramEnv, ctrl:
             value_of(env, ctrl, $);
             subtract(env, ctrl, $);
             p1 = pop($);
-            if (iszero(p1))
+            if (iszero(p1, env))
                 return 1;		// yes
         }
     }
@@ -6220,7 +6237,7 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // log of zero is not evaluated
 
-    if (iszero(x)) {
+    if (iszero(x, env)) {
         push(LOG, $);
         push_integer(0, $);
         list(2, $);
@@ -6483,7 +6500,7 @@ function modfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         return;
     }
 
-    if (!is_num(p1) || !is_num(p2) || iszero(p2)) {
+    if (!is_num(p1) || !is_num(p2) || iszero(p2, env)) {
         push(MOD, $);
         push(p1, $);
         push(p2, $);
@@ -6603,11 +6620,11 @@ function evaluate_nonstop_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramS
     }
 }
 
-export function isfalsey(x: U): boolean {
+export function isfalsey(x: U, env: ProgramEnv): boolean {
     if (is_boo(x)) {
         return x.isFalse();
     }
-    return iszero(x);
+    return iszero(x, env);
 }
 
 export function stack_not(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -6617,7 +6634,7 @@ export function stack_not(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
     evalp(env, ctrl, $);
     const x = pop($);
     try {
-        if (isfalsey(x)) {
+        if (isfalsey(x, env)) {
             push(predicate_return_value(true, ctrl), $);
         }
         else {
@@ -6951,7 +6968,7 @@ export function stack_or(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pro
         push(car(p1), $);
         evalp(env, ctrl, $);
         const p2 = pop($);
-        if (!iszero(p2)) {
+        if (!iszero(p2, env)) {
             push_integer(1, $);
             return;
         }
@@ -7209,14 +7226,14 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
 
         // expr^0
 
-        if (iszero(expo)) {
+        if (iszero(expo, env)) {
             push_integer(1, $);
             return;
         }
 
         // 0^expr
 
-        if (iszero(base)) {
+        if (iszero(base, env)) {
             push(POWER, $);
             push(base, $);
             push(expo, $);
@@ -7728,7 +7745,7 @@ function findroot(h: number, n: number, env: ProgramEnv, ctrl: ProgramControl, $
 
     // check constant term
 
-    if (iszero($.getAt(h))) {
+    if (iszero($.getAt(h), env)) {
         push_integer(0, $); // root is zero
         return 1;
     }
@@ -7778,7 +7795,7 @@ function findroot(h: number, n: number, env: ProgramEnv, ctrl: ProgramControl, $
 
             let PA = pop($); // polynomial evaluated at A
 
-            if (iszero(PA)) {
+            if (iszero(PA, env)) {
                 $.length = p; // pop all
                 push(A, $);
                 return 1; // root on stack
@@ -7794,7 +7811,7 @@ function findroot(h: number, n: number, env: ProgramEnv, ctrl: ProgramControl, $
 
             PA = pop($); // polynomial evaluated at A
 
-            if (iszero(PA)) {
+            if (iszero(PA, env)) {
                 $.length = p; // pop all
                 push(A, $);
                 return 1; // root on stack
@@ -7897,7 +7914,7 @@ function reduce(h: number, n: number, A: U, env: ProgramEnv, ctrl: ProgramContro
         $.setAt(h + i - 1, pop($));
     }
 
-    if (!iszero($.getAt(h)))
+    if (!iszero($.getAt(h), env))
         stopf("roots: residual error"); // not a root
 
     // move
@@ -8171,7 +8188,7 @@ function sgn(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         return;
     }
 
-    if (iszero(p1)) {
+    if (iszero(p1, env)) {
         push_integer(0, $);
         return;
     }
@@ -8320,7 +8337,7 @@ function simplify_pass1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
 
     T = pop($);
 
-    if (iszero(T))
+    if (iszero(T, env))
         p1 = R;
 
     push(p1, $);
@@ -8634,7 +8651,7 @@ function sinhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
         return;
     }
 
-    if (iszero(p1)) {
+    if (iszero(p1, env)) {
         push_integer(0, $);
         return;
     }
@@ -9007,7 +9024,7 @@ function tanhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
         return;
     }
 
-    if (iszero(p1)) {
+    if (iszero(p1, env)) {
         push_integer(0, $);
         return;
     }
@@ -9111,7 +9128,7 @@ export function stack_taylor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
         derivative(env, ctrl, $);
         F = pop($);
 
-        if (iszero(F))
+        if (iszero(F, env))
             break;
 
         push(C, $);	// c = c * (x - a)
@@ -9165,7 +9182,7 @@ export function stack_test(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
         push(car(p1), $);
         evalp(env, ctrl, $);
         const p2 = pop($);
-        if (!iszero(p2)) {
+        if (!iszero(p2, env)) {
             push(cadr(p1), $);
             value_of(env, ctrl, $);
             return;
@@ -9183,7 +9200,7 @@ export function stack_testeq(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, 
     subtract(env, ctrl, $);
     simplify(env, ctrl, $);
     const p1 = pop($);
-    if (iszero(p1))
+    if (iszero(p1, env))
         push_integer(1, $);
     else
         push_integer(0, $);
@@ -9226,7 +9243,7 @@ function cmp_args(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStac
     simplify(env, ctrl, $);
     floatfunc(env, ctrl, $);
     const p1 = pop($);
-    if (iszero(p1)) {
+    if (iszero(p1, env)) {
         return 0;
     }
     if (!is_num(p1)) {
@@ -9744,7 +9761,7 @@ function factor_factor(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
         return;
     }
 
-    if (!is_rat(INPUT) || iszero(INPUT) || isplusone(INPUT) || isminusone(INPUT)) {
+    if (!is_rat(INPUT) || iszero(INPUT, env) || isplusone(INPUT) || isminusone(INPUT)) {
         push(INPUT, $);
         return;
     }
@@ -10710,10 +10727,10 @@ function lessp(p1: U, p2: U): boolean {
     return cmp(p1, p2) < 0;
 }
 
-export function list(n: number, $: ProgramStack): void {
-    push(nil, $);
+export function list(n: number, _: Pick<ProgramStack, 'pop' | 'push'>): void {
+    push(nil, _);
     for (let i = 0; i < n; i++) {
-        cons($);
+        cons(_);
     }
 }
 
@@ -10848,7 +10865,7 @@ function multiply_scalar_factors(start: number, env: ProgramEnv, ctrl: ProgramCo
 
     const k0 = combine_numerical_factors(start, one, $);
 
-    if (iszero(k0) || start === $.length) {
+    if (iszero(k0, env) || start === $.length) {
         $.splice(start); // pop all
         push(k0, $);
         return;
@@ -10865,7 +10882,7 @@ function multiply_scalar_factors(start: number, env: ProgramEnv, ctrl: ProgramCo
 
     const k1 = combine_numerical_factors(start, k0, $);
 
-    if (iszero(k1) || start === $.length) {
+    if (iszero(k1, env) || start === $.length) {
         $.splice(start); // pop all
         push(k1, $);
         return;
@@ -11062,7 +11079,7 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
     switch (n) {
 
         case 0:
-            if (iszero(R))
+            if (iszero(R, env))
                 push_integer(1, $);
             else {
                 push(POWER, $);
@@ -11077,7 +11094,7 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
             break;
 
         case 1:
-            if (iszero(R))
+            if (iszero(R, env))
                 push(imu, $);
             else {
                 push(MULTIPLY, $);
@@ -11095,7 +11112,7 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
             break;
 
         case 2:
-            if (iszero(R))
+            if (iszero(R, env))
                 push_integer(-1, $);
             else {
                 push(MULTIPLY, $);
@@ -11113,7 +11130,7 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
             break;
 
         case 3:
-            if (iszero(R)) {
+            if (iszero(R, env)) {
                 push(MULTIPLY, $);
                 push_integer(-1, $);
                 push(imu, $);
@@ -11403,8 +11420,8 @@ function erfc(x: number): number {
     return 1.0 - erf(x);
 }
 
-export function pop($: ProgramStack): U {
-    return $.pop();
+export function pop(_: Pick<ProgramStack, 'pop'>): U {
+    return _.pop();
 }
 
 function assert_num_to_number(p: U): number | never {
@@ -11431,7 +11448,7 @@ function pop_double($: ProgramStack): number {
     }
 }
 
-export function pop_integer($: ProgramStack): number {
+export function pop_integer($: Pick<ProgramStack, 'pop'>): number {
     const expr = pop($);
     try {
         if (!issmallinteger(expr)) {
@@ -11742,7 +11759,7 @@ function normalize_clock_rational(expo: U, env: ProgramEnv, ctrl: ProgramControl
     switch (n) {
 
         case 0:
-            if (iszero(R))
+            if (iszero(R, env))
                 push_integer(1, $);
             else {
                 push(POWER, $);
@@ -11753,7 +11770,7 @@ function normalize_clock_rational(expo: U, env: ProgramEnv, ctrl: ProgramControl
             break;
 
         case 1:
-            if (iszero(R))
+            if (iszero(R, env))
                 push(imu, $);
             else {
                 push(MULTIPLY, $);
@@ -11769,7 +11786,7 @@ function normalize_clock_rational(expo: U, env: ProgramEnv, ctrl: ProgramControl
             break;
 
         case 2:
-            if (iszero(R))
+            if (iszero(R, env))
                 push_integer(-1, $);
             else {
                 push(MULTIPLY, $);
@@ -11783,7 +11800,7 @@ function normalize_clock_rational(expo: U, env: ProgramEnv, ctrl: ProgramControl
             break;
 
         case 3:
-            if (iszero(R)) {
+            if (iszero(R, env)) {
                 push(MULTIPLY, $);
                 push_integer(-1, $);
                 push(imu, $);
@@ -11933,14 +11950,14 @@ function power_numbers(base: Num, expo: Num, env: ProgramEnv, ctrl: ProgramContr
 
     // n^0
 
-    if (iszero(expo)) {
+    if (iszero(expo, env)) {
         push_integer(1, $);
         return;
     }
 
     // 0^n
 
-    if (iszero(base)) {
+    if (iszero(base, env)) {
         if (isnegativenumber(expo)) {
             // divide by zero
             $.push(new Err(items_to_cons(native_sym(Native.pow), base, expo)));
@@ -12294,7 +12311,7 @@ function prefixform(p: U, outbuf: string[]) {
     }
 }
 
-function promote_tensor($: ProgramStack): void {
+function promote_tensor($: Pick<ProgramStack, 'pop' | 'push'>): void {
 
     const p1 = pop($);
 
@@ -12355,8 +12372,8 @@ function promote_tensor($: ProgramStack): void {
  * pushes the expression onto the stack.
  * There is no evaluation of the expression.
  */
-export function push(expr: U, $: ProgramStack): void {
-    $.push(expr);
+export function push(expr: U, _: Pick<ProgramStack, 'push'>): void {
+    _.push(expr);
 }
 /*
 function peek(tag: string, $: ProgramStack): void {
@@ -12372,10 +12389,10 @@ function peek(tag: string, $: ProgramStack): void {
 }
 */
 
-function push_double(d: number, $: ProgramStack): void {
+function push_double(d: number, _: Pick<ProgramStack, 'push'>): void {
     const n = new Flt(d);
     try {
-        $.push(n);
+        _.push(n);
     }
     finally {
         n.release();
@@ -12385,7 +12402,7 @@ function push_double(d: number, $: ProgramStack): void {
  * Pushes a Rat onto the stack.
  * @param n 
  */
-export function push_integer(n: number, $: ProgramStack): void {
+export function push_integer(n: number, $: Pick<ProgramStack, 'push'>): void {
     push_rational(n, 1, $);
 }
 /**
@@ -12393,7 +12410,7 @@ export function push_integer(n: number, $: ProgramStack): void {
  * @param a 
  * @param b 
  */
-export function push_rational(a: number, b: number, $: ProgramStack): void {
+export function push_rational(a: number, b: number, $: Pick<ProgramStack, 'push'>): void {
     const n = create_rat(a, b);
     try {
         push(n, $);
@@ -12494,7 +12511,7 @@ function reduce_radical_rational(h: number, COEFF: Rat, env: ProgramEnv, ctrl: P
         if (is_num(EXPO) && isnegativenumber(EXPO)) {
             mod_integers(NUMER as Rat, BASE as Rat, $);
             const p2 = pop($);
-            if (iszero(p2)) {
+            if (iszero(p2, env)) {
                 push(NUMER, $);
                 push(BASE, $);
                 divide(env, ctrl, $);
@@ -12512,7 +12529,7 @@ function reduce_radical_rational(h: number, COEFF: Rat, env: ProgramEnv, ctrl: P
         else {
             mod_integers(DENOM as Rat, BASE as Rat, $);
             const p2 = pop($);
-            if (iszero(p2)) {
+            if (iszero(p2, env)) {
                 push(DENOM, $);
                 push(BASE, $);
                 divide(env, ctrl, $);
@@ -13321,9 +13338,10 @@ function static_reciprocate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
 
     // save divide by zero error for runtime
 
-    if (iszero(p2)) {
-        if (!(is_rat(p1) && isinteger1(p1)))
+    if (iszero(p2, env)) {
+        if (!(is_rat(p1) && isinteger1(p1))) {
             push(p1, $);
+        }
         push(POWER, $);
         push(p2, $);
         push_integer(-1, $);
@@ -13394,7 +13412,7 @@ export function swap($: ProgramStack): void {
 function trace_source_text(env: ProgramEnv, io: ProgramIO): void {
     const binding = get_binding(TRACE, nil, env);
     try {
-        if (!binding.equals(TRACE) && !iszero(binding)) {
+        if (!binding.equals(TRACE) && !iszero(binding, env)) {
             const escaped = html_escape_and_colorize(instring.substring(io.trace1, io.trace2), ColorCode.BLUE);
             broadcast(escaped, io);
         }
@@ -13621,6 +13639,12 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     getUserFunction(sym: Sym): U {
         assert_sym(sym);
         return this.usrfunc[sym.key()];
+    }
+    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
+        switch (atom.type) {
+            case 'rational': return rat_extension;
+        }
+        throw new Error(`ScriptVars.handlerFor ${atom.type} method not implemented.`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     hasBinding(opr: Sym, target: Cons): boolean {

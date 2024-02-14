@@ -1,9 +1,13 @@
-import { Flt, is_flt } from "math-expression-atoms";
+import { Flt, is_flt, Sym } from "math-expression-atoms";
+import { AtomHandler } from "math-expression-context";
+import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
 import { oneAsFlt } from "../../tree/flt/Flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
+
+const ISZERO = native_sym(Native.iszero);
 
 export function compare_flts(lhs: Flt, rhs: Flt): Sign {
     if (lhs.d < rhs.d) {
@@ -15,9 +19,8 @@ export function compare_flts(lhs: Flt, rhs: Flt): Sign {
     return 0;
 }
 
-export class FltExtension implements Extension<Flt> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor($: ExtensionEnv) {
+export class FltExtension implements Extension<Flt>, AtomHandler<Flt> {
+    constructor() {
         // Nothing to see here.
     }
     get hash(): string {
@@ -25,6 +28,12 @@ export class FltExtension implements Extension<Flt> {
     }
     get name(): string {
         return 'FltExtension';
+    }
+    test(atom: Flt, opr: Sym): boolean {
+        if (opr.equalsSym(ISZERO)) {
+            return atom.isZero();
+        }
+        throw new Error(`${this.name}.dispatch(${atom},${opr}) method not implemented.`);
     }
     iscons(): false {
         return false;
@@ -35,8 +44,8 @@ export class FltExtension implements Extension<Flt> {
     get dependencies(): FEATURE[] {
         return ['Flt'];
     }
-    evaluate(expr: Flt, argList: Cons): [TFLAGS, U] {
-        return this.transform(cons(expr, argList));
+    evaluate(atom: Flt, argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(atom, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         return [expr instanceof Flt ? TFLAG_HALT : TFLAG_NONE, expr];
@@ -66,6 +75,6 @@ export class FltExtension implements Extension<Flt> {
     }
 }
 
-export const flt_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new FltExtension($);
+export const flt_extension = new ExtensionOperatorBuilder(function () {
+    return new FltExtension();
 });

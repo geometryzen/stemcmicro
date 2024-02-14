@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -18,6 +18,12 @@ class Builder implements OperatorBuilder<Sym> {
 class SymMathMul implements Operator<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(private readonly $: ExtensionEnv) {
+    }
+    phases?: number | undefined;
+    dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(expr: Sym, opr: Sym): boolean {
+        throw new Error("Method not implemented.");
     }
     iscons(): false {
         return false;

@@ -8,7 +8,7 @@ const TTY = create_sym("tty");
 
 export function should_render_svg(env: ProgramEnv): boolean {
     const tty = get_binding(TTY, nil, env);
-    if (tty.equals(TTY) || iszero(tty)) {
+    if (tty.equals(TTY) || iszero(tty, env)) {
         return true;
     }
     else {

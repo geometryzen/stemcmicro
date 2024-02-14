@@ -1,4 +1,4 @@
-import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -22,6 +22,12 @@ class SymMathPow implements Operator<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(private readonly $: ExtensionEnv) {
     }
+    phases?: number | undefined;
+    dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(expr: Sym, opr: Sym): boolean {
+        throw new Error("Method not implemented.");
+    }
     iscons(): false {
         return false;
     }
@@ -40,8 +46,8 @@ class SymMathPow implements Operator<Sym> {
     transform(expr: U): [TFLAGS, U] {
         return [this.isKind(expr) ? TFLAG_HALT : TFLAG_NONE, expr];
     }
-    isKind(expr: U): expr is Sym {
-        return is_sym(expr) && MATH_POW.equals(expr);
+    isKind(arg: U): arg is Sym {
+        return is_sym(arg) && MATH_POW.equals(arg);
     }
     subst(expr: Sym, oldExpr: U, newExpr: U): U {
         if (expr.equals(oldExpr)) {

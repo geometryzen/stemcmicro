@@ -13,7 +13,7 @@ export function should_engine_render_svg($: ExprEngine): boolean {
         // Unbound in Eigenmath engine.
         return true;
     }
-    else if (iszero(tty)) {
+    else if (iszero(tty, $)) {
         // Bound to zero.
         return true;
     }

@@ -1,4 +1,4 @@
-import { ExtensionEnv, MODE_FACTORING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, MODE_FACTORING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -38,6 +38,11 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('abs_factorize', MATH_POW, guardL, guardR, $);
         this.#hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
+    }
+    dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(expr: EXP, opr: Sym): boolean {
+        throw new Error("Method not implemented.");
     }
     get hash(): string {
         return this.#hash;

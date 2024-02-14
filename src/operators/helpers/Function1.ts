@@ -1,12 +1,18 @@
 import { is_sym, Sym } from "math-expression-atoms";
 import { Cons, Cons1, is_cons, items_to_cons, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";
 
 export abstract class Function1<T extends U> extends FunctionVarArgs implements Operator<Cons1<Sym, T>> {
     constructor(name: string, opr: Sym, private readonly guard: GUARD<U, T>, $: ExtensionEnv) {
         super(name, opr, $);
+    }
+    phases?: number | undefined;
+    dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    test(expr: Cons1<Sym, T>, opr: Sym): boolean {
+        throw new Error("Method not implemented.");
     }
     isKind(expr: U): expr is Cons1<Sym, T> {
         return !!this.match(expr);

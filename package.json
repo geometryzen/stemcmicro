@@ -173,12 +173,12 @@
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "dependencies": {
-        "math-expression-native": "0.9.17",
         "typhon-lang": "^1.0.13"
     },
     "peerDependencies": {
         "math-expression-atoms": "0.9.36",
         "math-expression-context": "0.9.18",
+        "math-expression-native": "0.9.17",
         "math-expression-tree": "0.9.26"
     },
     "devDependencies": {

@@ -1,25 +1,21 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { QUOTE } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { assert_U } from "../helpers/is_any";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 // quote definition
 export function eval_quote(expr: Cons): U {
     assert_U(expr, "eval_quote(expr)", "expr");
     return expr.arg;
 }
 
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('quote', QUOTE, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('quote', QUOTE);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
@@ -34,4 +30,4 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
 }
 
-export const quote_varargs = new Builder();
+export const quote_varargs = mkbuilder(Op);

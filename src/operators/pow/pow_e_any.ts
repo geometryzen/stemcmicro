@@ -1,5 +1,6 @@
 import { count_imu_factors } from "../../calculators/count_imu_factors";
-import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
@@ -10,7 +11,7 @@ import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { MATH_ADD, MATH_MUL, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { negOne, one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { MATH_EXP } from "../exp/MATH_EXP";
 import { Cons2 } from "../helpers/Cons2";
@@ -23,12 +24,6 @@ import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 import { is_pi } from "../pi/is_pi";
 import { is_rat } from "../rat/rat_extension";
 import { is_sym } from "../sym/is_sym";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function cross(lhs: Sym, rhs: U): boolean {
@@ -54,19 +49,18 @@ type EXP = Cons2<Sym, LHS, RHS>;
 /**
  * (math.pow e X) is equivalent to exp(X)
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2X<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('pow_e_any', MATH_POW, is_sym, is_any, cross, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('pow_e_any', MATH_POW, is_sym, is_any, cross);
         this.#hash = hash_binop_atom_atom(this.opr, HASH_SYM, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, base: LHS, expo: RHS, outerExpr: EXP): [TFLAGS, U] {
+    transform2(opr: Sym, base: LHS, expo: RHS, outerExpr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(base), this.$.toInfixString(expo));
-        const $ = this.$;
         aggressive(expo, outerExpr, $);
         if ($.getDirective(Directive.familiarize)) {
             return [TFLAG_DIFF, items_to_cons(MATH_EXP, expo)];
@@ -166,5 +160,5 @@ function euler_formula(x: U, $: ExtensionEnv): U {
 
 }
 
-export const pow_e_any = new Builder();
+export const pow_e_any = mkbuilder(Op);
 

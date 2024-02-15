@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
@@ -10,18 +11,12 @@ import { is_rat } from "../rat/is_rat";
 const ARCTAN = native_sym(Native.arctan);
 const RE = native_sym(Native.real);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(RE, ARCTAN, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(RE, ARCTAN);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const innerExpr = expr.argList.head;
             const x = innerExpr.argList.head;
             return is_rat(x);
@@ -38,4 +33,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const real_arctan_rat = new Builder();
+export const real_arctan_rat = mkbuilder(Op);

@@ -1,7 +1,8 @@
 import { imu, is_blade, is_uom } from "math-expression-atoms";
 import { count_factors } from "../../calculators/count_factors";
 import { remove_factors } from "../../calculators/remove_factors";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { is_power } from "../../runtime/helpers";
@@ -34,23 +35,16 @@ function multiply_factors(factors: U[], $: ExtensionEnv): U {
     }
 }
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  * (re (* ...))
  * 
  * The strategy is to remove factors which are themselves real and treat them as scalars.
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(RE, MUL, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(RE, MUL);
     }
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg("opr", $.toSExprString(opr), "innerExpr", $.toSExprString(innerExpr), "outerExpr", $.toSExprString(outerExpr));
         const count_imu = count_factors(innerExpr, is_imu);
         if (count_imu > 0) {
@@ -176,4 +170,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const real_mul = new Builder();
+export const real_mul = mkbuilder(Op);

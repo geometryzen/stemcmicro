@@ -1,28 +1,23 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { Cons1 } from "../helpers/Cons1";
 import { is_imu } from "../imu/is_imu";
-import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const real = native_sym(Native.real);
 const log = native_sym(Native.log);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(real, log, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(real, log);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const logExpr = expr.argList.head;
             const x = logExpr.argList.head;
             return is_imu(x);
@@ -37,4 +32,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const real_log_imu = new Builder();
+export const real_log_imu = mkbuilder(Op);

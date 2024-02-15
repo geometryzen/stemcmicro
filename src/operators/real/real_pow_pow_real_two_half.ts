@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { is_square_root_of_real_squared } from "../../helpers/is_square_root_of_real_squared";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -10,22 +11,15 @@ import { Cons1 } from "../helpers/Cons1";
 const POW = native_sym(Native.pow);
 const RE = native_sym(Native.real);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  *
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(RE, POW, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(RE, POW);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        const $ = this.$;
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const innerExpr = expr.argList.head;
             return is_square_root_of_real_squared(innerExpr, $);
         }
@@ -39,4 +33,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const real_pow_pow_real_two_half = new Builder();
+export const real_pow_pow_real_two_half = mkbuilder(Op);

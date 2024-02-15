@@ -1,26 +1,21 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { REAL } from "../../runtime/constants";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
+import { Function1 } from "../helpers/Function1";
 import { is_rat } from "../rat/is_rat";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 type ARG = Rat;
 type EXP = Cons1<Sym, ARG>;
 
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('real_rat', REAL, is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('real_rat', REAL, is_rat);
         this.#hash = hash_unaop_atom(this.opr, HASH_RAT);
     }
     get hash(): string {
@@ -32,4 +27,4 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
 }
 
-export const real_rat = new Builder();
+export const real_rat = mkbuilder<EXP>(Op);

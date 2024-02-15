@@ -1,24 +1,19 @@
 import { Err, is_rat, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, Cons1, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const real = native_sym(Native.real);
 const log = native_sym(Native.log);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(real, log, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(real, log);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const logExpr = expr.argList.head;
             const x = logExpr.argList.head;
             return is_rat(x);
@@ -27,8 +22,7 @@ class Op extends CompositeOperator {
             return false;
         }
     }
-    transform1(opr: Sym, logExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, logExpr: Cons, exp: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const x = logExpr.argList.head;
         if (is_rat(x)) {
             if (x.isZero()) {
@@ -50,4 +44,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const real_log_rat = new Builder();
+export const real_log_rat = mkbuilder(Op);

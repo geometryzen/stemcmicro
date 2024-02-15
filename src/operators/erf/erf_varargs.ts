@@ -1,7 +1,7 @@
 import { create_flt, is_flt, zero } from "math-expression-atoms";
 import { Cons, items_to_cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { is_negative } from "../../predicates/is_negative";
 import { ERF } from "../../runtime/constants";
@@ -41,4 +41,4 @@ function yerf(p1: U, $: ExtensionEnv): U {
     return items_to_cons(ERF, p1);
 }
 
-export const erf_varargs = make_extension_builder(Op);
+export const erf_varargs = mkbuilder(Op);

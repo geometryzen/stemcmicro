@@ -2,7 +2,7 @@ import { Cell, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, Cons1, nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
@@ -47,4 +47,4 @@ class Op extends Function1<ARG> {
     }
 }
 
-export const atom_builder = make_extension_builder<EXP>(Op);
+export const atom_builder = mkbuilder<EXP>(Op);

@@ -1,7 +1,7 @@
 import { create_sym, is_rat, Rat, Sym } from "math-expression-atoms";
 import { U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Function1 } from "../helpers/Function1";
 
 class CeilingRat extends Function1<Rat> {
@@ -13,4 +13,4 @@ class CeilingRat extends Function1<Rat> {
     }
 }
 
-export const ceiling_rat = make_extension_builder(CeilingRat);
+export const ceiling_rat = mkbuilder(CeilingRat);

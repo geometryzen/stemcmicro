@@ -1,7 +1,7 @@
 import { Sym } from "math-expression-atoms";
 import { Cons1, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Extension, ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
@@ -29,4 +29,4 @@ class Op extends Function1<ARG> implements Extension<EXP> {
     }
 }
 
-export const st_any = make_extension_builder(Op);
+export const st_any = mkbuilder(Op);

@@ -2,7 +2,7 @@
 import { Sym } from "math-expression-atoms";
 import { Cons2, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { make_extension_builder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_RCO } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
@@ -22,4 +22,4 @@ class Op extends Function2<U, U> {
     }
 }
 
-export const rco_2_any_any = make_extension_builder(Op);
+export const rco_2_any_any = mkbuilder(Op);

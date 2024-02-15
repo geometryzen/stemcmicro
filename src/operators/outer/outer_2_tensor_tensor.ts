@@ -1,7 +1,7 @@
 
 import { is_tensor, Sym, Tensor } from "math-expression-atoms";
 import { Cons2, U } from "math-expression-tree";
-import { ExtensionEnv, FEATURE, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_TENSOR } from "../../hashing/hash_info";
 import { MAXDIM } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
@@ -46,4 +46,4 @@ class Op extends Function2<LHS, RHS> {
     }
 }
 
-export const outer_2_tensor_tensor = make_extension_builder<EXP>(Op);
+export const outer_2_tensor_tensor = mkbuilder<EXP>(Op);

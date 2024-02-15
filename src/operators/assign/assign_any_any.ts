@@ -2,7 +2,7 @@ import { is_sym, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons2, is_cons, nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { ASSIGN } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { caadr } from "../../tree/helpers";
@@ -113,4 +113,4 @@ class Op extends Function2<LHS, RHS> {
     }
 }
 
-export const assign_any_any = make_extension_builder<EXP>(Op);
+export const assign_any_any = mkbuilder<EXP>(Op);

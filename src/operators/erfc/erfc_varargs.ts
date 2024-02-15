@@ -1,6 +1,6 @@
 import { create_flt, is_flt, one } from "math-expression-atoms";
 import { Cons, items_to_cons, U } from "math-expression-tree";
-import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { ERFC } from "../../runtime/constants";
 import { cadr } from "../../tree/helpers";
@@ -36,4 +36,4 @@ function yerfc(p1: U, $: ExtensionEnv): U {
     return items_to_cons(ERFC, p1);
 }
 
-export const erfc_varargs = make_extension_builder(Op);
+export const erfc_varargs = mkbuilder(Op);

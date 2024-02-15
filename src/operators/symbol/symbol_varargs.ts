@@ -1,7 +1,7 @@
 import { create_sym, is_str, is_tensor } from "math-expression-atoms";
 import { Cons, is_nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Extension, ExtensionEnv, make_extension_builder, Predicates, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, mkbuilder, Predicates, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_nonop_cons, HASH_STR, HASH_TENSOR } from "../../hashing/hash_info";
 import { convert_tensor_to_primitives } from "../../helpers/convert_tensor_to_primitives";
 import { Native } from "../../native/Native";
@@ -83,4 +83,4 @@ function primitives_to_pairs(primitives: (boolean | string)[]): [string, boolean
     return pairs;
 }
 
-export const symbol_varargs = make_extension_builder(Op);
+export const symbol_varargs = mkbuilder(Op);

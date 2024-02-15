@@ -1,5 +1,5 @@
 import { EnvConfig } from "../../env/EnvConfig";
-import { Extension, make_extension_builder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { create_sym, Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -22,4 +22,4 @@ class Pred extends Function1<U> implements Extension<Cons> {
     }
 }
 
-export const pred_any = make_extension_builder(Pred);
+export const pred_any = mkbuilder(Pred);

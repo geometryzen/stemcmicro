@@ -1,7 +1,7 @@
 import { Str, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, make_extension_builder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_STR } from "../../hashing/hash_info";
 
 
@@ -105,4 +105,4 @@ class StrExtension implements Extension<Str>, AtomHandler<Str> {
 
 export const str_extension = new StrExtension();
 
-export const str_extension_builder = make_extension_builder<Str>(StrExtension);
+export const str_extension_builder = mkbuilder<Str>(StrExtension);

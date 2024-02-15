@@ -1,5 +1,5 @@
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { MATH_MUL, MATH_RCO } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -31,4 +31,4 @@ class Op extends Function2<U, Cons2<Sym, U, U>> {
     }
 }
 
-export const rco_2_any_mul_2_scalar_any = make_extension_builder(Op);
+export const rco_2_any_mul_2_scalar_any = mkbuilder(Op);

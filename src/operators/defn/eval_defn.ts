@@ -2,7 +2,7 @@ import { assert_map, assert_sym, assert_tensor, Err, is_err, is_map, is_str, is_
 import { Native, native_sym } from "math-expression-native";
 import { Cons, items_to_cons, nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
@@ -124,5 +124,5 @@ class Op extends FunctionVarArgs<Cons> {
     }
 }
 
-export const defn_builder = make_extension_builder(Op);
+export const defn_builder = mkbuilder(Op);
 

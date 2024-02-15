@@ -1,6 +1,6 @@
 import { Sym } from "math-expression-atoms";
 import { Cons2, items_to_cons, U } from "math-expression-tree";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_MUL, MATH_RCO } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
@@ -29,4 +29,4 @@ class Op extends Function2<Cons2<Sym, U, U>, U> {
     }
 }
 
-export const rco_2_mul_2_scalar_any_any = make_extension_builder(Op);
+export const rco_2_mul_2_scalar_any_any = mkbuilder(Op);

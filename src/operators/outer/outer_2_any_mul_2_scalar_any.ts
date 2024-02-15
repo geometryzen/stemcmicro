@@ -1,6 +1,6 @@
 import { Sym } from "math-expression-atoms";
 import { Cons2, items_to_cons, U } from "math-expression-tree";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { is_multiply } from "../../runtime/helpers";
 import { MATH_OUTER } from "../../runtime/ns_math";
@@ -48,4 +48,4 @@ class Op extends Function2<LHS, RHS> {
     }
 }
 
-export const outer_2_any_mul_2_scalar_any = make_extension_builder(Op);
+export const outer_2_any_mul_2_scalar_any = mkbuilder(Op);

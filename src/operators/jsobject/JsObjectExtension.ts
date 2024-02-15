@@ -2,7 +2,7 @@ import { assert_jsobject, is_jsobject, JsObject, Sym } from "math-expression-ato
 import { AtomHandler } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Extension, ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
@@ -67,4 +67,4 @@ export class JsObjectExtension implements Extension<JsObject>, AtomHandler<JsObj
     }
 }
 
-export const jsobject_extension_builder = make_extension_builder(JsObjectExtension);
+export const jsobject_extension_builder = mkbuilder(JsObjectExtension);

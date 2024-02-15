@@ -1,7 +1,7 @@
 import { Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, make_extension_builder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_PI } from "../../runtime/ns_math";
 import { is_pi } from "../pi/is_pi";
@@ -71,4 +71,4 @@ class SymMathPi implements Extension<Sym> {
     }
 }
 
-export const sym_math_pi_builder = make_extension_builder(SymMathPi);
+export const sym_math_pi_builder = mkbuilder(SymMathPi);

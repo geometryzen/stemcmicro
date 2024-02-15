@@ -2,7 +2,7 @@ import { create_flt, one, Rat, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Atom, cons, Cons, is_cons, is_singleton, U } from "math-expression-tree";
-import { Directive, Extension, ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 
 const ISZERO = native_sym(Native.iszero);
@@ -97,4 +97,4 @@ export class RatExtension implements Extension<Rat>, AtomHandler<Rat> {
 
 export const rat_extension: AtomHandler<Atom> = new RatExtension;
 
-export const rat_extension_builder = make_extension_builder<Rat>(RatExtension);
+export const rat_extension_builder = mkbuilder<Rat>(RatExtension);

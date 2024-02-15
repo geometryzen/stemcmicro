@@ -1,6 +1,6 @@
 import { Native, native_sym } from "math-expression-native";
 import { Cons, U } from "math-expression-tree";
-import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { eval_let } from "./eval_let";
@@ -23,4 +23,4 @@ class Op extends FunctionVarArgs<Cons> {
     }
 }
 
-export const let_varargs = make_extension_builder<Cons>(Op);
+export const let_varargs = mkbuilder<Cons>(Op);

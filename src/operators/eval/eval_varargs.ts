@@ -1,5 +1,5 @@
 import { car, Cons, is_cons, U } from "math-expression-tree";
-import { ExtensionEnv, make_extension_builder, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { EVAL } from "../../runtime/constants";
 import { cadr, cddr } from "../../tree/helpers";
@@ -41,4 +41,4 @@ class Op extends FunctionVarArgs<Cons> {
     }
 }
 
-export const eval_varargs = make_extension_builder(Op);
+export const eval_varargs = mkbuilder(Op);

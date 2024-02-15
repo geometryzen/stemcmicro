@@ -1,47 +1,37 @@
-import { ExtensionEnv, Operator, OperatorBuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { one, Sym } from "math-expression-atoms";
+import { Cons2, items_to_cons, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
-import { one } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, items_to_cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LHS = U;
 type RHS = U;
 type EXP = Cons2<Sym, LHS, RHS>;
 
-function is_real($: ExtensionEnv) {
-    return function (expr: LHS): expr is U {
-        if ($.isone(expr)) {
-            return false;
-        }
-        const retval = $.isreal(expr);
-        return retval;
-    };
+function is_real(expr: LHS, $: ExtensionEnv): expr is U {
+    if ($.isone(expr)) {
+        return false;
+    }
+    const retval = $.isreal(expr);
+    return retval;
 }
 
 /**
  * X | Y => X * (1 | Y), when X is real.
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly phases = MODE_EXPANDING;
-    constructor($: ExtensionEnv) {
-        super('inner_2_real_any', MATH_INNER, is_real($), is_any, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('inner_2_real_any', MATH_INNER, is_real, is_any);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         const A = $.valueOf(items_to_cons(opr, one, rhs));
         const B = $.valueOf(items_to_cons(MATH_MUL, lhs, A));
         return [TFLAG_DIFF, B];
     }
 }
 
-export const inner_2_real_any = new Builder();
+export const inner_2_real_any = mkbuilder<EXP>(Op);

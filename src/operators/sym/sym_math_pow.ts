@@ -2,7 +2,7 @@ import { assert_sym, is_sym, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Directive, Extension, ExtensionEnv, FEATURE, make_extension_builder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 
 const MATH_POW = native_sym(Native.pow);
@@ -71,4 +71,4 @@ class SymMathPow implements Extension<Sym> {
     }
 }
 
-export const sym_math_pow_builder = make_extension_builder(SymMathPow);
+export const sym_math_pow_builder = mkbuilder(SymMathPow);

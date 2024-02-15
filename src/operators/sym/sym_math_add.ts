@@ -1,7 +1,7 @@
 import { is_sym, Sym } from "math-expression-atoms";
 import { cons, Cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Extension, ExtensionEnv, FEATURE, make_extension_builder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 
@@ -73,4 +73,4 @@ class SymMathAdd implements Extension<Sym> {
     }
 }
 
-export const sym_math_add_builder = make_extension_builder(SymMathAdd);
+export const sym_math_add_builder = mkbuilder(SymMathAdd);

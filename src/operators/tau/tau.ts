@@ -3,7 +3,7 @@ import { Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons1, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Extension, ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { two } from "../../tree/rat/Rat";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
@@ -29,4 +29,4 @@ function tau_(x: U, $: Pick<ExtensionEnv, 'multiply'>): U {
     return $.multiply(two_pi, x);
 }
 
-export const tau_builder = make_extension_builder(Op);
+export const tau_builder = mkbuilder(Op);

@@ -296,10 +296,10 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(inner_2_imu_any);
     $.defineExtension(inner_2_sym_sym);
     $.defineExtension(inner_2_vec_scalar);
-    $.defineOperator(inner_2_blade_blade);
-    $.defineOperator(inner_2_real_any);
-    $.defineOperator(inner_2_any_real);
-    $.defineOperator(inner_2_any_rat);
+    $.defineExtension(inner_2_blade_blade);
+    $.defineExtension(inner_2_real_any);
+    $.defineExtension(inner_2_any_real);
+    $.defineExtension(inner_2_any_rat);
     $.defineExtension(inner_2_any_imu);
     $.defineExtension(inner_product_builder);
 

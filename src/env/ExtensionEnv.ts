@@ -565,6 +565,6 @@ class Builder<T extends U> implements ExtensionBuilder<T> {
     }
 }
 
-export function make_extension_builder<T extends U>(extension: ExtensionConstructor<T>): ExtensionBuilder<T> {
+export function mkbuilder<T extends U>(extension: ExtensionConstructor<T>): ExtensionBuilder<T> {
     return new Builder<T>(extension);
 }

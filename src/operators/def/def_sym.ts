@@ -2,7 +2,7 @@ import { is_sym, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons1, nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { Function1 } from "../helpers/Function1";
 import { extract_def_args } from "./extract_def_args";
@@ -65,4 +65,4 @@ class Op extends Function1<ARG> {
 /**
  * (def symbol)
  */
-export const def_sym_builder = make_extension_builder<EXP>(Op);
+export const def_sym_builder = mkbuilder<EXP>(Op);

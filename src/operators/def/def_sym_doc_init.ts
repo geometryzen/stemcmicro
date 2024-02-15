@@ -1,6 +1,6 @@
 import { assert_str, create_sym, Err, is_str, is_sym, Str, Sym } from "math-expression-atoms";
 import { Cons3, nil, U } from "math-expression-tree";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Function3 } from "../helpers/Function3";
 import { is_any } from "../helpers/is_any";
 import { extract_def_args } from "./extract_def_args";
@@ -79,4 +79,4 @@ class Op extends Function3<A, B, C> {
 /**
  * (def symbol doc-string init)
  */
-export const def_sym_doc_init_builder = make_extension_builder<EXP>(Op);
+export const def_sym_doc_init_builder = mkbuilder<EXP>(Op);

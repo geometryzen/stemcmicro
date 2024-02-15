@@ -1,7 +1,7 @@
 import { create_flt, create_sym, Flt, is_flt, Sym } from "math-expression-atoms";
 import { U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Function1 } from "../helpers/Function1";
 
 class CeilingFlt extends Function1<Flt> {
@@ -13,4 +13,4 @@ class CeilingFlt extends Function1<Flt> {
     }
 }
 
-export const ceiling_flt = make_extension_builder(CeilingFlt);
+export const ceiling_flt = mkbuilder(CeilingFlt);

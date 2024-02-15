@@ -2,7 +2,7 @@
 import { Blade, is_blade, Sym, zero } from "math-expression-atoms";
 import { U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
@@ -21,4 +21,4 @@ class Op extends Function2<Blade, U> {
     }
 }
 
-export const inner_2_vec_scalar = make_extension_builder(Op);
+export const inner_2_vec_scalar = mkbuilder(Op);

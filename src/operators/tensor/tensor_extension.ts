@@ -1,7 +1,7 @@
 import { is_tensor, Sym, Tensor } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, nil, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_TENSOR } from "../../hashing/hash_info";
 import { print_tensor } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
@@ -175,4 +175,4 @@ class TensorExtension implements Extension<Tensor>, AtomHandler<Tensor>{
 
 export const tensor_extension = new TensorExtension();
 
-export const tensor_extension_builder = make_extension_builder(TensorExtension);
+export const tensor_extension_builder = mkbuilder(TensorExtension);

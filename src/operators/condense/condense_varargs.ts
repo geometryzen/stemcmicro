@@ -1,7 +1,7 @@
 import { Cons, U } from "math-expression-tree";
 import { eval_condense } from "../../condense";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, MODE_EXPANDING, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { CONDENSE } from "../../runtime/constants";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
@@ -23,4 +23,4 @@ class Op extends FunctionVarArgs<Cons> {
     }
 }
 
-export const condense_varargs = make_extension_builder<Cons>(Op);
+export const condense_varargs = mkbuilder<Cons>(Op);

@@ -2,7 +2,7 @@
 import { Imu, is_imu, one, Sym } from "math-expression-atoms";
 import { Cons2, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_IMU } from "../../hashing/hash_info";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
@@ -29,4 +29,4 @@ class Op extends Function2<LHS, RHS> {
     }
 }
 
-export const inner_2_imu_imu = make_extension_builder<EXP>(Op);
+export const inner_2_imu_imu = mkbuilder<EXP>(Op);

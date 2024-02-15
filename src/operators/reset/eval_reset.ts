@@ -1,7 +1,7 @@
 import { assert_cell, create_sym, Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
@@ -49,4 +49,4 @@ class Op extends Function2<A, B> {
     }
 }
 
-export const reset_builder = make_extension_builder(Op);
+export const reset_builder = mkbuilder(Op);

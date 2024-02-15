@@ -2,7 +2,7 @@
 import { Imu, is_imu, is_rat } from "math-expression-atoms";
 import { Cons2, items_to_cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -30,4 +30,4 @@ class Op extends Function2<LHS, RHS> {
     }
 }
 
-export const inner_2_imu_rat = make_extension_builder<EXP>(Op);
+export const inner_2_imu_rat = mkbuilder<EXP>(Op);

@@ -2,7 +2,7 @@ import { create_sym, is_sym, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_cons, items_to_cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
 export function is_opr(sym: Sym, expr: Cons): expr is Cons {
@@ -32,4 +32,4 @@ class Op extends FunctionVarArgs<Cons> {
     }
 }
 
-export const d_to_derivative_builder = make_extension_builder<Cons>(Op); 
+export const d_to_derivative_builder = mkbuilder<Cons>(Op); 

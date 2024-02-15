@@ -1,7 +1,7 @@
 import { is_rat, Rat, Sym, zero } from "math-expression-atoms";
 import { Cons2, items_to_cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
@@ -80,5 +80,5 @@ class Op extends Function2<LHS, RHS> {
     }
 }
 
-export const inner_2_rat_any_builder = make_extension_builder<EXP>(Op);
+export const inner_2_rat_any_builder = mkbuilder<EXP>(Op);
 

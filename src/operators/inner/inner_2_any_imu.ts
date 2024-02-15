@@ -1,6 +1,6 @@
 import { Imu, is_imu, one, Sym } from "math-expression-atoms";
 import { items_to_cons, U } from "math-expression-tree";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_IMU } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Cons2 } from "../helpers/Cons2";
@@ -32,4 +32,4 @@ class Op extends Function2<LHS, RHS> {
     }
 }
 
-export const inner_2_any_imu = make_extension_builder<EXP>(Op);
+export const inner_2_any_imu = mkbuilder<EXP>(Op);

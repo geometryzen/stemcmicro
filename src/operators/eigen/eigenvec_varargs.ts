@@ -1,6 +1,6 @@
 import { Cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { EIGENVEC } from "../../runtime/constants";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
@@ -22,4 +22,4 @@ class Op extends FunctionVarArgs<Cons> {
     }
 }
 
-export const eigenvec_varargs = make_extension_builder<Cons>(Op);
+export const eigenvec_varargs = mkbuilder<Cons>(Op);

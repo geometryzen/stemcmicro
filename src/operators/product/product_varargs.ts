@@ -1,4 +1,4 @@
-import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { PRODUCT } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
@@ -21,4 +21,4 @@ class Op extends FunctionVarArgs<Cons> {
     }
 }
 
-export const product_varargs = make_extension_builder(Op);
+export const product_varargs = mkbuilder(Op);

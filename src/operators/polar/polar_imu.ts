@@ -1,7 +1,7 @@
 import { Imu, is_imu, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons1, U } from "math-expression-tree";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
 import { half } from "../../tree/rat/Rat";
 import { Function1 } from "../helpers/Function1";
@@ -27,4 +27,4 @@ class Op extends Function1<ARG> {
     }
 }
 
-export const polar_imu = make_extension_builder<EXP>(Op);
+export const polar_imu = mkbuilder<EXP>(Op);

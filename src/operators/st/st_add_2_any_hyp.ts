@@ -1,7 +1,7 @@
 import { Hyp, is_hyp, Sym } from "math-expression-atoms";
 import { Cons1, Cons2, is_cons, items_to_cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Extension, ExtensionEnv, make_extension_builder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { and } from "../helpers/and";
@@ -38,4 +38,4 @@ class Op extends Function1<ARG> implements Extension<EXP> {
     }
 }
 
-export const st_add_2_any_hyp = make_extension_builder(Op);
+export const st_add_2_any_hyp = mkbuilder(Op);

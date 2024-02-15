@@ -1,4 +1,4 @@
-import { Extension, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Extension, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -25,4 +25,4 @@ class Op extends Function1<ARG> implements Extension<EXP> {
     }
 }
 
-export const st_rat = make_extension_builder(Op);
+export const st_rat = mkbuilder(Op);

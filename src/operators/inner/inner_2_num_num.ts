@@ -3,7 +3,7 @@ import { is_num, Num, Sym } from "math-expression-atoms";
 import { U } from "math-expression-tree";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { EnvConfig } from "../../env/EnvConfig";
-import { make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
@@ -25,4 +25,4 @@ class Op extends Function2<Num, Num> {
     }
 }
 
-export const inner_2_num_num = make_extension_builder(Op);
+export const inner_2_num_num = mkbuilder(Op);

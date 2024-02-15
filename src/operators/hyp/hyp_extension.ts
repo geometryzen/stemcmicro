@@ -1,7 +1,7 @@
 import { epsilon, Hyp, is_hyp, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 
 function verify_hyp(hyp: Hyp): Hyp | never {
@@ -69,4 +69,4 @@ class HypExtension implements Extension<Hyp>, AtomHandler<Hyp> {
     }
 }
 
-export const hyp_extension_builder = make_extension_builder(HypExtension);
+export const hyp_extension_builder = mkbuilder(HypExtension);

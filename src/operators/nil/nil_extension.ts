@@ -1,7 +1,7 @@
 
 import { Sym } from "math-expression-atoms";
 import { cons, Cons, nil, U } from "math-expression-tree";
-import { Extension, FEATURE, make_extension_builder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_NIL } from "../../hashing/hash_info";
 
 class NilExtension implements Extension<Cons> {
@@ -71,4 +71,4 @@ class NilExtension implements Extension<Cons> {
     }
 }
 
-export const nil_extension_builder = make_extension_builder(NilExtension);
+export const nil_extension_builder = mkbuilder(NilExtension);

@@ -2,7 +2,7 @@ import { Cell, is_cell, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, make_extension_builder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_CELL } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
@@ -74,4 +74,4 @@ class CellExtension implements Extension<Cell>, AtomHandler<Cell> {
     }
 }
 
-export const cell_extension_builder = make_extension_builder(CellExtension);
+export const cell_extension_builder = mkbuilder(CellExtension);

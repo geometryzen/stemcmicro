@@ -1,7 +1,7 @@
 import { create_sym, is_sym, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { Cons, is_nil, nil, U } from "math-expression-tree";
-import { Directive, Extension, ExtensionEnv, make_extension_builder, TFLAGS } from "../../env/ExtensionEnv";
+import { Directive, Extension, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { piAsFlt } from "../../tree/flt/Flt";
@@ -98,4 +98,4 @@ class SymExtension implements Extension<Sym>, AtomHandler<Sym> {
     }
 }
 
-export const sym_extension_builder = make_extension_builder(SymExtension);
+export const sym_extension_builder = mkbuilder(SymExtension);

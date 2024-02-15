@@ -4,7 +4,7 @@ import { contains_single_blade } from "../../calculators/compare/contains_single
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { remove_factors } from "../../calculators/remove_factors";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
@@ -74,4 +74,4 @@ class Op extends Function2<LHS, RHS> {
     }
 }
 
-export const cross_any_any = make_extension_builder<EXP>(Op);
+export const cross_any_any = mkbuilder<EXP>(Op);

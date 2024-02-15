@@ -2,7 +2,7 @@ import { Flt, is_flt, Sym } from "math-expression-atoms";
 import { AtomHandler } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, make_extension_builder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
 import { oneAsFlt } from "../../tree/flt/Flt";
 
@@ -74,4 +74,4 @@ export class FltExtension implements Extension<Flt>, AtomHandler<Flt> {
     }
 }
 
-export const flt_extension_builder = make_extension_builder<Flt>(FltExtension);
+export const flt_extension_builder = mkbuilder<Flt>(FltExtension);

@@ -1,7 +1,7 @@
 import { create_sym, is_rat, Rat, Sym } from "math-expression-atoms";
 import { U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { Function1 } from "../helpers/Function1";
 
@@ -19,4 +19,4 @@ class PredRat extends Function1<Rat> {
     }
 }
 
-export const pred_rat = make_extension_builder(PredRat);
+export const pred_rat = mkbuilder(PredRat);

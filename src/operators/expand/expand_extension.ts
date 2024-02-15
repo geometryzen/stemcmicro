@@ -1,5 +1,5 @@
 import { Cons, U } from "math-expression-tree";
-import { ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { eval_expand } from "../../expand";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { EXPAND } from "../../runtime/constants";
@@ -21,4 +21,4 @@ class Op extends FunctionVarArgs<Cons> {
     }
 }
 
-export const expand_extension = make_extension_builder<Cons>(Op);
+export const expand_extension = mkbuilder<Cons>(Op);

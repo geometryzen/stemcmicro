@@ -1,5 +1,5 @@
 import { Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, make_extension_builder, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { HERMITE } from "../../runtime/constants";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
@@ -26,4 +26,4 @@ class Op extends FunctionVarArgs<Cons> implements Extension<Cons> {
     }
 }
 
-export const hermite_varargs = make_extension_builder<Cons>(Op);
+export const hermite_varargs = mkbuilder<Cons>(Op);

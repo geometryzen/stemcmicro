@@ -1,7 +1,7 @@
 import { Blade, is_blade, Sym } from "math-expression-atoms";
 import { AtomHandler, ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, FEATURE, make_extension_builder, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, FEATURE, mkbuilder, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
 
 /**
@@ -87,4 +87,4 @@ class BladeExtension implements Extension<Blade>, AtomHandler<Blade> {
     }
 }
 
-export const blade_extension_builder = make_extension_builder(BladeExtension);
+export const blade_extension_builder = mkbuilder(BladeExtension);

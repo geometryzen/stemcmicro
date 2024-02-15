@@ -2,7 +2,7 @@ import { imu, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons2, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
@@ -26,4 +26,4 @@ class Op extends Function2<U, U> {
     }
 }
 
-export const complex_2_any_any = make_extension_builder(Op);
+export const complex_2_any_any = mkbuilder(Op);

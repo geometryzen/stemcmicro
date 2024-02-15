@@ -1,7 +1,7 @@
 import { Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, make_extension_builder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
 import { AbstractKeywordOperator } from "../helpers/KeywordSymbol";
@@ -24,4 +24,4 @@ class ScriptLast extends AbstractKeywordOperator {
     }
 }
 
-export const script_last_0 = make_extension_builder(ScriptLast);
+export const script_last_0 = mkbuilder(ScriptLast);

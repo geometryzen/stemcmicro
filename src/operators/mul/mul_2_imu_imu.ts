@@ -1,18 +1,13 @@
 import { Imu, is_imu } from "math-expression-atoms";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_IMU } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
+import { U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LHS = Imu;
 type RHS = Imu;
@@ -21,11 +16,11 @@ type EXP = Cons2<Sym, LHS, RHS>;
 /**
  * i * i => -1
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Imu'];
-    constructor($: ExtensionEnv) {
-        super('mul_2_imu_imu', MATH_MUL, is_imu, is_imu, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_imu_imu', MATH_MUL, is_imu, is_imu);
         this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_IMU, HASH_IMU);
     }
     get hash(): string {
@@ -37,4 +32,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const mul_2_imu_imu = new Builder();
+export const mul_2_imu_imu = mkbuilder<EXP>(Op);

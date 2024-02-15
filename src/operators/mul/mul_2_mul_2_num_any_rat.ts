@@ -1,23 +1,18 @@
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
-import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
+import { is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
+import { is_rat } from "../rat/is_rat";
 import { is_mul_2_num_any } from "./is_mul_2_num_any";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LL = Num;
 type LR = U;
@@ -32,10 +27,10 @@ type EXP = Cons2<Sym, LHS, RHS>;
  * 
  * (Rat1 * X) * Rat2 => Rat1 * (X * Rat2) => Rat1 * (Rat2 * X) => (Rat1 * Rat2) * X
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('mul_2_mul_2_num_any_rat', MATH_MUL, and(is_cons, is_mul_2_num_any), is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_mul_2_num_any_rat', MATH_MUL, and(is_cons, is_mul_2_num_any), is_rat);
         this.#hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_RAT);
     }
     get hash(): string {
@@ -49,4 +44,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const mul_2_mul_2_num_any_rat = new Builder();
+export const mul_2_mul_2_num_any_rat = mkbuilder<EXP>(Op);

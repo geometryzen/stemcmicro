@@ -1,39 +1,33 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_rat_any } from "./is_mul_2_rat_any";
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
-
 type LHS = Cons2<Sym, Rat, U>;
 type RHS = Cons2<Sym, Rat, U>;
-type EXPR = Cons2<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * (n * X) * (m * Y) => (n * m) * (X * Y) 
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('mul_2_mul_2_rat_any_mul_2_rat_any', MATH_MUL, and(is_cons, is_mul_2_rat_any), and(is_cons, is_mul_2_rat_any), $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_mul_2_rat_any_mul_2_rat_any', MATH_MUL, and(is_cons, is_mul_2_rat_any), and(is_cons, is_mul_2_rat_any));
         this.#hash = hash_binop_cons_cons(MATH_MUL, MATH_MUL, MATH_MUL);
     }
     get hash(): string {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: Cons2<Sym, LHS, RHS>): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: Cons2<Sym, LHS, RHS>, $: ExtensionEnv): [TFLAGS, U] {
         const n = lhs.lhs;
         const X = lhs.rhs;
         const m = rhs.lhs;
@@ -44,4 +38,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     }
 }
 
-export const mul_2_mul_2_rat_any_mul_2_rat_any = new Builder();
+export const mul_2_mul_2_rat_any_mul_2_rat_any = mkbuilder<EXP>(Op);

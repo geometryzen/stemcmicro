@@ -430,13 +430,13 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(native_sym(Native.derivative), stack_derivative);
     $.defineStackFunction(native_sym(Native.det), stack_det);
 
-    $.defineOperator(dotdot_builder);
+    $.defineExtension(dotdot_builder);
 
-    $.defineOperator(dim_varargs);
-    $.defineOperator(dirac_varargs);
+    $.defineExtension(dim_varargs);
+    $.defineExtension(dirac_varargs);
     $.defineEvalFunction(create_sym("divisors"), eval_divisors);
 
-    $.defineOperator(do_varargs);
+    $.defineExtension(do_varargs);
 
     $.defineEvalFunction(DOT, eval_inner);
 
@@ -462,13 +462,13 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(native_sym(Native.exptan), stack_exptan);
     $.defineStackFunction(native_sym(Native.exptanh), stack_exptanh);
 
-    $.defineOperator(factor_varargs);
-    $.defineOperator(factorial_varargs);
-    $.defineOperator(float_varargs);
+    $.defineExtension(factor_varargs);
+    $.defineExtension(factorial_varargs);
+    $.defineExtension(float_varargs);
 
     $.defineStackFunction(create_sym("floor"), stack_floor);
 
-    $.defineOperator(for_varargs);
+    $.defineExtension(for_varargs);
 
     $.defineStackFunction(native_sym(Native.hadamard), stack_hadamard);
     $.defineEvalFunction(native_sym(Native.hilbert), eval_hilbert);
@@ -476,9 +476,9 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineStackFunction(native_sym(Native.component), stack_index);
 
-    $.defineOperator(infinitesimal_1_str);
+    $.defineExtension(infinitesimal_1_str);
 
-    $.defineOperator(integral_varargs);
+    $.defineExtension(integral_varargs);
 
     $.defineOperator(inv_inv);
     $.defineOperator(inv_any);

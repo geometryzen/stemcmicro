@@ -1,22 +1,10 @@
-import { create_boo, create_flt, create_sym, is_jsobject, Str, Sym } from "math-expression-atoms";
+import { create_boo, create_flt, create_sym, is_jsobject, is_sym, Str } from "math-expression-atoms";
 import { Cons, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { is_sym } from "../sym/is_sym";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        const DOTDOT = create_sym("..");
-        try {
-            return new DotDotOperator($, DOTDOT);
-        }
-        finally {
-            DOTDOT.release();
-        }
-    }
-}
 
 export function eval_dotdot(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
@@ -87,10 +75,10 @@ export function eval_dotdot(expr: Cons, $: ExtensionEnv): U {
 /**
  * (.. e -target -value)
  */
-class DotDotOperator extends FunctionVarArgs implements Operator<Cons> {
+class DotDotOperator extends FunctionVarArgs<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv, DOTDOT: Sym) {
-        super('dotdot', DOTDOT, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('dotdot', create_sym(".."));
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
@@ -100,11 +88,10 @@ class DotDotOperator extends FunctionVarArgs implements Operator<Cons> {
     override evaluate(argList: Cons): [TFLAGS, U] {
         throw new ProgrammingError();
     }
-    override valueOf(expr: Cons): U {
-        return eval_dotdot(expr, this.$);
+    override valueOf(expr: Cons, $: ExtensionEnv): U {
+        return eval_dotdot(expr, $);
     }
-    override transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    override transform(expr: Cons, $: ExtensionEnv): [number, U] {
         // console.lg(this.name, render_as_sexpr(expr, $));
         const hook = (where: string, retval: U): U => {
             // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
@@ -117,4 +104,4 @@ class DotDotOperator extends FunctionVarArgs implements Operator<Cons> {
     }
 }
 
-export const dotdot_builder = new Builder();
+export const dotdot_builder = mkbuilder(DotDotOperator);

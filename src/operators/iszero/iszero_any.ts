@@ -1,34 +1,28 @@
-import { Boo, booF, Sym } from "math-expression-atoms";
+import { booF, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
-import { Cons, is_atom, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Cons1, is_atom, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { Cons1 } from "../helpers/Cons1";
+import { predicate_return_value } from "../../helpers/predicate_return_value";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 const ISZERO = native_sym(Native.iszero);
 
-class Op extends Function1<U> implements Operator<Cons> {
+class Op extends Function1<U> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('iszero_any', ISZERO, is_any, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('iszero_any', ISZERO, is_any);
         this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: U, expr: Cons1<Sym, U>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: U, expr: Cons1<Sym, U>, $: ExtensionEnv): [TFLAGS, U] {
         if (is_atom(arg)) {
-            const handler = this.$.handlerFor(arg);
-            return [TFLAG_NONE, Boo.valueOf(handler.test(arg, ISZERO, this.$))];
+            const handler = $.handlerFor(arg);
+            return [TFLAG_NONE, predicate_return_value(handler.test(arg, ISZERO, $), $)];
         }
         else {
             return [TFLAG_NONE, booF];
@@ -36,4 +30,4 @@ class Op extends Function1<U> implements Operator<Cons> {
     }
 }
 
-export const iszero_any = new Builder();
+export const iszero_any = mkbuilder<Cons1<Sym, U>>(Op);

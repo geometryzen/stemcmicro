@@ -1,36 +1,28 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { is_sym, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons1, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { booF, booT } from "../../tree/boo/Boo";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
+import { predicate_return_value } from "../../helpers/predicate_return_value";
 import { Function1 } from "../helpers/Function1";
-import { is_sym } from "../sym/is_sym";
-
-class OpBuilder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 const ISZERO = native_sym(Native.iszero);
 
-class Op extends Function1<Sym> implements Operator<U> {
+class Op extends Function1<Sym> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('iszero_sym', ISZERO, is_sym, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('iszero_sym', ISZERO, is_sym);
         this.#hash = hash_unaop_atom(this.opr, HASH_SYM);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
+    transform1(opr: Sym, arg: Sym, exp: Cons1<Sym, U>, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(arg));
-        const $ = this.$;
         const predicates = $.getSymbolPredicates(arg);
-        return [TFLAG_DIFF, predicates.zero ? booT : booF];
+        return [TFLAG_DIFF, predicate_return_value(predicates.zero, $)];
     }
 }
 
-export const iszero_sym_builder = new OpBuilder();
+export const iszero_sym_builder = mkbuilder(Op);

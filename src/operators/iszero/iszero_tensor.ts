@@ -1,10 +1,10 @@
 import { Boo, is_tensor, Rat, Sym, Tensor } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
-import { U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Cons1, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_TENSOR, hash_unaop_atom } from "../../hashing/hash_info";
 import { predicate_return_value } from "../../helpers/predicate_return_value";
-import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
 
 type ARG = Tensor;
@@ -32,34 +32,22 @@ function iszero_tensor(arg: Tensor, $: Pick<ExtensionEnv, 'getDirective' | 'isze
     return predicate_return_value(true, $);
 }
 
-class OpBuilder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        const ISZERO = native_sym(Native.iszero);
-        try {
-            return new Op($, ISZERO);
-        }
-        finally {
-            ISZERO.release();
-        }
-    }
-}
 
-
-class Op extends Function1<Tensor> implements Operator<EXP> {
+class Op extends Function1<Tensor> {
     readonly #hash: string;
-    constructor($: ExtensionEnv, ISZERO: Sym) {
-        super('iszero_tensor', ISZERO, is_tensor, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('iszero_tensor', native_sym(Native.iszero), is_tensor);
         this.#hash = hash_unaop_atom(this.opr, HASH_TENSOR);
     }
     get hash(): string {
         return this.#hash;
     }
-    valueOf(expr: EXP): U {
-        return eval_iszero_tensor(expr, this.$);
+    valueOf(expr: EXP, $: ExtensionEnv): U {
+        return eval_iszero_tensor(expr, $);
     }
-    transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
-        return [TFLAG_DIFF, iszero_tensor(arg, this.$)];
+    transform1(opr: Sym, arg: ARG, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
+        return [TFLAG_DIFF, iszero_tensor(arg, $)];
     }
 }
 
-export const iszero_tensor_builder = new OpBuilder();
+export const iszero_tensor_builder = mkbuilder(Op);

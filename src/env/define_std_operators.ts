@@ -522,11 +522,11 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(make_predicate_sym_extension(ISREAL));
     $.defineOperator(is_real_any);
 
-    $.defineOperator(iszero_flt_builder);
-    $.defineOperator(iszero_rat_builder);
-    $.defineOperator(iszero_sym_builder);
-    $.defineOperator(iszero_tensor_builder);
-    $.defineOperator(iszero_any);
+    $.defineExtension(iszero_flt_builder);
+    $.defineExtension(iszero_rat_builder);
+    $.defineExtension(iszero_sym_builder);
+    $.defineExtension(iszero_tensor_builder);
+    $.defineExtension(iszero_any);
 
     $.defineStackFunction(native_sym(Native.minor), stack_minor);
     $.defineStackFunction(native_sym(Native.minormatrix), stack_minormatrix);

@@ -458,10 +458,6 @@ export interface ExtensionBuilder<T extends U> {
     create(config: Readonly<EnvConfig>): Extension<T>;
 }
 
-export interface OperatorBuilder<T extends U> {
-    create($: ExtensionEnv, config: Readonly<EnvConfig>): Operator<T>;
-}
-
 export const MODE_EXPANDING = 1;
 export const MODE_FACTORING = 2;
 

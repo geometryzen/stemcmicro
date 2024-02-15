@@ -1,6 +1,7 @@
 import { assert_rat, is_rat, Sym } from "math-expression-atoms";
 import { Cons, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { CompositeOperator } from "../helpers/CompositeOperator";
@@ -9,21 +10,15 @@ import { Cons1 } from "../helpers/Cons1";
 const rect = native_sym(Native.rect);
 const pow = native_sym(Native.pow);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  *
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(rect, pow, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(rect, pow);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const powExpr = expr.argList.head;
             const base = powExpr.base;
             const expo = powExpr.expo;
@@ -44,4 +39,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const rect_pow_rat_rat = new Builder();
+export const rect_pow_rat_rat = mkbuilder(Op);

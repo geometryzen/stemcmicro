@@ -1,32 +1,27 @@
 import { count_factors } from "../../calculators/count_factors";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { Cons1 } from "../helpers/Cons1";
 import { is_imu } from "../imu/is_imu";
-import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const rect = native_sym(Native.rect);
 const pow = native_sym(Native.pow);
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 /**
  *
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(rect, pow, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(rect, pow);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const powExpr = expr.argList.head;
             // console.lg("powExpr", this.$.toSExprString(powExpr));
             const base = powExpr.lhs;
@@ -58,4 +53,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const rect_pow_exp_imu = new Builder();
+export const rect_pow_exp_imu = mkbuilder(Op);

@@ -1,20 +1,15 @@
 import { is_rat, is_uom, QQ, Rat, Sym, Uom } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_UOM } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
-
-class Op extends Function2<Uom, Rat> implements Operator<Cons> {
+class Op extends Function2<Uom, Rat> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('pow_2_uom_rat', MATH_POW, is_uom, is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('pow_2_uom_rat', MATH_POW, is_uom, is_rat);
         this.#hash = hash_binop_atom_atom(MATH_POW, HASH_UOM, HASH_RAT);
     }
     get hash(): string {
@@ -26,4 +21,4 @@ class Op extends Function2<Uom, Rat> implements Operator<Cons> {
     }
 }
 
-export const pow_2_uom_rat = new Builder();
+export const pow_2_uom_rat = mkbuilder(Op);

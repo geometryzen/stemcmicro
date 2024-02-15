@@ -1,34 +1,29 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { one, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
+import { U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
-
 type LHS = Sym;
 type RHS = Rat;
-type EXPR = Cons2<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
-class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('pow_2_sym_rat', MATH_POW, is_sym, is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('pow_2_sym_rat', MATH_POW, is_sym, is_rat);
         this.#hash = hash_binop_atom_atom(MATH_POW, HASH_SYM, HASH_RAT);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, base: LHS, expo: RHS, expr: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
         // No change in arguments
         if (expo.isOne()) {
             return [TFLAG_DIFF, base];
@@ -43,4 +38,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     }
 }
 
-export const pow_2_sym_rat = new Builder();
+export const pow_2_sym_rat = mkbuilder<EXP>(Op);

@@ -1,27 +1,22 @@
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
 import { SINH } from "../../runtime/constants";
-import { Flt, create_flt, zeroAsFlt } from "../../tree/flt/Flt";
+import { create_flt, Flt, zeroAsFlt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
-import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
+import { Function1 } from "../helpers/Function1";
 
 type ARG = Flt;
 type EXP = Cons1<Sym, ARG>;
 
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Flt'];
-    constructor($: ExtensionEnv) {
-        super('sinh_flt', SINH, is_flt, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('sinh_flt', SINH, is_flt);
         this.#hash = hash_unaop_atom(this.opr, HASH_FLT);
     }
     get hash(): string {
@@ -40,4 +35,4 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
 }
 
-export const sinh_flt = new Builder();
+export const sinh_flt = mkbuilder<EXP>(Op);

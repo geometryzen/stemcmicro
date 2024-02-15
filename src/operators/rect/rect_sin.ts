@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
@@ -8,18 +9,11 @@ import { CompositeOperator } from "../helpers/CompositeOperator";
 const SIN = native_sym(Native.sin);
 const RECT = native_sym(Native.rect);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(RECT, SIN, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(RECT, SIN);
     }
-    transform1(opr: Sym, sinExpr: Cons, rectExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, sinExpr: Cons, rectExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const sinArg = sinExpr.arg;
         if ($.isreal(sinArg)) {
             return [TFLAG_DIFF, sinExpr];
@@ -28,5 +22,5 @@ class Op extends CompositeOperator {
     }
 }
 
-export const rect_sin = new Builder();
+export const rect_sin = mkbuilder(Op);
 

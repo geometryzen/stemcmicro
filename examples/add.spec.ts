@@ -9,4 +9,8 @@ describe("add", function () {
         check("(+ 1)", "1", { syntaxKind: SyntaxKind.ClojureScript });
         check("(+)", "0", { syntaxKind: SyntaxKind.ClojureScript });
     });
+    it("Blade, Blade", function () {
+        check("ex + ex", "2*ex");
+        // check("ex + ey", "ex + ey");
+    });
 });

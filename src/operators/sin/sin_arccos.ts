@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { half, one, two } from "../../tree/rat/Rat";
@@ -9,19 +10,12 @@ import { CompositeOperator } from "../helpers/CompositeOperator";
 const SIN = native_sym(Native.sin);
 const ARCCOS = native_sym(Native.arccos);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(SIN, ARCCOS, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(SIN, ARCCOS);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const x = innerExpr.argList.head;
         const x_squared = $.power(x, two);
         const one_minus_x_squared = $.subtract(one, x_squared);
@@ -30,4 +24,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const sin_arccos = new Builder();
+export const sin_arccos = mkbuilder(Op);

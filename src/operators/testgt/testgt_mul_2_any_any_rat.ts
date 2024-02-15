@@ -1,48 +1,42 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_GT, MATH_LT, MATH_MUL } from "../../runtime/ns_math";
 import { booF, booT } from "../../tree/boo/Boo";
-import { is_boo } from "../boo/is_boo";
-import { is_rat } from "../rat/is_rat";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
+import { is_boo } from "../boo/is_boo";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
+import { is_rat } from "../rat/is_rat";
 
 type LL = U;
 type LR = U;
 type LHS = Cons2<Sym, LL, LR>;
 type RHS = Rat;
-type EXPR = Cons2<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * (> (* x y) k)
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('testgt_mul_2_any_any_rat', MATH_GT, and(is_cons, is_mul_2_any_any), is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('testgt_mul_2_any_any_rat', MATH_GT, and(is_cons, is_mul_2_any_any), is_rat);
         this.#hash = hash_binop_cons_atom(MATH_GT, MATH_MUL, HASH_RAT);
     }
     get hash(): string {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         if (rhs.isNegative()) {
             return [TFLAG_DIFF, booF];
         }
         if (rhs.isZero()) {
-            const $ = this.$;
             const x = lhs.lhs;
             const y = lhs.rhs;
             const x_LT_0 = $.valueOf(items_to_cons(MATH_LT, x, zero));
@@ -70,4 +64,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     }
 }
 
-export const testgt_mul_2_any_any_rat = new Builder();
+export const testgt_mul_2_any_any_rat = mkbuilder<EXP>(Op);

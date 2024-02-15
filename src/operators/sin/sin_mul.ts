@@ -1,4 +1,5 @@
-import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -12,20 +13,13 @@ import { sin_special_angles } from "./transform_sin";
 const SIN = native_sym(Native.sin);
 const MUL = native_sym(Native.multiply);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(SIN, MUL, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(SIN, MUL);
     }
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         if ($.getDirective(Directive.convertTrigToExp)) {
             const pos_ix = $.multiply(imu, innerExpr);
             const neg_ix = $.negate(pos_ix);
@@ -41,4 +35,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const sin_mul = new Builder();
+export const sin_mul = mkbuilder(Op);

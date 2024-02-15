@@ -13,4 +13,5 @@ export interface ProgramEnv {
     setUserFunction(name: Sym, userfunc: U): void;
     defineUserSymbol(name: Sym): void;
     handlerFor<A extends Atom>(atom: A): AtomHandler<A>;
+    valueOf(expr: U): U;
 }

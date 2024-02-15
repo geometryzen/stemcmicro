@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -9,23 +10,16 @@ import { is_sym } from "../sym/is_sym";
 
 const RECT = native_sym(Native.rect);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends Function1<Sym> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('rect_sym', RECT, is_sym, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('rect_sym', RECT, is_sym);
         this.#hash = hash_unaop_atom(this.opr, HASH_SYM);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: Sym, rectExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, arg: Sym, rectExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         if ($.isreal(arg)) {
             return [TFLAG_DIFF, arg];
         }
@@ -35,4 +29,4 @@ class Op extends Function1<Sym> {
     }
 }
 
-export const rect_sym = new Builder();
+export const rect_sym = mkbuilder(Op);

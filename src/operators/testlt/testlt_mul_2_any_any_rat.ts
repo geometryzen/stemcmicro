@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_GT, MATH_LT, MATH_MUL } from "../../runtime/ns_math";
 import { booF, booT } from "../../tree/boo/Boo";
@@ -12,37 +13,30 @@ import { Function2 } from "../helpers/Function2";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 import { is_rat } from "../rat/is_rat";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 type LL = U;
 type LR = U;
 type LHS = Cons2<Sym, LL, LR>;
 type RHS = Rat;
-type EXPR = Cons2<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * (< (* x y) k)
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('testlt_mul_2_any_any_rat', MATH_LT, and(is_cons, is_mul_2_any_any), is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('testlt_mul_2_any_any_rat', MATH_LT, and(is_cons, is_mul_2_any_any), is_rat);
         this.#hash = hash_binop_cons_atom(MATH_LT, MATH_MUL, HASH_RAT);
     }
     get hash(): string {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         if (rhs.isNegative()) {
             return [TFLAG_DIFF, booF];
         }
         if (rhs.isZero()) {
-            const $ = this.$;
             const x = lhs.lhs;
             const y = lhs.rhs;
             const x_LT_0 = $.valueOf(items_to_cons(MATH_LT, x, zero));
@@ -68,4 +62,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     }
 }
 
-export const testlt_mul_2_any_any_rat = new Builder();
+export const testlt_mul_2_any_any_rat = mkbuilder<EXP>(Op);

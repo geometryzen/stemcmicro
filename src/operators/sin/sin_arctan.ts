@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { negHalf, one, two } from "../../tree/rat/Rat";
@@ -9,21 +10,14 @@ import { CompositeOperator } from "../helpers/CompositeOperator";
 const SIN = native_sym(Native.sin);
 const ARCTAN = native_sym(Native.arctan);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(SIN, ARCTAN, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(SIN, ARCTAN);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const x = innerExpr.argList.head;
         // see p. 173 of the CRC Handbook of Mathematical Sciences, or
         // https://www.rapidtables.com/math/trigonometry/arctan.html
@@ -34,4 +28,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const sin_arctan = new Builder();
+export const sin_arctan = mkbuilder(Op);

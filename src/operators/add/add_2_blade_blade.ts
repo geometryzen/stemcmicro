@@ -1,67 +1,35 @@
-import { Blade, is_blade } from "math-expression-atoms";
-import { compare_term_term } from "../../calculators/compare/compare_term_term";
+import { Blade, create_int, is_blade, Sym } from "math-expression-atoms";
+import { Cons2, items_to_cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, Operator, OperatorBuilder, Sign, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { mkbuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
-import { two } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, items_to_cons, U } from "../../tree/tree";
 import { compare_blade_blade } from "../blade/blade_extension";
-import { Cons2 } from "../helpers/Cons2";
-import { Function2X } from "../helpers/Function2X";
+import { Function2 } from "../helpers/Function2";
 
 type LHS = Blade;
 type RHS = Blade;
 type EXP = Cons2<Sym, LHS, RHS>;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function compare_blade_blade_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    if (is_blade(lhs) && is_blade(rhs)) {
-        return compare_blade_blade(lhs, rhs);
-    }
-    else {
-        throw new Error();
-    }
-}
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv, config: EnvConfig): Operator<Cons> {
-        if (config.noOptimize) {
-            return new Op($, compare_term_term);
-        }
-        else {
-            return new Op($, compare_blade_blade_terms);
-        }
-    }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function cross(lhs: LHS, rhs: RHS): boolean {
-    return true;
-}
-
 /**
  * Blade + Blade
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv, private readonly comparator: (lhs: U, rhs: U, $: ExtensionEnv) => Sign) {
-        super('add_2_blade_blade', MATH_ADD, is_blade, is_blade, cross, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('add_2_blade_blade', MATH_ADD, is_blade, is_blade);
         this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_BLADE, HASH_BLADE);
     }
     get hash(): string {
         return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: LHS, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
-        // console.lg(this.name, decodeMode($.getMode()), render_as_infix(expr, $));
-        switch (this.comparator(lhs, rhs, $)) {
+        switch (compare_blade_blade(lhs, rhs)) {
             case SIGN_GT: {
                 return [TFLAG_DIFF, items_to_cons(opr, rhs, lhs)];
             }
             case SIGN_EQ: {
-                return [TFLAG_DIFF, items_to_cons(MATH_MUL, two, lhs)];
+                return [TFLAG_DIFF, items_to_cons(MATH_MUL, create_int(2), lhs)];
             }
             default: {
                 return [TFLAG_HALT, expr];
@@ -70,4 +38,4 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const add_2_blade_blade = new Builder();
+export const add_2_blade_blade = mkbuilder(Op);

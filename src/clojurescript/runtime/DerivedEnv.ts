@@ -3,7 +3,7 @@ import { Rat, Sym, Tensor } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
 import { Cons, U } from "math-expression-tree";
-import { CompareFn, EvalFunction, Directive, ExprComparator, KeywordRunner, OperatorBuilder, Predicates, PrintHandler } from "../../env/ExtensionEnv";
+import { CompareFn, Directive, EvalFunction, ExprComparator, KeywordRunner, Predicates, PrintHandler } from "../../env/ExtensionEnv";
 import { Scope, Thing } from "./Stepper";
 
 export class DerivedScope implements Scope {

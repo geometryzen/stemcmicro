@@ -1,5 +1,6 @@
-import { create_sym, Sym } from "math-expression-atoms";
+import { Sym } from "math-expression-atoms";
 import { AtomHandler, CompareFn, ExprContext } from "math-expression-context";
+import { Native, native_sym } from "math-expression-native";
 import { Atom, Cons, is_atom, U } from "math-expression-tree";
 import { ProgramEnv } from "./ProgramEnv";
 
@@ -73,29 +74,9 @@ class IsZeroExprContext implements ExprContext {
 export function iszero(atom: U, env: ProgramEnv): boolean {
     if (is_atom(atom)) {
         const handler = env.handlerFor(atom);
-        return handler.test(atom, create_sym("iszero"), new IsZeroExprContext(env));
+        return handler.test(atom, native_sym(Native.iszero), new IsZeroExprContext(env));
     }
     else {
         return false;
     }
-    /*
-    if (is_rat(expr)) {
-        return expr.isZero();
-    }
-
-    if (is_flt(expr)) {
-        return expr.d === 0;
-    }
-
-    if (is_tensor(expr)) {
-        const n = expr.nelem;
-        for (let i = 0; i < n; i++) {
-            if (!iszero(expr.elems[i]))
-                return false;
-        }
-        return true;
-    }
-
-    return false;
-    */
 }

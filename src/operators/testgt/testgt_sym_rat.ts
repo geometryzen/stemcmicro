@@ -1,36 +1,31 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_GT } from "../../runtime/ns_math";
 import { booF, booT } from "../../tree/boo/Boo";
-import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
+import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 type LHS = Sym;
 type RHS = Rat;
-type EXPR = Cons2<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
-class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('testgt_sym_rat', MATH_GT, is_sym, is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('testgt_sym_rat', MATH_GT, is_sym, is_rat);
         this.#hash = hash_binop_atom_atom(MATH_GT, HASH_SYM, HASH_RAT);
     }
     get hash(): string {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         if (rhs.isNegative()) {
             return [TFLAG_DIFF, booT];
         }
@@ -41,4 +36,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     }
 }
 
-export const testgt_sym_rat = new Builder();
+export const testgt_sym_rat = mkbuilder<EXP>(Op);

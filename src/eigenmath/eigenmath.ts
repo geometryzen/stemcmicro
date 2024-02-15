@@ -1,4 +1,4 @@
-import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
+import { Adapter, assert_num, assert_tensor, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { AtomHandler, CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { assert_cons_or_nil, Atom, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
@@ -1096,7 +1096,7 @@ function sum_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramS
 
     flatten_terms(start, _);
 
-    let T = combine_tensors(start, env, ctrl, _);
+    const sigma = sum_tensors(start, env, ctrl, _);
 
     combine_terms(start, env, ctrl, _);
 
@@ -1107,12 +1107,7 @@ function sum_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramS
     const k = _.length - start;
 
     if (k === 0) {
-        if (is_tensor(T)) {
-            _.push(T);
-        }
-        else {
-            _.push(zero);
-        }
+        _.push(sigma);
         return;
     }
 
@@ -1123,10 +1118,10 @@ function sum_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramS
         cons(_); // prepend ADD to list
     }
 
-    if (istensor(T)) {
+    if (istensor(sigma)) {
         const p1 = _.pop();
 
-        T = copy_tensor(T);
+        const T = copy_tensor(sigma);
 
         const nelem = T.nelem;
 
@@ -1160,19 +1155,20 @@ function flatten_terms(start: number, _: ProgramStack): void {
     }
 }
 
-function combine_tensors(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): Tensor {
+export function sum_atoms(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): Tensor {
     let T: U = nil;
     for (let i = start; i < _.length; i++) {
         const p1 = _.getAt(i);
-        if (is_tensor(p1)) {
-            if (is_tensor(T)) {
+        if (is_atom(p1)) {
+            if (is_atom(T)) {
                 push(T, _);
                 push(p1, _);
-                add_tensors(env, ctrl, _);
+                add_2_tensors(env, ctrl, _);
                 T = pop(_);
             }
-            else
+            else {
                 T = p1;
+            }
             _.splice(i, 1);
             i--; // use same index again
         }
@@ -1180,26 +1176,51 @@ function combine_tensors(start: number, env: ProgramEnv, ctrl: ProgramControl, _
     return T as Tensor;
 }
 
-function add_tensors(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function sum_tensors(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): Rat | Tensor {
+    let sum: Rat | Tensor = zero;
+    for (let i = start; i < _.length; i++) {
+        const rhs = _.getAt(i);
+        if (is_tensor(rhs)) {
+            if (is_tensor(sum)) {
+                push(sum, _);
+                push(rhs, _);
+                add_2_tensors(env, ctrl, _);
+                sum = assert_tensor(pop(_));
+            }
+            else {
+                sum = rhs;
+            }
+            _.splice(i, 1);
+            i--; // use same index again
+        }
+    }
+    return sum;
+}
 
-    const p2 = pop($) as Tensor;
-    let p1 = pop($) as Tensor;
+/**
+ * [..., A, B] => [..., (+ A B)]
+ */
+function add_2_tensors(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    //                              [..., A, B]
+    const B = pop($) as Tensor; //  [..., A]
+    const A = pop($) as Tensor; //  [...]
 
-    if (!compatible_dimensions(p1, p2))
+    if (!compatible_dimensions(A, B)) {
         stopf("incompatible tensor arithmetic");
-
-    p1 = copy_tensor(p1);
-
-    const n = p1.nelem;
-
-    for (let i = 0; i < n; i++) {
-        push(p1.elems[i], $);
-        push(p2.elems[i], $);
-        add(env, ctrl, $);
-        p1.elems[i] = pop($);
     }
 
-    push(p1, $);
+    const C = copy_tensor(A);
+
+    const n = C.nelem;
+
+    for (let i = 0; i < n; i++) {
+        push(A.elems[i], $);
+        push(B.elems[i], $);
+        sum_terms(2, env, ctrl, $);
+        C.elems[i] = pop($);
+    }
+
+    push(C, $);                 //  [..., (+ A B)]
 }
 
 function combine_terms(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
@@ -1225,6 +1246,12 @@ function combine_terms_nib(i: number, j: number, env: ProgramEnv, ctrl: ProgramC
 
     // console.lg("combine_terms_nib", `${lhs}`, `${rhs}`);
 
+    if (is_atom(lhs) && is_atom(rhs)) {
+        // const expr = items_to_cons(native_sym(Native.add), lhs, rhs);
+        // const sum = env.valueOf(expr);
+        // throw new ProgrammingError();
+    }
+
     // We really can't do this properly without appealing to some
     if (iszero(rhs, env)) {
         return true;
@@ -1245,8 +1272,8 @@ function combine_terms_nib(i: number, j: number, env: ProgramEnv, ctrl: ProgramC
         return false; // cannot add number and something else
     }
 
-    let coeff1: U = one;
-    let coeff2: U = one;
+    let coeff1: Num = one;
+    let coeff2: Num = one;
 
     let denorm = 0;
 
@@ -1254,8 +1281,9 @@ function combine_terms_nib(i: number, j: number, env: ProgramEnv, ctrl: ProgramC
     if (car(lhs).equals(MULTIPLY)) {
         p1 = cdr(lhs);
         denorm = 1;
-        if (is_num(car(p1))) {
-            coeff1 = car(p1);
+        const head = car(p1);
+        if (is_num(head)) {
+            coeff1 = head;
             p1 = cdr(p1);
             if (cdr(p1).isnil) {
                 p1 = car(p1);
@@ -1267,8 +1295,9 @@ function combine_terms_nib(i: number, j: number, env: ProgramEnv, ctrl: ProgramC
     let p2 = rhs;
     if (car(rhs).equals(MULTIPLY)) {
         p2 = cdr(rhs);
-        if (is_num(car(p2))) {
-            coeff2 = car(p2);
+        const head = car(p2);
+        if (is_num(head)) {
+            coeff2 = head;
             p2 = cdr(p2);
             if (cdr(p2).isnil)
                 p2 = car(p2);
@@ -1281,7 +1310,7 @@ function combine_terms_nib(i: number, j: number, env: ProgramEnv, ctrl: ProgramC
 
     add_numbers(coeff1, coeff2, _);
 
-    coeff1 = pop(_);
+    coeff1 = assert_num(pop(_));
 
     if (iszero(coeff1, env)) {
         _.setAt(i, coeff1);
@@ -1455,16 +1484,16 @@ function isimaginaryfactor(p: U): boolean | 0 {
     return car(p).equals(POWER) && isminusone(cadr(p));
 }
 
-function add_numbers(p1: U, p2: U, $: Pick<ProgramStack, 'push'>): void {
+function add_numbers(lhs: Num, rhs: Num, $: Pick<ProgramStack, 'push'>): void {
 
-    if (is_rat(p1) && is_rat(p2)) {
-        add_rationals(p1, p2, $);
+    if (is_rat(lhs) && is_rat(rhs)) {
+        add_rationals(lhs, rhs, $);
         return;
     }
 
-    const a = assert_num_to_number(p1);
+    const a = assert_num_to_number(lhs);
 
-    const b = assert_num_to_number(p2);
+    const b = assert_num_to_number(rhs);
 
     push_double(a + b, $);
 }
@@ -9205,60 +9234,78 @@ export function stack_testeq(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, 
     subtract(env, ctrl, $);
     simplify(env, ctrl, $);
     const p1 = pop($);
-    if (iszero(p1, env))
-        push_integer(1, $);
-    else
-        push_integer(0, $);
+    if (iszero(p1, env)) {
+        push(predicate_return_value(true, ctrl), $);
+    }
+    else {
+        push(predicate_return_value(false, ctrl), $);
+    }
 }
 
 export function stack_testge(expr1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (cmp_args(expr1, env, ctrl, $) >= 0)
-        push_integer(1, $);
-    else
-        push_integer(0, $);
+    if (cmp_args(expr1, env, ctrl, $) >= 0) {
+        push(predicate_return_value(true, ctrl), $);
+    }
+    else {
+        push(predicate_return_value(false, ctrl), $);
+    }
 }
 
 export function stack_testgt(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (cmp_args(expr, env, ctrl, $) > 0)
-        push_integer(1, $);
-    else
-        push_integer(0, $);
+    if (cmp_args(expr, env, ctrl, $) > 0) {
+        push(predicate_return_value(true, ctrl), $);
+    }
+    else {
+        push(predicate_return_value(false, ctrl), $);
+    }
 }
 
 export function stack_testle(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (cmp_args(expr, env, ctrl, $) <= 0)
-        push_integer(1, $);
+    if (cmp_args(expr, env, ctrl, $) <= 0) {
+        push(predicate_return_value(true, ctrl), $);
+    }
     else
-        push_integer(0, $);
+        push(predicate_return_value(false, ctrl), $);
 }
 
 export function stack_testlt(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (cmp_args(expr, env, ctrl, $) < 0)
-        push_integer(1, $);
-    else
-        push_integer(0, $);
+    if (cmp_args(expr, env, ctrl, $) < 0) {
+        push(predicate_return_value(true, ctrl), $);
+    }
+    else {
+        push(predicate_return_value(false, ctrl), $);
+    }
 }
 
-function cmp_args(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 0 | 1 | -1 {
-    push(cadr(expr), $);
-    value_of(env, ctrl, $);
-    push(caddr(expr), $);
-    value_of(env, ctrl, $);
-    subtract(env, ctrl, $);
-    simplify(env, ctrl, $);
-    floatfunc(env, ctrl, $);
-    const p1 = pop($);
+function cmp_args(expr: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): Sign {
+    //                              [...]
+    push(expr, _);               //  [..., expr]
+    _.rest();                   //  [..., expr.rest]
+    _.dupl();                   //  [..., expr.rest, expr.rest]
+    _.head();                   //  [..., expr.rest, expr.rest.head]
+    value_of(env, ctrl, _);     //  [..., expr.rest, lhs]
+    _.swap();                   //  [..., lhs, expr.rest]
+    _.rest();                   //  [..., lhs, expr.rest.rest]
+    _.head();                   //  [..., lhs, expr.rest.rest.head]
+    value_of(env, ctrl, _);     //  [..., lhs, rhs]
+    // We now get into dubious territory....
+    // For example ex-ex is zero => SIGN_EQ.
+    // ex-ey => ex - ey
+    subtract(env, ctrl, _);     //  [..., (lhs-rhs)]
+    simplify(env, ctrl, _);
+    floatfunc(env, ctrl, _);
+    const p1 = pop(_);          //  [...]
     if (iszero(p1, env)) {
-        return 0;
+        return SIGN_EQ;
     }
     if (!is_num(p1)) {
         stopf("compare err");
     }
     if (isnegativenumber(p1)) {
-        return -1;
+        return SIGN_LT;
     }
     else {
-        return 1;
+        return SIGN_GT;
     }
 }
 
@@ -11015,9 +11062,13 @@ function multiply_uom_factors(start: number, $: ProgramStack): U {
     return product;
 }
 
+/**
+ * [..., x] => [..., (* -1 x)]
+ */
 export function negate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push_integer(-1, $);
-    multiply(env, ctrl, $);
+    //                                      [..., x]
+    push_integer(-1, $);                //  [..., x, -1];
+    multiply_factors(2, env, ctrl, $);  //  [..., (* -1 x)]
 }
 
 function normalize_polar(EXPO: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -11439,12 +11490,12 @@ export function pop(_: Pick<ProgramStack, 'pop'>): U {
     return _.pop();
 }
 
-function assert_num_to_number(p: U): number | never {
-    if (is_num(p)) {
-        return p.toNumber();
+function assert_num_to_number(x: Num): number | never {
+    if (is_num(x)) {
+        return x.toNumber();
     }
     else {
-        stopf(`assert_num_to_number() number expected ${p} `);
+        throw new ProgrammingError(`assert_num_to_number() number expected ${x} `);
     }
 }
 
@@ -12395,7 +12446,7 @@ function peek(tag: string, $: ProgramStack): void {
     const expr = $.pop();
     try {
         // eslint-disable-next-line no-console
-        console.lg(tag, `${ expr } `);
+        console.lg(tag, `${expr} `);
         $.push(expr);
     }
     finally {
@@ -13403,9 +13454,13 @@ export function stopf(errmsg: string): never {
     throw new Error(errmsg);
 }
 
+/**
+ * [..., x, y] => [..., (+ x (* -1 y))]
+ */
 export function subtract(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    negate(env, ctrl, $);
-    add(env, ctrl, $);
+    //                              [..., x, y]
+    negate(env, ctrl, $);       //  [..., x, (* -1 y)]
+    sum_terms(2, env, ctrl, $); //  [..., (+ x (* -1 y))]
 }
 
 /**

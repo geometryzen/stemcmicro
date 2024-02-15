@@ -1,4 +1,5 @@
-import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { is_multiple_of_pi } from "../../is_multiple_of_pi";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -34,20 +35,13 @@ function sine_of_angle_sum(addExpr: Cons, oldExpr: U, $: ExtensionEnv): [TFLAGS,
     }
 }
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(SIN, ADD, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(SIN, ADD);
     }
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         // sine function is antisymmetric, sin(-x) = -sin(x)
         if (is_negative(innerExpr)) {
             return [TFLAG_DIFF, $.negate($.sin($.negate(innerExpr)))];
@@ -56,4 +50,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const sin_add = new Builder();
+export const sin_add = mkbuilder(Op);

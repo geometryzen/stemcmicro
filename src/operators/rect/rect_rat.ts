@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -10,16 +11,10 @@ import { is_rat } from "../rat/is_rat";
 
 const RECT = native_sym(Native.rect);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends Function1<Rat> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('rect_rat', RECT, is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('rect_rat', RECT, is_rat);
         this.#hash = hash_unaop_atom(this.opr, HASH_RAT);
     }
     get hash(): string {
@@ -30,4 +25,4 @@ class Op extends Function1<Rat> {
     }
 }
 
-export const rect_rat = new Builder();
+export const rect_rat = mkbuilder(Op);

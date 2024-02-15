@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -12,24 +13,17 @@ import { sin_special_angles } from "./transform_sin";
 
 export const MATH_SIN = native_sym(Native.sin);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends Function1<Rat> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('sin_rat', MATH_SIN, is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('sin_rat', MATH_SIN, is_rat);
         this.#hash = hash_unaop_atom(MATH_SIN, HASH_RAT);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, x: Rat, expr: U): [TFLAGS, U] {
+    transform1(opr: Sym, x: Rat, expr: U, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(x));
-        const $ = this.$;
         if (x.isZero()) {
             return [TFLAG_DIFF, zero];
         }
@@ -41,5 +35,5 @@ class Op extends Function1<Rat> {
     }
 }
 
-export const sin_rat = new Builder();
+export const sin_rat = mkbuilder(Op);
 

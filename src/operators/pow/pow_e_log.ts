@@ -1,7 +1,8 @@
 import { is_sym, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_cons, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { Cons2 } from "../helpers/Cons2";
@@ -9,12 +10,6 @@ import { Function2X } from "../helpers/Function2X";
 
 const LOG = native_sym(Native.log);
 const POW = native_sym(Native.pow);
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 function cross(base: Sym, expo: U): boolean {
     if (is_base_of_natural_logarithm(base)) {
@@ -40,8 +35,8 @@ type EXP = Cons2<Sym, LHS, RHS>;
  */
 class Op extends Function2X<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('pow_2_e_log', POW, is_sym, is_cons, cross, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('pow_2_e_log', POW, is_sym, is_cons, cross);
         this.#hash = hash_binop_atom_atom(this.opr, HASH_SYM, HASH_ANY);
     }
     get hash(): string {
@@ -54,5 +49,5 @@ class Op extends Function2X<LHS, RHS> {
     }
 }
 
-export const pow_e_log = new Builder();
+export const pow_e_log = mkbuilder(Op);
 

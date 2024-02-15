@@ -1,32 +1,22 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_BOO, HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
-import { ISREAL } from "../../runtime/constants";
-import { booT } from "../../tree/boo/Boo";
-import { Flt } from "../../tree/flt/Flt";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
-import { Function1 } from "../helpers/Function1";
+import { Flt, is_flt } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder } from "../../env/ExtensionEnv";
+import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
+import { Predicate1 } from "../helpers/Predicate1";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new IsRealFlt($);
-    }
-}
-
-class IsRealFlt extends Function1<Flt> {
+class IsRealFlt extends Predicate1<Flt> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super(`${ISREAL.key()}(expr: ${HASH_FLT}) => ${HASH_BOO}`, ISREAL, is_flt, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('is_real_flt', native_sym(Native.isreal), is_flt, config);
         this.#hash = hash_unaop_atom(this.opr, HASH_FLT);
     }
     get hash(): string {
         return this.#hash;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: Flt): [TFLAGS, U] {
-        return [TFLAG_DIFF, booT];
+    compute(): boolean {
+        return true;
     }
 }
 
-export const is_real_flt = new Builder();
+export const is_real_flt = mkbuilder(IsRealFlt);

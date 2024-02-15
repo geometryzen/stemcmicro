@@ -6,7 +6,7 @@ import { imu } from "../../tree/imu/Imu";
 import { half, two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { simplify_trig } from "../simplify/simplify";
 
 const ABS = native_sym(Native.abs);

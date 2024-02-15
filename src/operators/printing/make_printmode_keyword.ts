@@ -1,5 +1,6 @@
 import { create_sym, is_sym, Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { get_last_print_mode_symbol } from "../../print/print";
@@ -7,14 +8,14 @@ import { render_using_print_mode } from "../../print/render_using_print_mode";
 import { store_text_in_binding } from "../../print/store_text_in_binding";
 import { defs, PrintMode } from "../../runtime/defs";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
-import { AbstractKeywordOperator } from "../helpers/KeywordSymbol";
+import { AbstractKeywordExtension } from "../helpers/KeywordSymbol";
 
 /**
  * TODO:
  */
-export class PrintKeyword extends AbstractKeywordOperator {
-    constructor(keyword: Sym, private readonly printMode: () => PrintMode) {
-        super(keyword);
+export class PrintKeyword extends AbstractKeywordExtension {
+    constructor(keyword: Sym, private readonly printMode: () => PrintMode, readonly config: Readonly<EnvConfig>) {
+        super(keyword, config);
     }
     get hash(): string {
         return HASH_SYM;
@@ -51,8 +52,8 @@ class Builder implements ExtensionBuilder<U> {
     constructor(private readonly keyword: string, private readonly printMode: () => PrintMode) {
 
     }
-    create(): Extension<U> {
-        return new PrintKeyword(create_sym(this.keyword), this.printMode);
+    create(config: Readonly<EnvConfig>): Extension<U> {
+        return new PrintKeyword(create_sym(this.keyword), this.printMode, config);
     }
 }
 

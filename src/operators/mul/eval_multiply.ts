@@ -15,8 +15,20 @@ import { cddr } from "../../tree/helpers";
 
 export function eval_multiply(expr: Cons, $: ExtensionEnv): U {
     const args = expr.argList;
-    const vals = args.map($.valueOf);
-    return multiply_values(vals, expr, $);
+    try {
+        const vals = args.map((arg) => {
+            return $.valueOf(arg);
+        });
+        try {
+            return multiply_values(vals, expr, $);
+        }
+        finally {
+            vals.release();
+        }
+    }
+    finally {
+        args.release();
+    }
 }
 
 export function multiply_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {

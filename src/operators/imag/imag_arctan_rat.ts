@@ -6,7 +6,7 @@ import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Cons1 } from "../helpers/Cons1";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { is_rat } from "../rat/is_rat";
 
 const imag = native_sym(Native.imag);

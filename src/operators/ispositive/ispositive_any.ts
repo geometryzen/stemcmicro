@@ -1,32 +1,26 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Native, native_sym } from "math-expression-native";
+import { U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
+import { Predicate1 } from "../helpers/Predicate1";
 
 export const ISPOS = native_sym(Native.ispositive);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
-class Op extends Function1<U> {
+class Op extends Predicate1<U> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('ispositive_any', ISPOS, is_any, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('ispositive_any', ISPOS, is_any, config);
         this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: U, expr: U): [TFLAGS, U] {
-        return [TFLAG_NONE, expr];
+    compute(): boolean {
+        return false;
     }
+
 }
 
-export const ispositive_any = new Builder();
+export const ispositive_any = mkbuilder(Op);

@@ -1,36 +1,21 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { booF, booT } from "../../tree/boo/Boo";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { Native, native_sym } from "math-expression-native";
+import { Cons } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";
+import { CompositePredicate } from "../helpers/CompositePredicate";
 
 const ADD = native_sym(Native.add);
 const IS_REAL = native_sym(Native.isreal);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
+class Op extends CompositePredicate {
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(IS_REAL, ADD, config);
     }
-}
-
-class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(IS_REAL, ADD, $);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, add: Cons): [TFLAGS, U] {
-        const $ = this.$;
-        if ([...add.argList].every(function (arg) {
+    compute(inner: Cons, $: ExtensionEnv): boolean {
+        return [...inner.argList].every(function (arg) {
             return $.isreal(arg);
-        })) {
-            return [TFLAG_DIFF, booT];
-        }
-        else {
-            return [TFLAG_DIFF, booF];
-        }
+        });
     }
 }
 
-export const is_real_add = new Builder();
+export const is_real_add = mkbuilder(Op);

@@ -1,33 +1,24 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
+import { assert_sym, is_sym, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, Cons1, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { predicate_return_value } from "../../helpers/predicate_return_value";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
-import { booF, booT } from "../../tree/boo/Boo";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
-import { Cons1 } from "../helpers/Cons1";
-import { assert_sym } from "../sym/assert_sym";
-import { is_sym } from "../sym/is_sym";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const POW = native_sym(Native.pow);
 const IS_REAL = native_sym(Native.isreal);
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 /**
  * 
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(IS_REAL, POW, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(IS_REAL, POW);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const innerExpr = expr.argList.head;
             const base = innerExpr.lhs;
             const expo = innerExpr.rhs;
@@ -38,16 +29,15 @@ class Op extends CompositeOperator {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons1<Sym, Cons>): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons1<Sym, Cons>, $: ExtensionEnv): [TFLAGS, U] {
         const expo = assert_sym(innerExpr.rhs);
         if ($.isreal(expo)) {
-            return [TFLAG_DIFF, booT];
+            return [TFLAG_DIFF, predicate_return_value(true, $)];
         }
         else {
-            return [TFLAG_DIFF, booF];
+            return [TFLAG_DIFF, predicate_return_value(false, $)];
         }
     }
 }
 
-export const is_real_pow_e_sym = new Builder();
+export const is_real_pow_e_sym = mkbuilder(Op);

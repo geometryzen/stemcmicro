@@ -4,11 +4,11 @@ import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
-import { AbstractKeywordOperator } from "../helpers/KeywordSymbol";
+import { AbstractKeywordExtension } from "../helpers/KeywordSymbol";
 
-class ScriptLast extends AbstractKeywordOperator {
+class ScriptLast extends AbstractKeywordExtension {
     constructor(readonly config: Readonly<EnvConfig>) {
-        super(RESERVED_KEYWORD_LAST);
+        super(RESERVED_KEYWORD_LAST, config);
     }
     get hash(): string {
         return HASH_SYM;

@@ -1,32 +1,26 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_BOO, HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
-import { ISREAL } from "../../runtime/constants";
-import { booF } from "../../tree/boo/Boo";
-import { Imu } from "../../tree/imu/Imu";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
+import { Boo, booF, Imu, is_imu, Rat, Sym, zero } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
 import { Function1 } from "../helpers/Function1";
-import { is_imu } from "../imu/is_imu";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new IsRealImu($);
-    }
-}
 
 class IsRealImu extends Function1<Imu> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super(`${ISREAL.key()}(expr: ${HASH_IMU}) => ${HASH_BOO}`, ISREAL, is_imu, $);
+    readonly #false: Boo | Rat;
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('is_real_imu', native_sym(Native.isreal), is_imu);
         this.#hash = hash_unaop_atom(this.opr, HASH_IMU);
+        this.#false = config.useIntegersForPredicates ? zero : booF;
     }
     get hash(): string {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Imu): [TFLAGS, U] {
-        return [TFLAG_DIFF, booF];
+        return [TFLAG_DIFF, this.#false];
     }
 }
 
-export const is_real_imu = new Builder();
+export const is_real_imu = mkbuilder(IsRealImu);

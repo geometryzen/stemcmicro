@@ -3,7 +3,7 @@ import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const conj = native_sym(Native.conj);
 const add = native_sym(Native.add);

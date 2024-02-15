@@ -7,7 +7,7 @@ import { is_multiply } from "../../runtime/helpers";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const ARG = native_sym(Native.arg);
 const EXP = native_sym(Native.exp);

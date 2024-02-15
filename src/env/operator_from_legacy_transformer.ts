@@ -3,17 +3,17 @@ import { LambdaExpr } from "math-expression-context";
 import { Cons, is_cons, U } from "math-expression-tree";
 import { hash_nonop_cons } from "../hashing/hash_info";
 import { FunctionVarArgs } from "../operators/helpers/FunctionVarArgs";
-import { EvalFunction, Extension, ExtensionBuilder, ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { EvalFunction, Extension, ExtensionBuilder, ExtensionEnv, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 
 class PluggableBuilder implements ExtensionBuilder<U> {
     constructor(private readonly opr: Sym, private readonly hash: string, private readonly evaluator: EvalFunction) {
     }
     create(): Extension<U> {
-        return new PluggableOperator(this.opr, this.hash, this.evaluator);
+        return new PluggableExtension(this.opr, this.hash, this.evaluator);
     }
 }
 
-class PluggableOperator extends FunctionVarArgs implements Extension<Cons> {
+class PluggableExtension extends FunctionVarArgs<Cons> {
     readonly #hash: string;
     constructor(opr: Sym, hash: string, private readonly evaluator: EvalFunction) {
         super(opr.key(), opr);
@@ -23,7 +23,7 @@ class PluggableOperator extends FunctionVarArgs implements Extension<Cons> {
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons, $:ExtensionEnv): [number, U] {
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
         // console.lg("PluggableOperator.transform", "name:", JSON.stringify(this.name), "expr:", render_as_sexpr(expr, $));
         const hook = (where: string, retval: U): U => {
             // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
@@ -36,12 +36,12 @@ class PluggableOperator extends FunctionVarArgs implements Extension<Cons> {
     }
 }
 
-export function operator_from_cons_expression(opr: Sym, transformer: EvalFunction): ExtensionBuilder<U> {
+export function extension_builder_from_cons_expression(opr: Sym, transformer: EvalFunction): ExtensionBuilder<U> {
     const hash = hash_nonop_cons(opr);
     return new PluggableBuilder(opr, hash, transformer);
 }
 
-export function operator_from_lambda_expression(match: U, lambda: LambdaExpr): ExtensionBuilder<U> {
+export function extension_builder_from_lambda_expression(match: U, lambda: LambdaExpr): ExtensionBuilder<U> {
     const opr = opr_from_match(match);
     const hash = hash_from_match(match);
     const transformer = transformer_from_lambda(lambda);

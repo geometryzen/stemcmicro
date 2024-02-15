@@ -1,8 +1,8 @@
 import { Sym } from "math-expression-atoms";
 import { Cons, Cons1, is_cons, U } from "math-expression-tree";
-import { ExtensionEnv } from "../env/ExtensionEnv";
-import { HASH_ANY, hash_unaop_atom } from "../hashing/hash_info";
-import { Function1 } from "./helpers/Function1";
+import { ExtensionEnv } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
+import { Function1 } from "./Function1";
 
 export abstract class CompositeOperator extends Function1<Cons> {
     readonly #hash: string;

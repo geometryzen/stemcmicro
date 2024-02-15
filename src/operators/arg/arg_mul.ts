@@ -5,7 +5,7 @@ import { Flt, oneAsFlt } from "../../tree/flt/Flt";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { is_flt } from "../flt/is_flt";
 import { is_rat } from "../rat/is_rat";
 

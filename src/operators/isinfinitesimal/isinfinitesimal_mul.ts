@@ -1,36 +1,22 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { booF, booT } from "../../tree/boo/Boo";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { Cons } from "../../tree/tree";
+import { CompositePredicate } from "../helpers/CompositePredicate";
 
 const ISINIFINITESIMAL = native_sym(Native.isinfinitesimal);
 const MULTIPLY = native_sym(Native.multiply);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op(MULTIPLY, $);
+class Op extends CompositePredicate {
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(ISINIFINITESIMAL, MULTIPLY, config);
     }
-}
-
-class Op extends CompositeOperator {
-    constructor(innerOpr: Sym, $: ExtensionEnv) {
-        super(ISINIFINITESIMAL, innerOpr, $);
-    }
-    transform1(opr: Sym, mulExpr: Cons): [TFLAGS, U] {
-        // console.lg(this.name, this.$.toInfixString(mulExpr));
-        const $ = this.$;
-        if ([...mulExpr.argList].some(function (arg) {
+    compute(inner: Cons, $: ExtensionEnv): boolean {
+        return [...inner.argList].some(function (arg) {
             return $.isinfinitesimal(arg);
-        })) {
-            return [TFLAG_DIFF, booT];
-        }
-        else {
-            return [TFLAG_DIFF, booF];
-        }
+        });
     }
 }
 
-export const isinfinitesimal_mul = new Builder();
+export const isinfinitesimal_mul = mkbuilder(Op);

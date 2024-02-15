@@ -1,37 +1,32 @@
-import { ExtensionEnv, Operator, OperatorBuilder, Predicates, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { is_sym, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Extension, ExtensionBuilder, ExtensionEnv, Predicates } from "../../env/ExtensionEnv";
 import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { create_boo } from "../../tree/boo/Boo";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
-import { is_sym } from "../sym/is_sym";
+import { Predicate1 } from "../helpers/Predicate1";
 
-class Builder implements OperatorBuilder<U> {
+class Builder implements ExtensionBuilder<U> {
     constructor(readonly predicate: Sym, readonly which: (predicates: Predicates) => boolean) {
 
     }
-    create($: ExtensionEnv): Operator<U> {
-        return new Op(this.predicate, this.which, $);
+    create(config: Readonly<EnvConfig>): Extension<U> {
+        return new Op(this.predicate, this.which, config);
     }
 }
 
-class Op extends Function1<Sym> {
+class Op extends Predicate1<Sym> {
     readonly #hash: string;
-    constructor(readonly predicate: Sym, readonly which: (predicates: Predicates) => boolean, $: ExtensionEnv) {
-        super("ispositive_sym", predicate, is_sym, $);
+    constructor(readonly opr: Sym, readonly which: (predicates: Predicates) => boolean, readonly config: Readonly<EnvConfig>) {
+        super("ispositive_sym", opr, is_sym, config);
         this.#hash = hash_unaop_atom(this.opr, HASH_SYM);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
-        const $ = this.$;
-        // console.lg(`${this.name} ${$.toInfixString(arg)}`);
+    compute(arg: Sym, $: ExtensionEnv): boolean {
         const predicates = $.getSymbolPredicates(arg);
-        // console.lg(`${this.name} ${$.toInfixString(arg)} ${JSON.stringify(predicates, null, 2)}`);
-        return [TFLAG_DIFF, create_boo(this.which(predicates))];
+        return this.which(predicates);
     }
 }
 

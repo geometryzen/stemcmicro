@@ -42,9 +42,9 @@ export abstract class FunctionVarArgs<T extends Cons> extends AbstractExtension<
     test(expr: T, opr: Sym, env: ExprContext): boolean {
         throw new Error("Method not implemented.");
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform(expr: T, $: ExtensionEnv): [number, U] {
-        throw new Error(`FunctionVarArgs.transform must be implemented in ${this.name}`);
+    abstract transform(expr: T, $: ExtensionEnv): [number, U];
+    valueOf(expr: T, $: ExtensionEnv): U {
+        return this.transform(expr, $)[1];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKind(expr: U, $: ExtensionEnv): expr is T {

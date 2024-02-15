@@ -4,7 +4,7 @@ import { native_sym } from "../../native/native_sym";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { Cons1 } from "../helpers/Cons1";
 import { is_rat } from "../rat/is_rat";
 

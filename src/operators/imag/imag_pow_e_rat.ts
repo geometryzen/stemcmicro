@@ -5,7 +5,7 @@ import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natura
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { Cons1 } from "../helpers/Cons1";
 import { is_rat } from "../rat/is_rat";
 

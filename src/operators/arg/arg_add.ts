@@ -5,7 +5,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../
 import { is_negative } from "../../predicates/is_negative";
 import { DynamicConstants } from "../../runtime/defs";
 import { half } from "../../tree/rat/Rat";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const ARG = native_sym(Native.arg);
 const ADD = native_sym(Native.add);

@@ -1,32 +1,23 @@
-import { assert_rat, is_rat } from "math-expression-atoms";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { booF, booT } from "../../tree/boo/Boo";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
-import { Cons1 } from "../helpers/Cons1";
+import { assert_rat, booF, booT, is_rat, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, Cons1, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const PI = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
 const IS_REAL = native_sym(Native.isreal);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  * 
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(IS_REAL, POW, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(IS_REAL, POW);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const pow = expr.argList.head;
             const base = pow.lhs;
             const expo = pow.rhs;
@@ -37,8 +28,7 @@ class Op extends CompositeOperator {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons1<Sym, Cons>): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons1<Sym, Cons>, $: ExtensionEnv): [TFLAGS, U] {
         const base = assert_rat(innerExpr.lhs);
         // console.lg("base",$.toInfixString(base));
         if (base.isMinusOne()) {
@@ -64,4 +54,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const is_real_pow_rat_rat = new Builder();
+export const is_real_pow_rat_rat = mkbuilder(Op);

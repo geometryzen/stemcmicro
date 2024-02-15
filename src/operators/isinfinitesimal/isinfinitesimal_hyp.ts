@@ -1,35 +1,24 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Hyp, is_hyp } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder } from "../../env/ExtensionEnv";
 import { HASH_HYP, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { booT } from "../../tree/boo/Boo";
-import { Hyp } from "../../tree/hyp/Hyp";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
-import { is_hyp } from "../hyp/is_hyp";
+import { Predicate1 } from "../helpers/Predicate1";
 
 const ISINFINITESIMAL = native_sym(Native.isinfinitesimal);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
-class Op extends Function1<Hyp> {
+class Op extends Predicate1<Hyp> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('infinitesimal_hyp', ISINFINITESIMAL, is_hyp, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('infinitesimal_hyp', ISINFINITESIMAL, is_hyp, config);
         this.#hash = hash_unaop_atom(this.opr, HASH_HYP);
     }
     get hash(): string {
         return this.#hash;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: Hyp): [TFLAGS, U] {
-        return [TFLAG_DIFF, booT];
+    compute(): boolean {
+        return true;
     }
 }
 
-export const isinfinitesimal_hyp = new Builder();
+export const isinfinitesimal_hyp = mkbuilder(Op);

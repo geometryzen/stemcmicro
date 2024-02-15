@@ -1,35 +1,25 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Native, native_sym } from "math-expression-native";
+import { U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
+import { Predicate1 } from "../helpers/Predicate1";
 
 export const ISINFINITESIMAL = native_sym(Native.isinfinitesimal);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
-class Op extends Function1<U> {
+class Op extends Predicate1<U> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('isinfinitesimal_any', ISINFINITESIMAL, is_any, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('isinfinitesimal_any', ISINFINITESIMAL, is_any, config);
         this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: U, expr: U): [TFLAGS, U] {
-        // console.lg(this.name, this.$.toInfixString(arg));
-        // We could use fuzzy logic here...
-        return [TFLAG_NONE, expr];
+    compute(): boolean {
+        return false;
     }
 }
 
-export const isinfinitesimal_any = new Builder();
+export const isinfinitesimal_any = mkbuilder(Op);

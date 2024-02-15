@@ -52,6 +52,8 @@ export function simplify(expr: U, $: ExtensionEnv): U {
     // The following illustrates how we should be handling all atoms.
     // Of course, the extension should be looked up from the context.
     if (is_tensor(scode)) {
+        const extension = $.extensionFor(scode);
+        extension;
         return hook(tensor_extension.simplify(scode, $));
     }
 

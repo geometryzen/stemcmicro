@@ -6,7 +6,7 @@ import { half } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Cons1 } from "../helpers/Cons1";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { simplify } from "../simplify/simplify";
 
 const abs = native_sym(Native.abs);

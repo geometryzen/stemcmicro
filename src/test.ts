@@ -306,15 +306,8 @@ export function eval_or(p1: Cons, $: ExtensionEnv): U {
     }
 }
 
-// use subtract for cases like A < A + 1
-
-// TODO you could be smarter here and
-// simplify both sides only in the case
-// of "relational operator: cannot determine..."
-// a bit like we do in eval_testeq
 /**
- * Supports testge, testgt, testle, testlt
- * @param expr An binary expression containing (testxx lhs rhs) whre xx is one of ge,gt,le,lt.
+ * 
  */
 function cmp_args(expr: Cons, $: ExtensionEnv): Sign | null {
     // console.lg("cmp_args", $.toInfixString(expr));

@@ -3,7 +3,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { Cons1 } from "../helpers/Cons1";
 import { assert_sym } from "../sym/assert_sym";
 import { is_sym } from "../sym/is_sym";

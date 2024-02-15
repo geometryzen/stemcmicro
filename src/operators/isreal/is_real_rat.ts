@@ -1,34 +1,27 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Boo, booT, is_rat, one, Rat, Sym } from "math-expression-atoms";
+import { Cons1, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { ISREAL } from "../../runtime/constants";
-import { booT } from "../../tree/boo/Boo";
-import { Rat } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { is_rat } from "../rat/is_rat";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 type ARG = Rat;
 
 class Op extends Function1<ARG> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('is_real_rat', ISREAL, is_rat, $);
+    readonly #true: Boo | Rat;
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('is_real_rat', ISREAL, is_rat);
         this.#hash = hash_unaop_atom(this.opr, HASH_RAT);
+        this.#true = config.useIntegersForPredicates ? one : booT;
     }
     get hash(): string {
         return this.#hash;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
-        return [TFLAG_DIFF, booT];
+    transform1(): [TFLAGS, U] {
+        return [TFLAG_DIFF, this.#true];
     }
 }
 
-export const is_real_rat = new Builder();
+export const is_real_rat = mkbuilder<Cons1<Sym, ARG>>(Op);

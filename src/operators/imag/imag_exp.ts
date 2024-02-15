@@ -7,7 +7,7 @@ import { is_multiply } from "../../runtime/helpers";
 import { one, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { is_imu } from "../imu/is_imu";
 
 const EXP = native_sym(Native.exp);

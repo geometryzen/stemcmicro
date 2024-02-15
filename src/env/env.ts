@@ -10,7 +10,7 @@ import { StackFunction } from '../adapters/StackFunction';
 import { AtomListener, UndeclaredVars } from '../api/api';
 import { eval_function } from "../eval_function";
 import { yyfactorpoly } from "../factorpoly";
-import { hash_for_atom, hash_info, hash_nonop_cons } from "../hashing/hash_info";
+import { hash_for_atom, hash_info, hash_nonop_cons, hash_target } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { algebra } from "../operators/algebra/algebra";
 import { eval_lambda_in_fn_syntax } from '../operators/fn/eval_fn';
@@ -26,10 +26,10 @@ import { Visitor } from '../visitor/Visitor';
 import { DerivedEnv } from './DerivedEnv';
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
-import { CompareFn, Directive, directive_from_flag, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, Directive, directive_from_flag, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
-import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
-import { hash_from_match, operator_from_cons_expression, opr_from_match } from "./operator_from_legacy_transformer";
+import { extension_builder_from_keyword_runner } from "./operator_from_keyword_runner";
+import { extension_builder_from_cons_expression, hash_from_match, opr_from_match } from "./operator_from_legacy_transformer";
 import { UnknownConsOperator } from "./UnknownOperator";
 
 const ADD = native_sym(Native.add);
@@ -382,30 +382,34 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setCellHost(host: CellHost): void {
             throw new ProgrammingError();
         },
-        getBinding(name: Sym): U {
-            // console.lg("ExprContext.getBinding", `${name}`);
+        getBinding(name: Sym, target: Cons): U {
+            // console.lg("ExtensionEnv.getBinding", `${name}`, `${target}`);
             assert_sym(name);
             if (symTab.hasBinding(name)) {
                 return symTab.getBinding(name);
             }
             else {
                 const currents: { [operator: string]: Extension<U>[] } = currentConsByOperator();
-                const cons: Extension<U>[] = currents[name.key()];
-                if (Array.isArray(cons) && cons.length > 0) {
+                const extensions: Extension<U>[] = currents[name.key()];
+                if (Array.isArray(extensions) && extensions.length > 0) {
                     // We may not match because available are (opr Rat) and (opr U), but this hash_nonop_cons gives (opr). 
-                    const hash = hash_nonop_cons(name);
-                    // console.lg("looking for: ", hash);
-                    for (let i = 0; i < cons.length; i++) {
-                        if (cons[i].hash === hash) {
-                            const operator = cons[i];
-                            const bodyExpr = make_lambda_expr_from_extension(name, operator);
-                            return new Lambda(bodyExpr, "???");
+                    const hashes = hash_target(name, target);
+                    for (let h = 0; h < hashes.length; h++) {
+                        const hash = hashes[h];
+                        // console.lg("looking for: ", hash);
+                        for (let i = 0; i < extensions.length; i++) {
+                            if (extensions[i].hash === hash) {
+                                const extension = extensions[i];
+                                const bodyExpr = make_lambda_expr_from_extension(name, target, extension);
+                                // console.lg("found: ", extension.hash, "name", extension.name);
+                                return new Lambda(bodyExpr, hash);
+                            }
+                            else {
+                                // console.lg("mismatch: ", extensions[i].hash, "name", extensions[i].name);
+                            }
                         }
-                        else {
-                            // console.lg("mismatch: ", cons[i].hash, "name", cons[i].name);
-                        }
+                        // console.lg(`No matching operators for ${name}`);
                     }
-                    // console.lg(`No matching operators for ${name}`);
                 }
                 else {
                     // console.lg(`No operators for ${name}`);
@@ -499,20 +503,19 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         defineEvalFunction(opr: Sym, evalFunction: EvalFunction): void {
-            $.defineOperator(operator_from_cons_expression(opr, evalFunction));
+            $.defineExtension(extension_builder_from_cons_expression(opr, evalFunction));
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         defineFunction(match: U, impl: LambdaExpr): void {
-            // $.defineOperator(operator_from_modern_transformer(match, impl));
             const opr = opr_from_match(match);
             const hash = hash_from_match(match);
             $.setBinding(opr, new Lambda(impl, hash));
         },
         defineStackFunction(opr: Sym, stackFunction: StackFunction): void {
-            $.defineOperator(operator_from_cons_expression(opr, make_eval(stackFunction)));
+            $.defineExtension(extension_builder_from_cons_expression(opr, make_eval(stackFunction)));
         },
         defineKeyword(sym: Sym, runner: KeywordRunner): void {
-            $.defineOperator(operator_from_keyword_runner(sym, runner));
+            $.defineExtension(extension_builder_from_keyword_runner(sym, runner));
         },
         defineUserSymbol(name: Sym): void {
             // The most important thing to do is to keep track of which symbols are user symbols.
@@ -528,9 +531,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         defineExtension(builder: ExtensionBuilder<U>): void {
             builders.push(builder);
-        },
-        defineOperator(builder: OperatorBuilder<U>): void {
-            throw new ProgrammingError("ExtensionEnv.defineOperator method not implemented.");
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         defineAssociative(opr: Sym, id: Rat): void {
@@ -569,7 +569,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return $.evaluate(Native.cos, expr);
         },
         derivedEnv(): ExtensionEnv {
-            return new DerivedEnv(this);
+            return new DerivedEnv(this, config);
         },
         evaluate(opr: Native, ...args: U[]): U {
             const argList = items_to_cons(...args);
@@ -666,7 +666,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                     found = true;
                                 }
                                 else {
-                                    // console.log("mismatch: ", cons_operators[i].hash, "name", cons_operators[i].name);
+                                    // console.lg("mismatch: ", cons_operators[i].hash, "name", cons_operators[i].name);
                                 }
                             }
                             if (!found) {
@@ -1299,10 +1299,17 @@ function unambiguous_operator(expr: Cons, ops: Extension<U>[], $: ExtensionEnv):
 /**
  * 
  */
-function make_lambda_expr_from_extension(name: Sym, extension: Extension<U>): LambdaExpr {
+function make_lambda_expr_from_extension(name: Sym, target: Cons, extension: Extension<U>): LambdaExpr {
     return (argList: Cons, ctxt: ExprContext): U => {
         const $ = new ExtensionEnvFromExprContext(ctxt);
-        return extension.valueOf(cons(name, argList), $);
+        // console.lg("make_lambda", "name", `${name}`, "argList", `${argList}`, "target", `${target}`, extension.name);
+        if (is_nil(target)) {
+            return extension.valueOf(cons(name, argList), $);
+
+        }
+        else {
+            return extension.valueOf(target, $);
+        }
     };
 }
 

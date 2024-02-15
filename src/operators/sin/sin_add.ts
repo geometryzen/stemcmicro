@@ -5,7 +5,7 @@ import { native_sym } from "../../native/native_sym";
 import { is_negative } from "../../predicates/is_negative";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const SIN = native_sym(Native.sin);
 const ADD = native_sym(Native.add);

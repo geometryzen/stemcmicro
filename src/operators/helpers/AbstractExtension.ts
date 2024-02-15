@@ -77,7 +77,5 @@ export abstract class AbstractExtension<T extends U> {
     toListString(expr: T, $: ExtensionEnv): string {
         return render_as_sexpr(expr, $);
     }
-    valueOf(expr: T, $: ExtensionEnv): U {
-        return $.valueOf(expr);
-    }
+    abstract valueOf(expr: T, $: ExtensionEnv): U;
 }

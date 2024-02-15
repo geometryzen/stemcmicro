@@ -11,7 +11,8 @@ import { eval_dotdot } from "../operators/dotdot/eval_dotdot";
 import { JsObjectExtension } from "../operators/jsobject/JsObjectExtension";
 import { eval_let } from "../operators/let/eval_let";
 import { ASSIGN, COMPONENT, LET } from "../runtime/constants";
-import { CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { EnvConfig } from "./EnvConfig";
+import { CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 /**
  * Evaluates each item in the `argList` and returns (opr ...), 
  */
@@ -30,11 +31,13 @@ function evaluate_args(opr: Sym, argList: Cons, $: ExtensionEnv): Cons {
  */
 export class DerivedEnv implements ExtensionEnv {
     readonly #baseEnv: ExtensionEnv;
+    readonly #config: Readonly<EnvConfig>;
     readonly #bindings: Map<string, U> = new Map();
     readonly #userfunc: Map<string, U> = new Map();
     readonly listeners: ExprEngineListener[] = [];
-    constructor(baseEnv: ExtensionEnv) {
+    constructor(baseEnv: ExtensionEnv, config: Readonly<EnvConfig>) {
         this.#baseEnv = baseEnv;
+        this.#config = config;
     }
     addAtomListener(subscriber: AtomListener): void {
         this.#baseEnv.addAtomListener(subscriber);
@@ -118,9 +121,6 @@ export class DerivedEnv implements ExtensionEnv {
     defineKeyword(sym: Sym, runner: KeywordRunner): void {
         this.#baseEnv.defineKeyword(sym, runner);
     }
-    defineOperator(builder: OperatorBuilder<U>): void {
-        this.#baseEnv.defineOperator(builder);
-    }
     defineExtension(builder: ExtensionBuilder<U>): void {
         this.#baseEnv.defineExtension(builder);
     }
@@ -131,7 +131,7 @@ export class DerivedEnv implements ExtensionEnv {
         this.#baseEnv.defineUserSymbol(name);
     }
     derivedEnv(): ExtensionEnv {
-        return new DerivedEnv(this);
+        return new DerivedEnv(this, this.#config);
     }
     divide(lhs: U, rhs: U): U {
         throw new Error('divide method not implemented.');
@@ -367,7 +367,7 @@ export class DerivedEnv implements ExtensionEnv {
             }
             else if (is_jsobject(expr)) {
                 // This is the idea until we can do a lookup of the extension.
-                const extension = new JsObjectExtension();
+                const extension = new JsObjectExtension(this.#config);
                 return extension.valueOf(expr, this);
             }
             else if (is_keyword(expr)) {
@@ -414,7 +414,7 @@ export class DerivedEnv implements ExtensionEnv {
         throw new Error(`DerivedEnv.valueOf ${expr} method not implemented.`);
     }
     getBinding(opr: Sym, target: Cons): U {
-        // console.lg("DerivedEnv.getBinding", `${name}`);
+        // console.lg("DerivedEnv.getBinding", `${opr}`, `${target}`);
         const key = opr.key();
         if (this.#bindings.has(key)) {
             return this.#bindings.get(key)!;

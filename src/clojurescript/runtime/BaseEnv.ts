@@ -74,9 +74,6 @@ export class BaseEnv implements Scope {
     defineKeyword(sym: Sym, runner: KeywordRunner): void {
         throw new Error("Method not implemented.");
     }
-    defineOperator(builder: OperatorBuilder<U>): void {
-        throw new Error("Method not implemented.");
-    }
     defineAssociative(opr: Sym, id: Rat): void {
         throw new Error("Method not implemented.");
     }

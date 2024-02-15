@@ -1,6 +1,7 @@
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_cons, nil, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { guess } from "../../guess";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
@@ -57,27 +58,20 @@ export function eval_factor(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('factor', native_sym(Native.factor), $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('factor', native_sym(Native.factor));
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
         const retval = eval_factor(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }
 
-export const factor_varargs = new Builder();
+export const factor_varargs = mkbuilder(Op);

@@ -8,7 +8,7 @@ import { is_power } from "../../runtime/helpers";
 import { negOne, one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { is_imu } from "../imu/is_imu";
 import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";

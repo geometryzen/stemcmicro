@@ -7,7 +7,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { Cons1 } from "../helpers/Cons1";
 import { is_imu } from "../imu/is_imu";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const RE = native_sym(Native.real);
 const MUL = native_sym(Native.multiply);

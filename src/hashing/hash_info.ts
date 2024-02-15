@@ -1,5 +1,5 @@
 import { booT, Cell, CellHost, create_flt, create_int, create_str, create_sym, create_tensor, epsilon, Err, et, imu, is_keyword, is_rat, is_str, is_sym, Map, Sym } from "math-expression-atoms";
-import { Atom, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { Atom, Cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { create_uom } from "../operators/uom/uom";
 
 const KIND_NIL = 0;
@@ -97,6 +97,15 @@ export function hash_unaop_cons(opr: Sym, arg: Sym): string {
  */
 export function hash_nonop_cons(opr: Sym): string {
     return `(${opr.key()})`;
+}
+
+export function hash_target(opr: Sym, target: Cons): string[] {
+    if (is_nil(target)) {
+        return [hash_nonop_cons(opr)];
+    }
+    else {
+        return hash_info(target);
+    }
 }
 
 export function hash_info(expr: U): string[] {

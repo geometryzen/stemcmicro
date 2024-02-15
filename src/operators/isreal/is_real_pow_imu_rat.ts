@@ -1,33 +1,23 @@
-import { assert_rat, is_rat } from "math-expression-atoms";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { booF, booT } from "../../tree/boo/Boo";
+import { assert_rat, booF, booT, is_imu, is_rat, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, Cons1, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { four } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
-import { Cons1 } from "../helpers/Cons1";
-import { is_imu } from "../imu/is_imu";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const POW = native_sym(Native.pow);
 const IS_REAL = native_sym(Native.isreal);
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new IsRealPow($);
-    }
-}
 
 /**
  * isreal(z) <=> iszero(im(z))
  */
 class IsRealPow extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(IS_REAL, POW, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(IS_REAL, POW);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             // console.lg("expr", expr.toString());
             const pow = expr.argList.head;
             // console.lg("pow", pow.toString());
@@ -62,4 +52,4 @@ class IsRealPow extends CompositeOperator {
     }
 }
 
-export const is_real_pow_imu_rat = new Builder();
+export const is_real_pow_imu_rat = mkbuilder(IsRealPow);

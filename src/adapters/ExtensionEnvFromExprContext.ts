@@ -1,18 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CellHost, Rat, Sym, Tensor } from "math-expression-atoms";
 import { AtomHandler, ExprContext, LambdaExpr } from "math-expression-context";
-import { Native } from "math-expression-native";
-import { Atom, Cons, U } from "math-expression-tree";
+import { Native, native_sym } from "math-expression-native";
+import { Atom, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
 import { AtomListener, ExprEngineListener } from "../api/api";
-import { CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler } from "../env/ExtensionEnv";
+import { CompareFn, Directive, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
+import { ProgrammingError } from "../programming/ProgrammingError";
 import { StackFunction } from "./StackFunction";
 
 export class ExtensionEnvFromExprContext implements ExtensionEnv {
     constructor(readonly ctxt: ExprContext) {
-
+        if (ctxt) {
+            // OK
+        }
+        else {
+            throw new ProgrammingError("ctxt MUST be defined.");
+        }
     }
     handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
-        throw new Error("Method not implemented.");
+        return this.ctxt.handlerFor(atom);
     }
     addAtomListener(subscriber: AtomListener): void {
         throw new Error("Method not implemented.");
@@ -42,7 +48,8 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     add(...args: U[]): U {
-        throw new Error("Method not implemented.");
+        const expr = items_to_cons(native_sym(Native.add), ...args);
+        return this.ctxt.valueOf(expr);
     }
     arccos(expr: U): U {
         throw new Error("Method not implemented.");
@@ -72,7 +79,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     compareFn(opr: Sym): CompareFn {
-        throw new Error("Method not implemented.");
+        return this.ctxt.compareFn(opr);
     }
     component(tensor: Tensor<U>, indices: U): U {
         throw new Error("Method not implemented.");
@@ -87,9 +94,6 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     defineKeyword(sym: Sym, runner: KeywordRunner): void {
-        throw new Error("Method not implemented.");
-    }
-    defineOperator(builder: OperatorBuilder<U>): void {
         throw new Error("Method not implemented.");
     }
     defineExtension(builder: ExtensionBuilder<U>): void {
@@ -132,7 +136,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     getDirective(directive: number): number {
-        throw new Error("Method not implemented.");
+        return this.ctxt.getDirective(directive);
     }
     getSymbolPredicates(sym: Sym): Predicates {
         throw new Error("Method not implemented.");
@@ -162,7 +166,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     isExpanding(): boolean {
-        throw new Error("Method not implemented.");
+        return this.ctxt.getDirective(Directive.expanding) > 0;
     }
     isFactoring(): boolean {
         throw new Error("Method not implemented.");
@@ -194,8 +198,14 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     isscalar(expr: U): boolean {
         throw new Error("Method not implemented.");
     }
-    iszero(expr: U): boolean {
-        throw new Error("Method not implemented.");
+    iszero(arg: U): boolean {
+        if (is_atom(arg)) {
+            const handler = this.ctxt.handlerFor(arg);
+            return handler.test(arg, native_sym(Native.iszero), this.ctxt);
+        }
+        throw new Error(`ExtensionEnvFromExprContext.iszero ${arg} method not implemented.`);
+        // const expr = items_to_cons(native_sym(Native.iszero), arg);
+        // return this.ctxt.valueOf(expr);
     }
     log(expr: U): U {
         throw new Error("Method not implemented.");
@@ -216,7 +226,8 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     power(base: U, expo: U): U {
-        throw new Error("Method not implemented.");
+        const expr = items_to_cons(native_sym(Native.pow), base, expo);
+        return this.ctxt.valueOf(expr);
     }
     re(expr: U): U {
         throw new Error("Method not implemented.");
@@ -231,10 +242,10 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     pushDirective(directive: number, value: number): void {
-        throw new Error("Method not implemented.");
+        this.ctxt.pushDirective(directive, value);
     }
     popDirective(): void {
-        throw new Error("Method not implemented.");
+        this.ctxt.popDirective();
     }
     setSymbolOrder(sym: Sym, order: ExprComparator): void {
         throw new Error("Method not implemented.");
@@ -276,22 +287,28 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     transform(expr: U): [number, U] {
-        throw new Error("Method not implemented.");
+        const value = this.ctxt.valueOf(expr);
+        if (value.equals(expr)) {
+            return [TFLAG_NONE, value];
+        }
+        else {
+            return [TFLAG_DIFF, value];
+        }
     }
     valueOf(expr: U): U {
-        throw new Error("Method not implemented.");
+        return this.ctxt.valueOf(expr);
     }
     hasBinding(opr: Sym, target: Cons): boolean {
-        throw new Error("Method not implemented.");
+        return this.ctxt.hasBinding(opr, target);
     }
     getBinding(opr: Sym, target: Cons): U {
-        throw new Error("Method not implemented.");
+        return this.ctxt.getBinding(opr, target);
     }
     setBinding(opr: Sym, binding: U): void {
         throw new Error("Method not implemented.");
     }
     hasUserFunction(name: Sym): boolean {
-        throw new Error("Method not implemented.");
+        return this.ctxt.hasUserFunction(name);
     }
     getUserFunction(name: Sym): U {
         throw new Error("Method not implemented.");

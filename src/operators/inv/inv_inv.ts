@@ -3,7 +3,7 @@ import { Native, native_sym } from "math-expression-native";
 import { Cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const INV = native_sym(Native.inv);
 

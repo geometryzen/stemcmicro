@@ -1,32 +1,28 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { ISREAL } from "../../runtime/constants";
-import { MATH_MUL } from "../../runtime/ns_math";
-import { booF, booT } from "../../tree/boo/Boo";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op(MATH_MUL, $);
-    }
-}
+import { Boo, booF, booT, one, Rat, Sym, zero } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 class Op extends CompositeOperator {
-    constructor(innerOpr: Sym, $: ExtensionEnv) {
-        super(ISREAL, innerOpr, $);
+    readonly #true: Boo | Rat;
+    readonly #false: Boo | Rat;
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(native_sym(Native.isreal), native_sym(Native.multiply));
+        this.#true = config.useIntegersForPredicates ? one : booT;
+        this.#false = config.useIntegersForPredicates ? zero : booF;
     }
-    transform1(opr: Sym, add: Cons): [TFLAGS, U] {
-        const $ = this.$;
-        if ([...add.argList].every(function (arg) {
+    transform1(opr: Sym, inner: Cons, outer: Cons, $: ExtensionEnv): [TFLAGS, U] {
+        if ([...inner.argList].every(function (arg) {
             return $.isreal(arg);
         })) {
-            return [TFLAG_DIFF, booT];
+            return [TFLAG_DIFF, this.#true];
         }
         else {
-            return [TFLAG_DIFF, booF];
+            return [TFLAG_DIFF, this.#false];
         }
     }
 }
 
-export const is_real_mul = new Builder();
+export const is_real_mul = mkbuilder(Op);

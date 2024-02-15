@@ -10,7 +10,7 @@ import { native_sym } from "../../native/native_sym";
 import { imu } from "../../tree/imu/Imu";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { is_rat } from "../rat/is_rat";
 
 const EXP = native_sym(Native.exp);

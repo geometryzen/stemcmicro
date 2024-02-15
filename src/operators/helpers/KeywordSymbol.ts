@@ -2,14 +2,15 @@
 import { assert_sym, is_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS } from "../../env/ExtensionEnv";
 
 /**
  * 
  */
-export abstract class AbstractKeywordOperator implements Extension<Sym> {
+export abstract class AbstractKeywordExtension implements Extension<Sym> {
     readonly #keyword: Sym;
-    constructor(keyword: Sym) {
+    constructor(keyword: Sym, readonly config: Readonly<EnvConfig>) {
         this.#keyword = assert_sym(keyword);
     }
     phases?: number | undefined;

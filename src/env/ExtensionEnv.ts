@@ -330,10 +330,6 @@ export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, P
      * e.g. clearall 
      */
     defineKeyword(sym: Sym, runner: KeywordRunner): void;
-    /**
-     * @deprecated Migrate to defineExtension(...)
-     */
-    defineOperator(builder: OperatorBuilder<U>): void;
     defineExtension(builder: ExtensionBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
     defineUserSymbol(name: Sym): void;

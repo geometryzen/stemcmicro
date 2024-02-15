@@ -935,6 +935,11 @@ export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
     const x = pop($);
     try {
         if (is_atom(x)) {
+            if (is_blade(x)) {
+                // throw new ProgrammingError("abs(Blade)");
+            }
+            const handler = env.handlerFor(x);
+            handler.test;
             if (is_num(x)) {
                 push(x, $);
                 if (isnegativenumber(x)) {
@@ -9529,15 +9534,25 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
                         if (env.hasBinding(opr, expr)) {
                             ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) + 1);
                             try {
+                                // console.lg("getBinding", `${opr}`, `${expr}`);
                                 const binding = env.getBinding(opr, expr);
                                 // console.lg("binding", `${ binding } `);
                                 try {
                                     if (is_atom(binding)) {
-                                        // console.lg("binding.type", `${ binding.type } `);
+                                        // console.lg("binding.type", `${binding.type} `);
+                                    }
+                                    else if (is_cons(binding)) {
+                                        // console.lg("binding.type", "cons");
+                                    }
+                                    else if (is_nil(binding)) {
+                                        // console.lg("binding.type", "nil");
                                     }
                                     if (is_lambda(binding)) {
                                         const ctxt = new ExprContextFromProgram(env, ctrl, $);
-                                        const value = binding.body(expr.rest, ctxt);
+                                        const body: LambdaExpr = binding.body;
+                                        // console.lg(JSON.stringify(body), typeof body);
+                                        const value = body(expr.rest, ctxt);
+                                        // console.lg("value", `${value} `);
                                         try {
                                             $.push(value);
                                         }
@@ -12380,7 +12395,7 @@ function peek(tag: string, $: ProgramStack): void {
     const expr = $.pop();
     try {
         // eslint-disable-next-line no-console
-        console.log(tag, `${ expr } `);
+        console.lg(tag, `${ expr } `);
         $.push(expr);
     }
     finally {
@@ -13621,15 +13636,15 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getBinding(opr: Sym, target: Cons): U {
-        // console.lg("ScriptVars.getBinding", `${ name } `);
+        // console.lg("ScriptVars.getBinding", `${opr}`, `${target}`);
         assert_sym(opr);
         const key = opr.key();
         if (this.#bindings.has(key)) {
             return this.#bindings.get(key)!;
         }
         else if (this.#stackFunctions.has(key)) {
-            const consFunction: StackFunction = this.#stackFunctions.get(key)!;
-            const bodyExpr = make_lambda_expr_from_cons_function(opr, consFunction);
+            const stackFunction: StackFunction = this.#stackFunctions.get(key)!;
+            const bodyExpr = make_lambda_expr_from_stack_function(opr, stackFunction);
             return new Lambda(bodyExpr, "???");
         }
         else {
@@ -13769,10 +13784,10 @@ const zero: Rat = create_int(0);
 const one: Rat = create_int(1);
 const minusone: Rat = create_int(-1);
 
-function make_lambda_expr_from_cons_function(sym: Sym, consFunction: StackFunction): LambdaExpr {
+function make_lambda_expr_from_stack_function(sym: Sym, stackFunction: StackFunction): LambdaExpr {
     return function (argList: Cons, ctxt: ExprContext): U {
         const $ = new StackU();
-        consFunction(create_cons(sym, argList), ctxt, ctxt, $);
+        stackFunction(create_cons(sym, argList), ctxt, ctxt, $);
         return $.pop();
     };
 }

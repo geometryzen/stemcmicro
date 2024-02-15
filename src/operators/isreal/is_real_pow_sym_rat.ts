@@ -1,34 +1,27 @@
-import { assert_rat, is_rat } from "math-expression-atoms";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { booF, booT, create_boo } from "../../tree/boo/Boo";
+import { assert_rat, assert_sym, is_rat, is_sym, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, Cons1, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { predicate_return_value } from "../../helpers/predicate_return_value";
 import { two } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
-import { Cons1 } from "../helpers/Cons1";
-import { assert_sym } from "../sym/assert_sym";
-import { is_sym } from "../sym/is_sym";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const POW = native_sym(Native.pow);
 const IS_REAL = native_sym(Native.isreal);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
+type ARG = Cons1<Sym, Cons>
+type EXP = Cons1<Sym, ARG>
 
 /**
  * isreal(z) <=> iszero(im(z))
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(IS_REAL, POW, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(IS_REAL, POW);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is EXP {
+        if (super.isKind(expr, $)) {
             // console.lg("expr", expr.toString());
             const pow = expr.argList.head;
             // console.lg("pow", pow.toString());
@@ -42,8 +35,7 @@ class Op extends CompositeOperator {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, pow: Cons, expr: Cons1<Sym, Cons>): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, pow: ARG, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         const base = assert_sym(pow.lhs);
         const expo = assert_rat(pow.rhs);
         const numer = expo.numer();
@@ -51,31 +43,20 @@ class Op extends CompositeOperator {
         if ($.isreal(base)) {
             if (numer.div(two).isInteger()) {
                 if (denom.isOne()) {
-                    return [TFLAG_DIFF, booT];
-                }
-                else {
-                    return [TFLAG_DIFF, booF];
+                    return [TFLAG_DIFF, predicate_return_value(true, $)];
                 }
             }
             else if (numer.isMinusOne()) {
                 if (denom.isOne()) {
                     // Duplicates rule in is_real_pow_ant_negone.
-                    return [TFLAG_DIFF, create_boo($.isreal(base))];
-                }
-                else {
-                    return [TFLAG_DIFF, booF];
+                    return [TFLAG_DIFF, predicate_return_value($.isreal(base), $)];
                 }
             }
-            else {
-                return [TFLAG_DIFF, booF];
-            }
         }
-        else {
-            return [TFLAG_DIFF, booF];
-        }
+        return [TFLAG_DIFF, predicate_return_value(false, $)];
         // const denom = expo.denom();
         // We can improve on this...
     }
 }
 
-export const is_real_pow_sym_rat = new Builder();
+export const is_real_pow_sym_rat = mkbuilder<EXP>(Op);

@@ -135,6 +135,7 @@ import { legendre_varargs } from '../operators/legendre/legendre_varargs';
 import { let_varargs } from '../operators/let/let_varargs';
 import { stack_mag } from '../operators/mag/stack_mag';
 import { eval_multiply } from '../operators/mul/eval_multiply';
+import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
 import { mul_2_tensor_tensor } from '../operators/mul/mul_2_tensor_tensor';
 import { nil_extension_builder } from '../operators/nil/nil_extension';
 import { or_varargs } from '../operators/or/or_varargs';
@@ -243,6 +244,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineAssociative(MATH_MUL, one);
     $.defineExtension(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
     $.defineExtension(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
+    $.defineExtension(mul_2_blade_blade);
     $.defineExtension(mul_2_tensor_tensor);
     $.defineEvalFunction(MATH_MUL, eval_multiply);
 
@@ -359,6 +361,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(jsobject_extension_builder);
 
     $.defineStackFunction(native_sym(Native.abs), stack_abs);
+
     $.defineStackFunction(native_sym(Native.adj), stack_adj);
 
     $.defineExtension(algebra_2_tensor_tensor);
@@ -487,40 +490,40 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(is_complex_sym);
     $.defineExtension(is_complex_any);
 
-    $.defineOperator(isinfinitesimal_hyp);
-    $.defineOperator(isinfinitesimal_mul);
-    $.defineOperator(isinfinitesimal_rat);
-    $.defineOperator(isinfinitesimal_sym);
-    $.defineOperator(isinfinitesimal_any);
+    $.defineExtension(isinfinitesimal_hyp);
+    $.defineExtension(isinfinitesimal_mul);
+    $.defineExtension(isinfinitesimal_rat);
+    $.defineExtension(isinfinitesimal_sym);
+    $.defineExtension(isinfinitesimal_any);
 
-    $.defineOperator(ispositive_exp);
-    $.defineOperator(ispositive_flt);
-    $.defineOperator(ispositive_rat);
-    $.defineOperator(ispositive_sym);
-    $.defineOperator(ispositive_any);
+    $.defineExtension(ispositive_exp);
+    $.defineExtension(ispositive_flt);
+    $.defineExtension(ispositive_rat);
+    $.defineExtension(ispositive_sym);
+    $.defineExtension(ispositive_any);
 
     $.defineExtension(isprime_varargs);
 
-    $.defineOperator(is_real_abs);
-    $.defineOperator(is_real_add);
+    $.defineExtension(is_real_abs);
+    $.defineExtension(is_real_add);
     $.defineExtension(isreal_holomorphic(COS));
     $.defineExtension(isreal_holomorphic(EXP));
     $.defineExtension(isreal_holomorphic(FACTORIAL));
     $.defineExtension(is_real_cos);
-    $.defineOperator(is_real_flt);
-    $.defineOperator(is_real_imag);
-    $.defineOperator(is_real_imu);
-    $.defineOperator(is_real_mul);
-    $.defineOperator(is_real_pow_e_sym);
-    $.defineOperator(is_real_pow_rat_rat);
-    $.defineOperator(is_real_pow_sym_rat);
-    $.defineOperator(is_real_pow_imu_rat);
-    $.defineOperator(is_real_pow_any_negone);
-    $.defineOperator(is_real_rat);
-    $.defineOperator(is_real_real);
-    $.defineOperator(is_real_sin);
+    $.defineExtension(is_real_flt);
+    $.defineExtension(is_real_imag);
+    $.defineExtension(is_real_imu);
+    $.defineExtension(is_real_mul);
+    $.defineExtension(is_real_pow_e_sym);
+    $.defineExtension(is_real_pow_rat_rat);
+    $.defineExtension(is_real_pow_sym_rat);
+    $.defineExtension(is_real_pow_imu_rat);
+    $.defineExtension(is_real_pow_any_negone);
+    $.defineExtension(is_real_rat);
+    $.defineExtension(is_real_real);
+    $.defineExtension(is_real_sin);
     $.defineExtension(make_predicate_sym_extension(ISREAL));
-    $.defineOperator(is_real_any);
+    $.defineExtension(is_real_any);
 
     $.defineExtension(iszero_flt_builder);
     $.defineExtension(iszero_rat_builder);
@@ -600,7 +603,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(native_sym(Native.st), stack_st);
 
     $.defineEvalFunction(native_sym(Native.subst), eval_subst);
-    $.defineEvalFunction(native_sym(Native.taylor), eval_sum);
+    $.defineEvalFunction(native_sym(Native.sum), eval_sum);
 
     $.defineExtension(symbol_varargs);
 

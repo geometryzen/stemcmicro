@@ -3,7 +3,7 @@ import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { compute_theta_from_base_and_expo } from "../real/compute_theta_from_base_and_expo";
 
 const ARG = native_sym(Native.arg);

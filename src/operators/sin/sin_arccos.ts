@@ -4,7 +4,7 @@ import { native_sym } from "../../native/native_sym";
 import { half, one, two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const SIN = native_sym(Native.sin);
 const ARCCOS = native_sym(Native.arccos);

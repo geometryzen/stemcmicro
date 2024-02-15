@@ -6,7 +6,7 @@ import { is_negative } from "../../predicates/is_negative";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../CompositeOperator";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { sin_special_angles } from "./transform_sin";
 
 const SIN = native_sym(Native.sin);

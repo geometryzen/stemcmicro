@@ -480,12 +480,12 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineExtension(integral_varargs);
 
-    $.defineOperator(inv_inv);
-    $.defineOperator(inv_any);
+    $.defineExtension(inv_inv);
+    $.defineExtension(inv_any);
     $.defineStackFunction(native_sym(Native.inv), stack_inv);
 
-    $.defineOperator(is_complex_sym);
-    $.defineOperator(is_complex_any);
+    $.defineExtension(is_complex_sym);
+    $.defineExtension(is_complex_any);
 
     $.defineOperator(isinfinitesimal_hyp);
     $.defineOperator(isinfinitesimal_mul);
@@ -499,7 +499,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(ispositive_sym);
     $.defineOperator(ispositive_any);
 
-    $.defineOperator(isprime_varargs);
+    $.defineExtension(isprime_varargs);
 
     $.defineOperator(is_real_abs);
     $.defineOperator(is_real_add);

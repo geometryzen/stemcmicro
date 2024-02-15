@@ -1,38 +1,30 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { create_boo, is_sym, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons1, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { create_boo } from "../../tree/boo/Boo";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { is_sym } from "../sym/is_sym";
 
 export const IS_COMPLEX = native_sym(Native.iscomplex);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 type ARG = Sym;
+type EXP = Cons1<Sym, ARG>;
 
 class Op extends Function1<ARG> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('is_complex_sym', IS_COMPLEX, is_sym, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('is_complex_sym', IS_COMPLEX, is_sym);
         this.#hash = hash_unaop_atom(this.opr, HASH_SYM);
     }
     get hash(): string {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, arg: ARG, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         const props = $.getSymbolPredicates(arg);
         return [TFLAG_DIFF, create_boo(props.complex)];
     }
 }
 
-export const is_complex_sym = new Builder();
+export const is_complex_sym = mkbuilder(Op);

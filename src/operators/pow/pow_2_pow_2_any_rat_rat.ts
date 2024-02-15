@@ -1,18 +1,13 @@
 import { is_rat, Sym } from "math-expression-atoms";
-import { Cons, Cons2, is_cons, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Cons2, is_cons, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Rat, two } from "../../tree/rat/Rat";
 import { and } from "../helpers/and";
 import { Function2 } from "../helpers/Function2";
 import { is_pow_2_any_rat } from "./is_pow_2_any_rat";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LL = U;
 type LR = Rat;
@@ -27,22 +22,21 @@ const guardR = is_rat;
  * (b**2)**(1/2) => b, for b real and positive or zero.
  * (b**m)**n => b**(m*n), for any positive integers m and n.
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('pow_2_pow_2_any_rat_rat', MATH_POW, guardL, guardR, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('pow_2_pow_2_any_rat_rat', MATH_POW, guardL, guardR);
         this.#hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
-    isKind(expr: U): expr is Cons2<Sym, LHS, Rat> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons2<Sym, LHS, Rat> {
+        if (super.isKind(expr, $)) {
             const m = expr.base.expo;
             const n = expr.expo;
             // (b**2)**(1/2)
             if (m.isTwo() && n.isHalf()) {
-                const $ = this.$;
                 const b = expr.base.base;
                 if ($.isreal(b)) {
                     if ($.ispositive(b) || $.iszero(b)) {
@@ -53,8 +47,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         }
         return false;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         const b = lhs.base;
         const m = lhs.expo;
         const n = rhs;
@@ -77,4 +70,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const pow_2_pow_2_any_rat_rat = new Builder();
+export const pow_2_pow_2_any_rat_rat = mkbuilder<EXP>(Op);

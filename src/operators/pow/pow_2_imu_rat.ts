@@ -1,32 +1,26 @@
 import { imu, Imu, is_imu, is_rat, negOne, one, Rat, Sym } from "math-expression-atoms";
-import { Cons, Cons2, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Cons2, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_IMU, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { half } from "../../tree/rat/Rat";
 import { Function2 } from "../helpers/Function2";
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
-
 type LHS = Imu;
 type RHS = Rat;
 type EXP = Cons2<Sym, LHS, RHS>;
 
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('pow_2_imu_rat', MATH_POW, is_imu, is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('pow_2_imu_rat', MATH_POW, is_imu, is_rat);
         this.#hash = hash_binop_atom_atom(MATH_POW, HASH_IMU, HASH_RAT);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: Imu, rhs: Rat, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: Imu, rhs: Rat, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         if (rhs.isEven()) {
             const n = rhs.mul(half);
             if (n.isEven()) {
@@ -53,4 +47,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const pow_2_imu_rat = new Builder();
+export const pow_2_imu_rat = mkbuilder<EXP>(Op);

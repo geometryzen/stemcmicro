@@ -1,19 +1,14 @@
 import { Imu, is_imu } from "math-expression-atoms";
-import { ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
+import { U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_sym } from "../sym/is_sym";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LHS = Sym;
 type RHS = Imu;
@@ -22,17 +17,16 @@ type EXP = Cons2<Sym, LHS, RHS>;
 /**
  * Sym * Imu may be ordered consistently using compare_factors.
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('mul_2_sym_imu', MATH_MUL, is_sym, is_imu, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_sym_imu', MATH_MUL, is_sym, is_imu);
         this.#hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_POW);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP, $: ExtensionEnv): [TFLAGS, U] {
         switch ($.compareFn(opr)(lhs, rhs)) {
             case SIGN_GT: {
                 return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, rhs, lhs))];
@@ -44,4 +38,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const mul_2_sym_imu = new Builder();
+export const mul_2_sym_imu = mkbuilder<EXP>(Op);

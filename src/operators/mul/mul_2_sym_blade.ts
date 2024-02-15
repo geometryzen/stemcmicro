@@ -1,39 +1,31 @@
 
 import { Blade, is_blade } from "math-expression-atoms";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
+import { U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_sym } from "../sym/is_sym";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LHS = Sym;
 type RHS = Blade;
 type EXP = Cons2<Sym, LHS, RHS>
 
-function cross($: ExtensionEnv) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return function (lhs: LHS, rhs: RHS): boolean {
-        return $.isscalar(lhs);
-    };
+function cross(lhs: LHS, rhs: RHS, exp: EXP, $: ExtensionEnv): boolean {
+    return $.isscalar(lhs);
 }
 
 /**
  * Sym * Blade => Sym * Blade (STABLE)
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2X<LHS, RHS> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
-    constructor($: ExtensionEnv) {
-        super('mul_2_sym_blade', MATH_MUL, is_sym, is_blade, cross($), $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_sym_blade', MATH_MUL, is_sym, is_blade, cross);
         this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_SYM, HASH_BLADE);
     }
     get hash(): string {
@@ -49,4 +41,4 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const mul_2_sym_blade = new Builder();
+export const mul_2_sym_blade = mkbuilder<EXP>(Op);

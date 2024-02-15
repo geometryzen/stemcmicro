@@ -1,21 +1,16 @@
 
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { is_rat } from "../rat/is_rat";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
+import { U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
+import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LHS = Sym;
 type RHS = Rat;
@@ -26,10 +21,10 @@ type EXP = Cons2<Sym, LHS, RHS>
  *             => 0 if Rat is zero
  *             => Sym if Rat is one
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('mul_2_sym_rat', MATH_MUL, is_sym, is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_sym_rat', MATH_MUL, is_sym, is_rat);
         this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_SYM, HASH_RAT);
     }
     get hash(): string {
@@ -48,4 +43,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const mul_2_sym_rat = new Builder();
+export const mul_2_sym_rat = mkbuilder<EXP>(Op);

@@ -1,29 +1,23 @@
 
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { items_to_cons } from "../../makeList";
-import { is_num } from "../num/is_num";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
+import { U } from "../../tree/tree";
 import { Function2 } from "../helpers/Function2";
+import { is_num } from "../num/is_num";
 import { is_sym } from "../sym/is_sym";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 /**
  * Sym * Num => Num * Sym
  */
-class Op extends Function2<Sym, Num> implements Operator<Cons2<Sym, Sym, Num>> {
+class Op extends Function2<Sym, Num> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('mul_2_sym_num', MATH_MUL, is_sym, is_num, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_sym_num', MATH_MUL, is_sym, is_num);
         this.#hash = `(* Sym Num)`;
     }
     get hash(): string {
@@ -40,4 +34,4 @@ class Op extends Function2<Sym, Num> implements Operator<Cons2<Sym, Sym, Num>> {
     }
 }
 
-export const mul_2_sym_num = new Builder();
+export const mul_2_sym_num = mkbuilder(Op);

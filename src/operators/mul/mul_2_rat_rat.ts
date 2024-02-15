@@ -1,10 +1,11 @@
 
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
+import { U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_rat } from "../rat/is_rat";
@@ -29,16 +30,10 @@ function mul_2_rat_rat(lhs: Rat, rhs: Rat): Rat {
     return lhs.mul(rhs);
 }
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
-
-class Op extends Function2<Rat, Rat> implements Operator<EXP> {
+class Op extends Function2<Rat, Rat> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('mul_2_rat_rat', MATH_MUL, is_rat, is_rat, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_rat_rat', MATH_MUL, is_rat, is_rat);
         this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_RAT);
     }
     get hash(): string {
@@ -55,4 +50,4 @@ class Op extends Function2<Rat, Rat> implements Operator<EXP> {
     }
 }
 
-export const mul_2_rat_rat_builder = new Builder();
+export const mul_2_rat_rat_builder = mkbuilder<EXP>(Op);

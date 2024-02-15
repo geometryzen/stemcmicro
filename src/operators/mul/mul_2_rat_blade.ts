@@ -1,17 +1,13 @@
 
 import { Blade, is_blade, is_rat, Rat, Sym, zero } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LHS = Rat;
 type RHS = Blade;
@@ -45,11 +41,11 @@ function mul_2_rat_blade(lhs: Rat, rhs: Blade, expr: EXP): Rat | Blade | EXP {
  *               => 0 if Rat is zero
  *               => Blade if Rat is one
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
-    constructor($: ExtensionEnv) {
-        super('mul_2_rat_blade', MATH_MUL, is_rat, is_blade, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_rat_blade', MATH_MUL, is_rat, is_blade);
         this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_BLADE);
     }
     get hash(): string {
@@ -69,4 +65,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const mul_2_rat_blade_builder = new Builder();
+export const mul_2_rat_blade_builder = mkbuilder(Op);

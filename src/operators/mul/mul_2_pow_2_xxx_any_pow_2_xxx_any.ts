@@ -1,21 +1,16 @@
 
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
 import { MATH_ADD, MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
+import { is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { GUARD } from "../helpers/GUARD";
 import { is_pow_2_sym_any } from "../pow/is_pow_2_sym_any";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LHS = Cons2<Sym, Sym, U>;
 type RHS = Cons2<Sym, Sym, U>;
@@ -38,17 +33,16 @@ const guardR: GUARD<U, RHS> = and(is_cons, is_pow_2_sym_any);
  * 
  * (x ** a) * (x ** b) =>  x ** (a + b) 
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2X<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('mul_2_pow_2_xxx_any_pow_2_xxx_any', MATH_MUL, guardL, guardR, cross, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_pow_2_xxx_any_pow_2_xxx_any', MATH_MUL, guardL, guardR, cross);
         this.#hash = hash_binop_cons_cons(MATH_MUL, MATH_POW, MATH_POW);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, exp: EXP, $: ExtensionEnv): [TFLAGS, U] {
         const sym = lhs.lhs;
         const a = lhs.rhs;
         const b = rhs.rhs;
@@ -58,4 +52,4 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const mul_2_pow_2_xxx_any_pow_2_xxx_any = new Builder();
+export const mul_2_pow_2_xxx_any_pow_2_xxx_any = mkbuilder<EXP>(Op);

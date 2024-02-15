@@ -1,4 +1,5 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_RAT } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -11,12 +12,6 @@ import { Function2 } from "../helpers/Function2";
 import { is_rat } from "../rat/rat_extension";
 import { is_mul_2_rat_any } from "./is_mul_2_rat_any";
 
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
-
 /**
  * Combines adjacent number factors when an expression is in right-associated form. 
  * 
@@ -24,17 +19,16 @@ class Builder implements OperatorBuilder<Cons> {
  * 
  * Transform is redundant because it can be replaced by change of association and Rat + Rat.
  */
-class Op extends Function2<Rat, Cons2<Sym, Rat, U>> implements Operator<Cons> {
+class Op extends Function2<Rat, Cons2<Sym, Rat, U>> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('mul_2_rat_mul_2_rat_any', MATH_MUL, is_rat, and(is_cons, is_mul_2_rat_any), $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_rat_mul_2_rat_any', MATH_MUL, is_rat, and(is_cons, is_mul_2_rat_any));
         this.#hash = hash_binop_atom_cons(MATH_MUL, HASH_RAT, MATH_MUL);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: Rat, rhs: Cons2<Sym, Rat, U>): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: Rat, rhs: Cons2<Sym, Rat, U>, exp: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const num1 = lhs;
         const num2 = rhs.lhs;
         const r1r2 = num1.mul(num2);
@@ -46,4 +40,4 @@ class Op extends Function2<Rat, Cons2<Sym, Rat, U>> implements Operator<Cons> {
     }
 }
 
-export const mul_2_rat_mul_2_rat_any = new Builder();
+export const mul_2_rat_mul_2_rat_any = mkbuilder(Op);

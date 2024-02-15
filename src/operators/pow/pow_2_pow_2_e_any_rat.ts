@@ -1,22 +1,17 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_opr_2_lhs_rhs } from "../helpers/is_opr_2_lhs_rhs";
 import { is_mul_2_rat_sym } from "../mul/is_mul_2_rat_sym";
 import { is_rat } from "../rat/rat_extension";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LL = Sym;
 type LR = Cons2<Sym, Rat, Sym>;
@@ -36,18 +31,17 @@ function cross(lhs: LHS, rhs: RHS): boolean {
 /**
  * (pow (pow e (* 2 x)) 1/2) => (pow e x)
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2X<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('pow_2_pow_2_e_any_rat', MATH_POW, guardL, guardR, cross, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('pow_2_pow_2_e_any_rat', MATH_POW, guardL, guardR, cross);
         this.#hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         const x = lhs.rhs.rhs;
         const e = lhs.lhs;
         const retval = $.valueOf(items_to_cons(MATH_POW, e, x));
@@ -55,4 +49,4 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const pow_2_pow_2_e_any_rat = new Builder();
+export const pow_2_pow_2_e_any_rat = mkbuilder<EXP>(Op);

@@ -1,6 +1,7 @@
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { remove_imu_factors } from "../../calculators/remove_imu_factors";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -12,19 +13,12 @@ import { CompositeOperator } from "../helpers/CompositeOperator";
 const EXP = native_sym(Native.exp);
 const RECT = native_sym(Native.rect);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(RECT, EXP, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(RECT, EXP);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, expExpr: Cons, rectExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, expExpr: Cons, rectExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const arg = expExpr.arg;
         if ($.isreal(arg)) {
             return [TFLAG_DIFF, expExpr];
@@ -39,5 +33,5 @@ class Op extends CompositeOperator {
     }
 }
 
-export const rect_exp = new Builder();
+export const rect_exp = mkbuilder(Op);
 

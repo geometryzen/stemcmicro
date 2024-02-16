@@ -1,28 +1,23 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, items_to_cons, U } from "../../tree/tree";
+import { items_to_cons, U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_sym } from "../sym/is_sym";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 /**
  * b + a => a + b
  * a + a => 2 * a
  */
-class Op extends Function2<Sym, Sym> implements Operator<Cons2<Sym, Sym, Sym>> {
+class Op extends Function2<Sym, Sym> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('add_2_sym_sym', MATH_ADD, is_sym, is_sym, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('add_2_sym_sym', MATH_ADD, is_sym, is_sym);
         this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_SYM, HASH_SYM);
     }
     get hash(): string {
@@ -48,4 +43,4 @@ class Op extends Function2<Sym, Sym> implements Operator<Cons2<Sym, Sym, Sym>> {
     }
 }
 
-export const add_2_sym_sym = new Builder();
+export const add_2_sym_sym = mkbuilder(Op);

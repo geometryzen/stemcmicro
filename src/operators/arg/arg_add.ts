@@ -1,7 +1,8 @@
 import { Err, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, items_to_cons, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { is_negative } from "../../predicates/is_negative";
 import { DynamicConstants } from "../../runtime/defs";
 import { half } from "../../tree/rat/Rat";
@@ -9,12 +10,6 @@ import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const ARG = native_sym(Native.arg);
 const ADD = native_sym(Native.add);
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 function arg_of_sum(z: Cons, $: ExtensionEnv): U {
     const y = $.im(z);
@@ -63,13 +58,13 @@ function arg_of_sum(z: Cons, $: ExtensionEnv): U {
  * arg(a + b + c ...)
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(ARG, ADD, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(ARG, ADD);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        return [TFLAG_DIFF, arg_of_sum(innerExpr, this.$)];
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
+        return [TFLAG_DIFF, arg_of_sum(innerExpr, $)];
     }
 }
 
-export const arg_add = new Builder();
+export const arg_add = mkbuilder(Op);

@@ -1,38 +1,32 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
+import { Function1 } from "../helpers/Function1";
 import { is_sym } from "../sym/is_sym";
 
 const ARG = native_sym(Native.arg);
 const MATH_E = native_sym(Native.E);
 const PI = native_sym(Native.PI);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 type ARG = Sym;
 type EXP = Cons1<Sym, ARG>;
 
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('arg_sym', ARG, is_sym, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('arg_sym', ARG, is_sym);
         this.#hash = hash_unaop_atom(this.opr, HASH_SYM);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, arg: ARG, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         if (arg.equalsSym(MATH_E)) {
             return [TFLAG_DIFF, zero];
         }
@@ -50,4 +44,4 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
 }
 
-export const arg_sym = new Builder();
+export const arg_sym = mkbuilder(Op);

@@ -1,31 +1,25 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { ARCTANH } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { eval_arctanh } from "./arctanh";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('arctanh', ARCTANH, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('arctanh', ARCTANH);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
         const retval = eval_arctanh(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }
 
-export const arctanh_varargs = new Builder();
+export const arctanh_varargs = mkbuilder(Op);

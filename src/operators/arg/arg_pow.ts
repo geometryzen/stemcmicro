@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
@@ -9,21 +10,14 @@ import { compute_theta_from_base_and_expo } from "../real/compute_theta_from_bas
 const ARG = native_sym(Native.arg);
 const POW = native_sym(Native.pow);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  * 
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(ARG, POW, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(ARG, POW);
     }
-    transform1(opr: Sym, innerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const base = innerExpr.lhs;
         const expo = innerExpr.rhs;
         const theta = compute_theta_from_base_and_expo(base, expo, $);
@@ -31,4 +25,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const arg_pow = new Builder();
+export const arg_pow = mkbuilder(Op);

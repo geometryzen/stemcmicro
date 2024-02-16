@@ -1,34 +1,28 @@
 import { circexp } from "../../circexp";
-import { Directive, ExtensionEnv, MODE_EXPANDING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Directive, ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { CIRCEXP } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
+import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
-import { Cons1 } from "../helpers/Cons1";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 type ARG = U;
 type EXP = Cons1<Sym, ARG>;
 
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly #hash: string;
     readonly phases = MODE_EXPANDING;
-    constructor($: ExtensionEnv) {
-        super('circexp_any', CIRCEXP, is_any, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('circexp_any', CIRCEXP, is_any);
         this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: ARG, oldExpr: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, arg: ARG, oldExpr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         $.pushDirective(Directive.convertTrigToExp, 1);
         try {
             const rawExpr = circexp(arg, $);
@@ -45,4 +39,4 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
 }
 
-export const circexp_any = new Builder();
+export const circexp_any = mkbuilder(Op);

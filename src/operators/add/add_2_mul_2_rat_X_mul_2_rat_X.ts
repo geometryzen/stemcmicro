@@ -1,4 +1,5 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -8,12 +9,6 @@ import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_mul_2_rat_any } from "../mul/is_mul_2_rat_any";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 function cross(lhs: Cons2<Sym, Rat, U>, rhs: Cons2<Sym, Rat, U>): boolean {
     const x1 = lhs.rhs;
@@ -27,17 +22,16 @@ function cross(lhs: Cons2<Sym, Rat, U>, rhs: Cons2<Sym, Rat, U>): boolean {
 /**
  * (p * X) + (q * X) => (p + q) * X
  */
-class Op extends Function2X<Cons2<Sym, Rat, U>, Cons2<Sym, Rat, U>> implements Operator<Cons> {
+class Op extends Function2X<Cons2<Sym, Rat, U>, Cons2<Sym, Rat, U>> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('add_2_mul_2_rat_X_mul_2_rat_X', MATH_ADD, and(is_cons, is_mul_2_rat_any), and(is_cons, is_mul_2_rat_any), cross, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('add_2_mul_2_rat_X_mul_2_rat_X', MATH_ADD, and(is_cons, is_mul_2_rat_any), and(is_cons, is_mul_2_rat_any), cross);
         this.#hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: Cons2<Sym, Rat, U>, rhs: Cons2<Sym, Rat, U>): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: Cons2<Sym, Rat, U>, rhs: Cons2<Sym, Rat, U>, exp: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const p = lhs.lhs;
         const X = lhs.rhs;
         const q = rhs.lhs;
@@ -47,4 +41,4 @@ class Op extends Function2X<Cons2<Sym, Rat, U>, Cons2<Sym, Rat, U>> implements O
     }
 }
 
-export const add_2_mul_2_rat_X_mul_2_rat_X = new Builder();
+export const add_2_mul_2_rat_X_mul_2_rat_X = mkbuilder(Op);

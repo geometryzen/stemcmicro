@@ -1,23 +1,16 @@
 import { Blade, is_blade } from "math-expression-atoms";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { compare_blade_blade } from "../blade/blade_extension";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_rat_blade } from "../mul/is_mul_2_rat_blade";
-
-class Builder implements OperatorBuilder<Cons> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    create($: ExtensionEnv, config: Readonly<EnvConfig>): Operator<Cons> {
-        return new Op($, config);
-    }
-}
 
 type LHS = Blade;
 type RL = Rat;
@@ -25,17 +18,16 @@ type RR = Blade;
 type RHS = Cons2<Sym, RL, RR>;
 type EXP = Cons2<Sym, LHS, RHS>
 
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv, private readonly config: EnvConfig) {
-        super('add_2_blade_mul_2_rat_blade', MATH_ADD, is_blade, and(is_cons, is_mul_2_rat_blade), $);
+    constructor(private readonly config: EnvConfig) {
+        super('add_2_blade_mul_2_rat_blade', MATH_ADD, is_blade, and(is_cons, is_mul_2_rat_blade));
         this.#hash = hash_binop_atom_cons(MATH_ADD, HASH_BLADE, MATH_MUL);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name, decodeMode($.getMode()), render_as_infix(expr, $));
         if (this.config.noOptimize) {
             return [TFLAG_NONE, expr];
@@ -66,4 +58,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const add_2_blade_mul_2_rat_blade = new Builder();
+export const add_2_blade_mul_2_rat_blade = mkbuilder(Op);

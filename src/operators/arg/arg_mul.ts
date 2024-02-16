@@ -1,23 +1,18 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Flt, oneAsFlt } from "../../tree/flt/Flt";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { CompositeOperator } from "../helpers/CompositeOperator";
 import { is_flt } from "../flt/is_flt";
+import { CompositeOperator } from "../helpers/CompositeOperator";
 import { is_rat } from "../rat/is_rat";
 
 const ARG = native_sym(Native.arg);
 const MUL = native_sym(Native.multiply);
 const PI = native_sym(Native.PI);
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 /**
  * [-pi,pi]
@@ -74,16 +69,15 @@ function principal_value_flts(arg: Flt, $: ExtensionEnv): U {
  * arg(a * b * c ...) = arg(a) + arg(b) + arg(c) + ...
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(ARG, MUL, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(ARG, MUL);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const sum = innerExpr.tail().map($.arg).reduce((lhs, rhs) => $.add(lhs, rhs), zero);
         const pv = principal_value_radians(sum, $);
         return [TFLAG_DIFF, pv];
     }
 }
 
-export const arg_mul = new Builder();
+export const arg_mul = mkbuilder(Op);

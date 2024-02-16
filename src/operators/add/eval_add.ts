@@ -20,8 +20,6 @@ import { is_num } from "../num/is_num";
 import { is_tensor } from "../tensor/is_tensor";
 import { add_tensor_tensor } from "../tensor/tensor_extension";
 
-const ADD = native_sym(Native.add);
-
 export function eval_add(expr: Cons, $: ExtensionEnv): U {
     const args = expr.argList;
     const vals = args.map($.valueOf);
@@ -73,7 +71,7 @@ function add_terms(terms: U[], $: ExtensionEnv): U {
     /**
      * The canonical comparator function for comparing terms.
      */
-    const cmp_terms = $.compareFn(ADD);
+    const cmp_terms = $.compareFn(native_sym(Native.add));
 
     // ensure no infinite loop, use "for"
     for (let i = 0; i < 10; i++) {
@@ -174,7 +172,7 @@ function add_terms(terms: U[], $: ExtensionEnv): U {
             return terms[0];
         }
         default: {
-            terms.unshift(ADD);
+            terms.unshift(native_sym(Native.add));
             return items_to_cons(...terms);
         }
     }

@@ -1,6 +1,7 @@
 import { assert_rat, is_rat, Sym, zero } from "math-expression-atoms";
 import { Cons, U } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { CompositeOperator } from "../helpers/CompositeOperator";
@@ -10,21 +11,15 @@ const PI = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
 const IM = native_sym(Native.imag);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  *
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(IM, POW, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(IM, POW);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const innerExpr = expr.argList.head;
             const base = innerExpr.lhs;
             const expo = innerExpr.rhs;
@@ -34,8 +29,7 @@ class Op extends CompositeOperator {
             return false;
         }
     }
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         // TODO: What do we do about roots of unity?
         const base = assert_rat(innerExpr.lhs);
         // console.lg("base",$.toInfixString(base));
@@ -57,4 +51,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const imag_pow_rat_rat = new Builder();
+export const imag_pow_rat_rat = mkbuilder(Op);

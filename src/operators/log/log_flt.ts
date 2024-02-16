@@ -1,5 +1,6 @@
 import { Err } from "math-expression-atoms";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -12,23 +13,17 @@ import { Function1 } from "../helpers/Function1";
 
 const LOG = native_sym(Native.log);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends Function1<Flt> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('log_flt', LOG, is_flt, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('log_flt', LOG, is_flt);
         this.#hash = hash_unaop_atom(LOG, HASH_FLT);
     }
     get hash(): string {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, x: Flt, expr: U): [TFLAGS, U] {
+    transform1(opr: Sym, x: Flt, expr: U, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(x));
         if (x.isOne()) {
             return [TFLAG_DIFF, zeroAsFlt];
@@ -37,9 +32,7 @@ class Op extends Function1<Flt> {
             return [TFLAG_DIFF, new Err(expr)];
         }
         else if (x.isNegative()) {
-            const $ = this.$;
             if (x.isMinusOne()) {
-                const $ = this.$;
                 return [TFLAG_DIFF, $.multiply(imu, piAsFlt)];
             }
             else {
@@ -52,4 +45,4 @@ class Op extends Function1<Flt> {
     }
 }
 
-export const log_flt = new Builder();
+export const log_flt = mkbuilder(Op);

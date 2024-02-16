@@ -1,37 +1,29 @@
 
 import { Flt, is_err, is_flt, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
-import { Cons, Cons2, U } from "math-expression-tree";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Cons2, U } from "math-expression-tree";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_FLT } from "../../hashing/hash_info";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
-
-class Builder implements OperatorBuilder<Cons> {
-    constructor(readonly opr: Sym) {
-
-    }
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($, this.opr);
-    }
-}
 
 type LHS = U;
 type RHS = Flt;
 type EXP = Cons2<Sym, LHS, RHS>
 
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = [];
-    constructor($: ExtensionEnv, opr: Sym) {
-        super('mul_2_any_flt', opr, is_any, is_flt, $);
-        this.#hash = hash_binop_atom_atom(opr, HASH_ANY, HASH_FLT);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('mul_2_any_flt', native_sym(Native.multiply), is_any, is_flt);
+        this.#hash = hash_binop_atom_atom(native_sym(Native.multiply), HASH_ANY, HASH_FLT);
     }
     get hash(): string {
         return this.#hash;
     }
-    isKind(expr: U): expr is EXP {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is EXP {
+        if (super.isKind(expr, $)) {
             const rhs = expr.rhs;
             return rhs.isZero();
         }
@@ -53,4 +45,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const mul_2_any_flt = new Builder(native_sym(Native.multiply));
+export const mul_2_any_flt = mkbuilder(Op);

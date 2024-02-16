@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -11,16 +12,10 @@ import { is_sym } from "../sym/is_sym";
 
 export const MATH_LOG = native_sym(Native.log);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends Function1<Sym> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('log_sym', MATH_LOG, is_sym, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('log_sym', MATH_LOG, is_sym);
         this.#hash = hash_unaop_atom(MATH_LOG, HASH_SYM);
     }
     get hash(): string {
@@ -35,5 +30,5 @@ class Op extends Function1<Sym> {
     }
 }
 
-export const log_sym = new Builder();
+export const log_sym = mkbuilder(Op);
 

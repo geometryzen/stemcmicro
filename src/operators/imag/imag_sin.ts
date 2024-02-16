@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { zero } from "../../tree/rat/Rat";
@@ -9,21 +10,14 @@ import { CompositeOperator } from "../helpers/CompositeOperator";
 const SIN = native_sym(Native.sin);
 const IM = native_sym(Native.imag);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  * im(sin(z)) = 0 when z is real
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(IM, SIN, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(IM, SIN);
     }
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const z = innerExpr.argList.head;
         if ($.isreal(z)) {
             return [TFLAG_DIFF, zero];
@@ -34,4 +28,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const imag_sin = new Builder();
+export const imag_sin = mkbuilder(Op);

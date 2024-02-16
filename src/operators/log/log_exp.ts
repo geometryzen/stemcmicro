@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
@@ -8,15 +9,9 @@ import { CompositeOperator } from "../helpers/CompositeOperator";
 const LOG = native_sym(Native.log);
 const EXP = native_sym(Native.exp);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(LOG, EXP, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(LOG, EXP);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
@@ -26,4 +21,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const log_exp = new Builder();
+export const log_exp = mkbuilder<Cons>(Op);

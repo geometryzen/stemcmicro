@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
@@ -10,21 +11,15 @@ import { is_rat } from "../rat/is_rat";
 const POW = native_sym(Native.pow);
 const IM = native_sym(Native.imag);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  *
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(IM, POW, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(IM, POW);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const innerExpr = expr.argList.head;
             // const base = innerExpr.lhs;
             const expo = innerExpr.expo;
@@ -36,8 +31,7 @@ class Op extends CompositeOperator {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg("im(1/z)", $.toInfixString(innerExpr));
         const base = innerExpr.lhs;
         const z = base;
@@ -53,4 +47,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const imag_pow_z_negone = new Builder();
+export const imag_pow_z_negone = mkbuilder(Op);

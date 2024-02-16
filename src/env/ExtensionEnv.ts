@@ -348,7 +348,6 @@ export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, P
      */
     factorize(poly: U, x: U): U;
     float(expr: U): U;
-    getCustomDirective(directive: string): boolean;
     getDirective(directive: number): number;
     getSymbolPredicates(sym: Sym): Predicates;
     /**
@@ -422,7 +421,6 @@ export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, P
     re(expr: U): U;
     rect(expr: U): U;
     remove(varName: Sym): void;
-    setCustomDirective(directive: string, value: boolean): void;
     pushDirective(directive: number, value: number): void;
     popDirective(): void;
     setSymbolOrder(sym: Sym, order: ExprComparator): void;

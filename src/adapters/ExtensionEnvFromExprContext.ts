@@ -1,12 +1,33 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CellHost, Rat, Sym, Tensor } from "math-expression-atoms";
+import { CellHost, create_int, is_boo, Rat, Sym, Tensor } from "math-expression-atoms";
 import { AtomHandler, ExprContext, LambdaExpr } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { Atom, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
+import { Atom, Cons, items_to_cons, U } from "math-expression-tree";
 import { AtomListener, ExprEngineListener } from "../api/api";
 import { CompareFn, Directive, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
+import { is_rat } from "../operators/rat/rat_extension";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import { StackFunction } from "./StackFunction";
+
+function predicate_to_boolean(expr: U): boolean {
+    if (is_boo(expr)) {
+        return expr.isTrue();
+    }
+    else if (is_rat(expr)) {
+        if (expr.isOne()) {
+            return true;
+        }
+        else if (expr.isZero()) {
+            return false;
+        }
+        else {
+            throw new ProgrammingError(`${expr}`);
+        }
+    }
+    else {
+        throw new ProgrammingError(`${expr}`);
+    }
+}
 
 export class ExtensionEnvFromExprContext implements ExtensionEnv {
     constructor(readonly ctxt: ExprContext) {
@@ -41,36 +62,89 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     setPrintHandler(handler: PrintHandler): void {
         throw new Error("Method not implemented.");
     }
-    abs(expr: U): U {
-        throw new Error("Method not implemented.");
+    abs(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.arg), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     algebra(metric: Tensor<U>, labels: Tensor<U>): Tensor<U> {
         throw new Error("Method not implemented.");
     }
     add(...args: U[]): U {
         const expr = items_to_cons(native_sym(Native.add), ...args);
-        return this.ctxt.valueOf(expr);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    arccos(expr: U): U {
-        throw new Error("Method not implemented.");
+    arccos(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.arccos), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    arcsin(expr: U): U {
-        throw new Error("Method not implemented.");
+    arcsin(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.arcsin), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    arctan(expr: U): U {
-        throw new Error("Method not implemented.");
+    arctan(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.arctan), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    arg(expr: U): U {
-        throw new Error("Method not implemented.");
+    arg(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.arg), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    clock(expr: U): U {
-        throw new Error("Method not implemented.");
+    clock(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.clock), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    conj(expr: U): U {
-        throw new Error("Method not implemented.");
+    conj(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.conj), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    cos(expr: U): U {
-        throw new Error("Method not implemented.");
+    cos(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.cos), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     clearBindings(): void {
         throw new Error("Method not implemented.");
@@ -82,7 +156,13 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         return this.ctxt.compareFn(opr);
     }
     component(tensor: Tensor<U>, indices: U): U {
-        throw new Error("Method not implemented.");
+        const expr = items_to_cons(native_sym(Native.component), tensor, indices);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     defineEvalFunction(opr: Sym, evalFunction: EvalFunction): void {
         throw new Error("Method not implemented.");
@@ -109,10 +189,29 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     divide(lhs: U, rhs: U): U {
-        throw new Error("Method not implemented.");
+        const expr = items_to_cons(native_sym(Native.divide), lhs, rhs);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     equals(lhs: U, rhs: U): boolean {
-        throw new Error("Method not implemented.");
+        const expr = items_to_cons(native_sym(Native.testeq), lhs, rhs);
+        try {
+            const retval = this.ctxt.valueOf(expr);
+            try {
+                return predicate_to_boolean(retval);
+            }
+            finally {
+                retval.release();
+            }
+
+        }
+        finally {
+            expr.release();
+        }
     }
     evaluate(opr: Native, ...args: U[]): U {
         throw new Error("Method not implemented.");
@@ -120,25 +219,71 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     executeProlog(prolog: readonly string[]): void {
         throw new Error("Method not implemented.");
     }
-    exp(expr: U): U {
-        throw new Error("Method not implemented.");
+    exp(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.exp), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    factor(expr: U): U {
-        throw new Error("Method not implemented.");
+    factor(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.factor), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     factorize(poly: U, x: U): U {
         throw new Error("Method not implemented.");
     }
-    float(expr: U): U {
-        throw new Error("Method not implemented.");
-    }
-    getCustomDirective(directive: string): boolean {
-        throw new Error("Method not implemented.");
+    float(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.float), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     getDirective(directive: number): number {
         return this.ctxt.getDirective(directive);
     }
     getSymbolPredicates(sym: Sym): Predicates {
+        const predicates: Predicates = {
+            algebraic: false,
+            antihermitian: false,
+            commutative: false,
+            complex: false,
+            extended_negative: false,
+            extended_nonnegative: false,
+            extended_nonpositive: false,
+            extended_nonzero: false,
+            extended_positive: false,
+            finite: false,
+            hermitian: false,
+            hypercomplex: false,
+            hyperreal: false,
+            imaginary: false,
+            infinite: false,
+            infinitesimal: false,
+            integer: false,
+            irrational: false,
+            negative: false,
+            noninteger: false,
+            nonnegative: false,
+            nonpositive: false,
+            nonzero: false,
+            positive: false,
+            rational: false,
+            real: false,
+            transcendental: false,
+            zero: false
+        };
+        return predicates;
         throw new Error("Method not implemented.");
     }
     getSymbolPrintName(sym: Sym): string {
@@ -153,17 +298,41 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     buildOperators(): void {
         throw new Error("Method not implemented.");
     }
-    im(expr: U): U {
-        throw new Error("Method not implemented.");
+    im(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.imag), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     inner(lhs: U, rhs: U): U {
-        throw new Error("Method not implemented.");
+        const expr = items_to_cons(native_sym(Native.inner), lhs, rhs);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     is(predicate: Sym, expr: U): boolean {
         throw new Error("Method not implemented.");
     }
-    iscomplex(expr: U): boolean {
-        throw new Error("Method not implemented.");
+    iscomplex(arg: U): boolean {
+        const expr = items_to_cons(native_sym(Native.iscomplex), arg);
+        try {
+            const retval = this.ctxt.valueOf(expr);
+            try {
+                return predicate_to_boolean(retval);
+            }
+            finally {
+                retval.release();
+            }
+        }
+        finally {
+            expr.release();
+        }
     }
     isExpanding(): boolean {
         return this.ctxt.getDirective(Directive.expanding) > 0;
@@ -171,14 +340,50 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     isFactoring(): boolean {
         throw new Error("Method not implemented.");
     }
-    isimag(expr: U): boolean {
-        throw new Error("Method not implemented.");
+    isimag(arg: U): boolean {
+        const expr = items_to_cons(native_sym(Native.isimag), arg);
+        try {
+            const retval = this.ctxt.valueOf(expr);
+            try {
+                return predicate_to_boolean(retval);
+            }
+            finally {
+                retval.release();
+            }
+        }
+        finally {
+            expr.release();
+        }
     }
-    isinfinite(expr: U): boolean {
-        throw new Error("Method not implemented.");
+    isinfinite(arg: U): boolean {
+        const expr = items_to_cons(native_sym(Native.isinfinite), arg);
+        try {
+            const retval = this.ctxt.valueOf(expr);
+            try {
+                return predicate_to_boolean(retval);
+            }
+            finally {
+                retval.release();
+            }
+        }
+        finally {
+            expr.release();
+        }
     }
-    isinfinitesimal(expr: U): boolean {
-        throw new Error("Method not implemented.");
+    isinfinitesimal(arg: U): boolean {
+        const expr = items_to_cons(native_sym(Native.isinfinitesimal), arg);
+        try {
+            const retval = this.ctxt.valueOf(expr);
+            try {
+                return predicate_to_boolean(retval);
+            }
+            finally {
+                retval.release();
+            }
+        }
+        finally {
+            expr.release();
+        }
     }
     isminusone(expr: U): boolean {
         throw new Error("Method not implemented.");
@@ -192,53 +397,115 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     ispositive(expr: U): boolean {
         throw new Error("Method not implemented.");
     }
-    isreal(expr: U): boolean {
-        throw new Error("Method not implemented.");
+    isreal(arg: U): boolean {
+        const expr = items_to_cons(native_sym(Native.isreal), arg);
+        try {
+            const retval = this.ctxt.valueOf(expr);
+            try {
+                return predicate_to_boolean(retval);
+            }
+            finally {
+                retval.release();
+            }
+        }
+        finally {
+            expr.release();
+        }
     }
     isscalar(expr: U): boolean {
         throw new Error("Method not implemented.");
     }
     iszero(arg: U): boolean {
-        if (is_atom(arg)) {
-            const handler = this.ctxt.handlerFor(arg);
-            return handler.test(arg, native_sym(Native.iszero), this.ctxt);
+        const expr = items_to_cons(native_sym(Native.iszero), arg);
+        try {
+            const retval = this.ctxt.valueOf(expr);
+            try {
+                return predicate_to_boolean(retval);
+            }
+            finally {
+                retval.release();
+            }
         }
-        throw new Error(`ExtensionEnvFromExprContext.iszero ${arg} method not implemented.`);
-        // const expr = items_to_cons(native_sym(Native.iszero), arg);
-        // return this.ctxt.valueOf(expr);
+        finally {
+            expr.release();
+        }
     }
-    log(expr: U): U {
-        throw new Error("Method not implemented.");
+    log(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.log), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     multiply(...args: U[]): U {
-        throw new Error("Method not implemented.");
+        const expr = items_to_cons(native_sym(Native.multiply), ...args);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    negate(expr: U): U {
-        throw new Error("Method not implemented.");
+    negate(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.multiply), create_int(-1), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     extensionFor(expr: U): Extension<U> | undefined {
         throw new Error("Method not implemented.");
     }
     outer(...args: U[]): U {
-        throw new Error("Method not implemented.");
+        const expr = items_to_cons(native_sym(Native.outer), ...args);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    polar(expr: U): U {
-        throw new Error("Method not implemented.");
+    polar(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.polar), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     power(base: U, expo: U): U {
         const expr = items_to_cons(native_sym(Native.pow), base, expo);
-        return this.ctxt.valueOf(expr);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    re(expr: U): U {
-        throw new Error("Method not implemented.");
+    re(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.real), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    rect(expr: U): U {
-        throw new Error("Method not implemented.");
+    rect(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.rect), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     remove(varName: Sym): void {
-        throw new Error("Method not implemented.");
-    }
-    setCustomDirective(directive: string, value: boolean): void {
         throw new Error("Method not implemented.");
     }
     pushDirective(directive: number, value: number): void {
@@ -259,23 +526,53 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     setSymbolUsrFunc(sym: Sym, usrfunc: U): void {
         throw new Error("Method not implemented.");
     }
-    simplify(expr: U): U {
-        throw new Error("Method not implemented.");
+    simplify(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.simplify), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    sin(expr: U): U {
-        throw new Error("Method not implemented.");
+    sin(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.sin), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    sqrt(expr: U): U {
-        throw new Error("Method not implemented.");
+    sqrt(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.sqrt), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
-    st(expr: U): U {
-        throw new Error("Method not implemented.");
+    st(arg: U): U {
+        const expr = items_to_cons(native_sym(Native.st), arg);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     subst(newExpr: U, oldExpr: U, expr: U): U {
         throw new Error("Method not implemented.");
     }
     subtract(lhs: U, rhs: U): U {
-        throw new Error("Method not implemented.");
+        const expr = items_to_cons(native_sym(Native.subtract), lhs, rhs);
+        try {
+            return this.ctxt.valueOf(expr);
+        }
+        finally {
+            expr.release();
+        }
     }
     toInfixString(expr: U): string {
         throw new Error("Method not implemented.");

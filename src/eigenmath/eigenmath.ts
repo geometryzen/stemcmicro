@@ -5,8 +5,9 @@ import { assert_cons_or_nil, Atom, car, cdr, Cons, cons as create_cons, is_atom,
 import { ExprContextFromProgram } from '../adapters/ExprContextFromProgram';
 import { make_stack } from '../adapters/make_stack';
 import { StackFunction } from '../adapters/StackFunction';
-import { ExprEngineListener } from '../api/api';
+import { ExprEngineListener, UndeclaredVars } from '../api/api';
 import { DirectiveStack } from '../env/DirectiveStack';
+import { EnvConfig } from '../env/EnvConfig';
 import { Directive } from '../env/ExtensionEnv';
 import { imu } from '../env/imu';
 import { StackU } from '../env/StackU';
@@ -22,7 +23,9 @@ import { mag, stack_mag } from '../operators/mag/stack_mag';
 import { rat_extension } from '../operators/rat/rat_extension';
 import { stack_rotate } from '../operators/rotate/stack_rotate';
 import { assert_sym } from '../operators/sym/assert_sym';
+import { sym_extension_builder } from '../operators/sym/sym_extension';
 import { stack_uom } from '../operators/uom/stack_uom';
+import { SyntaxKind } from '../parser/parser';
 import { ProgrammingError } from '../programming/ProgrammingError';
 import { is_power } from '../runtime/helpers';
 import { assert_cons } from '../tree/cons/assert_cons';
@@ -13501,6 +13504,10 @@ export function broadcast(text: string, io: Pick<ProgramIO, 'listeners'>): void 
     }
 }
 
+interface ScriptVarsConfig {
+
+}
+
 export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, ProgramStack, ProgramFrame, ProgramIO {
     inbuf: string = "";
     /**
@@ -13520,7 +13527,22 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     listeners: ExprEngineListener[] = [];
     readonly #prolog: string[] = [];
     readonly #userFunctions: Map<string, UserFunction> = new Map();
-    constructor() {
+    readonly #config: Readonly<EnvConfig>;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    constructor(config: Readonly<ScriptVarsConfig>) {
+        this.#config = {
+            allowUndeclaredVars: UndeclaredVars.Nil,
+            assumes: {},
+            dependencies: [],
+            disable: [],
+            enable: [],
+            noOptimize: false,
+            useCaretForExponentiation: false,
+            useDerivativeShorthandLowerD: false,
+            useIntegersForPredicates: false,
+            useParenForTensors: false,
+            syntaxKind: SyntaxKind.STEMCscript,
+        };
         this.defineUserSymbol(MATH_PI);
         this.defineUserSymbol(MATH_E);
 
@@ -13713,6 +13735,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
         switch (atom.type) {
             case 'rational': return rat_extension;
+            case 'symbol': return sym_extension_builder.create(this.#config) as unknown as AtomHandler<A>;
         }
         throw new Error(`ScriptVars.handlerFor ${atom.type} method not implemented.`);
     }

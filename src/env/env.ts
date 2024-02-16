@@ -274,7 +274,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     let printHandler: PrintHandler = new NoopPrintHandler();
 
     const native_directives = new DirectiveStack();
-    const custom_directives: { [directive: string]: boolean } = {};
 
     /**
      * Override printname(s) for symbols used during rendering.
@@ -815,9 +814,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return p;
             }
         },
-        getCustomDirective(directive: string): boolean {
-            return !!custom_directives[directive];
-        },
         getDirective(directive: number): number {
             return native_directives.get(directive);
         },
@@ -921,9 +917,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         remove(varName: Sym): void {
             symTab.delete(varName);
-        },
-        setCustomDirective(directive: string, value: boolean): void {
-            custom_directives[directive] = value;
         },
         pushDirective(directive: number, value: number): void {
             native_directives.push(directive, value);

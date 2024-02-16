@@ -98,4 +98,4 @@ class SymExtension implements Extension<Sym>, AtomHandler<Sym> {
     }
 }
 
-export const sym_extension_builder = mkbuilder(SymExtension);
+export const sym_extension_builder = mkbuilder<Sym>(SymExtension);

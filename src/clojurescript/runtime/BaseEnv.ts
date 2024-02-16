@@ -92,9 +92,6 @@ export class BaseEnv implements Scope {
     float(expr: U): U {
         throw new Error("Method not implemented.");
     }
-    getCustomDirective(directive: string): boolean {
-        throw new Error("Method not implemented.");
-    }
     getDirective(directive: Directive): boolean {
         throw new Error("Method not implemented.");
     }
@@ -199,9 +196,6 @@ export class BaseEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     remove(varName: Sym): void {
-        throw new Error("Method not implemented.");
-    }
-    setCustomDirective(directive: string, value: boolean): void {
         throw new Error("Method not implemented.");
     }
     pushDirective(directive: Directive, value: boolean): void {

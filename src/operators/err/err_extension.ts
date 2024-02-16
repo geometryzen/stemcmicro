@@ -1,5 +1,6 @@
 import { Err, is_err, Sym } from "math-expression-atoms";
 import { AtomHandler } from "math-expression-context";
+import { is_native, Native } from "math-expression-native";
 import { cons, Cons, nil, U } from 'math-expression-tree';
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
@@ -34,7 +35,10 @@ export class ErrExtension implements Extension<Err>, AtomHandler<Err> {
         return 'ErrExtension';
     }
     test(atom: Err, opr: Sym): boolean {
-        throw new Error(`${this.name}.dispatch(${atom},${opr}) method not implemented.`);
+        if (is_native(opr, Native.iszero)) {
+            return false;
+        }
+        throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
     }
     iscons(): false {
         return false;

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { assert_sym, is_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
+import { is_native, Native } from "math-expression-native";
 import { cons, Cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS } from "../../env/ExtensionEnv";
@@ -16,7 +17,10 @@ export abstract class AbstractKeywordExtension implements Extension<Sym> {
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
     test(expr: Sym, opr: Sym, env: ExprContext): boolean {
-        throw new Error("Method not implemented.");
+        if (is_native(opr, Native.iszero)) {
+            return false;
+        }
+        throw new Error(`AbstractKeywordExtension.test ${expr} ${opr} method not implemented.`);
     }
     abstract readonly hash: string;
     abstract readonly name: string;

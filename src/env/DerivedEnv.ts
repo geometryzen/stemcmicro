@@ -157,9 +157,6 @@ export class DerivedEnv implements ExtensionEnv {
     float(expr: U): U {
         throw new Error('float method not implemented.');
     }
-    getCustomDirective(directive: string): boolean {
-        throw new Error('getCustomDirective method not implemented.');
-    }
     getDirective(directive: number): number {
         return this.#baseEnv.getDirective(directive);
     }
@@ -266,9 +263,6 @@ export class DerivedEnv implements ExtensionEnv {
     }
     remove(varName: Sym): void {
         throw new Error('remove method not implemented.');
-    }
-    setCustomDirective(directive: string, value: boolean): void {
-        throw new Error('setCustomDirective method not implemented.');
     }
     pushDirective(directive: number, value: number): void {
         this.#baseEnv.pushDirective(directive, value);

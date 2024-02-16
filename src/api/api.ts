@@ -491,10 +491,9 @@ class ClojureScriptEngine implements ExprEngine {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(options: Partial<EngineConfig>) {
         // We can wrap #env with a DerivedEnv to evolve to an architecture that supports nested scopes.
-        // Wrapping wil reveal where there are holes in the implementation.
+        // Wrapping will reveal where there are holes in the implementation.
         const allowUndeclaredVars = allow_undeclared_vars(options, UndeclaredVars.Err);
         const baseEnv = create_env({ allowUndeclaredVars, dependencies: ALL_FEATURES });
-        // const baseEnv = new DerivedEnv(create_env({ dependencies: ALL_FEATURES }));
         this.#env = baseEnv;
         init_env(this.#env, {
             allowUndeclaredVars,
@@ -754,7 +753,7 @@ class ScriptVarsPrintConfig implements PrintConfig {
 }
 
 class EigenmathEngine implements ExprEngine {
-    readonly #scriptVars: ScriptVars = new ScriptVars();
+    readonly #scriptVars: ScriptVars = new ScriptVars({});
     constructor(options: Partial<EngineConfig>) {
         // Determine whether options requested are compatible with Eigenmath.
         // TODO: 

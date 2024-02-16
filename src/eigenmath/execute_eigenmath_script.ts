@@ -22,7 +22,7 @@ function eigenmath_parse_config_from_options(options: Partial<EigenmathParseConf
 
 export function execute_eigenmath_script(sourceText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler, options: Partial<EigenmathParseConfig> = {}): void {
     const config = eigenmath_parse_config_from_options(options);
-    const vars = new ScriptVars();
+    const vars = new ScriptVars(config);
     const env: ProgramEnv = vars;
     const ctrl: ProgramControl = vars;
     const $: ProgramStack = vars;

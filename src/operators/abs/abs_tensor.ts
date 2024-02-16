@@ -1,5 +1,6 @@
 import { complex_conjugate } from "../../complex_conjugate";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_TENSOR, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -7,22 +8,22 @@ import { half } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
+import { Function1 } from "../helpers/Function1";
 import { simplify } from "../simplify/simplify";
 import { is_tensor } from "../tensor/is_tensor";
 import { wrap_as_transform } from "../wrap_as_transform";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
+class Builder implements ExtensionBuilder<U> {
+    create(config: Readonly<EnvConfig>): Extension<U> {
+        return new Op(config);
     }
 }
 
 export abstract class FunctionTensor extends Function1<Tensor> {
     readonly #hash: string;
-    constructor(opr: Sym, $: ExtensionEnv) {
-        super(`${opr.key()}_${HASH_TENSOR}`, opr, is_tensor, $);
+    constructor(opr: Sym, readonly config: Readonly<EnvConfig>) {
+        super(`${opr.key()}_${HASH_TENSOR}`, opr, is_tensor);
         this.#hash = hash_unaop_atom(this.opr, HASH_TENSOR);
     }
     get hash(): string {
@@ -31,11 +32,11 @@ export abstract class FunctionTensor extends Function1<Tensor> {
 }
 
 class Op extends FunctionTensor {
-    constructor($: ExtensionEnv) {
-        super(native_sym(Native.abs), $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(native_sym(Native.abs), config);
     }
-    transform1(opr: Sym, arg: Tensor, expr: Cons1<Sym, Tensor>): [TFLAGS, U] {
-        return wrap_as_transform(abs_of_tensor(arg, this.$), expr);
+    transform1(opr: Sym, arg: Tensor, expr: Cons1<Sym, Tensor>, $: ExtensionEnv): [TFLAGS, U] {
+        return wrap_as_transform(abs_of_tensor(arg, $), expr);
     }
 }
 

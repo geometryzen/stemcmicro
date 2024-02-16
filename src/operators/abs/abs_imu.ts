@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -6,21 +7,15 @@ import { Imu } from "../../tree/imu/Imu";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
+import { Function1 } from "../helpers/Function1";
 import { is_imu } from "../imu/is_imu";
 import { wrap_as_transform } from "../wrap_as_transform";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends Function1<Imu> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('abs_imu', native_sym(Native.abs), is_imu, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('abs_imu', native_sym(Native.abs), is_imu);
         this.#hash = hash_unaop_atom(this.opr, HASH_IMU);
     }
     get hash(): string {
@@ -31,4 +26,4 @@ class Op extends Function1<Imu> {
     }
 }
 
-export const abs_imu = new Builder();
+export const abs_imu = mkbuilder(Op);

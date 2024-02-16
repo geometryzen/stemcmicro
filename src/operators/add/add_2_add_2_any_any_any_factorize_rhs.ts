@@ -1,34 +1,26 @@
 import { do_factorize_rhs } from "../../calculators/factorize/do_factorize_rhs";
 import { is_factorize_rhs } from "../../calculators/factorize/is_factorize_rhs";
-import { Extension, ExtensionBuilder, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
 import { is_add_2_any_any } from "./is_add_2_any_any";
 
-class Builder implements ExtensionBuilder<Cons> {
-    create($: ExtensionEnv): Extension<Cons> {
-        return new Op($);
-    }
-}
-
 type LHS = Cons2<Sym, U, U>;
 type RHS = U;
 type EXP = Cons2<Sym, LHS, RHS>;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function cross($: ExtensionEnv) {
-    return function (lhs: LHS, rhs: RHS): boolean {
-        // A problem with this is that we have performed the tree transformation either twice
-        // if is successful, or partially if it fails.
-        return is_factorize_rhs(lhs.rhs, rhs);
-    };
+function cross(lhs: LHS, rhs: RHS): boolean {
+    // A problem with this is that we have performed the tree transformation either twice
+    // if is successful, or partially if it fails.
+    return is_factorize_rhs(lhs.rhs, rhs);
 }
 
 /**
@@ -36,15 +28,14 @@ function cross($: ExtensionEnv) {
  */
 class Op extends Function2X<LHS, RHS> implements Extension<EXP> {
     readonly #hash: string;
-    constructor() {
-        super('add_2_add_2_any_any_any_factorize_rhs', MATH_ADD, and(is_cons, is_add_2_any_any), is_any, cross($), $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('add_2_add_2_any_any_any_factorize_rhs', MATH_ADD, and(is_cons, is_add_2_any_any), is_any, cross);
         this.#hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP, $: ExtensionEnv): [TFLAGS, U] {
         if ($.isExpanding()) {
             const X = lhs.lhs;
             const Y = lhs.rhs;
@@ -58,4 +49,4 @@ class Op extends Function2X<LHS, RHS> implements Extension<EXP> {
     }
 }
 
-export const add_2_add_2_any_any_any_factorize_rhs = new Builder();
+export const add_2_add_2_any_any_any_factorize_rhs = mkbuilder(Op);

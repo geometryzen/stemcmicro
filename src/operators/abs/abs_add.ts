@@ -1,4 +1,5 @@
-import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { has_clock_form, has_exp_form } from "../../runtime/find";
@@ -12,22 +13,15 @@ import { simplify_trig } from "../simplify/simplify";
 const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  * abs(a + b + ...)
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(ABS, ADD, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(ABS, ADD);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, addExpr: Cons, absExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, addExpr: Cons, absExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name, $.toInfixString(addExpr));
         // console.lg("abs", $.toInfixString(expr));
         // TODO: If it looks vaguely like a complex number perhaps?
@@ -65,5 +59,5 @@ class Op extends CompositeOperator {
     }
 }
 
-export const abs_add = new Builder();
+export const abs_add = mkbuilder(Op);
 

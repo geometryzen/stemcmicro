@@ -1,39 +1,22 @@
-import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { two, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { Function1X } from "../helpers/Function1X";
 import { Cons1 } from "../helpers/Cons1";
+import { Function1 } from "../helpers/Function1";
 import { is_sym } from "../sym/is_sym";
-
-export const abs = native_sym(Native.abs);
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function cross($: ExtensionEnv) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return function (arg: Sym): boolean {
-        return true;
-    };
-}
 
 /**
  * abs(x) => (sqrt (pow x 2))
  */
-class Op extends Function1X<Sym> implements Operator<Cons1<Sym, Sym>> {
-    constructor($: ExtensionEnv) {
-        super('abs_sym', abs, is_sym, cross($), $);
+class Op extends Function1<Sym> {
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('abs_sym', native_sym(Native.abs), is_sym);
     }
-    transform1(opr: Sym, x: Sym, origExpr: Cons1<Sym, Sym>): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, x: Sym, origExpr: Cons1<Sym, Sym>, $: ExtensionEnv): [TFLAGS, U] {
         const props = $.getSymbolPredicates(x);
         if (props.positive) {
             return [TFLAG_DIFF, x];
@@ -53,4 +36,4 @@ class Op extends Function1X<Sym> implements Operator<Cons1<Sym, Sym>> {
     }
 }
 
-export const abs_sym = new Builder();
+export const abs_sym = mkbuilder(Op);

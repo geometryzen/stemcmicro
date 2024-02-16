@@ -1,29 +1,24 @@
-import { ExtensionEnv, FEATURE, MODE_EXPANDING, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, FEATURE, mkbuilder, MODE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
+import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
-import { Cons1 } from "../helpers/Cons1";
 import { wrap_as_transform } from "../wrap_as_transform";
 import { abs } from "./abs";
 
 export const ABS = native_sym(Native.abs);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 type ARG = U;
 type EXP = Cons1<Sym, ARG>;
 
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly phases = MODE_EXPANDING;
-    constructor($: ExtensionEnv) {
-        super('abs_any', ABS, is_any, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('abs_any', ABS, is_any);
     }
     dependencies?: FEATURE[] | undefined;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,13 +44,12 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         }
     }
     */
-    transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
+    transform1(opr: Sym, arg: ARG, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         // TODO: Ultimately we want this to do nothing for extensibility.
         // console.lg(this.name, this.$.toInfixString(arg));
-        const $ = this.$;
         const retval = abs(arg, $);
         return wrap_as_transform(retval, expr);
     }
 }
 
-export const abs_any = new Builder();
+export const abs_any = mkbuilder(Op);

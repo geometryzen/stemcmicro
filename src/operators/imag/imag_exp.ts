@@ -1,6 +1,7 @@
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { remove_imu_factors } from "../../calculators/remove_imu_factors";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { is_multiply } from "../../runtime/helpers";
@@ -13,22 +14,15 @@ import { is_imu } from "../imu/is_imu";
 const EXP = native_sym(Native.exp);
 const IM = native_sym(Native.imag);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  * im(exp(z)) = 0 when z is real
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(IM, EXP, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(IM, EXP);
     }
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name);
-        const $ = this.$;
         const z = innerExpr.argList.head;
         if ($.isreal(z)) {
             return [TFLAG_DIFF, zero];
@@ -53,4 +47,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const imag_exp = new Builder();
+export const imag_exp = mkbuilder(Op);

@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
@@ -12,21 +13,15 @@ import { is_rat } from "../rat/is_rat";
 const POW = native_sym(Native.pow);
 const IM = native_sym(Native.imag);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  *
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(IM, POW, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(IM, POW);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const innerExpr = expr.argList.head;
             const base = innerExpr.lhs;
             const expo = innerExpr.rhs;
@@ -42,4 +37,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const imag_pow_e_rat = new Builder();
+export const imag_pow_e_rat = mkbuilder(Op);

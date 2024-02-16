@@ -1,29 +1,24 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { ARCTAN } from "../../runtime/constants";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { Cons1 } from "../helpers/Cons1";
 import { CompositeOperator } from "../helpers/CompositeOperator";
+import { Cons1 } from "../helpers/Cons1";
 import { is_rat } from "../rat/is_rat";
 
 const imag = native_sym(Native.imag);
 // const log = native_sym(Native.log);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(imag, ARCTAN, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(imag, ARCTAN);
     }
-    isKind(expr: U): expr is Cons1<Sym, Cons> {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is Cons1<Sym, Cons> {
+        if (super.isKind(expr, $)) {
             const innerExpr = expr.argList.head;
             const x = innerExpr.argList.head;
             return is_rat(x);
@@ -38,4 +33,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const imag_arctan_rat = new Builder();
+export const imag_arctan_rat = mkbuilder(Op);

@@ -1,29 +1,24 @@
 import { Blade, is_blade } from "math-expression-atoms";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_BLADE, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
+import { Function1 } from "../helpers/Function1";
 
 export const IM = native_sym(Native.imag);
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 type ARG = Blade;
 type EXP = Cons1<Sym, ARG>;
 
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('imag_blade', IM, is_blade, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('imag_blade', IM, is_blade);
         this.#hash = hash_unaop_atom(this.opr, HASH_BLADE);
     }
     get hash(): string {
@@ -35,4 +30,4 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
 }
 
-export const imag_blade = new Builder();
+export const imag_blade = mkbuilder(Op);

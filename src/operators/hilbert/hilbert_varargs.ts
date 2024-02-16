@@ -1,15 +1,11 @@
 import { Cons, U } from "math-expression-tree";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, FEATURE, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { hilbert } from "../../hilbert";
 import { HILBERT } from "../../runtime/constants";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 export function eval_hilbert(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
     try {
@@ -32,22 +28,21 @@ export function eval_hilbert(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = [];
-    constructor($: ExtensionEnv) {
-        super('hilbert', HILBERT, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('hilbert', HILBERT);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform(expr: Cons): [number, U] {
-        const $ = this.$;
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
         const retval = eval_hilbert(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }
 
-export const hilbert_varargs = new Builder();
+export const hilbert_varargs = mkbuilder(Op);

@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { one } from "../../tree/rat/Rat";
@@ -9,20 +10,13 @@ import { CompositeOperator } from "../helpers/CompositeOperator";
 const IM = native_sym(Native.imag);
 const MUL = native_sym(Native.multiply);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(IM, MUL, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(IM, MUL);
     }
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         const rs: U[] = []; // the real factors.
         const cs: U[] = []; // the complex factors
         [...innerExpr.argList].forEach(function (factor) {
@@ -56,7 +50,7 @@ class Op extends CompositeOperator {
     }
 }
 
-export const imag_mul = new Builder();
+export const imag_mul = mkbuilder(Op);
 
 function multiply_factors(factors: U[], $: ExtensionEnv): U {
     if (factors.length > 1) {

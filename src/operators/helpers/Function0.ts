@@ -2,7 +2,7 @@ import { is_sym, Sym } from "math-expression-atoms";
 import { Cons, is_cons, U } from "math-expression-tree";
 import { FunctionVarArgs } from "./FunctionVarArgs";
 
-export abstract class Function0 extends FunctionVarArgs {
+export abstract class Function0 extends FunctionVarArgs<Cons> {
     constructor(name: string, opr: Sym) {
         super(name, opr);
     }

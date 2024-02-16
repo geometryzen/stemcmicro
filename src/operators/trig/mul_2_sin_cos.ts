@@ -1,5 +1,6 @@
 import { Cons2 } from "math-expression-tree";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -12,30 +13,29 @@ import { Function2 } from "../helpers/Function2";
 import { is_opr_1_any } from "../helpers/is_opr_1_any";
 import { MATH_SIN } from "../sin/MATH_SIN";
 
-export class Builder implements OperatorBuilder<Cons> {
+export class Builder implements ExtensionBuilder<Cons> {
     constructor(public readonly name: string, public readonly opr: Sym, public readonly lhs: Sym, public readonly rhs: Sym) {
         // Nothing to see here.
     }
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op(this.name, this.opr, this.lhs, this.rhs, $);
+    create(config: Readonly<EnvConfig>): Extension<Cons> {
+        return new Op(this.name, this.opr, this.lhs, this.rhs, config);
     }
 }
 
 type LHS = Cons1<Sym, U>;
 type RHS = Cons1<Sym, U>;
-type EXPR = Cons2<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
-class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor(name: string, opr: Sym, lhs: Sym, rhs: Sym, $: ExtensionEnv) {
-        super(name, opr, and(is_cons, is_opr_1_any(lhs)), and(is_cons, is_opr_1_any(rhs)), $);
+    constructor(name: string, opr: Sym, lhs: Sym, rhs: Sym, readonly config: Readonly<EnvConfig>) {
+        super(name, opr, and(is_cons, is_opr_1_any(lhs)), and(is_cons, is_opr_1_any(rhs)));
         this.#hash = hash_binop_cons_cons(opr, lhs, rhs);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP, $: ExtensionEnv): [TFLAGS, U] {
         return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, orig.rhs, orig.lhs))];
     }
 }

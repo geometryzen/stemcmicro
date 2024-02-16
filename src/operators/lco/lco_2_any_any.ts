@@ -26,8 +26,8 @@ class Op extends Function2<LHS, RHS> {
     constructor() {
         super('lco_2_any_any', MATH_LCO, is_any, is_any);
     }
-    isKind(expr: U): expr is EXP {
-        if (super.isKind(expr)) {
+    isKind(expr: U, $: ExtensionEnv): expr is EXP {
+        if (super.isKind(expr, $)) {
             const lhs = expr.lhs;
             const rhs = expr.rhs;
             if (is_blade(lhs) && is_blade(rhs)) {

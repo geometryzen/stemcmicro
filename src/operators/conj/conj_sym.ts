@@ -1,20 +1,15 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
+import { Function1 } from "../helpers/Function1";
 import { is_sym } from "../sym/is_sym";
 import { MATH_CONJ } from "./MATH_CONJ";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new ConjSym($);
-    }
-}
-
-class ConjSym extends Function1<Sym> implements Operator<U> {
-    constructor($: ExtensionEnv) {
-        super('conj_sym', MATH_CONJ, is_sym, $);
+class ConjSym extends Function1<Sym> {
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('conj_sym', MATH_CONJ, is_sym);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Sym, expr: Cons1<Sym, Sym>): [TFLAGS, U] {
@@ -23,4 +18,4 @@ class ConjSym extends Function1<Sym> implements Operator<U> {
     }
 }
 
-export const conj_sym = new Builder();
+export const conj_sym = mkbuilder(ConjSym);

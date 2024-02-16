@@ -21,11 +21,11 @@ export abstract class AbstractExtension<T extends U> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     compareFactors(lhs: U, rhs: U): Sign {
-        throw new Error("Abtract Operator Method not implemented.");
+        throw new Error("AbtractExtension.compareFcators method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     compareTerms(lhs: U, rhs: U): Sign {
-        throw new Error("Abtract Operator Method not implemented.");
+        throw new Error("AbtractExtension compareTerms method not implemented.");
     }
     subst(expr: T, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'extensionFor'>): U {
         if (expr.equals(oldExpr)) {

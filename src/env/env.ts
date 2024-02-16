@@ -30,7 +30,7 @@ import { CompareFn, Directive, directive_from_flag, EvalFunction, ExprComparator
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { extension_builder_from_keyword_runner } from "./operator_from_keyword_runner";
 import { extension_builder_from_cons_expression, hash_from_match, opr_from_match } from "./operator_from_legacy_transformer";
-import { UnknownConsOperator } from "./UnknownOperator";
+import { UnknownConsExtension } from "./UnknownConsExtension";
 
 const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
@@ -522,7 +522,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // This will allow us to report back correctly later in hasUserFunction(sym), which is used for SVG rendering.
             userSymbols.set(name.key(), name);
 
-            // Given that we already have an Operator for Sym installed,
+            // Given that we already have an Extension for Sym installed,
             // which has the same (standard) implementation of valueOf as the user symbol runner,
             // there's really no value in adding the following operator.
             // Leaving it for now as it does no harm and may have utility later.
@@ -877,7 +877,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             }
                         }
                     }
-                    return new UnknownConsOperator($);
+                    return new UnknownConsExtension($);
                     // We can end up here for user-defined functions.
                     // The consumer is trying to answer a question
                     // throw new SystemError(`${expr}, current_phase = ${current_focus} keys = ${JSON.stringify(keys)}`);
@@ -1073,7 +1073,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                     const binding = $.getBinding(opr, expr);
                                     if (!is_nil(binding)) {
                                         if (is_cons(binding)) {
-                                            // TODO: Install as a normal Operator...
+                                            // TODO: Install as a normal Extension...
                                             if (binding.opr.equals(FN)) {
                                                 const newExpr = eval_lambda_in_fn_syntax(expr, $);
                                                 return [TFLAG_DIFF, newExpr];
@@ -1170,7 +1170,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                 const binding = $.getBinding(opr, expr);
                                 if (!is_nil(binding)) {
                                     if (is_cons(binding)) {
-                                        // TOOD: Install as a normal Operator.
+                                        // TOOD: Install as a normal Extension.
                                         if (binding.opr.equals(FN)) {
                                             throw new Error("TODO B");
                                             // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Sym } from "math-expression-atoms";
 import { Cons, U } from "../tree/tree";
-import { ExtensionEnv, FEATURE, Operator } from "./ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE } from "./ExtensionEnv";
 
-export class UnknownConsOperator implements Operator<Cons> {
+export class UnknownConsExtension implements Extension<Cons> {
     name: string;
     constructor(private readonly $: ExtensionEnv) {
         this.name = "unknown";
@@ -21,13 +21,13 @@ export class UnknownConsOperator implements Operator<Cons> {
         throw new Error();
     }
     get hash(): string {
-        throw new Error("UnknownOperator.hash Method not implemented.");
+        throw new Error("UnknownConsExtension.hash Method not implemented.");
     }
     isKind(expr: Cons): expr is Cons {
-        throw new Error("UnknownOperator.isKind Method not implemented.");
+        throw new Error("UnknownConsExtension.isKind Method not implemented.");
     }
     subst(expr: U, oldExpr: U, newExpr: U): U {
-        throw new Error("UnknownOperator.subst Method not implemented.");
+        throw new Error("UnknownConsExtension.subst Method not implemented.");
     }
     toInfixString(expr: U): string {
         throw new Error(`${expr.toString()} is not defined.`);
@@ -42,12 +42,12 @@ export class UnknownConsOperator implements Operator<Cons> {
         return `(${ss.join(' ')})`;
     }
     evaluate(expr: U, argList: Cons): [number, U] {
-        throw new Error("UnknownOperator. Method not implemented.");
+        throw new Error("UnknownConsExtension. Method not implemented.");
     }
     transform(expr: U): [number, U] {
-        throw new Error("UnknownOperator. Method not implemented.");
+        throw new Error("UnknownConsExtension. Method not implemented.");
     }
     valueOf(expr: U): U {
-        throw new Error("UnknownOperator. Method not implemented.");
+        throw new Error("UnknownConsExtension. Method not implemented.");
     }
 }

@@ -1,19 +1,14 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_HYP, hash_unaop_atom } from "../../hashing/hash_info";
 import { Hyp } from "../../tree/hyp/Hyp";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
+import { Function1 } from "../helpers/Function1";
 import { is_hyp } from "../hyp/is_hyp";
 import { MATH_COS } from "./MATH_COS";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 type ARG = Hyp;
 type EXP = Cons1<Sym, ARG>;
@@ -21,10 +16,10 @@ type EXP = Cons1<Sym, ARG>;
 /**
  * cos(Hyp) => 1
  */
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('cos_hyp', MATH_COS, is_hyp, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('cos_hyp', MATH_COS, is_hyp);
         this.#hash = hash_unaop_atom(MATH_COS, HASH_HYP);
     }
     get hash(): string {
@@ -36,4 +31,4 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
 }
 
-export const cos_hyp = new Builder();
+export const cos_hyp = mkbuilder<EXP>(Op);

@@ -123,7 +123,7 @@ function aggressive(expo: RHS, outerExpr: EXP, $: ExtensionEnv) {
                 // (k * X) * i
                 // expo_lhs=k*X
                 // expo_rhs=i
-                if (is_cons(expo_lhs) && is_opr_2_lhs_any(MATH_MUL, is_rat)(expo_lhs) && $.isreal(expo_lhs.rhs) && is_imu(expo_rhs)) {
+                if (is_cons(expo_lhs) && is_opr_2_lhs_any(MATH_MUL, is_rat)(expo_lhs, $) && $.isreal(expo_lhs.rhs) && is_imu(expo_rhs)) {
                     // console.lg(`Euler 4`);
                     //
                     // const k = expo_lhs.lhs;

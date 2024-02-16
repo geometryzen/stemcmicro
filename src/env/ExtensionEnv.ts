@@ -477,55 +477,6 @@ export const MODE_FLAGS_NONE = 0;
 export const MODE_FLAGS_ALL = MODE_EXPANDING | MODE_FACTORING;
 export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTORING;
 
-/**
- * @deprecated Migrate to Extension
- */
-export interface Operator<T extends U> {
-    readonly name?: string;
-    /**
-     * Determines which expressions this operator matches.
-     */
-    readonly hash: string;
-    /**
-     * Determines whether this operator is for evaluating list expressions.
-     */
-    iscons(): this is Operator<Cons>;
-    /**
-     * The symbol that this operator represents.
-     * 
-     * i.e. (operator arg0 arg1 ...)
-     * 
-     * If this operator is not for list expressions, the implementation should throw an error.
-     */
-    operator(): Sym | never;
-    /**
-     * Determines the modes in which this operator is active.
-     */
-    readonly phases?: number;
-    /**
-     *
-     */
-    readonly dependencies?: FEATURE[];
-    /**
-     * Determines whether this operator can be used to evaluate the expression.
-     */
-    isKind(expr: U): expr is T;
-    subst(expr: T, oldExpr: U, newExpr: U): U;
-    test(expr: T, opr: Sym): boolean;
-    toInfixString(expr: T): string;
-    toLatexString(expr: T): string;
-    toListString(expr: T): string;
-    evaluate(opr: T, argList: Cons): [TFLAGS, U];
-    /**
-     * Evaluates the expression and also returns some information about the returned expression.
-     */
-    transform(expr: T): [TFLAGS, U];
-    /**
-     * Evaluates the expression.
-     */
-    valueOf(expr: T): U;
-}
-
 export interface Extension<T extends U> {
     readonly hash: string;
     readonly name: string;

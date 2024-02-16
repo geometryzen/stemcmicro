@@ -40,7 +40,7 @@ export function countOccurrencesOfSymbol(needle: Sym, p: U, $: ExtensionEnv) {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function count_size(expr: U, $: ExtensionEnv): number {
-    // TODO: Generalize by creating Operator.countSize(expr): number;
+    // TODO: Generalize by creating Extension.countSize(expr): number;
     if (is_tensor(expr)) {
         let n = 0;
         for (let i = 0; i < expr.nelem; i++) {

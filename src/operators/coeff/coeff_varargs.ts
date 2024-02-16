@@ -11,7 +11,7 @@ class Builder implements ExtensionBuilder<U> {
     }
 }
 
-class Op extends FunctionVarArgs implements Extension<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
     readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     constructor() {

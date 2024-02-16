@@ -1,22 +1,17 @@
 import { Native, native_sym } from "math-expression-native";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Hyp } from "../../tree/hyp/Hyp";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
+import { is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_opr_2_any_any } from "../helpers/is_opr_2_any_any";
 import { is_sym } from "../sym/is_sym";
 import { dproduct } from "./helpers/dproduct";
-
-class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
-    }
-}
 
 type LHS = Cons2<Sym, U, U>;
 type RHS = Sym;
@@ -27,17 +22,16 @@ type EXP = Cons2<Sym, LHS, RHS>;
  * 
  * TODO: This should now be covered elsewhere.
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
-    constructor($: ExtensionEnv) {
-        super('derivative_2_mul_any', native_sym(Native.derivative), and(is_cons, is_opr_2_any_any(MATH_MUL)), is_sym, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('derivative_2_mul_any', native_sym(Native.derivative), and(is_cons, is_opr_2_any_any(MATH_MUL)), is_sym);
         this.#hash = hash_binop_cons_atom(this.opr, MATH_MUL, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP, $: ExtensionEnv): [TFLAGS, U] {
         const retval = dproduct(lhs, rhs, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_NONE, retval];
@@ -60,7 +54,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const derivative_2_mul_any = new Builder();
+export const derivative_2_mul_any = mkbuilder(Op);
 
 export function non_standard_analysis_derivative(F: U, X: U, $: ExtensionEnv): U {
     // Here, we evaluate the derivative using nonstandard analyis.

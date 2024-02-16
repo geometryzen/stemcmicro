@@ -1,4 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
@@ -8,26 +9,19 @@ import { CompositeOperator } from "../helpers/CompositeOperator";
 const ADD = native_sym(Native.add);
 const EXP = native_sym(Native.exp);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  * exp(a + b + ...) = exp(a) * exp(b) * ...
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(EXP, ADD, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(EXP, ADD);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, addExpr: Cons, expExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, addExpr: Cons, expExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name, $.toInfixString(addExpr));
         return [TFLAG_DIFF, $.multiply(...addExpr.argList.map($.exp))];
     }
 }
 
-export const exp_add = new Builder();
+export const exp_add = mkbuilder(Op);
 

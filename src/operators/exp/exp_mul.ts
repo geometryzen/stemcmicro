@@ -4,7 +4,8 @@ import { extract_single_blade } from "../../calculators/compare/extract_single_b
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { remove_factors } from "../../calculators/remove_factors";
 import { remove_imu_factors } from "../../calculators/remove_imu_factors";
-import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { imu } from "../../tree/imu/Imu";
@@ -17,27 +18,20 @@ const EXP = native_sym(Native.exp);
 const MUL = native_sym(Native.multiply);
 // const PI = native_sym(Native.PI);
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
-
 /**
  *
  */
 class Op extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(EXP, MUL, $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super(EXP, MUL);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(innerExpr));
         // console.lg("converExpToTrig?", this.$.getDirective(Directive.convertExpToTrig));
         // console.lg("converTrigToExp?", this.$.getDirective(Directive.convertTrigToExp));
         // console.lg("clock?", this.$.getDirective(Directive.complexAsClock));
         // console.lg("polar?", this.$.getDirective(Directive.complexAsPolar));
-        const $ = this.$;
         if (should_convert_exp_to_trig($)) {
             if (count_imu_factors(innerExpr) === 1) {
                 const x = remove_imu_factors(innerExpr);
@@ -80,5 +74,5 @@ function should_convert_exp_to_trig($: ExtensionEnv): boolean {
     return true;
 }
 
-export const exp_mul = new Builder();
+export const exp_mul = mkbuilder(Op);
 

@@ -12,7 +12,7 @@ class Builder implements ExtensionBuilder<U> {
     }
 }
 
-class Op extends FunctionVarArgs implements Extension<Cons> {
+class Op extends FunctionVarArgs<Cons> {
     readonly #hash: string;
     constructor(readonly config: Readonly<EnvConfig>) {
         super('gamma', GAMMA);

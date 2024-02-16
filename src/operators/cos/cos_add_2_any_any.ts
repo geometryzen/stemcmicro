@@ -1,22 +1,17 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, MODE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
+import { EnvConfig } from "../../env/EnvConfig";
+import { ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
+import { Cons1 } from "../helpers/Cons1";
 import { Cons2 } from "../helpers/Cons2";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { is_opr_2_lhs_any } from "../helpers/is_opr_2_lhs_any";
-import { Cons1 } from "../helpers/Cons1";
 import { MATH_SIN } from "../sin/MATH_SIN";
 import { MATH_COS } from "./MATH_COS";
-
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Op($);
-    }
-}
 
 type AL = U;
 type AR = U;
@@ -26,18 +21,17 @@ type EXP = Cons1<Sym, ARG>;
 /**
  * cos(a+b) => cos(a)*cos(b)-sin(a)*sin(b) 
  */
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly #hash: string;
     readonly phases = MODE_EXPANDING;
-    constructor($: ExtensionEnv) {
-        super('cos_add_2_any_any', MATH_COS, and(is_cons, is_opr_2_lhs_any(MATH_ADD, is_any)), $);
+    constructor(readonly config: Readonly<EnvConfig>) {
+        super('cos_add_2_any_any', MATH_COS, and(is_cons, is_opr_2_lhs_any(MATH_ADD, is_any)));
         this.#hash = hash_unaop_cons(MATH_COS, MATH_ADD);
     }
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
-        const $ = this.$;
+    transform1(opr: Sym, arg: ARG, exp: EXP, $: ExtensionEnv): [TFLAGS, U] {
         const a = arg.lhs;
         const b = arg.rhs;
         const cosA = $.valueOf(items_to_cons(MATH_COS, a));
@@ -51,4 +45,4 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
 }
 
-export const cos_add_2_any_any = new Builder();
+export const cos_add_2_any_any = mkbuilder(Op);

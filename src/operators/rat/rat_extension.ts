@@ -1,4 +1,4 @@
-import { assert_rat, create_flt, create_sym, is_blade, is_boo, is_err, is_flt, is_imu, is_sym, one, Rat, Sym, zero } from "math-expression-atoms";
+import { assert_rat, create_flt, create_sym, is_blade, is_boo, is_err, is_flt, is_imu, is_sym, is_uom, one, Rat, Sym, zero } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, is_cons, is_singleton, items_to_cons, U } from "math-expression-tree";
@@ -69,14 +69,19 @@ export class RatExtension implements Extension<Rat> {
                 if (is_blade(rhs)) {
                     return order_binary(MUL, lhs, rhs, env);
                 }
+                else if (is_flt(rhs)) {
+                    return create_flt(lhs.toNumber() * rhs.toNumber());
+                }
                 else if (is_imu(rhs)) {
                     return order_binary(MUL, lhs, rhs, env);
                 }
                 else if (is_rat(rhs)) {
-                    // console.lg(`RatExtension.binL Rat Rat ${lhs} ${opr} ${rhs}`);
                     return lhs.mul(rhs);
                 }
                 else if (is_sym(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_uom(rhs)) {
                     return order_binary(MUL, lhs, rhs, env);
                 }
             }

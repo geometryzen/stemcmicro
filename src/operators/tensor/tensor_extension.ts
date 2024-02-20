@@ -1,4 +1,4 @@
-import { is_tensor, Sym, Tensor } from "math-expression-atoms";
+import { is_tensor, is_uom, Sym, Tensor } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
@@ -6,18 +6,24 @@ import { conjfunc, inner, power, push_rational } from "../../eigenmath/eigenmath
 import { Directive, Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";
 import { HASH_TENSOR } from "../../hashing/hash_info";
+import { isone } from "../../helpers/isone";
+import { iszero } from "../../helpers/iszero";
+import { multiply } from "../../helpers/multiply";
 import { PrintConfig, print_str, render_using_non_sexpr_print_mode } from "../../print/print";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { MAXDIM } from "../../runtime/constants";
 import { defs, PrintMode, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_SEXPR } from "../../runtime/defs";
-import { assert_square_matrix_tensor } from "../../tensor";
+import { assert_square_matrix_tensor, is_line_matrix, is_square_matrix } from "../../tensor";
 import { cofactor } from "../cofactor/cofactor";
+import { is_hyp } from "../hyp/is_hyp";
 import { simplify } from "../simplify/simplify";
 import { subst } from "../subst/subst";
 
 const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
 const ADJ = native_sym(Native.adj);
+const ISONE = native_sym(Native.isone);
+const MUL = native_sym(Native.multiply);
 
 function equal_elements(as: U[], bs: U[], $: ExtensionEnv): boolean {
     const length = as.length;
@@ -104,14 +110,65 @@ class TensorExtension implements Extension<Tensor> {
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    test(atom: Tensor, opr: Sym, env: ExprContext): boolean {
-        throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
+    test(m: Tensor, opr: Sym, env: ExprContext): boolean {
+        if (opr.equalsSym(ISONE)) {
+            if (is_line_matrix(m)) {
+                const n = m.dim(0);
+                for (let i = 0; i < n; i++) {
+                    const element = m.elem(n * i);
+                    if (i === 0) {
+                        if (!isone(element, env)) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (!iszero(element, env)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            if (is_square_matrix(m)) {
+                const n = m.dim(0);
+                for (let i = 0; i < n; i++) {
+                    for (let j = 0; j < n; j++) {
+                        const element = m.elem(n * i + j);
+                        if (i === j) {
+                            if (!isone(element, env)) {
+                                return false;
+                            }
+                        }
+                        else {
+                            if (!iszero(element, env)) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        throw new Error(`${this.name}.test(${m},${opr}) method not implemented.`);
     }
     binL(lhs: Tensor, opr: Sym, rhs: U, env: ExprContext): U {
         if (opr.equalsSym(ADD)) {
             if (is_atom(rhs)) {
                 if (is_tensor(rhs)) {
                     return add_tensor_tensor(lhs, rhs, env);
+                }
+            }
+        }
+        else if (opr.equalsSym(MUL)) {
+            if (is_atom(rhs)) {
+                if (is_hyp(rhs)) {
+                    return lhs.map(x => multiply(env, x, rhs));
+                }
+                else if (is_uom(rhs)) {
+                    return lhs.map(x => multiply(env, x, rhs));
                 }
             }
         }

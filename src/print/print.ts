@@ -380,9 +380,9 @@ export function sign_of_term(term: U): '+' | '-' {
 /**
  * WARNING: This function treats (* -1 ...) or (* -1.0 ...) as (* ...).
  * In other words, it skips over the first argument when it is Rat(-1) or Flt(-1).
- * This means that 
+ * This means that we don't retain the floating aspect when Flt(-1)
  */
-function print_multiply_when_no_denominators(expr: Cons, $: PrintConfig) {
+function print_multiply_when_no_denominators(expr: Cons, $: PrintConfig): string {
     // console.lg(`print_multiply_when_no_denominators: ${expr}`);
     let denom = '';
     let origAccumulator = '';
@@ -477,6 +477,7 @@ function print_multiply_when_no_denominators(expr: Cons, $: PrintConfig) {
 }
 
 export function print_multiplicative_expr(expr: U, $: PrintConfig): string {
+    // console.lg("print_multiplicative_expr", `${expr}`);
     if (is_cons(expr) && is_multiply(expr)) {
         if (any_denominators(expr)) {
             return print_a_over_b(expr, $);

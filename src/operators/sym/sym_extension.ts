@@ -1,9 +1,12 @@
-import { create_sym, is_blade, is_err, is_flt, is_rat, is_sym, one, Sym } from "math-expression-atoms";
-import { ExprContext, SIGN_GT, SIGN_LT } from "math-expression-context";
+import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Sym, zero } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, is_nil, items_to_cons, nil, U } from "math-expression-tree";
 import { Directive, Extension, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
+import { float } from "../../helpers/float";
+import { iszero } from "../../helpers/iszero";
+import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { piAsFlt } from "../../tree/flt/Flt";
@@ -12,6 +15,7 @@ import { get_binding } from "./get_binding";
 
 const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
+const GRADE = native_sym(Native.grade);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
 const ISONE = native_sym(Native.isone);
@@ -41,43 +45,54 @@ class SymExtension implements Extension<Sym> {
         }
         throw new ProgrammingError(`SymExtension.test ${atom} ${opr}`);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    binL(lhs: Sym, opr: Sym, rhs: U, _: ExprContext): U {
+    binL(lhs: Sym, opr: Sym, rhs: U, env: ExprContext): U {
         if (opr.equalsSym(ADD)) {
             if (is_atom(rhs)) {
                 if (is_err(rhs)) {
                     return rhs;
                 }
                 else if (is_sym(rhs)) {
-                    return items_to_cons(ADD, lhs, rhs);
+                    return order_binary(ADD, lhs, rhs, env);
                 }
             }
         }
         else if (opr.equalsSym(MUL)) {
             if (is_atom(rhs)) {
                 if (is_blade(rhs)) {
-                    return order_binary(MUL, lhs, rhs, _);
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_err(rhs)) {
+                    return rhs;
+                }
+                else if (is_flt(rhs)) {
+                    if (rhs.isZero()) {
+                        return rhs;
+                    }
+                    else {
+                        return order_binary(MUL, float(lhs, env), rhs, env);
+                    }
+                }
+                else if (is_hyp(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_imu(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
                 }
                 else if (is_rat(rhs)) {
                     if (rhs.isOne()) {
-                        return _.valueOf(lhs);
+                        return env.valueOf(lhs);
                     }
                     // console.lg(`SymExtension.binL ${lhs} ${opr} ${rhs}`);
-                    return items_to_cons(MUL, lhs, rhs);
+                    return order_binary(MUL, lhs, rhs, env);
                 }
                 else if (is_sym(rhs)) {
-                    const compareFn = _.compareFn(MUL);
-                    switch (compareFn(lhs, rhs)) {
-                        case SIGN_LT: {
-                            return items_to_cons(MUL, lhs, rhs);
-                        }
-                        case SIGN_GT: {
-                            return items_to_cons(MUL, rhs, lhs);
-                        }
-                        default: {
-                            return items_to_cons(MUL, lhs, rhs);
-                        }
-                    }
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_tensor(rhs)) {
+                    return rhs.map(x => multiply(env, lhs, x));
+                }
+                else if (is_uom(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
                 }
             }
         }
@@ -112,15 +127,40 @@ class SymExtension implements Extension<Sym> {
         }
         throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    binR(rhs: Sym, opr: Sym, lhs: U, expr: ExprContext): U {
+    binR(rhs: Sym, opr: Sym, lhs: U, env: ExprContext): U {
+        if (opr.equalsSym(MUL)) {
+            if (is_atom(lhs)) {
+                if (is_hyp(lhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_tensor(lhs)) {
+                    return lhs.map(x => multiply(env, x, rhs));
+                }
+                else if (is_uom(lhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+            }
+        }
         throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
         if (opr.equalsSym(ABS)) {
             // See abs_sym.ts for an implementaion that looks at symbol predicates.
             return items_to_cons(ABS, target);
+        }
+        else if (opr.equalsSym(GRADE)) {
+            const head = argList.head;
+            try {
+                if (iszero(head, env)) {
+                    return target;
+                }
+                else {
+                    return zero;
+                }
+            }
+            finally {
+                head.release();
+            }
         }
         throw new ProgrammingError(`SymExtension.dispatch ${target} ${opr} ${argList} method not implemented.`);
     }

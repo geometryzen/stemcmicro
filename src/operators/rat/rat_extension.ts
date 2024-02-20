@@ -1,4 +1,4 @@
-import { assert_rat, create_flt, create_sym, is_blade, is_boo, is_err, is_flt, is_imu, is_sym, is_uom, one, Rat, Sym, zero } from "math-expression-atoms";
+import { assert_rat, create_flt, create_sym, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_sym, is_tensor, is_uom, one, Rat, Sym, zero } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, is_cons, is_singleton, items_to_cons, U } from "math-expression-tree";
@@ -6,6 +6,7 @@ import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Directive, Extension, ExtensionBuilder, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { iszero } from "../../helpers/iszero";
+import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { ProgrammingError } from "../../programming/ProgrammingError";
@@ -69,8 +70,14 @@ export class RatExtension implements Extension<Rat> {
                 if (is_blade(rhs)) {
                     return order_binary(MUL, lhs, rhs, env);
                 }
+                else if (is_err(rhs)) {
+                    return rhs;
+                }
                 else if (is_flt(rhs)) {
                     return create_flt(lhs.toNumber() * rhs.toNumber());
+                }
+                else if (is_hyp(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
                 }
                 else if (is_imu(rhs)) {
                     return order_binary(MUL, lhs, rhs, env);
@@ -80,6 +87,17 @@ export class RatExtension implements Extension<Rat> {
                 }
                 else if (is_sym(rhs)) {
                     return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_tensor(rhs)) {
+                    if (lhs.isZero()) {
+                        return rhs.map(() => lhs);
+                    }
+                    else if (lhs.isOne()) {
+                        return rhs.map((x) => x);
+                    }
+                    else {
+                        return rhs.map(x => multiply(env, lhs, x));
+                    }
                 }
                 else if (is_uom(rhs)) {
                     return order_binary(MUL, lhs, rhs, env);
@@ -91,12 +109,28 @@ export class RatExtension implements Extension<Rat> {
                 if (is_rat(rhs)) {
                     return power_rat_base_rat_expo(lhs, rhs, env);
                 }
+                else if (is_sym(rhs)) {
+                    return items_to_cons(POW, lhs, rhs);
+                }
             }
         }
         throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    binR(rhs: Rat, opr: Sym, lhs: U, expr: ExprContext): U {
+    binR(rhs: Rat, opr: Sym, lhs: U, env: ExprContext): U {
+        if (opr.equalsSym(MUL)) {
+            if (is_atom(lhs)) {
+                if (is_hyp(lhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_tensor(lhs)) {
+                    return lhs.map(x => multiply(env, x, rhs));
+                }
+                else if (is_uom(lhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+            }
+        }
         throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -1,16 +1,20 @@
-import { create_sym, Flt, is_blade, is_boo, is_err, is_flt, is_rat, is_sym, is_uom, Sym } from "math-expression-atoms";
+import { create_sym, Flt, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, U } from "math-expression-tree";
+import { cons, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { iszero } from "../../helpers/iszero";
+import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
-import { create_flt, oneAsFlt } from "../../tree/flt/Flt";
+import { create_flt, oneAsFlt, zeroAsFlt } from "../../tree/flt/Flt";
 
 const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
+const GRADE = native_sym(Native.grade);
+const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
@@ -36,7 +40,10 @@ export class FltExtension implements Extension<Flt> {
         return 'FltExtension';
     }
     test(atom: Flt, opr: Sym): boolean {
-        if (opr.equalsSym(ISZERO)) {
+        if (opr.equalsSym(ISONE)) {
+            return atom.isOne();
+        }
+        else if (opr.equalsSym(ISZERO)) {
             return atom.isZero();
         }
         throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
@@ -65,35 +72,80 @@ export class FltExtension implements Extension<Flt> {
         else if (opr.equalsSym(MUL)) {
             if (is_atom(rhs)) {
                 if (is_blade(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
+                    if (lhs.isZero()) {
+                        return lhs;
+                    }
+                    else {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                }
+                else if (is_err(rhs)) {
+                    return rhs;
                 }
                 else if (is_flt(rhs)) {
                     return lhs.mul(rhs);
+                }
+                else if (is_hyp(rhs)) {
+                    if (lhs.isZero()) {
+                        return lhs;
+                    }
+                    else {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                }
+                else if (is_imu(rhs)) {
+                    if (lhs.isZero()) {
+                        return lhs;
+                    }
+                    else {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
                 }
                 else if (is_rat(rhs)) {
                     return create_flt(lhs.toNumber() * rhs.toNumber());
                 }
                 else if (is_sym(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
+                    if (lhs.isZero()) {
+                        return lhs;
+                    }
+                    else {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                }
+                else if (is_tensor(rhs)) {
+                    if (lhs.isZero()) {
+                        return rhs.map(() => lhs);
+                    }
+                    else {
+                        return rhs.map(x => multiply(env, lhs, x));
+                    }
                 }
                 else if (is_uom(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
+                    if (lhs.isZero()) {
+                        return lhs;
+                    }
+                    else {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
                 }
             }
         }
         else if (opr.equalsSym(POW)) {
             if (is_atom(rhs)) {
-                if (is_rat(rhs)) {
-                    if (rhs.isMinusOne()) {
-                        return lhs.inv();
-                    }
+                if (is_flt(rhs)) {
+                    return create_flt(Math.pow(lhs.toNumber(), rhs.toNumber()));
+                }
+                else if (is_rat(rhs)) {
+                    return create_flt(Math.pow(lhs.toNumber(), rhs.toNumber()));
+                }
+                else if (is_sym(rhs)) {
+                    return items_to_cons(POW, lhs, rhs);
                 }
             }
         }
         throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    binR(rhs: Flt, opr: Sym, lhs: U, expr: ExprContext): U {
+    binR(rhs: Flt, opr: Sym, lhs: U, env: ExprContext): U {
         if (opr.equalsSym(ADD)) {
             if (is_atom(lhs)) {
                 if (is_flt(lhs)) {
@@ -104,12 +156,49 @@ export class FltExtension implements Extension<Flt> {
                 }
             }
         }
+        else if (opr.equalsSym(MUL)) {
+            if (is_atom(lhs)) {
+                if (is_hyp(lhs)) {
+                    if (rhs.isZero()) {
+                        return rhs;
+                    }
+                    else {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                }
+                else if (is_tensor(lhs)) {
+                    return lhs.map(x => multiply(env, x, rhs));
+                }
+                else if (is_uom(lhs)) {
+                    if (rhs.isZero()) {
+                        return rhs;
+                    }
+                    else {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                }
+            }
+        }
         throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Flt, opr: Sym, argList: Cons, env: ExprContext): U {
         if (opr.equalsSym(ABS)) {
             return target.abs();
+        }
+        else if (opr.equalsSym(GRADE)) {
+            const head = argList.head;
+            try {
+                if (iszero(head, env)) {
+                    return target;
+                }
+                else {
+                    return zeroAsFlt;
+                }
+            }
+            finally {
+                head.release();
+            }
         }
         throw new ProgrammingError(`FltExtension.dispatch ${target} ${opr} ${argList} method not implemented.`);
     }

@@ -1,4 +1,4 @@
-import { is_blade, is_num, is_str, is_sym, is_tensor, is_uom } from "math-expression-atoms";
+import { is_blade, is_hyp, is_num, is_str, is_sym, is_tensor, is_uom } from "math-expression-atoms";
 import { car, cdr, is_cons, is_nil, U } from "math-expression-tree";
 import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_imu } from "../../operators/imu/is_imu";
@@ -112,6 +112,19 @@ export class MulComparator implements ExprComparator {
         }
 
         if (is_cons(rhs)) {
+            return SIGN_GT;
+        }
+
+        if (is_hyp(lhs) && is_hyp(rhs)) {
+            // Will probably order base on symbols in future.
+            return strcmp(lhs.printname, rhs.printname);
+        }
+
+        if (is_hyp(lhs)) {
+            return SIGN_LT;
+        }
+
+        if (is_hyp(rhs)) {
             return SIGN_GT;
         }
 

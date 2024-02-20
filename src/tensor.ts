@@ -28,16 +28,50 @@ export function other_x_tensor(lhs: U, rhs: Tensor, $: ExtensionEnv): U {
     });
 }
 
-/**
- * Determines whether the expression is a square matrix.
- * To be a square matrix, it must be a tensor with two dimensions, with the sizes of each dimension being equal.
- */
-export function is_square_matrix(expr: U): expr is Tensor & { ndim: 2; square: true } {
-    return is_tensor(expr) && is_square_matrix_tensor(expr);
+export function is_line_matrix(tensor: Tensor): boolean {
+    if (tensor.ndim === 1) {
+        return is_hypercube_matrix(tensor);
+    }
+    else {
+        return false;
+    }
 }
 
-export function is_square_matrix_tensor(tensor: Tensor): tensor is Tensor & { ndim: 2; square: true } {
-    return tensor.ndim === 2 && tensor.dim(0) === tensor.dim(1);
+export function is_square_matrix(tensor: Tensor): boolean {
+    if (tensor.ndim === 2) {
+        return is_hypercube_matrix(tensor);
+    }
+    else {
+        return false;
+    }
+}
+
+export function is_cube_matrix(tensor: Tensor): boolean {
+    if (tensor.ndim === 3) {
+        return is_hypercube_matrix(tensor);
+    }
+    else {
+        return false;
+    }
+}
+
+export function is_hypercube_matrix(tensor: Tensor): boolean {
+    const ndim = tensor.ndim;
+    if (ndim > 0) {
+        const size = tensor.dim(0);
+        for (let i = 0; i < ndim; i++) {
+            if (tensor.dim(i) === size) {
+                // continue
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+    else {
+        return true;
+    }
 }
 
 /**
@@ -45,7 +79,7 @@ export function is_square_matrix_tensor(tensor: Tensor): tensor is Tensor & { nd
  * @param expr The expression that is asserted to be a square matrix.
  */
 export function assert_square_matrix(expr: U, $: ExtensionEnv): number | never {
-    if (is_square_matrix(expr)) {
+    if (is_tensor(expr) && is_square_matrix(expr)) {
         return expr.dim(0);
     }
     else {
@@ -54,7 +88,7 @@ export function assert_square_matrix(expr: U, $: ExtensionEnv): number | never {
 }
 
 export function assert_square_matrix_tensor(tensor: Tensor): number | never {
-    if (is_square_matrix_tensor(tensor)) {
+    if (is_square_matrix(tensor)) {
         return tensor.dim(0);
     }
     else {

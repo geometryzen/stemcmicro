@@ -48,6 +48,8 @@ is 1/x^2 but it also looks a little like x^(1/2)
 
 */
 
+// FIXME: This function uses module level variables.
+
 //-----------------------------------------------------------------------------
 //
 //  Examples:
@@ -360,8 +362,7 @@ function emit_fraction(p: U, d: number, $: PrintConfig) {
 
     // emit numerical coefficient
     if (!A.isOne()) {
-        // p3 is A
-        emit_number(A, 0, $); // p3 is A
+        emit_number(A, 0, $);
         count++;
     }
 
@@ -428,7 +429,7 @@ function emit_fraction(p: U, d: number, $: PrintConfig) {
 
 // p points to a multiply
 function emit_numerators(p: Cons, $: PrintConfig) {
-    let p1: U = one;
+    let p1: Num = one;
 
     p = cdr(p);
 
@@ -465,28 +466,36 @@ function emit_numerators(p: Cons, $: PrintConfig) {
     }
 }
 
-// p points to a multiply
-function emit_denominators(p: U, $: PrintConfig) {
+/**
+ * @param expr is a multiply expression.
+ */
+function emit_denominators(expr: Cons, $: PrintConfig): void {
     let n = 0;
 
-    p = cdr(p);
+    let p = expr.argList;
 
-    if (is_rat_and_fraction(car(p))) {
-        const p1 = mp_denominator(car(p));
-        emit_number(p1, 0, $);
-        n++;
-        p = cdr(p);
-    }
-
-    while (is_cons(p)) {
-        if (isdenominator(car(p))) {
-            if (n > 0) {
-                __emit_char(' ');
-            }
-            emit_denominator(car(p), 0, $);
+    const leading = p.head;
+    try {
+        if (is_rat_and_fraction(leading)) {
+            const denom = leading.denom();
+            emit_number(denom, 0, $);
             n++;
+            p = cdr(p);
         }
-        p = cdr(p);
+
+        while (is_cons(p)) {
+            if (isdenominator(car(p))) {
+                if (n > 0) {
+                    __emit_char(' ');
+                }
+                emit_denominator(car(p), 0, $);
+                n++;
+            }
+            p = cdr(p);
+        }
+    }
+    finally {
+        leading.release();
     }
 }
 
@@ -973,12 +982,12 @@ function __emit_str(s: string) {
 
 /**
  * TODO: Refactoring
- * 1. Argument should only accept Num
- * 2. Encapsulate Rat so that a,b are not visible.
- * 3. Avoid re-assignable variables.
- * 4. Assert that the argument is indeed a Num.
+ * 1. Encapsulate Rat so that a,b are not visible.
+ * 2. Avoid re-assignable variables.
+ * 3. Assert that the argument is indeed a Num.
+ * 4. emit_sign always seems to be zero in calls.
  */
-function emit_number(p: U, emit_sign: number, $: PrintConfig): void {
+function emit_number(p: Num, emit_sign: number, $: Pick<PrintConfig, 'getDirective'>): void {
     if (is_rat(p)) {
         let tmpString = p.a.toString();
         if (tmpString[0] === '-' && emit_sign === 0) {

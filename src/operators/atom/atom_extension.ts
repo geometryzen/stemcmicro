@@ -6,6 +6,7 @@ import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from 
 import { HASH_CELL } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
+const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
 
 class CellExtension implements Extension<Cell> {
@@ -13,7 +14,18 @@ class CellExtension implements Extension<Cell> {
         // Nothing to see here.
     }
     test(cell: Cell, opr: Sym, env: ExprContext): boolean {
-        if (opr.equalsSym(ISZERO)) {
+        if (opr.equalsSym(ISONE)) {
+            const atom = cell.deref();
+            try {
+                if (is_atom(atom)) {
+                    return env.handlerFor(atom).test(atom, opr, env);
+                }
+            }
+            finally {
+                atom.release();
+            }
+        }
+        else if (opr.equalsSym(ISZERO)) {
             const atom = cell.deref();
             try {
                 if (is_atom(atom)) {

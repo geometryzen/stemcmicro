@@ -1,4 +1,4 @@
-import { create_int, is_num, one, Tensor, zero } from 'math-expression-atoms';
+import { create_int, is_num, is_tensor, one, Tensor, zero } from 'math-expression-atoms';
 import { ExprContext } from 'math-expression-context';
 import { items_to_cons, U } from 'math-expression-tree';
 import { Sign } from '../../env/ExtensionEnv';
@@ -37,23 +37,24 @@ export function det(M: Tensor, $: ExprContext): U {
         return retval;
     };
 
-    if (!is_square_matrix(M)) {
-        // console.lg(`must be square M=${print_expr(M, $)}`);
-        return hook(items_to_cons(DET, M));
-    }
-
-    const elems = M.copyElements();
-    const is_numeric = elems.every((element) => is_num(element));
-    if (is_numeric) {
-        return hook(determinant_numeric(M, $));
+    if (is_tensor(M) && is_square_matrix(M)) {
+        const elems = M.copyElements();
+        const is_numeric = elems.every((element) => is_num(element));
+        if (is_numeric) {
+            return hook(determinant_numeric(M, $));
+        }
+        else {
+            return hook(determinant_symbolic(elems, M.dim(0), $));
+        }
     }
     else {
-        return hook(determinant_symbolic(elems, M.dim(0), $));
+        // console.lg(`must be square M=${print_expr(M, $)}`);
+        return hook(items_to_cons(DET, M));
     }
 }
 
 // determinant of n * n matrix elements on the stack
-export function determinant_symbolic(elements: readonly U[], n: number, $: Pick<ExprContext,'valueOf'>): U {
+export function determinant_symbolic(elements: readonly U[], n: number, $: Pick<ExprContext, 'valueOf'>): U {
     if (n === 0) {
         // The remainder of this code should do this!
         return one;

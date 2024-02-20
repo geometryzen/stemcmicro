@@ -90,6 +90,7 @@ import { d_to_derivative_builder } from '../operators/derivative/d_to_derivative
 import { eval_derivative } from '../operators/derivative/eval_derivative';
 import { eval_det } from '../operators/det/eval_det';
 import { map_extension_builder } from '../operators/dictionary/dictionary_extension';
+import { eval_differential } from '../operators/differential/differential';
 import { dim_varargs } from '../operators/dim/dim_varargs';
 import { dirac_varargs } from '../operators/dirac/dirac_varargs';
 import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from '../operators/distrib/make_distrib_expand_law';
@@ -113,6 +114,7 @@ import { flt_extension_builder } from '../operators/flt/flt_extension';
 import { for_varargs } from '../operators/for/for_varargs';
 import { gamma_varargs } from '../operators/gamma/gamma_varargs';
 import { gcd_varargs } from '../operators/gcd/gcd_varargs';
+import { eval_grade } from '../operators/grade/grade';
 import { stack_hadamard } from '../operators/hadamard/stack_hadamard';
 import { hermite_varargs } from '../operators/hermite/hermite_varargs';
 import { eval_hilbert } from '../operators/hilbert/hilbert_varargs';
@@ -477,6 +479,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineExtension(deref_builder);
 
+    // TODO: Maybe we should have d as a shorthand for the differential instead?
     if (config.useDerivativeShorthandLowerD) {
         // console.lg("Installing d_to_derivative");
         $.defineExtension(d_to_derivative_builder);
@@ -489,7 +492,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineEvalFunction(native_sym(Native.det), eval_det);
 
     $.defineExtension(dotdot_builder);
-
+    $.defineEvalFunction(create_sym("differential"), eval_differential);
     $.defineExtension(dim_varargs);
     $.defineExtension(dirac_varargs);
     $.defineEvalFunction(create_sym("divisors"), eval_divisors);
@@ -525,9 +528,11 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(factorial_varargs);
     $.defineExtension(float_varargs);
 
-    $.defineStackFunction(create_sym("floor"), stack_floor);
+    $.defineStackFunction(native_sym(Native.floor), stack_floor);
 
     $.defineExtension(for_varargs);
+
+    $.defineEvalFunction(native_sym(Native.grade), eval_grade);
 
     $.defineStackFunction(native_sym(Native.hadamard), stack_hadamard);
     $.defineEvalFunction(native_sym(Native.hilbert), eval_hilbert);
@@ -620,7 +625,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(product_varargs);
 
     $.defineEvalFunction(QUOTE, eval_quote);
-    $.defineEvalFunction(create_sym("quotient"), eval_quotient);
+    $.defineEvalFunction(native_sym(Native.quotient), eval_quotient);
 
     $.defineStackFunction(native_sym(Native.rationalize), stack_rationalize);
     $.defineStackFunction(native_sym(Native.real), stack_real);
@@ -630,7 +635,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineEvalFunction(native_sym(Native.roots), eval_roots);
 
-    $.defineEvalFunction(create_sym("round"), eval_round);
+    $.defineEvalFunction(native_sym(Native.round), eval_round);
     $.defineStackFunction(native_sym(Native.rotate), stack_rotate);
 
     $.defineExtension(script_last_0);
@@ -671,7 +676,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineEvalFunction(native_sym(Native.tanh), eval_tanh);
     $.defineExtension(tau_builder);
 
-    $.defineEvalFunction(create_sym('typeof'), eval_typeof);
+    $.defineEvalFunction(native_sym(Native.typeof), eval_typeof);
 
     $.defineEvalFunction(TEST, eval_test);
     $.defineEvalFunction(native_sym(Native.testeq), eval_testeq);

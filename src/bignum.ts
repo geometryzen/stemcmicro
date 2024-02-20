@@ -95,9 +95,9 @@ export function bignum_truncate(p1: Rat): Rat {
 /**
  * @deprecated If p1 is a Rat, call p1.numer()
  */
- export function mp_numerator(p1: U): Rat {
-    if (is_rat(p1)) {
-        return p1.numer();
+export function mp_numerator(x: Rat): Rat {
+    if (is_rat(x)) {
+        return x.numer();
     }
     else {
         return one;
@@ -107,9 +107,9 @@ export function bignum_truncate(p1: Rat): Rat {
 /**
  * @deprecated If p1 is a Rat, call p1.denom()
  */
-export function mp_denominator(p1: U): Rat {
-    if (is_rat(p1)) {
-        return p1.denom();
+export function mp_denominator(x: U): Rat {
+    if (is_rat(x)) {
+        return x.denom();
     }
     else {
         return one;

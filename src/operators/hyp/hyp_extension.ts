@@ -1,8 +1,13 @@
-import { epsilon, Hyp, is_hyp, Sym } from "math-expression-atoms";
+import { epsilon, Hyp, is_hyp, is_tensor, is_uom, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
+import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, nil, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
+import { multiply } from "../../helpers/multiply";
+import { order_binary } from "../../helpers/order_binary";
+
+const MUL = native_sym(Native.multiply);
 
 function verify_hyp(hyp: Hyp): Hyp | never {
     if (is_hyp(hyp)) {
@@ -22,8 +27,18 @@ class HypExtension implements Extension<Hyp> {
     test(atom: Hyp, opr: Sym, expr: ExprContext): boolean {
         return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    binL(atom: Hyp, opr: Sym, rhs: U, expr: ExprContext): U {
+    binL(lhs: Hyp, opr: Sym, rhs: U, env: ExprContext): U {
+        if (opr.equalsSym(MUL)) {
+            if (is_hyp(rhs)) {
+                return order_binary(MUL, lhs, rhs, env);
+            }
+            else if (is_tensor(rhs)) {
+                return rhs.map(x => multiply(env, lhs, x));
+            }
+            else if (is_uom(rhs)) {
+                return order_binary(MUL, lhs, rhs, env);
+            }
+        }
         return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -1,9 +1,11 @@
-import { create_int, is_uom, QQ, Sym, Uom } from "math-expression-atoms";
+import { create_int, is_hyp, is_tensor, is_uom, QQ, Sym, Uom } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
+import { multiply } from "../../helpers/multiply";
+import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { two } from "../../tree/rat/Rat";
 import { is_rat } from "../rat/rat_extension";
@@ -40,7 +42,13 @@ class UomExtension implements Extension<Uom> {
         }
         else if (opr.equalsSym(MUL)) {
             if (is_atom(rhs)) {
-                if (is_uom(rhs)) {
+                if (is_hyp(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_tensor(rhs)) {
+                    return rhs.map(x => multiply(env, lhs, x));
+                }
+                else if (is_uom(rhs)) {
                     return lhs.mul(rhs);
                 }
             }

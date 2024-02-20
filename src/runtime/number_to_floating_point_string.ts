@@ -2,7 +2,7 @@ import { Directive } from "../env/ExtensionEnv";
 import { PrintConfig } from "../print/print";
 import { defs, PRINTMODE_LATEX } from "./defs";
 
-export function number_to_floating_point_string(d: number, $: PrintConfig): string {
+export function number_to_floating_point_string(d: number, $: Pick<PrintConfig, 'getDirective'>): string {
     // console.lg(`number_to_floating_point_string d=${d}`);
     // when generating code, print out
     // the standard JS Number printout

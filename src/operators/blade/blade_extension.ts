@@ -1,9 +1,10 @@
-import { Blade, is_blade, is_rat, Sym } from "math-expression-atoms";
+import { Blade, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_tensor, is_uom, one, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
 import { Extension, FEATURE, mkbuilder, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
+import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { is_sym } from "../sym/is_sym";
@@ -12,6 +13,7 @@ const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
 const GRADE = native_sym(Native.grade);
 const MUL = native_sym(Native.multiply);
+const POW = native_sym(Native.pow);
 const SQRT = native_sym(Native.sqrt);
 
 /**
@@ -58,21 +60,70 @@ class BladeExtension implements Extension<Blade> {
         }
         else if (opr.equalsSym(MUL)) {
             if (is_atom(rhs)) {
-                if (is_sym(rhs)) {
+                if (is_err(rhs)) {
+                    return rhs;
+                }
+                else if (is_flt(rhs)) {
+                    if (rhs.isZero()) {
+                        return rhs;
+                    }
+                    else {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                }
+                else if (is_hyp(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_imu(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_rat(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_sym(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_tensor(rhs)) {
+                    return rhs.map(x => multiply(env, lhs, x));
+                }
+                else if (is_uom(rhs)) {
                     return order_binary(MUL, lhs, rhs, env);
                 }
             }
             throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
         }
+        else if (opr.equalsSym(POW)) {
+            if (is_atom(rhs)) {
+                if (is_rat(rhs)) {
+                    if (rhs.isZero()) {
+                        return one;
+                    }
+                    else if (rhs.isOne()) {
+                        return lhs;
+                    }
+                    else if (rhs.isTwo()) {
+                        return lhs.mul(lhs);
+                    }
+                }
+            }
+        }
         throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
         //        return nil;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    binR(rhs: Blade, opr: Sym, lhs: U, _: ExprContext): U {
+    binR(rhs: Blade, opr: Sym, lhs: U, env: ExprContext): U {
         if (opr.equalsSym(MUL)) {
             if (is_atom(lhs)) {
-                if (is_rat(lhs)) {
-                    return order_binary(MUL, lhs, rhs, _);
+                if (is_hyp(lhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_rat(lhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_tensor(lhs)) {
+                    return lhs.map(x => multiply(env, x, rhs));
+                }
+                else if (is_uom(lhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
                 }
             }
         }

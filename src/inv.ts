@@ -1,4 +1,4 @@
-import { Err, one, Sym, Tensor, zero } from 'math-expression-atoms';
+import { Err, is_tensor, one, Sym, Tensor, zero } from 'math-expression-atoms';
 import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { divide } from './helpers/divide';
@@ -62,7 +62,10 @@ export function inv(expr: U, $: ExtensionEnv): Cons | Sym | Tensor | Err {
         return hook(inverses[0] as Tensor);
     }
 
-    if (!is_square_matrix(expr)) {
+    if (is_tensor(expr) && is_square_matrix(expr)) {
+        // Fall through.
+    }
+    else {
         return hook(items_to_cons(INV, expr));
     }
 
@@ -77,12 +80,13 @@ export function inv(expr: U, $: ExtensionEnv): Cons | Sym | Tensor | Err {
     return hook(divide(adj(expr, $), p2, $) as Tensor);
 }
 
-export function invg(p1: U, $: ExtensionEnv): Cons | Sym | Tensor {
-    if (!is_square_matrix(p1)) {
-        return items_to_cons(INVG, p1);
+export function invg(expr: U, $: ExtensionEnv): Cons | Sym | Tensor {
+    if (is_tensor(expr) && is_square_matrix(expr)) {
+        return inverse_tensor(expr, $);
     }
-
-    return inverse_tensor(p1, $);
+    else {
+        return items_to_cons(INVG, expr);
+    }
 }
 
 // inverse using gaussian elimination

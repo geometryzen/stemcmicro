@@ -1,21 +1,21 @@
 
-import { create_int, imu, Imu, negOne, one, Sym } from "math-expression-atoms";
+import { imu, Imu, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, negOne, one, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
 import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_IMU } from "../../hashing/hash_info";
+import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { MATH_IMU } from "../../runtime/ns_math";
 import { half, two } from "../../tree/rat/Rat";
-import { is_rat } from "../rat/rat_extension";
-import { is_sym } from "../sym/is_sym";
 
+const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
-const negImu = items_to_cons(MUL, create_int(-1), imu);
+const negImu = items_to_cons(MUL, negOne, imu);
 
 function divide(numer: U, denom: U, env: ExprContext): U {
     const rhs = items_to_cons(POW, denom, negOne);
@@ -29,14 +29,39 @@ class ImuExtension implements Extension<Imu> {
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binL(lhs: Imu, opr: Sym, rhs: U, _: ExprContext): U {
         if (opr.equalsSym(MUL)) {
             if (is_atom(rhs)) {
-                if (is_rat(rhs)) {
+                if (is_blade(rhs)) {
+                    return order_binary(MUL, lhs, rhs, _);
+                }
+                else if (is_err(rhs)) {
+                    return rhs;
+                }
+                else if (is_flt(rhs)) {
+                    if (rhs.isZero()) {
+                        return rhs;
+                    }
+                    else {
+                        return order_binary(MUL, lhs, rhs, _);
+                    }
+                }
+                else if (is_hyp(rhs)) {
+                    return order_binary(MUL, lhs, rhs, _);
+                }
+                else if (is_imu(rhs)) {
+                    return negOne;
+                }
+                else if (is_rat(rhs)) {
                     return order_binary(MUL, lhs, rhs, _);
                 }
                 else if (is_sym(rhs)) {
+                    return order_binary(MUL, lhs, rhs, _);
+                }
+                else if (is_tensor(rhs)) {
+                    return rhs.map(x => multiply(_, lhs, x));
+                }
+                else if (is_uom(rhs)) {
                     return order_binary(MUL, lhs, rhs, _);
                 }
             }
@@ -77,6 +102,19 @@ class ImuExtension implements Extension<Imu> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binR(rhs: Imu, opr: Sym, lhs: U, env: ExprContext): U {
+        if (opr.equalsSym(MUL)) {
+            if (is_atom(lhs)) {
+                if (is_hyp(lhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_tensor(lhs)) {
+                    return lhs.map(x => multiply(env, x, rhs));
+                }
+                else if (is_uom(lhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+            }
+        }
         throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,7 +122,10 @@ class ImuExtension implements Extension<Imu> {
         throw new Error("Method not implemented.");
     }
     test(expr: Imu, opr: Sym): boolean {
-        if (opr.equalsSym(ISZERO)) {
+        if (opr.equalsSym(ISONE)) {
+            return false;
+        }
+        else if (opr.equalsSym(ISZERO)) {
             return false;
         }
         throw new Error(`ImuExtension.test ${opr} method not implemented.`);

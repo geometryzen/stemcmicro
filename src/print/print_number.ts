@@ -4,36 +4,32 @@
 // e.g. when printing a base elevated to a negative exponent
 // prints the inverse of the base powered to the unsigned
 
-import { is_flt } from "../operators/flt/is_flt";
-import { is_rat } from "../operators/rat/is_rat";
+import { is_flt, is_rat, Num } from "math-expression-atoms";
 import { defs, PRINTMODE_LATEX } from "../runtime/defs";
 import { number_to_floating_point_string } from "../runtime/number_to_floating_point_string";
-import { Num } from "../tree/num/Num";
 import { PrintConfig } from './print';
 
-// exponent.
-export function print_number(p: Num, signed: boolean, $: PrintConfig): string {
-
-    if (is_rat(p)) {
+export function print_number(x: Num, signed: boolean, $: PrintConfig): string {
+    if (is_rat(x)) {
         let str = '';
-        let numerStr = p.a.toString();
+        let numerStr = x.a.toString();
         if (!signed) {
             if (numerStr[0] === '-') {
                 numerStr = numerStr.substring(1);
             }
         }
 
-        if (defs.printMode === PRINTMODE_LATEX && p.isFraction()) {
+        if (defs.printMode === PRINTMODE_LATEX && x.isFraction()) {
             numerStr = '\\frac{' + numerStr + '}{';
         }
 
         str += numerStr;
 
-        if (p.isFraction()) {
+        if (x.isFraction()) {
             if (defs.printMode !== PRINTMODE_LATEX) {
                 str += '/';
             }
-            let denomStr = p.b.toString();
+            let denomStr = x.b.toString();
             if (defs.printMode === PRINTMODE_LATEX) {
                 denomStr += '}';
             }
@@ -41,16 +37,19 @@ export function print_number(p: Num, signed: boolean, $: PrintConfig): string {
         }
         return str;
     }
-    else if (is_flt(p)) {
-        let str = '';
-        let aAsString = number_to_floating_point_string(p.d, $);
+    else if (is_flt(x)) {
+        const s = number_to_floating_point_string(x.d, $);
         if (!signed) {
-            if (aAsString[0] === '-') {
-                aAsString = aAsString.substring(1);
+            if (s[0] === '-') {
+                return s.substring(1);
+            }
+            else {
+                return s;
             }
         }
-        str += aAsString;
-        return str;
+        else {
+            return s;
+        }
     }
-    throw new Error(`print_number(p = ${p})`);
+    throw new Error(`print_number(p = ${x})`);
 }

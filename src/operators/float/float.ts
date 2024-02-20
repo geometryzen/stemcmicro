@@ -1,11 +1,10 @@
-import { is_rat, is_tensor } from 'math-expression-atoms';
+import { is_rat, is_tensor, Tensor } from 'math-expression-atoms';
 import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { rat_to_flt } from '../../bignum';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { eAsFlt, Flt, piAsFlt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
-import { Tensor } from '../../tree/tensor/Tensor';
 import { is_pi } from '../pi/is_pi';
 
 export function eval_float(expr: Cons, $: ExtensionEnv): U {
@@ -36,17 +35,11 @@ export function zzfloat(expr: U, $: ExtensionEnv): U {
         $.popDirective();
     }
 }
-// zzfloat doesn't necessarily result in a double
-// , for example if there are variables. But
-// in many of the tests there should be indeed
-// a float, this line comes handy to highlight
-// when that doesn't happen for those tests.
-// checkFloatHasWorkedOutCompletely(defs.stack[defs.tos-1],$)
 
 /**
  * coercion of the expr to a Flt, Tensor<Flt> etc.
  */
-export function evaluate_as_float(expr: U, $: ExtensionEnv): U {
+export function evaluate_as_float(expr: U, $: Pick<ExtensionEnv, 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     // console.lg(`yyfloat`, render_as_sexpr(expr, $));
     $.pushDirective(Directive.evaluatingAsFloat, 1);
     try {
@@ -57,8 +50,7 @@ export function evaluate_as_float(expr: U, $: ExtensionEnv): U {
     }
 }
 
-function yyfloat_(expr: U, $: ExtensionEnv): Flt | Cons | Tensor | U {
-    // console.lg(`yyfloat_`, $.toSExprString(expr));
+function yyfloat_(expr: U, $: Pick<ExtensionEnv, 'valueOf'>): Flt | Cons | Tensor | U {
     if (is_cons(expr)) {
         return $.valueOf(items_to_cons(...expr.map(function (x) {
             return yyfloat_(x, $);

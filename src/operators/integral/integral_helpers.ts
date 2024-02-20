@@ -1,4 +1,4 @@
-import { scan_meta } from '../../algebrite/scan';
+import { ScanOptions, scan_meta } from '../../algebrite/scan';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { guess } from '../../guess';
 import { is_num_and_equalq, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one } from '../../is';
@@ -734,7 +734,14 @@ function hash_power(base: U, expo: U, x: U, $: ExtensionEnv): number {
 export function make_hashed_itab($: ExtensionEnv): { [index: string]: string[] } {
     const tab: { [key: string]: string[] } = {};
     for (const s of Array.from(itab)) {
-        const f = scan_meta(s, { useCaretForExponentiation: false, useParenForTensors: false, explicitAssocAdd: false, explicitAssocMul: false });
+        const options: ScanOptions = {
+            useCaretForExponentiation: false,
+            useParenForTensors: false,
+            explicitAssocAdd: false,
+            explicitAssocExt: false,
+            explicitAssocMul: false
+        };
+        const f = scan_meta(s, options);
         const u = cadr(f);
         const h = italu_hashcode(u, METAX, $);
         const key = h.toFixed(6);

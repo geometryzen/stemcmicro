@@ -2,6 +2,7 @@ import { Blade, is_blade, is_uom, Uom } from 'math-expression-atoms';
 import { is_native } from 'math-expression-native';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { Directive } from '../env/ExtensionEnv';
+import { isone } from '../helpers/isone';
 import { is_num_and_eq_minus_one, is_rat_and_fraction } from '../is';
 import { Native } from '../native/Native';
 import { is_flt } from '../operators/flt/is_flt';
@@ -97,19 +98,19 @@ function printchar(character: string) {
     return printchar_nowrap(character);
 }
 
-export function render_as_ascii(p: U, $: PrintConfig): string {
+export function render_as_ascii(expr: U, $: PrintConfig): string {
     // console.lg(`render_as_ascii: ${p}`);
     yindex = 0;
     level = 0;
     emit_x = 0;
-    emit_top_expr(p, $);
+    emit_top_expr(expr, $);
 
     // if too wide then print flat
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [h, w, y] = Array.from(get_size(0, yindex));
 
     if (w > 100) {
-        render_using_non_sexpr_print_mode(p, $);
+        render_using_non_sexpr_print_mode(expr, $);
         return '';
     }
 
@@ -135,7 +136,7 @@ function emit_top_expr(p: U, $: PrintConfig): void {
     }
 }
 
-function will_be_displayed_as_fraction(p: U, $: PrintConfig): boolean {
+function will_be_displayed_as_fraction(p: U): boolean {
     if (level > 0) {
         return false;
     }
@@ -149,7 +150,7 @@ function will_be_displayed_as_fraction(p: U, $: PrintConfig): boolean {
         return true;
     }
     while (is_cons(p)) {
-        if (isdenominator(car(p), $)) {
+        if (isdenominator(car(p))) {
             return true;
         }
         p = cdr(p);
@@ -167,7 +168,7 @@ function emit_expr(p: U, $: PrintConfig): void {
         p = cdr(p);
         if (__is_negative(car(p))) {
             __emit_char('-');
-            if (will_be_displayed_as_fraction(car(p), $)) {
+            if (will_be_displayed_as_fraction(car(p))) {
                 __emit_char(' ');
             }
         }
@@ -192,7 +193,7 @@ function emit_expr(p: U, $: PrintConfig): void {
     else {
         if (__is_negative(p)) {
             __emit_char('-');
-            if (will_be_displayed_as_fraction(p, $)) {
+            if (will_be_displayed_as_fraction(p)) {
                 __emit_char(' ');
             }
         }
@@ -243,7 +244,7 @@ function __is_negative(p: U): boolean {
 function emit_term(p: U, $: PrintConfig) {
     // console.lg(`emit_term:       ${p}`);
     if (is_multiply(p)) {
-        const n = count_denominators(p, $);
+        const n = count_denominators(p);
         if (n && level === 0) {
             emit_fraction(p, n, $);
         }
@@ -257,12 +258,13 @@ function emit_term(p: U, $: PrintConfig) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function isdenominator(p: U, $: PrintConfig): boolean {
-    const base = cadr(p);
-    return is_power(p) && is_base_of_natural_logarithm(base) && __is_negative(caddr(p));
+function isdenominator(expr: U): boolean {
+
+    const base = cadr(expr);
+    return is_power(expr) && is_base_of_natural_logarithm(base) && __is_negative(caddr(expr));
 }
 
-function count_denominators(p: U, $: PrintConfig) {
+function count_denominators(p: U) {
     let count = 0;
     p = cdr(p);
     //  if (isfraction(car(p))) {
@@ -271,7 +273,7 @@ function count_denominators(p: U, $: PrintConfig) {
     //  }
     while (is_cons(p)) {
         const q = car(p);
-        if (isdenominator(q, $)) {
+        if (isdenominator(q)) {
             count++;
         }
         p = cdr(p);
@@ -284,7 +286,7 @@ function emit_multiply(p: Cons, n: number, $: PrintConfig) {
     // console.lg(`emit_multiply:   ${p} n=${n}`);
     if (n === 0) {
         p = cdr(p);
-        if ($.isone(car(p)) || is_num_and_eq_minus_one(car(p))) {
+        if (isone(car(p), $) || is_num_and_eq_minus_one(car(p))) {
             p = cdr(p);
         }
         emit_factor(car(p), $);
@@ -336,14 +338,14 @@ function emit_fraction(p: U, d: number, $: PrintConfig) {
     }
 
     // count numerators
-    n = $.isone(A) ? 0 : 1;
+    n = A.isOne() ? 0 : 1;
     p1 = cdr(p);
     if (is_num(car(p1))) {
         p1 = cdr(p1);
     }
     while (is_cons(p1)) {
         p2 = car(p1);
-        if (!isdenominator(p2, $)) {
+        if (!isdenominator(p2)) {
             n++;
         }
         p1 = cdr(p1);
@@ -357,7 +359,7 @@ function emit_fraction(p: U, d: number, $: PrintConfig) {
     count = 0;
 
     // emit numerical coefficient
-    if (!$.isone(A)) {
+    if (!A.isOne()) {
         // p3 is A
         emit_number(A, 0, $); // p3 is A
         count++;
@@ -373,7 +375,7 @@ function emit_fraction(p: U, d: number, $: PrintConfig) {
 
     while (is_cons(p1)) {
         p2 = car(p1);
-        if (!isdenominator(p2, $)) {
+        if (!isdenominator(p2)) {
             if (count > 0) {
                 __emit_char(' ');
             }
@@ -397,7 +399,7 @@ function emit_fraction(p: U, d: number, $: PrintConfig) {
 
     count = 0;
 
-    if (!$.isone(B)) {
+    if (!B.isOne()) {
         emit_number(B, 0, $);
         count++;
         d++;
@@ -411,7 +413,7 @@ function emit_fraction(p: U, d: number, $: PrintConfig) {
 
     while (is_cons(p1)) {
         p2 = car(p1);
-        if (isdenominator(p2, $)) {
+        if (isdenominator(p2)) {
             if (count > 0) {
                 __emit_char(' ');
             }
@@ -442,13 +444,13 @@ function emit_numerators(p: Cons, $: PrintConfig) {
 
     let n = 0;
 
-    if (!$.isone(p1)) {
+    if (!isone(p1, $)) {
         emit_number(p1, 0, $);
         n++;
     }
 
     while (is_cons(p)) {
-        if (!isdenominator(car(p), $)) {
+        if (!isdenominator(car(p))) {
             if (n > 0) {
                 __emit_char(' ');
             }
@@ -477,7 +479,7 @@ function emit_denominators(p: U, $: PrintConfig) {
     }
 
     while (is_cons(p)) {
-        if (isdenominator(car(p), $)) {
+        if (isdenominator(car(p))) {
             if (n > 0) {
                 __emit_char(' ');
             }

@@ -16,7 +16,8 @@ export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): 
         useCaretForExponentiation: flag_from_directive($.getDirective(Directive.useCaretForExponentiation)),
         useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
         explicitAssocAdd: false,
-        explicitAssocMul: false
+        explicitAssocMul: false,
+        explicitAssocExt: false
     });
     if (scanned === sourceText.length) {
         const str = assert_str(tree);

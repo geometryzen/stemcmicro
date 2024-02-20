@@ -11,7 +11,7 @@ import { compare_tensors } from "./compare_tensors";
 /**
  * NIL, Num, Str, Sym, Tensor, Cons, Blade, Imu, Hyp, Uom
  */
-export function compare_expr_expr(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+export function compare_expr_expr(lhs: U, rhs: U, $: Pick<ExtensionEnv, 'toInfixString'>): Sign {
     // console.lg("compare_expr_expr", $.toInfixString(lhs), $.toInfixString(rhs));
 
     if (lhs === rhs) {
@@ -42,6 +42,8 @@ export function compare_expr_expr(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         return SIGN_GT;
     }
 
+    // Under addition, or multiplication, we shouldn't get here.
+    // Especially under addition where the addition (+) operator is usually taken to mean string concatenation.
     if (is_str(lhs) && is_str(rhs)) {
         return strcmp(lhs.str, rhs.str);
     }

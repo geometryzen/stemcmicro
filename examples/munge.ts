@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { nil, U } from "math-expression-tree";
-import { create_engine, ExprEngineListener } from "../src/api/api";
+import { create_engine, ExprEngineListener, UndeclaredVars } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 
 class TestListener implements ExprEngineListener {
@@ -11,6 +11,7 @@ class TestListener implements ExprEngineListener {
 }
 export interface MungeConfig {
     syntaxKind: SyntaxKind;
+    allowUndeclaredVars: UndeclaredVars
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -19,7 +20,7 @@ export function munge(sourceText: string, options: Partial<MungeConfig>): U {
     try {
         const subscriber = new TestListener();
         engine.addListener(subscriber);
-        const { trees, errors } = engine.parse(sourceText);
+        const { trees, errors } = engine.parse(sourceText, { explicitAssocAdd: true, explicitAssocExt: true, explicitAssocMul: true });
         if (errors.length > 0) {
             // eslint-disable-next-line no-console
             console.log(errors[0]);

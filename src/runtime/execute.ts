@@ -28,6 +28,7 @@ function scan_options($: ExtensionEnv): ScanOptions {
         useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
         explicitAssocAdd: false,
         explicitAssocMul: false,
+        explicitAssocExt: false
     };
 }
 

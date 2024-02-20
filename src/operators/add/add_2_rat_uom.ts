@@ -24,4 +24,4 @@ class Op extends Function2<LHS, RHS> {
     }
 }
 
-export const add_2_rat_uom = mkbuilder(Op);
+export const add_2_rat_uom = mkbuilder<EXP>(Op);

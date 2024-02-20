@@ -3,6 +3,7 @@
 // The imports below are for types only and will not create a dependency.
 //
 import { Flt, negOne, Rat, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { U } from "math-expression-tree";
 import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { negOneAsFlt, piAsFlt } from "../tree/flt/Flt";
@@ -137,7 +138,7 @@ export function doexpand_unary<T extends keyof ExtensionEnv>(func: (arg: U, $: P
     }
 }
 
-export function doexpand_binary<T extends keyof ExtensionEnv>(func: (lhs: U, rhs: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>) => U, lhs: U, rhs: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>): U {
+export function doexpand_binary<T extends keyof ExprContext>(func: (lhs: U, rhs: U, $: Pick<ExprContext, T | 'pushDirective' | 'popDirective'>) => U, lhs: U, rhs: U, $: Pick<ExprContext, T | 'pushDirective' | 'popDirective'>): U {
     $.pushDirective(Directive.expanding, 1);
     try {
         return func(lhs, rhs, $);
@@ -151,10 +152,10 @@ export function doexpand_binary<T extends keyof ExtensionEnv>(func: (lhs: U, rhs
  *
  */
 export class DynamicConstants {
-    public static NegOne($: ExtensionEnv): Flt | Rat {
+    public static NegOne($: ExprContext): Flt | Rat {
         return $.getDirective(Directive.evaluatingAsFloat) ? negOneAsFlt : negOne;
     }
-    public static PI($: ExtensionEnv): Sym | Flt {
+    public static PI($: ExprContext): Sym | Flt {
         return $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : MATH_PI;
     }
 }

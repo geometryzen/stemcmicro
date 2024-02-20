@@ -1,15 +1,19 @@
 import { Sym } from "math-expression-atoms";
-import { AtomHandler, CompareFn, ExprContext } from "math-expression-context";
+import { CompareFn, ExprContext, ExprHandler } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { Atom, Cons, is_atom, U } from "math-expression-tree";
+import { Cons, is_atom, U } from "math-expression-tree";
 import { ProgramEnv } from "./ProgramEnv";
 
 class IsZeroExprContext implements ExprContext {
     constructor(readonly env: ProgramEnv) {
 
     }
-    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
-        return this.env.handlerFor(atom);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getSymbolPrintName(sym: Sym): string {
+        throw new Error("Method not implemented.");
+    }
+    handlerFor<T extends U>(expr: T): ExprHandler<T> {
+        return this.env.handlerFor(expr);
     }
     clearBindings(): void {
         throw new Error("Method not implemented.");

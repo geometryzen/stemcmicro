@@ -1,4 +1,5 @@
 import { is_sym, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { cons, Cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
@@ -14,6 +15,18 @@ class SymMathAdd implements Extension<Sym> {
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(expr: Sym, opr: Sym, rhs: U, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(expr: Sym, opr: Sym, lhs: U, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(expr: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(expr: Sym, opr: Sym): boolean {
         throw new Error("Method not implemented.");
@@ -47,14 +60,18 @@ class SymMathAdd implements Extension<Sym> {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(opr: Sym, $: ExtensionEnv): string {
+    toHumanString(opr: Sym, $: ExprContext): string {
         return '+';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toLatexString(opr: Sym, $: ExtensionEnv): string {
+    toInfixString(opr: Sym, $: ExprContext): string {
         return '+';
     }
-    toListString(opr: Sym, $: ExtensionEnv): string {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toLatexString(opr: Sym, $: ExprContext): string {
+        return '+';
+    }
+    toListString(opr: Sym, $: ExprContext): string {
         return $.getSymbolPrintName(MATH_ADD);
     }
     evaluate(opr: Sym, argList: Cons, $: ExtensionEnv): [TFLAGS, U] {

@@ -14,7 +14,7 @@ import { to_list_add_sort } from "./to_list_add_sort";
  * @param term The term to be appended.
  * @param $ The extension environment.
  */
-export function append_terms(terms: U[], term: U, $: ExtensionEnv): void {
+export function append_terms(terms: U[], term: U, $: Pick<ExtensionEnv, 'getDirective' | 'iszero'>): void {
     if (is_cons(term) && is_add(term)) {
         // Go recursive here, don't just "spread" them in.
         // That way we entirely flatten nested add(s) and respect zero value processing.
@@ -33,7 +33,7 @@ export function append_terms(terms: U[], term: U, $: ExtensionEnv): void {
     }
 }
 
-export function flatten_terms(terms: U[], $: ExtensionEnv): U[] {
+export function flatten_terms(terms: U[], $: Pick<ExtensionEnv, 'getDirective' | 'iszero'>): U[] {
     const retval: U[] = [];
     terms.forEach(function (term) {
         append_terms(retval, term, $);

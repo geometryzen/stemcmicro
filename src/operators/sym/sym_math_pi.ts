@@ -1,13 +1,19 @@
-import { Sym } from "math-expression-atoms";
+import { one, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { cons, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
+import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
+import { order_binary } from "../../helpers/order_binary";
+import { ProgrammingError } from "../../programming/ProgrammingError";
 import { MATH_PI } from "../../runtime/ns_math";
 import { is_pi } from "../pi/is_pi";
+import { is_rat } from "../rat/rat_extension";
 import { assert_sym } from "./assert_sym";
 
 const ISZERO = native_sym(Native.iszero);
+const MUL = native_sym(Native.multiply);
+const POW = native_sym(Native.pow);
 
 /**
  * 
@@ -18,6 +24,40 @@ class SymMathPi implements Extension<Sym> {
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(lhs: Sym, opr: Sym, rhs: U, _: ExprContext): U {
+        if (opr.equalsSym(MUL)) {
+            if (is_atom(rhs)) {
+                if (is_rat(rhs)) {
+                    return order_binary(MUL, lhs, rhs, _);
+                }
+            }
+        }
+        else if (opr.equalsSym(POW)) {
+            if (is_atom(rhs)) {
+                if (is_rat(rhs)) {
+                    if (rhs.isZero()) {
+                        return one;
+                    }
+                    else if (rhs.isOne()) {
+                        return lhs;
+                    }
+                    else {
+                        return items_to_cons(POW, lhs, rhs);
+                    }
+                }
+            }
+        }
+        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(rhs: Sym, opr: Sym, lhs: U, env: ExprContext): U {
+        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(expr: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
     test(expr: Sym, opr: Sym): boolean {
         if (opr.equalsSym(ISZERO)) {
             return false;
@@ -53,8 +93,11 @@ class SymMathPi implements Extension<Sym> {
             return expr;
         }
     }
+    toHumanString(expr: Sym, $: ExprContext): string {
+        return $.getSymbolPrintName(MATH_PI);
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(expr: Sym, $: ExtensionEnv): string {
+    toInfixString(expr: Sym, $: ExprContext): string {
         return $.getSymbolPrintName(MATH_PI);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -63,7 +106,7 @@ class SymMathPi implements Extension<Sym> {
         return '\\pi';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(expr: Sym, $: ExtensionEnv): string {
+    toListString(expr: Sym, $: ExprContext): string {
         return $.getSymbolPrintName(MATH_PI);
     }
     valueOf(expr: Sym): Sym {

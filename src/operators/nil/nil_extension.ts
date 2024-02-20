@@ -1,5 +1,6 @@
 
 import { Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { cons, Cons, nil, U } from "math-expression-tree";
 import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_NIL } from "../../hashing/hash_info";
@@ -10,6 +11,18 @@ class NilExtension implements Extension<Cons> {
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(expr: Cons, opr: Sym, rhs: U, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(expr: Cons, opr: Sym, lhs: U, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(expr: Cons, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(expr: Cons, opr: Sym): boolean {
         throw new Error("Method not implemented.");
@@ -41,6 +54,10 @@ class NilExtension implements Extension<Cons> {
         else {
             return expr;
         }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toHumanString(expr: Cons): string {
+        return 'nil';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toInfixString(expr: Cons): string {

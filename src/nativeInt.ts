@@ -1,9 +1,7 @@
+import { is_flt, is_rat, Num } from "math-expression-atoms";
+import { U } from "math-expression-tree";
 import { in_safe_integer_range } from "./in_safe_integer_range";
 import { is_rat_and_integer } from "./is_rat_and_integer";
-import { is_flt } from "./operators/flt/is_flt";
-import { is_rat } from "./operators/rat/is_rat";
-import { Num } from "./tree/num/Num";
-import { U } from "./tree/tree";
 
 /**
  * If the expr is not a Rat or Flt then the result is NaN.
@@ -12,7 +10,7 @@ import { U } from "./tree/tree";
  */
 export function nativeInt(expr: U): number {
     if (is_rat(expr)) {
-        if (is_rat_and_integer(expr) && in_safe_integer_range(expr.a)) {
+        if (expr.isInteger() && in_safe_integer_range(expr.a)) {
             return expr.a.toJSNumber();
         }
         else {

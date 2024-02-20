@@ -16,6 +16,15 @@ export class MulComparator implements ExprComparator {
         // We have to treat (pow base expo) as a special case because of the ambiguity in representing a symbol.
         // i.e. sym is the same as (pow sym expo).
         // So we have to order power expressions according to the base.
+
+        // Under multiplication, we don't want strings to be sorted because they don't commute.
+        // This makes more sense for addition, but why order them under multiplication?
+        // Perhaps the only thing that doesn't commute under addition?
+        // This will likely mess with the use of strings as units of measure.
+        if (is_str(lhs) && is_str(rhs)) {
+            return SIGN_EQ;
+        }
+
         if (is_power(lhs)) {
             const base = lhs.base;
             return this.compare(base, rhs, $);

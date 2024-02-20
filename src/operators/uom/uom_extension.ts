@@ -1,10 +1,19 @@
-import { create_int, is_uom, Sym, Uom } from "math-expression-atoms";
-import { AtomHandler, ExprContext } from "math-expression-context";
-import { cons, Cons, U } from "math-expression-tree";
+import { create_int, is_uom, QQ, Sym, Uom } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
+import { Native, native_sym } from "math-expression-native";
+import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
+import { ProgrammingError } from "../../programming/ProgrammingError";
+import { two } from "../../tree/rat/Rat";
+import { is_rat } from "../rat/rat_extension";
 
-class UomExtension implements Extension<Uom>, AtomHandler<Uom> {
+const ABS = native_sym(Native.abs);
+const ADD = native_sym(Native.add);
+const MUL = native_sym(Native.multiply);
+const POW = native_sym(Native.pow);
+
+class UomExtension implements Extension<Uom> {
     constructor() {
         // Nothing to see here.
     }
@@ -13,11 +22,57 @@ class UomExtension implements Extension<Uom>, AtomHandler<Uom> {
     test(uom: Uom, opr: Sym, env: ExprContext): boolean {
         return false;
     }
+    binL(lhs: Uom, opr: Sym, rhs: U, env: ExprContext): U {
+        if (opr.equalsSym(ADD)) {
+            if (is_atom(rhs)) {
+                if (is_uom(rhs)) {
+                    if (lhs.equals(rhs)) {
+                        const expr = items_to_cons(MUL, two, lhs);
+                        try {
+                            return env.valueOf(expr);
+                        }
+                        finally {
+                            expr.release();
+                        }
+                    }
+                }
+            }
+        }
+        else if (opr.equalsSym(MUL)) {
+            if (is_atom(rhs)) {
+                if (is_uom(rhs)) {
+                    return lhs.mul(rhs);
+                }
+            }
+        }
+        else if (opr.equalsSym(POW)) {
+            if (is_atom(rhs)) {
+                if (is_rat(rhs)) {
+                    const numer = rhs.numer();
+                    const denom = rhs.denom();
+                    const expo = QQ.valueOf(numer.toNumber(), denom.toNumber());
+                    return lhs.pow(expo);
+                }
+            }
+        }
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(atom: Uom, opr: Sym, lhs: U, expr: ExprContext): U {
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(target: Uom, opr: Sym, argList: Cons, env: ExprContext): U {
+        if (opr.equalsSym(ABS)) {
+            return target;
+        }
+        throw new ProgrammingError(`UomExtension.dispatch ${target} ${opr} ${argList} method not implemented.`);
+    }
     iscons(): false {
         return false;
     }
     operator(): never {
-        throw new Error();
+        throw new ProgrammingError();
     }
     get hash(): string {
         return HASH_UOM;
@@ -43,14 +98,25 @@ class UomExtension implements Extension<Uom>, AtomHandler<Uom> {
         }
         return uom;
     }
-    toInfixString(uom: Uom): string {
+    toHumanString(uom: Uom): string {
         return uom.toInfixString();
+    }
+    toInfixString(uom: Uom): string {
+        if (uom.isOne()) {
+            return "1";
+        }
+        else {
+            return uom.toInfixString();
+        }
     }
     toLatexString(uom: Uom): string {
         return uom.toInfixString();
     }
     toListString(uom: Uom): string {
         return uom.toString(10, false);
+    }
+    toString(): string {
+        return this.name;
     }
     evaluate(expr: U, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(expr, argList));

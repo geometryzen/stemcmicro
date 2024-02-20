@@ -1,7 +1,11 @@
 import { create_int, zero } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { Cons, U } from 'math-expression-tree';
-import { ExtensionEnv } from './env/ExtensionEnv';
+import { add } from './helpers/add';
 import { divide } from './helpers/divide';
+import { multiply } from './helpers/multiply';
+import { power } from './helpers/power';
+import { subtract } from './helpers/subtract';
 import { coefficients } from './operators/coeff/coeff';
 import { SYMBOL_X } from './runtime/constants';
 
@@ -12,7 +16,7 @@ import { SYMBOL_X } from './runtime/constants';
  * 
  * The remainder can be calculated by p - q * quotient(p,q)
  */
-export function eval_quotient(expr: Cons, $: ExtensionEnv): U {
+export function eval_quotient(expr: Cons, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     const p = $.valueOf(expr.item1);
     const q = $.valueOf(expr.item2);
     const X = $.valueOf(expr.item3);
@@ -24,24 +28,24 @@ export function eval_quotient(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-export function quotient(p: U, q: U, X: U, $: ExtensionEnv): U {
-    const dividendCs = coefficients(p, X, $);
+export function quotient(p: U, q: U, X: U, _: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
+    const dividendCs = coefficients(p, X, _);
     let m = dividendCs.length - 1; // m is dividend's highest power
 
-    const divisorCs = coefficients(q, X, $);
+    const divisorCs = coefficients(q, X, _);
     const n = divisorCs.length - 1; // n is divisor's highest power
 
     let x = m - n;
 
     let retval: U = zero;
     while (x >= 0) {
-        const Q = divide(dividendCs[m], divisorCs[n], $);
+        const Q = divide(dividendCs[m], divisorCs[n], _);
 
         for (let i = 0; i <= n; i++) {
-            dividendCs[x + i] = $.subtract(dividendCs[x + i], $.multiply(divisorCs[i], Q));
+            dividendCs[x + i] = subtract(dividendCs[x + i], multiply(_, divisorCs[i], Q), _);
         }
 
-        retval = $.add(retval, $.multiply(Q, $.power(X, create_int(x))));
+        retval = add(_, retval, multiply(_, Q, power(X, create_int(x), _)));
 
         m--;
         x--;

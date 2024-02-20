@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CellHost, create_sym, is_boo, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor, Rat, Sym, Tensor } from "math-expression-atoms";
-import { AtomHandler, LambdaExpr } from "math-expression-context";
+import { CellHost, create_sym, is_boo, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor, Sym, Tensor } from "math-expression-atoms";
+import { ExprHandler, LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
-import { Atom, Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
+import { Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
 import { StackFunction } from "../adapters/StackFunction";
 import { AtomListener, ExprEngineListener } from "../api/api";
 import { assert_sym_any_any } from "../clojurescript/runtime/step_setq";
+import { ProgramStack } from "../eigenmath/ProgramStack";
 import { setq } from "../operators/assign/assign_any_any";
 import { eval_dotdot } from "../operators/dotdot/eval_dotdot";
 import { JsObjectExtension } from "../operators/jsobject/JsObjectExtension";
 import { eval_let } from "../operators/let/eval_let";
+import { ProgrammingError } from "../programming/ProgrammingError";
 import { ASSIGN, COMPONENT, LET } from "../runtime/constants";
 import { EnvConfig } from "./EnvConfig";
 import { CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
@@ -124,9 +126,6 @@ export class DerivedEnv implements ExtensionEnv {
     defineExtension(builder: ExtensionBuilder<U>): void {
         this.#baseEnv.defineExtension(builder);
     }
-    defineAssociative(opr: Sym, id: Rat): void {
-        this.#baseEnv.defineAssociative(opr, id);
-    }
     defineUserSymbol(name: Sym): void {
         this.#baseEnv.defineUserSymbol(name);
     }
@@ -173,8 +172,8 @@ export class DerivedEnv implements ExtensionEnv {
         // TODO: Symbols in the bindings?
         return this.#baseEnv.getSymbolsInfo();
     }
-    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
-        return this.#baseEnv.handlerFor(atom);
+    handlerFor<T extends U>(expr: T): ExprHandler<T> {
+        return this.#baseEnv.handlerFor(expr);
     }
     im(expr: U): U {
         throw new Error('im method not implemented.');
@@ -325,7 +324,11 @@ export class DerivedEnv implements ExtensionEnv {
             value.release();
         }
     }
-    valueOf(expr: U): U {
+    valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U {
+        // console.lg("DerivedEnv.valueOf");
+        if (stack) {
+            throw new ProgrammingError("TODO: DerivedEnv.valueOf");
+        }
         if (is_cons(expr)) {
             const opr = expr.opr;
             try {
@@ -394,7 +397,7 @@ export class DerivedEnv implements ExtensionEnv {
                 return this.#baseEnv.valueOf(expr);
             }
             else {
-                // In the general case we look for the Extension to correctly evaluate the atonm in the current scope.
+                // In the general case we look for the Extension to correctly evaluate the atom in the current scope.
                 const extension = this.#baseEnv.extensionFor(expr);
                 if (extension) {
                     return extension.valueOf(expr, this);

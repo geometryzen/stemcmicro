@@ -1,15 +1,37 @@
-import { Boo, booT, is_boo, Sym } from "math-expression-atoms";
-import { AtomHandler, ExprContext } from "math-expression-context";
-import { cons, Cons, U } from "math-expression-tree";
+import { Boo, booT, create_sym, is_boo, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
+import { Native, native_sym } from "math-expression-native";
+import { cons, Cons, is_atom, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ProgrammingError } from "../../programming/ProgrammingError";
 
-export class BooExtension implements Extension<Boo>, AtomHandler<Boo> {
+const ADD = native_sym(Native.add);
+
+export class BooExtension implements Extension<Boo> {
     constructor() {
         // Nothing to see here.
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(atom: Boo, opr: Sym, env: ExprContext): boolean {
         return false;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(lhs: Boo, opr: Sym, rhs: U, expr: ExprContext): U {
+        if (opr.equalsSym(ADD)) {
+            if (is_atom(rhs)) {
+                return diagnostic(Diagnostics.Operator_0_cannot_be_applied_to_types_1_and_2, ADD, create_sym(lhs.type), create_sym(rhs.type));
+            }
+        }
+        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(rhs: Boo, opr: Sym, lhs: U, expr: ExprContext): U {
+        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(target: Boo, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
     }
     iscons(): false {
         return false;
@@ -47,6 +69,9 @@ export class BooExtension implements Extension<Boo>, AtomHandler<Boo> {
     subst(expr: Boo, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
         return expr;
         // throw new Error(`Boo.subst(expr=${render_as_infix(expr, $)}, oldExpr=${render_as_infix(oldExpr, $)}, newExpr=${render_as_infix(newExpr, $)}) Method not implemented.`);
+    }
+    toHumanString(expr: Boo): string {
+        return expr.equals(booT) ? 'true' : 'false';
     }
     toInfixString(expr: Boo): string {
         return expr.equals(booT) ? 'true' : 'false';

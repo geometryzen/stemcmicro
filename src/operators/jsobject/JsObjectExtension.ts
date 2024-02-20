@@ -1,18 +1,30 @@
 import { assert_jsobject, is_jsobject, JsObject, Sym } from "math-expression-atoms";
-import { AtomHandler } from "math-expression-context";
-import { Cons, U } from "math-expression-tree";
+import { ExprContext } from "math-expression-context";
+import { Cons, nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
-export class JsObjectExtension implements Extension<JsObject>, AtomHandler<JsObject> {
+export class JsObjectExtension implements Extension<JsObject> {
     #hash: string = hash_for_atom(new JsObject({}));
     constructor(readonly config: Readonly<EnvConfig>) {
         // Nothing to see here.
     }
     test(atom: JsObject, opr: Sym): boolean {
-        throw new Error(`${this.name}.dispatch(${atom},${opr}) method not implemented.`);
+        throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(atom: JsObject, opr: Sym, rhs: U, expr: ExprContext): U {
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(atom: JsObject, opr: Sym, lhs: U, expr: ExprContext): U {
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(expr: JsObject, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
     }
     iscons(): false {
         return false;
@@ -43,6 +55,10 @@ export class JsObjectExtension implements Extension<JsObject>, AtomHandler<JsObj
             }
         }
         return expr;
+    }
+    toHumanString(obj: JsObject): string {
+        assert_jsobject(obj);
+        return obj.toString();
     }
     toInfixString(obj: JsObject): string {
         assert_jsobject(obj);

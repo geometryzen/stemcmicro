@@ -1,12 +1,19 @@
-import { Flt, is_flt, Sym } from "math-expression-atoms";
-import { AtomHandler } from "math-expression-context";
+import { create_sym, Flt, is_boo, is_err, is_flt, is_rat, is_sym, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { cons, Cons, is_atom, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { Extension, FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { order_binary } from "../../helpers/order_binary";
+import { ProgrammingError } from "../../programming/ProgrammingError";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
-import { oneAsFlt } from "../../tree/flt/Flt";
+import { create_flt, oneAsFlt } from "../../tree/flt/Flt";
 
+const ABS = native_sym(Native.abs);
+const ADD = native_sym(Native.add);
 const ISZERO = native_sym(Native.iszero);
+const MUL = native_sym(Native.multiply);
+const POW = native_sym(Native.pow);
 
 export function compare_flts(lhs: Flt, rhs: Flt): Sign {
     if (lhs.d < rhs.d) {
@@ -18,7 +25,7 @@ export function compare_flts(lhs: Flt, rhs: Flt): Sign {
     return 0;
 }
 
-export class FltExtension implements Extension<Flt>, AtomHandler<Flt> {
+export class FltExtension implements Extension<Flt> {
     constructor() {
         // Nothing to see here.
     }
@@ -32,7 +39,67 @@ export class FltExtension implements Extension<Flt>, AtomHandler<Flt> {
         if (opr.equalsSym(ISZERO)) {
             return atom.isZero();
         }
-        throw new Error(`${this.name}.dispatch(${atom},${opr}) method not implemented.`);
+        throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(lhs: Flt, opr: Sym, rhs: U, env: ExprContext): U {
+        if (opr.equalsSym(ADD)) {
+            if (is_atom(rhs)) {
+                if (is_boo(rhs)) {
+                    return diagnostic(Diagnostics.Operator_0_cannot_be_applied_to_types_1_and_2, ADD, create_sym(lhs.type), create_sym(rhs.type));
+                }
+                else if (is_flt(rhs)) {
+                    return lhs.add(rhs);
+                }
+                else if (is_rat(rhs)) {
+                    return create_flt(lhs.toNumber() + rhs.toNumber());
+                }
+                else if (is_sym(rhs)) {
+                    return order_binary(ADD, lhs, rhs, env);
+                }
+                else if (is_err(rhs)) {
+                    return rhs;
+                }
+            }
+        }
+        else if (opr.equalsSym(MUL)) {
+            if (is_atom(rhs)) {
+                if (is_flt(rhs)) {
+                    return lhs.mul(rhs);
+                }
+            }
+        }
+        else if (opr.equalsSym(POW)) {
+            if (is_atom(rhs)) {
+                if (is_rat(rhs)) {
+                    if (rhs.isMinusOne()) {
+                        return lhs.inv();
+                    }
+                }
+            }
+        }
+        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(rhs: Flt, opr: Sym, lhs: U, expr: ExprContext): U {
+        if (opr.equalsSym(ADD)) {
+            if (is_atom(lhs)) {
+                if (is_flt(lhs)) {
+                    return lhs.add(rhs);
+                }
+                else if (is_rat(lhs)) {
+                    return create_flt(lhs.toNumber() + rhs.toNumber());
+                }
+            }
+        }
+        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(target: Flt, opr: Sym, argList: Cons, env: ExprContext): U {
+        if (opr.equalsSym(ABS)) {
+            return target.abs();
+        }
+        throw new ProgrammingError(`FltExtension.dispatch ${target} ${opr} ${argList} method not implemented.`);
     }
     iscons(): false {
         return false;
@@ -60,13 +127,16 @@ export class FltExtension implements Extension<Flt>, AtomHandler<Flt> {
         }
         return expr;
     }
-    toInfixString(atom: Flt, $: ExtensionEnv): string {
+    toHumanString(atom: Flt, $: ExprContext): string {
         return number_to_floating_point_string(atom.d, $);
     }
-    toLatexString(atom: Flt, $: ExtensionEnv): string {
+    toInfixString(atom: Flt, $: ExprContext): string {
         return number_to_floating_point_string(atom.d, $);
     }
-    toListString(atom: Flt, $: ExtensionEnv): string {
+    toLatexString(atom: Flt, $: ExprContext): string {
+        return number_to_floating_point_string(atom.d, $);
+    }
+    toListString(atom: Flt, $: ExprContext): string {
         return number_to_floating_point_string(atom.d, $);
     }
     valueOf(expr: Flt): U {

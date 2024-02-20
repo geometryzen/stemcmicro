@@ -158,9 +158,6 @@ export const AUTOEXPAND = create_sym('autoexpand');
 export const AUTOFACTOR = create_sym('autofactor');
 export const BAKE = create_sym('bake');
 export const TRACE = create_sym('trace');
-export const FORCE_FIXED_PRINTOUT = create_sym('forceFixedPrintout');
-export const VARNAME_MAX_FIXED_PRINTOUT_DIGITS = create_sym('maxFixedPrintoutDigits');
-export const DEFAULT_MAX_FIXED_PRINTOUT_DIGITS = 6;
 
 export const METAA = create_sym('$METAA');
 export const METAB = create_sym('$METAB');

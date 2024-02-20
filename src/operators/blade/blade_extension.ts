@@ -1,8 +1,17 @@
-import { Blade, is_blade, Sym } from "math-expression-atoms";
-import { AtomHandler, ExprContext } from "math-expression-context";
-import { cons, Cons, U } from "math-expression-tree";
+import { Blade, is_blade, is_rat, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
+import { Native, native_sym } from "math-expression-native";
+import { cons, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
 import { Extension, FEATURE, mkbuilder, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
+import { order_binary } from "../../helpers/order_binary";
+import { ProgrammingError } from "../../programming/ProgrammingError";
+
+const ABS = native_sym(Native.abs);
+const ADD = native_sym(Native.add);
+const GRADE = native_sym(Native.grade);
+const MUL = native_sym(Native.multiply);
+const SQRT = native_sym(Native.sqrt);
 
 /**
  * Compares blades according to the canonical representation.
@@ -29,13 +38,64 @@ export function compare_blade_blade(lhs: Blade, rhs: Blade): Sign {
     return SIGN_EQ;
 }
 
-class BladeExtension implements Extension<Blade>, AtomHandler<Blade> {
+class BladeExtension implements Extension<Blade> {
     constructor() {
         // Nothing to see here.
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(atom: Blade, opr: Sym, env: ExprContext): boolean {
         return false;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(lhs: Blade, opr: Sym, rhs: U, expr: ExprContext): U {
+        if (opr.equalsSym(ADD)) {
+            if (is_atom(rhs)) {
+                if (is_blade(rhs)) {
+                    return lhs.add(rhs);
+                }
+            }
+        }
+        else if (opr.equalsSym(MUL)) {
+            throw new ProgrammingError(`${rhs}`);
+        }
+        throw new ProgrammingError(`${rhs}`);
+        //        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(rhs: Blade, opr: Sym, lhs: U, _: ExprContext): U {
+        if (opr.equalsSym(MUL)) {
+            if (is_atom(lhs)) {
+                if (is_rat(lhs)) {
+                    return order_binary(MUL, lhs, rhs, _);
+                }
+            }
+        }
+        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        //        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(target: Blade, opr: Sym, argList: Cons, env: ExprContext): U {
+        if (opr.equalsSym(ABS)) {
+            const expr = items_to_cons(SQRT, target.scp(target));
+            try {
+                return env.valueOf(expr);
+            }
+            finally {
+                expr.release();
+            }
+        }
+        else if (opr.equalsSym(GRADE)) {
+            const head = argList.head;
+            try {
+                if (is_rat(head) && head.isInteger()) {
+                    return target.extractGrade(head.toNumber());
+                }
+            }
+            finally {
+                head.release();
+            }
+        }
+        throw new Error(`BladeExtenson.dispatch ${opr} method not implemented.`);
     }
     iscons(): boolean {
         return false;
@@ -64,14 +124,20 @@ class BladeExtension implements Extension<Blade>, AtomHandler<Blade> {
         }
         return expr;
     }
-    toInfixString(vec: Blade): string {
-        return vec.toInfixString();
+    toHumanString(blade: Blade): string {
+        return blade.toInfixString();
     }
-    toLatexString(vec: Blade): string {
-        return vec.toLatexString();
+    toInfixString(blade: Blade): string {
+        return blade.toInfixString();
     }
-    toListString(vec: Blade): string {
-        return vec.toListString();
+    toLatexString(blade: Blade): string {
+        return blade.toLatexString();
+    }
+    toListString(blade: Blade): string {
+        return blade.toListString();
+    }
+    toString(): string {
+        return this.name;
     }
     evaluate(expr: Blade, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(expr, argList));

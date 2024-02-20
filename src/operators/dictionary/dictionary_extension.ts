@@ -1,8 +1,9 @@
 import { is_map, Map, Sym } from "math-expression-atoms";
-import { AtomHandler, ExprContext } from "math-expression-context";
-import { cons, Cons, U } from "math-expression-tree";
+import { ExprContext } from "math-expression-context";
+import { cons, Cons, nil, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
+import { listform } from "../../helpers/listform";
 import { print_str } from "../../print/print";
 import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
 
@@ -15,7 +16,7 @@ function verify_map(x: Map): Map | never {
     }
 }
 
-class DictionaryExtension implements Extension<Map>, AtomHandler<Map> {
+class DictionaryExtension implements Extension<Map> {
     // Create an exemplar of the atom we control to discover it's name for hashing purposes.
     readonly #atom: Map = verify_map(new Map([]));
     readonly #hash: string = hash_for_atom(verify_map(this.#atom));
@@ -26,6 +27,18 @@ class DictionaryExtension implements Extension<Map>, AtomHandler<Map> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(atom: Map, opr: Sym, env: ExprContext): boolean {
         return false;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(atom: Map, opr: Sym, rhs: U, expr: ExprContext): U {
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(atom: Map, opr: Sym, lhs: U, expr: ExprContext): U {
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(expr: Map, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
     }
     iscons(): false {
         return false;
@@ -62,14 +75,18 @@ class DictionaryExtension implements Extension<Map>, AtomHandler<Map> {
         return expr;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(dictionary: Map, $: ExtensionEnv): string {
+    toHumanString(dictionary: Map, $: ExprContext): string {
         throw new Error("DictionaryExtension.toInfixString() method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toLatexString(dictionary: Map, $: ExtensionEnv): string {
+    toInfixString(dictionary: Map, $: ExprContext): string {
+        throw new Error("DictionaryExtension.toInfixString() method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toLatexString(dictionary: Map, $: ExprContext): string {
         return print_dictionary_latex(dictionary, $);
     }
-    toListString(dictionary: Map, $: ExtensionEnv): string {
+    toListString(dictionary: Map, $: ExprContext): string {
         // While the following implementation requires refactoring due to some technical weaknesses,
         // the basic idea is good. The function to print the dictionary should be owned by this extension.
         const printMode: PrintMode = defs.printMode;
@@ -86,7 +103,7 @@ class DictionaryExtension implements Extension<Map>, AtomHandler<Map> {
 export const map_extension_builder = mkbuilder(DictionaryExtension);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function print_dictionary(dictionary: Map, $: ExtensionEnv): string {
+export function print_dictionary(dictionary: Map, $: ExprContext): string {
     let str = '';
     str += print_str('{');
     try {
@@ -96,8 +113,8 @@ export function print_dictionary(dictionary: Map, $: ExtensionEnv): string {
         for (let i = 0; i < n; i++) {
             const key = entries[i][0];
             const value = entries[i][1];
-            const keyStr = $.toSExprString(key);
-            const valStr = $.toSExprString(value);
+            const keyStr = listform(key, $);
+            const valStr = listform(value, $);
             pairs.push(`${keyStr} ${valStr}`);
         }
         str += pairs.join(' ');
@@ -109,7 +126,7 @@ export function print_dictionary(dictionary: Map, $: ExtensionEnv): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function print_dictionary_latex(dictionary: Map, $: ExtensionEnv): string {
+function print_dictionary_latex(dictionary: Map, $: ExprContext): string {
     let str = '';
 
     str += '\\begin{lstlisting}[language=python]';

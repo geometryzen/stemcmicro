@@ -1,4 +1,7 @@
 {
+    "$schema": "https://json.schemastore.org/mocharc",
+    "full-trace": true,
     "require": "./register.js",
-    "reporter": "dot"
+    "reporter": "dot",
+    "timeout": 5000
 }

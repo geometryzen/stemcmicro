@@ -1,9 +1,5 @@
-import { create_int, is_rat } from "math-expression-atoms";
-import { is_nil, nil } from "math-expression-tree";
-import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
-import { nativeInt } from "../nativeInt";
+import { Directive } from "../env/ExtensionEnv";
 import { PrintConfig } from "../print/print";
-import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, FORCE_FIXED_PRINTOUT, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { defs, PRINTMODE_LATEX } from "./defs";
 
 export function number_to_floating_point_string(d: number, $: PrintConfig): string {
@@ -15,7 +11,8 @@ export function number_to_floating_point_string(d: number, $: PrintConfig): stri
         return `${d}`;
     }
 
-    if ($.iszero($.getBinding(FORCE_FIXED_PRINTOUT, nil))) {
+    // TODO: It would be better if this were a
+    if (!$.getDirective(Directive.forceFixedPrintout)) {
         str = '' + d;
         // manipulate the string so that it can be parsed by
         // by ourselves (something like 1.23e-123 wouldn't cut it because
@@ -58,9 +55,7 @@ export function number_to_floating_point_string(d: number, $: PrintConfig): stri
         }
     }
     else {
-        // MAX_FIXED_PRINTOUT_DIGITS would be 6 if it were defined. If defined it would be a Rat or a Flt.
-        const txtMaxFixedPrintoutDigits = $.getBinding(VARNAME_MAX_FIXED_PRINTOUT_DIGITS, nil);
-        const maxFixedPrintoutDigits = nativeInt(is_nil(txtMaxFixedPrintoutDigits) ? create_int(DEFAULT_MAX_FIXED_PRINTOUT_DIGITS) : txtMaxFixedPrintoutDigits);
+        const maxFixedPrintoutDigits = $.getDirective(Directive.maxFixedPrintoutDigits);
 
         str = d.toFixed(maxFixedPrintoutDigits);
 
@@ -88,13 +83,14 @@ export function number_to_floating_point_string(d: number, $: PrintConfig): stri
     return str;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/*
 function shouldForceFixed($: ExtensionEnv): boolean {
     const forceFixedBinding = $.getBinding(FORCE_FIXED_PRINTOUT, nil);
     return is_rat(forceFixedBinding) ? !$.iszero(forceFixedBinding) : false;
 }
+*/
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/*
 function ensureTrailingDecimalZero(repr: string): string {
     if (repr.indexOf('.') === -1) {
         return repr + '.0';
@@ -103,3 +99,4 @@ function ensureTrailingDecimalZero(repr: string): string {
         return repr;
     }
 }
+*/

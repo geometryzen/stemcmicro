@@ -15,4 +15,7 @@ describe("imu", function () {
         check("sqrt(-1)**6", "-1");
         check("sqrt(-1)**7", "-i");
     });
+    it("raised to fractional powers", function () {
+        check("sqrt(-1)**(1/2)", "(-1)**(1/4)");
+    });
 });

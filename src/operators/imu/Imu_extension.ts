@@ -1,12 +1,27 @@
 
-import { imu, Imu, Sym } from "math-expression-atoms";
+import { create_int, imu, Imu, negOne, one, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { cons, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
+import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_IMU } from "../../hashing/hash_info";
+import { order_binary } from "../../helpers/order_binary";
+import { ProgrammingError } from "../../programming/ProgrammingError";
 import { MATH_IMU } from "../../runtime/ns_math";
+import { half, two } from "../../tree/rat/Rat";
+import { is_rat } from "../rat/rat_extension";
+import { is_sym } from "../sym/is_sym";
 
 const ISZERO = native_sym(Native.iszero);
+const MUL = native_sym(Native.multiply);
+const POW = native_sym(Native.pow);
+const negImu = items_to_cons(MUL, create_int(-1), imu);
+
+function divide(numer: U, denom: U, env: ExprContext): U {
+    const rhs = items_to_cons(POW, denom, negOne);
+    const ratio = items_to_cons(MUL, numer, rhs);
+    return env.valueOf(ratio);
+}
 
 class ImuExtension implements Extension<Imu> {
     constructor() {
@@ -14,6 +29,60 @@ class ImuExtension implements Extension<Imu> {
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(lhs: Imu, opr: Sym, rhs: U, _: ExprContext): U {
+        if (opr.equalsSym(MUL)) {
+            if (is_atom(rhs)) {
+                if (is_rat(rhs)) {
+                    return order_binary(MUL, lhs, rhs, _);
+                }
+                else if (is_sym(rhs)) {
+                    return order_binary(MUL, lhs, rhs, _);
+                }
+            }
+        }
+        else if (opr.equalsSym(POW)) {
+            if (is_atom(rhs)) {
+                if (is_rat(rhs)) {
+                    if (rhs.isEven()) {
+                        const n = rhs.mul(half);
+                        if (n.isEven()) {
+                            return one;
+                        }
+                        else {
+                            return negOne;
+                        }
+                    }
+                    else if (rhs.isOdd()) {
+                        const n = rhs.succ().mul(half);
+                        if (n.isEven()) {
+                            return negImu;
+                        }
+                        else {
+                            return imu;
+                        }
+                    }
+                    else {
+                        const a = rhs.numer();
+                        const b = rhs.denom();
+                        const twoB = items_to_cons(MUL, two, b);
+                        const expo = divide(a, twoB, _);
+                        const retval = items_to_cons(POW, negOne, expo);
+                        return _.valueOf(retval);
+                    }
+                }
+            }
+        }
+        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(rhs: Imu, opr: Sym, lhs: U, env: ExprContext): U {
+        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(expr: Imu, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
     test(expr: Imu, opr: Sym): boolean {
         if (opr.equalsSym(ISZERO)) {
             return false;
@@ -49,6 +118,10 @@ class ImuExtension implements Extension<Imu> {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toHumanString(expr: Imu): string {
+        return 'i';
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toInfixString(expr: Imu): string {
         return 'i';
     }
@@ -57,8 +130,11 @@ class ImuExtension implements Extension<Imu> {
         return '\\imath';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(expr: Imu, $: ExtensionEnv): string {
+    toListString(expr: Imu, $: ExprContext): string {
         return $.getSymbolPrintName(MATH_IMU);
+    }
+    toString(): string {
+        return this.name;
     }
     evaluate(expr: Imu, argList: Cons): [TFLAGS, U] {
         // console.lg(this.name, "evaluate");

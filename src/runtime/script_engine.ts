@@ -1,4 +1,4 @@
-import { assert_sym, create_int, create_sym, Sym } from "math-expression-atoms";
+import { assert_sym, create_sym, Sym } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
 import { define_geometric30_algebra, define_math_constant_pi, define_metric_prefixes_for_si_units, define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api/api";
@@ -12,7 +12,6 @@ import { render_as_human } from "../print/render_as_human";
 import { render_as_infix } from "../print/render_as_infix";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
-import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { move_top_of_stack } from "./defs";
 import { execute_script, transform_tree } from "./execute";
 import { execute_definitions } from "./init";
@@ -95,8 +94,6 @@ export function init_env($: ExtensionEnv, options: ScriptContextOptions = { useD
     });
 
     $.buildOperators();
-
-    $.setBinding(VARNAME_MAX_FIXED_PRINTOUT_DIGITS, create_int(DEFAULT_MAX_FIXED_PRINTOUT_DIGITS));
 
     if (options && options.prolog) {
         if (Array.isArray(options.prolog)) {
@@ -329,6 +326,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
             useIntegersForPredicates: !!options.useIntegersForPredicates,
             useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
             explicitAssocAdd: false,
+            explicitAssocExt: false,
             explicitAssocMul: false,
         };
     }
@@ -339,6 +337,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
             useIntegersForPredicates: false,
             useParenForTensors: false,
             explicitAssocAdd: false,
+            explicitAssocExt: false,
             explicitAssocMul: false
         };
     }

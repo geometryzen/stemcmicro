@@ -1,4 +1,5 @@
 import { create_int, imu, is_rat, negOne, one, Tensor } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
 import { car, Cons, nil, U } from 'math-expression-tree';
 import { rational } from './bignum';
@@ -7,6 +8,7 @@ import { compare_expr_expr } from './calculators/compare/compare_expr_expr';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { guess } from './guess';
 import { divide } from './helpers/divide';
+import { iszero } from './helpers/iszero';
 import { is_complex_number, is_poly_expanded_form } from './is';
 import { coefficients } from './operators/coeff/coeff';
 import { factorize } from './operators/factor/factor';
@@ -72,21 +74,21 @@ function is_some_coeff_complex_number(cs: U[], $: ExtensionEnv): boolean {
  * k[n-1]    Coefficient of x^(n-1)
  * @param ks The coefficients of the polynomial. ks[i] is the coefficient of x^i
  */
-function is_simple_root(ks: U[], $: ExtensionEnv): boolean {
+function is_simple_root(ks: U[], $: Pick<ExprContext, 'valueOf'>): boolean {
     if (ks.length <= 2) {
         return false;
     }
-    if ($.iszero(ks[0])) {
+    if (iszero(ks[0], $)) {
         return false;
     }
-    return ks.slice(1, ks.length - 1).every((el) => $.iszero(el));
+    return ks.slice(1, ks.length - 1).every((el) => iszero(el, $));
 }
 
 /**
  * Computes the coefficients of the polynomial then divides each by the highest power coefficient.
  * The coefficients are returned in the order [c0, c1, c2, ..., 1] where c0 is the constant coefficient.
  */
-function normalized_coeff(poly: U, x: U, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'negate' | 'extensionFor' | 'valueOf' | 'pushDirective' | 'popDirective'>): U[] {
+function normalized_coeff(poly: U, x: U, $: Pick<ExprContext, 'handlerFor' | 'valueOf' | 'pushDirective' | 'popDirective'>): U[] {
     const cs = coefficients(poly, x, $);
     const highest = cs[cs.length - 1];
     return cs.map((c) => divide(c, highest, $));

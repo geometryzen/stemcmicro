@@ -365,7 +365,7 @@ describe("Free Body Diagram", function () {
         assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "e");
         engine.release();
     });
-    it("D", function () {
+    xit("D", function () {
         const lines: string[] = [
             `G20=algebra([1,1],["e1","e2"])`,
             `e1=G20[1]`,

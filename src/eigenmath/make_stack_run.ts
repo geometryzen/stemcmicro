@@ -67,7 +67,7 @@ export function make_stack_run(io: ProgramIO) {
                 useImaginaryI: is_imu(get_binding(I_LOWER, nil, env)),
                 useImaginaryJ: is_imu(get_binding(J_LOWER, nil, env))
             };
-            print_value_and_input_as_svg_or_infix(result, input, should_render_svg(env), ec, io.listeners, make_should_annotate(env));
+            print_value_and_input_as_svg_or_infix(result, input, should_render_svg(env), env, ctrl, ec, io.listeners, make_should_annotate(env));
             if (!is_nil(result)) {
                 set_symbol(LAST, result, nil, env);
             }

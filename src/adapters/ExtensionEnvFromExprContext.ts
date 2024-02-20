@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CellHost, create_int, is_boo, Rat, Sym, Tensor } from "math-expression-atoms";
-import { AtomHandler, ExprContext, LambdaExpr } from "math-expression-context";
+import { CellHost, create_int, is_boo, Sym, Tensor } from "math-expression-atoms";
+import { ExprContext, ExprHandler, LambdaExpr } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { Atom, Cons, items_to_cons, U } from "math-expression-tree";
+import { Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
 import { AtomListener, ExprEngineListener } from "../api/api";
+import { ProgramStack } from "../eigenmath/ProgramStack";
 import { CompareFn, Directive, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
+import { ExtensionFromExprHandler } from "../env/ExtensionFromExprHandler";
 import { is_rat } from "../operators/rat/rat_extension";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import { StackFunction } from "./StackFunction";
@@ -29,6 +31,15 @@ function predicate_to_boolean(expr: U): boolean {
     }
 }
 
+function checkThis(arg: ExtensionEnvFromExprContext): ExprContext {
+    if (arg instanceof ExtensionEnvFromExprContext) {
+        return arg.ctxt;
+    }
+    else {
+        throw new ProgrammingError(new Error().stack);
+    }
+}
+
 export class ExtensionEnvFromExprContext implements ExtensionEnv {
     constructor(readonly ctxt: ExprContext) {
         if (ctxt) {
@@ -38,8 +49,8 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
             throw new ProgrammingError("ctxt MUST be defined.");
         }
     }
-    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
-        return this.ctxt.handlerFor(atom);
+    handlerFor<T extends U>(expr: T): ExprHandler<T> {
+        return this.ctxt.handlerFor(expr);
     }
     addAtomListener(subscriber: AtomListener): void {
         throw new Error("Method not implemented.");
@@ -179,9 +190,6 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     defineExtension(builder: ExtensionBuilder<U>): void {
         throw new Error("Method not implemented.");
     }
-    defineAssociative(opr: Sym, id: Rat): void {
-        throw new Error("Method not implemented.");
-    }
     defineUserSymbol(name: Sym): void {
         throw new Error("Method not implemented.");
     }
@@ -200,7 +208,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     equals(lhs: U, rhs: U): boolean {
         const expr = items_to_cons(native_sym(Native.testeq), lhs, rhs);
         try {
-            const retval = this.ctxt.valueOf(expr);
+            const retval = checkThis(this).valueOf(expr);
             try {
                 return predicate_to_boolean(retval);
             }
@@ -458,7 +466,10 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         }
     }
     extensionFor(expr: U): Extension<U> | undefined {
-        throw new Error("Method not implemented.");
+        if (is_atom(expr)) {
+            return new ExtensionFromExprHandler(this.ctxt.handlerFor(expr));
+        }
+        throw new Error("ExtensionFromExprContext.extensionFo method not implemented.");
     }
     outer(...args: U[]): U {
         const expr = items_to_cons(native_sym(Native.outer), ...args);
@@ -592,8 +603,20 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
             return [TFLAG_DIFF, value];
         }
     }
-    valueOf(expr: U): U {
-        return this.ctxt.valueOf(expr);
+    valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U {
+        const value = checkThis(this).valueOf(expr);
+        if (stack) {
+            try {
+                stack.push(value);
+                return nil;
+            }
+            finally {
+                value.release();
+            }
+        }
+        else {
+            return value;
+        }
     }
     hasBinding(opr: Sym, target: Cons): boolean {
         return this.ctxt.hasBinding(opr, target);

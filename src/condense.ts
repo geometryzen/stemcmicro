@@ -1,4 +1,6 @@
+import { ExprContext } from 'math-expression-context';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { add } from './helpers/add';
 import { divide } from './helpers/divide';
 import { inverse } from './helpers/inverse';
 import { multiply_noexpand } from './multiply';
@@ -17,7 +19,7 @@ export function eval_condense(p1: U, $: ExtensionEnv): U {
     return result;
 }
 
-export function condense(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'multiply' | 'power' | 'popDirective' | 'pushDirective' | 'subtract' | 'valueOf'>): U {
+export function condense(p1: U, $: Pick<ExprContext, 'popDirective' | 'pushDirective' | 'valueOf'>): U {
     return noexpand_unary(yycondense, p1, $);
 }
 
@@ -27,7 +29,7 @@ export function condense(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'mul
  * @param $ 
  * @returns 
  */
-export function yycondense(P: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'multiply' | 'power' | 'popDirective' | 'pushDirective' | 'subtract' | 'valueOf'>): U {
+export function yycondense(P: U, $: Pick<ExprContext, 'popDirective' | 'pushDirective' | 'valueOf'>): U {
     // console.lg("yycondense", render_as_sexpr(P, $));
     // console.lg("yycondense", render_as_infix(P, $));
 
@@ -46,7 +48,7 @@ export function yycondense(P: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'mu
     const one_divided_by_gcd = inverse(terms_gcd, $);
     const P_divided_by_gcd = P
         .tail()
-        .reduce((a: U, b: U) => $.add(a, multiply_noexpand(one_divided_by_gcd, b, $)), zero);
+        .reduce((a: U, b: U) => add($, a, multiply_noexpand(one_divided_by_gcd, b, $)), zero);
 
     // We multiplied above w/o expanding so some factors cancelled.
 

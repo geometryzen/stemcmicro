@@ -1,5 +1,5 @@
-import { assert_cons_or_nil, cons, is_cons, U } from 'math-expression-tree';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { ExprContext } from 'math-expression-context';
+import { assert_cons_or_nil, cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
 
 /**
  * BEWARE: The order of parameters does not match the scripting language which is (subst newExpr, oldExpr, expr).
@@ -8,7 +8,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
  * @param oldExpr 
  * @param newExpr
  */
-export function subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'extensionFor'>): U {
+export function subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExprContext, 'handlerFor'>): U {
     if (expr.equals(oldExpr)) {
         return newExpr;
     }
@@ -37,13 +37,16 @@ export function subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'ex
             }
         }
     }
-    else {
-        const op = $.extensionFor(expr);
+    else if (is_atom(expr)) {
+        const op = $.handlerFor(expr);
         if (op) {
             return op.subst(expr, oldExpr, newExpr, $);
         }
         else {
             return expr;
         }
+    }
+    else {
+        return nil;
     }
 }

@@ -1,13 +1,14 @@
 import { is_rat, one } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { car, is_cons, U } from 'math-expression-tree';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { inverse } from '../../helpers/inverse';
+import { isone } from '../../helpers/isone';
 import { multiply_items } from '../../multiply';
 import { is_negative } from '../../predicates/is_negative';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { rationalize_factoring } from '../rationalize/rationalize';
 
-export function denominator(expr: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
+export function denominator(expr: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     // console.lg("denominator", `${expr}`);
     const hook = function (retval: U): U {
         // console.lg(`LEAVING denominator of ${$.toInfixString(expr)} ${$.toListString(expr)} => ${$.toInfixString(retval)}`);
@@ -27,7 +28,7 @@ export function denominator(expr: U, $: Pick<ExtensionEnv, 'add' | 'factorize' |
         // (denom (* x1 x2 x3 ...)) = denom(x1) * denom(x2) * denom(x3)
         // "denominator of products = product of denominators"
         // TODO: Why do I care about whether a1 is one?
-        if (is_multiply(expr) && !$.isone(car(argList))) {
+        if (is_multiply(expr) && !isone(car(argList), $)) {
             // console.lg("(denom (* x1 x2 x3 ...)) = denom(x1) * denom(x2) * denom(x3)");
             const xs = expr.tail();
             // console.lg(`xs => ${items_to_infix(xs, $)}`);
@@ -45,13 +46,13 @@ export function denominator(expr: U, $: Pick<ExtensionEnv, 'add' | 'factorize' |
     return hook(one);
 }
 
-function denominators(xs: U[], $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U[] {
+function denominators(xs: U[], $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U[] {
     const denom_mapper = make_denom_mapper($);
     const denoms = xs.map(denom_mapper);
     return denoms;
 }
 
-function make_denom_mapper($: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): (x: U) => U {
+function make_denom_mapper($: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): (x: U) => U {
     return function (x: U) {
         return denominator(x, $);
     };

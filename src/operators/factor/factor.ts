@@ -1,4 +1,5 @@
 import { create_int, is_rat, is_sym, one, Rat } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { yyfactorpoly } from '../../factorpoly';
@@ -21,8 +22,8 @@ export function factor_again(p1: U, p2: U, $: ExtensionEnv): U {
     return arr[0];
 }
 
-function factor_term(arr: U[], arg1: U, arg2: U, $: ExtensionEnv): void {
-    const p1 = $.factorize(arg1, arg2);
+function factor_term(arr: U[], arg1: U, arg2: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): void {
+    const p1 = factorize(arg1, arg2,$);
     if (is_multiply(p1)) {
         arr.push(...p1.tail());
         return;
@@ -31,7 +32,7 @@ function factor_term(arr: U[], arg1: U, arg2: U, $: ExtensionEnv): void {
     arr.push(p1);
 }
 
-export function factor(poly: U, x: U, $: ExtensionEnv): U {
+export function factor(poly: U, x: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     // console.lg("factor", "poly", `${$.toInfixString(poly)}`, "x", `${x}`);
     if (is_rat(poly) && poly.isInteger()) {
         return factor_rat(poly);
@@ -40,7 +41,7 @@ export function factor(poly: U, x: U, $: ExtensionEnv): U {
     return factorize(poly, x, $);
 }
 
-export function factorize(p: U, x: U, $: Pick<ExtensionEnv, 'add' | 'equals' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'pushDirective' | 'popDirective' | 'rect' | 'subtract' | 'valueOf'>): U {
+export function factorize(p: U, x: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     if (!p.contains(x)) {
         // console.lg(`Giving up b/c the polynomial does not contain the variable.`);
         return p;

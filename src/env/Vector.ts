@@ -1,7 +1,7 @@
-import { is_atom, is_cons, U } from "math-expression-tree";
+import { Atom, Cons, is_atom, is_cons, U } from "math-expression-tree";
 import { ProgrammingError } from "../programming/ProgrammingError";
 
-function is_cons_or_atom(expr: U): boolean {
+function is_cons_or_atom(expr: U): expr is Cons | Atom {
     return is_cons(expr) || is_atom(expr);
 }
 

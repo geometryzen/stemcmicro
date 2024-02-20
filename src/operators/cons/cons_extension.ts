@@ -1,6 +1,8 @@
 import { is_sym, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { cons, Cons, is_cons, is_nil, nil, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, mkbuilder, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { listform } from "../../helpers/listform";
 import { to_infix_string } from "../../print/to_infix_string";
 
 /**
@@ -15,8 +17,22 @@ class ConsExtension implements Extension<Cons> {
     constructor() {
         // Nothing to see here.
     }
+    phases?: number | undefined;
+    dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(expr: Cons, opr: Sym, rhs: U, env: ExprContext): U {
+        throw new Error(`${this.name}.binL(${expr},${opr}) method not implemented.`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(expr: Cons, opr: Sym, lhs: U, env: ExprContext): U {
+        throw new Error(`${this.name}.binR(${expr},${opr}) method not implemented.`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(expr: Cons, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
     test(expr: Cons, opr: Sym): boolean {
-        throw new Error(`${this.name}.dispatch(${expr},${opr}) method not implemented.`);
+        throw new Error(`${this.name}.test(${expr},${opr}) method not implemented.`);
     }
     iscons(): false {
         return false;
@@ -47,27 +63,28 @@ class ConsExtension implements Extension<Cons> {
     subst(expr: Cons, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
         throw new Error(`expr = ${expr} oldExpr = ${oldExpr} newExpr = ${newExpr}`);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(cons: Cons, $: ExtensionEnv): string {
+    toHumanString(cons: Cons, $: ExprContext): string {
         return to_infix_string(cons, $);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toLatexString(cons: Cons, $: ExtensionEnv): string {
+    toInfixString(cons: Cons, $: ExprContext): string {
         return to_infix_string(cons, $);
     }
-    toListString(cons: Cons, $: ExtensionEnv): string {
+    toLatexString(cons: Cons, $: ExprContext): string {
+        return to_infix_string(cons, $);
+    }
+    toListString(cons: Cons, $: ExprContext): string {
         let str = '';
         str += '(';
-        str += $.toSExprString(cons.car);
+        str += listform(cons.car, $);
         let expr = cons.cdr;
         while (is_cons(expr)) {
             str += ' ';
-            str += $.toSExprString(expr.car);
+            str += listform(expr.car, $);
             expr = expr.cdr;
         }
         if (expr !== nil) {
             str += ' . ';
-            str += $.toSExprString(expr);
+            str += listform(expr, $);
         }
         str += ')';
         return str;
@@ -172,7 +189,7 @@ function _isinteger(p1: U): U {
 */
 /*
 function eval_operator(p1: U, $: ExtensionEnv) {
-    const mapped = is_cons(p1) ? p1.tail().map($.valueOf) : [];
+    const mapped = is_cons(p1) ? p1.tail().map(arg=>$.valueOf(arg)) : [];
     const result = items_to_cons(OPERATOR, ...mapped);
     stack_push(result);
 }

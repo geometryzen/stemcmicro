@@ -1,4 +1,5 @@
 import { create_int, one, Tensor, zero } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { Cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factors } from './factors';
@@ -8,7 +9,7 @@ import { divide_expand } from './helpers/divide';
 import { inverse } from './helpers/inverse';
 import { inv } from './inv';
 import { is_plus_or_minus_one, is_poly_expanded_form } from './is';
-import { multiply, multiply_items } from './multiply';
+import { multiply_binary, multiply_items } from './multiply';
 import { nativeInt } from './nativeInt';
 import { degree } from './operators/degree/degree';
 import { denominator } from './operators/denominator/denominator';
@@ -319,9 +320,9 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < d; j++) {
             const arg6 = $.power(p6, create_int(i));
-            const arg8 = doexpand_binary(multiply, p8, arg6, $);
+            const arg8 = doexpand_binary(multiply_binary, p8, arg6, $);
             const arg9 = $.power(p9, create_int(j));
-            const multiplied = doexpand_binary(multiply, arg8, arg9, $);
+            const multiplied = doexpand_binary(multiply_binary, arg8, arg9, $);
             stack.push(multiplied);
         }
     }
@@ -330,7 +331,7 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
 }
 
 // Returns T = A/F where F is a factor of A.
-function trivial_divide(p2: U, p5: U, $: Pick<ExtensionEnv, 'multiply' | 'valueOf'>): U {
+function trivial_divide(p2: U, p5: U, $: ExprContext): U {
     let result: U = one;
     if (is_multiply(p2)) {
         const arr: U[] = [];

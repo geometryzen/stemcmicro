@@ -1,8 +1,13 @@
 import { bigInt, BigInteger, Err, imu, negOne, one, Rat, Sym, zero } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, U } from 'math-expression-tree';
 import { bignum_truncate, makePositive, makeSignSameAs } from './bignum';
-import { Directive, ExtensionEnv } from './env/ExtensionEnv';
+import { Directive } from './env/ExtensionEnv';
+import { exp } from './helpers/exp';
+import { multiply } from './helpers/multiply';
+import { negate } from './helpers/negate';
+import { subtract } from './helpers/subtract';
 import { in_safe_integer_range } from './in_safe_integer_range';
 import { is_num_and_eq_minus_one } from './is';
 import { is_rat_and_integer } from './is_rat_and_integer';
@@ -14,11 +19,12 @@ import { quickfactor } from './quickfactor';
 import { half } from './tree/rat/Rat';
 
 export const E = native_sym(Native.E);
+export const EXP = native_sym(Native.exp);
 export const PI = native_sym(Native.PI);
 export const POWER = native_sym(Native.pow);
 
 // Rational power function
-export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat | Sym | U {
+export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExprContext): Cons | Rat | Sym | U {
     // console.lg("power_rat_base_rat_expo", $.toInfixString(base), $.toLatexString(expo));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
@@ -39,7 +45,9 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExtensionEnv): 
             return hook(items_to_cons(POWER, base, expo), "B-clock");
         }
         else if ($.getDirective(Directive.complexAsPolar)) {
-            return hook($.exp($.multiply(half, imu, PI)), "B-power");
+            const x = multiply($, half, imu, PI);
+            const expX = exp(x, $);
+            return hook(expX, "B-power");
         }
         else {
             return hook(imu, "B");
@@ -49,7 +57,7 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExtensionEnv): 
     // console.lg(`power(base => ${base}, expo => ${expo}) => ?`);
 
     // if base is zero then return 0
-    if ($.iszero(base)) {
+    if (base.isZero()) {
         if (is_num_and_negative(expo)) {
             // throw new Error(`divide by zero for base => ${base} and exponent => ${expo}`);
             return hook(new Err(items_to_cons(POWER, base, expo)), 'D0');
@@ -95,7 +103,7 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExtensionEnv): 
 
     // if base is negative then (-N)^M -> N^M * (-1)^M
     if (is_num_and_negative(base)) {
-        return hook($.multiply(power_rat_base_rat_expo($.negate(base) as Rat, expo, $), power_rat_base_rat_expo(negOne, expo, $)), "I");
+        return hook(multiply($, power_rat_base_rat_expo(base.neg(), expo, $), power_rat_base_rat_expo(negOne, expo, $)), "I");
     }
 
     // if base is not an integer then power numerator and denominator
@@ -107,7 +115,7 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExtensionEnv): 
         const pow_m_a = power_rat_base_rat_expo(m, a, $);
         const minus_a = a.neg();
         const pow_n_minus_a = power_rat_base_rat_expo(n, minus_a, $);
-        return hook($.multiply(pow_m_a, pow_n_minus_a), "J");
+        return hook(multiply($, pow_m_a, pow_n_minus_a), "J");
     }
 
     // At this point base is a positive integer.
@@ -165,7 +173,8 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExtensionEnv): 
 //  (-1)^(-8/3)  ->  -(-1)^(1/3)  -8  3  -3  1
 //
 //-----------------------------------------------------------------------------
-function normalize_angle(A: Rat, $: ExtensionEnv): U {
+
+function normalize_angle(A: Rat, $: ExprContext): U {
     // integer exponent?
     if (is_rat_and_integer(A)) {
         if (A.a.isOdd()) {
@@ -184,14 +193,14 @@ function normalize_angle(A: Rat, $: ExtensionEnv): U {
 
     // remainder (always positive)
     // TODO: Need a sub on Rat
-    const R = $.subtract(A, Q);
+    const R = subtract(A, Q, $);
 
     // remainder becomes new angle
     let result: U = items_to_cons(POWER, negOne, R);
 
     // negate if quotient is odd
     if (Q.a.isOdd()) {
-        result = $.negate(result);
+        result = negate(result, $);
     }
     return result;
 }

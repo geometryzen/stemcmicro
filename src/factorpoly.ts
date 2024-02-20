@@ -1,12 +1,21 @@
 import { create_int, imu, negOne, one, Sym, zero } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
 import { items_to_cons, U } from 'math-expression-tree';
 import { rational } from './bignum';
 import { complex_conjugate } from './complex_conjugate';
 import { yycondense } from './condense';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { add } from './helpers/add';
 import { divide } from './helpers/divide';
+import { equals } from './helpers/equals';
 import { inverse } from './helpers/inverse';
+import { iszero } from './helpers/iszero';
+import { multiply } from './helpers/multiply';
+import { negate } from './helpers/negate';
+import { power } from './helpers/power';
+import { rect } from './helpers/rect';
+import { subtract } from './helpers/subtract';
 import { contains_floating_values_or_floatf } from './is';
 import { multiply_noexpand, negate_noexpand } from './multiply';
 import { coefficients } from './operators/coeff/coeff';
@@ -37,7 +46,7 @@ import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
  * @param $ 
  * @returns factored polynomial
  */
-export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'pushDirective' | 'popDirective' | 'rect' | 'subtract' | 'valueOf'>): U {
+export function yyfactorpoly(P: U, X: Sym, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     // console.lg("yyfactorpoly", `${($ as ExtensionEnv).toInfixString(P)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
@@ -78,7 +87,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals
         // console.lg("coeffIdx", coeffIdx);
         let foundCRoot = false;
         let foundRRoot = false;
-        if ($.iszero(cs[0])) {
+        if (iszero(cs[0], $)) {
             a = one;
             b = zero;
         }
@@ -102,7 +111,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals
                 continue;
             }
             else {
-                p8 = $.add($.multiply(a as U, X), b as U); // A, x, B
+                p8 = add($, multiply($, a as U, X), b as U); // A, x, B
 
                 // factor out negative sign (not req'd because p4 > 1)
                 //if 0
@@ -133,14 +142,14 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals
                 // polynomial part still left to factor.
                 yydivpoly(a as U, b as U, cs, coeffIdx, $);
 
-                while (coeffIdx && $.iszero(cs[coeffIdx])) {
+                while (coeffIdx && iszero(cs[coeffIdx], $)) {
                     coeffIdx--;
                 }
 
                 let temp: U = zero;
                 for (let i = 0; i <= coeffIdx; i++) {
                     // p2: the free variable
-                    temp = $.add(temp, $.multiply(cs[i], $.power(X, create_int(i))));
+                    temp = add($, temp, multiply($, cs[i], power(X, create_int(i), $)));
                 }
                 remainingPoly = temp;
             }
@@ -150,10 +159,10 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals
                 break;
             }
             else {
-                const firstFactor = $.subtract(a as U, X); // A, x
-                const secondFactor = $.subtract(complex_conjugate(a as U, $ as ExtensionEnv), X); // p4: A, p2: x
+                const firstFactor = subtract(a as U, X, $); // A, x
+                const secondFactor = subtract(complex_conjugate(a as U, $), X, $); // p4: A, p2: x
 
-                p8 = $.multiply(firstFactor, secondFactor);
+                p8 = multiply($, firstFactor, secondFactor);
 
                 //if (factpoly_expo > 0 && isnegativeterm(polycoeff[factpoly_expo]))
                 //  negate()
@@ -187,7 +196,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals
                     let temp: U = zero;
                     for (let i = 0; i <= coeffIdx; i++) {
                         // p2: the free variable
-                        temp = $.add(temp, $.multiply(cs[i], $.power(X, create_int(i))));
+                        temp = add($, temp, multiply($, cs[i], power(X, create_int(i), $)));
                     }
                     remainingPoly = temp;
                 }
@@ -198,11 +207,11 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals
 
                 const divisor = p8;
                 const dividend = remainingPoly;
-                remainingPoly = quotient(dividend, divisor, X, $ as ExtensionEnv);
+                remainingPoly = quotient(dividend, divisor, X, $);
 
-                const checkingTheDivision = $.multiply(remainingPoly, p8);
+                const checkingTheDivision = multiply($, remainingPoly, p8);
 
-                if (!$.equals(checkingTheDivision, dividend)) {
+                if (!equals(checkingTheDivision, dividend, $)) {
                     stack_push(previousK);
 
                     const arg2 = noexpand_unary(yycondense, dividend, $);
@@ -239,7 +248,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals
 
     let temp: U = zero;
     for (let i = 0; i <= coeffIdx; i++) {
-        temp = $.add(temp, $.multiply(cs[i], $.power(X, create_int(i))));
+        temp = add($, temp, multiply($, cs[i], power(X, create_int(i), $)));
     }
 
     // console.lg("temp       II", render_as_infix(temp, $));
@@ -255,7 +264,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals
         //prev_expanding = expanding
         //expanding = 1
         //expanding = prev_expanding
-        return hook(multiply_noexpand(negate_noexpand(k, $ as ExtensionEnv), $.negate(remaining), $), "B");
+        return hook(multiply_noexpand(negate_noexpand(k, $ as ExtensionEnv), negate(remaining, $), $), "B");
     }
     else {
         // console.lg("k", ($ as ExtensionEnv).toInfixString(k));
@@ -269,7 +278,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExtensionEnv, 'add' | 'equals
  * @param cs This array is mutated as an intended side-effect and we return a value, k, such that
  * multiplication of the mutated coefficient by k recreates the original coefficients.
  */
-function rationalize_coefficients(cs: U[], $: Pick<ExtensionEnv, 'add' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'pushDirective' | 'popDirective' | 'factorize' | 'subtract' | 'valueOf'>): U {
+function rationalize_coefficients(cs: U[], $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     // console.lg("rationalize_coefficients", ($ as ExtensionEnv).toSExprString(items_to_cons(...cs)));
     // console.lg(`rationalize_coefficients ${coefficients}`);
     // LCM of all polynomial coefficients
@@ -280,7 +289,7 @@ function rationalize_coefficients(cs: U[], $: Pick<ExtensionEnv, 'add' | 'isone'
 
     // multiply each coefficient by RESULT
     for (let i = 0; i < cs.length; i++) {
-        cs[i] = $.multiply(one_over_k, cs[i]);
+        cs[i] = multiply($, one_over_k, cs[i]);
     }
 
     const k = inverse(one_over_k, $);
@@ -297,7 +306,7 @@ function rationalize_coefficients(cs: U[], $: Pick<ExtensionEnv, 'add' | 'isone'
  * @param $ 
  * @returns 
  */
-function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, a: U, b: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): [success: boolean, a: U, b: U] {
+function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, a: U, b: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): [success: boolean, a: U, b: U] {
     const h = defs.tos;
 
     const an = defs.tos;
@@ -314,22 +323,22 @@ function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, a: U, 
             a = defs.stack[an + rootsTries_i] as U;
             b = defs.stack[a0 + rootsTries_j] as U;
 
-            const neg_root_candidate = $.negate(divide(b, a, $));
+            const neg_root_candidate = negate(divide(b, a, $), $);
 
             const neg_poly = polynomial(neg_root_candidate, coeffs, coeffIdx, $);
 
-            if ($.iszero(neg_poly)) {
+            if (iszero(neg_poly, $)) {
                 move_top_of_stack(h);
                 return [true, a, b];
             }
 
-            b = $.negate(b);
+            b = negate(b, $);
 
-            const pos_root_candidate = $.negate(neg_root_candidate);
+            const pos_root_candidate = negate(neg_root_candidate, $);
 
             const pos_poly = polynomial(pos_root_candidate, coeffs, coeffIdx, $);
 
-            if ($.iszero(pos_poly)) {
+            if (iszero(pos_poly, $)) {
                 move_top_of_stack(h);
                 return [true, a, b];
             }
@@ -341,7 +350,7 @@ function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, a: U, 
     return [false, a, b];
 }
 
-function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly_expo: number, $: Pick<ExtensionEnv, 'add' | 'iszero' | 'multiply' | 'power' | 'rect' | 'valueOf'>): [boolean, U | undefined] {
+function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly_expo: number, _: Pick<ExprContext, 'valueOf'>): [boolean, U | undefined] {
     let p4: U | undefined;
     let p3: U, p6: U;
 
@@ -355,11 +364,11 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
 
     // trying -1^(2/3) which generates a polynomial in Z
     // generates x^2 + 2x + 1
-    p4 = $.rect($.power(negOne, rational(2, 3)));
+    p4 = rect(power(negOne, rational(2, 3), _), _);
     p3 = p4;
     stack_push(p3);
-    p6 = polynomial(p3, polycoeff, factpoly_expo, $);
-    if ($.iszero(p6)) {
+    p6 = polynomial(p3, polycoeff, factpoly_expo, _);
+    if (iszero(p6, _)) {
         move_top_of_stack(h);
         return [true, p4];
     }
@@ -367,11 +376,11 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
     // trying 1^(2/3) which generates a polynomial in Z
     // http://www.wolframalpha.com/input/?i=(1)%5E(2%2F3)
     // generates x^2 - 2x + 1
-    p4 = $.rect($.power(one, rational(2, 3)));
+    p4 = rect(power(one, rational(2, 3), _), _);
     p3 = p4;
     stack_push(p3);
-    p6 = polynomial(p3, polycoeff, factpoly_expo, $);
-    if ($.iszero(p6)) {
+    p6 = polynomial(p3, polycoeff, factpoly_expo, _);
+    if (iszero(p6, _)) {
         move_top_of_stack(h);
         return [true, p4];
     }
@@ -380,20 +389,19 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
     // generate polynomials in Z
     for (let rootsTries_i = -10; rootsTries_i <= 10; rootsTries_i++) {
         for (let rootsTries_j = 1; rootsTries_j <= 5; rootsTries_j++) {
-            p4 = $.rect(
-                $.add(
-                    create_int(rootsTries_i),
-                    $.multiply(create_int(rootsTries_j), imu)
-                )
+            p4 = rect(
+                add(_, create_int(rootsTries_i),
+                    multiply(_, create_int(rootsTries_j), imu)
+                ), _
             );
 
             const p3 = p4;
 
             stack_push(p3);
 
-            const p6 = polynomial(p3, polycoeff, factpoly_expo, $);
+            const p6 = polynomial(p3, polycoeff, factpoly_expo, _);
 
-            if ($.iszero(p6)) {
+            if (iszero(p6, _)) {
                 move_top_of_stack(h);
                 return [true, p4];
             }
@@ -412,15 +420,15 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
  * @param b 
  * @param coeffs 
  * @param k 
- * @param $ 
+ * @param _ 
  */
-function yydivpoly(a: U, b: U, coeffs: U[], k: number, $: Pick<ExtensionEnv, 'multiply' | 'subtract' | 'valueOf'>): void {
+function yydivpoly(a: U, b: U, coeffs: U[], k: number, _: Pick<ExprContext, 'valueOf'>): void {
     let temp: U = zero;
     for (let i = k; i > 0; i--) {
-        const divided = divide(coeffs[i], a, $);
+        const divided = divide(coeffs[i], a, _);
         coeffs[i] = temp;
         temp = divided;
-        coeffs[i - 1] = $.subtract(coeffs[i - 1], $.multiply(temp, b));
+        coeffs[i - 1] = subtract(coeffs[i - 1], multiply(_, temp, b), _);
     }
     coeffs[0] = temp;
 }
@@ -431,12 +439,12 @@ function yydivpoly(a: U, b: U, coeffs: U[], k: number, $: Pick<ExtensionEnv, 'mu
  * @param coeffs the coefficients.
  * @param k the degree.
  */
-function polynomial(x: U, coeffs: U[], k: number, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'valueOf'>): U {
+function polynomial(x: U, coeffs: U[], k: number, _: Pick<ExprContext, 'valueOf'>): U {
     assert_positive_integer(k);
     // return $.valueOf(generate_polynomial_recursive(x,coeffs,k));
     let temp: U = zero;
     for (let i = k; i >= 0; i--) {
-        temp = $.add($.multiply(temp, x), coeffs[i]);
+        temp = add(_, multiply(_, temp, x), coeffs[i]);
     }
     return temp;
 }

@@ -1,8 +1,13 @@
 import { create_int, is_num, one, Tensor, zero } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { car, cdr, is_cons, U } from 'math-expression-tree';
 import { sort_factors } from '../../calculators/compare/sort_factors';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { add } from '../../helpers/add';
 import { inverse } from '../../helpers/inverse';
+import { isone } from '../../helpers/isone';
+import { multiply } from '../../helpers/multiply';
+import { power } from '../../helpers/power';
 import { nativeInt } from '../../nativeInt';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
@@ -37,7 +42,7 @@ export function divisors(term: U, $: ExtensionEnv): U {
     return new Tensor([n], sort_factors(factors, $));
 }
 
-export function ydivisors(term: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): U[] {
+export function ydivisors(term: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U[] {
     const stack: U[] = [];
     // push all of the term's factors
     if (is_num(term)) {
@@ -100,7 +105,7 @@ export function ydivisors(term: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | '
 //    12
 //
 //-----------------------------------------------------------------------------
-function gen(stack: U[], h: number, k: number, $: Pick<ExtensionEnv, 'multiply' | 'power'>): void {
+function gen(stack: U[], h: number, k: number, _: Pick<ExprContext, 'valueOf'>): void {
     const ACCUM: U = stack.pop() as U;
 
     if (h === k) {
@@ -114,8 +119,8 @@ function gen(stack: U[], h: number, k: number, $: Pick<ExtensionEnv, 'multiply' 
     const expo = nativeInt(EXPO);
     if (!isNaN(expo)) {
         for (let i = 0; i <= Math.abs(expo); i++) {
-            stack.push($.multiply(ACCUM, $.power(BASE, create_int(signum(expo) * i))));
-            gen(stack, h + 2, k, $);
+            stack.push(multiply(_, ACCUM, power(BASE, create_int(signum(expo) * i), _)));
+            gen(stack, h + 2, k, _);
         }
     }
 }
@@ -132,7 +137,7 @@ function gen(stack: U[], h: number, k: number, $: Pick<ExtensionEnv, 'multiply' 
 //  by the exponent.
 //
 //-----------------------------------------------------------------------------
-function __factor_add(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'extensionFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): U[] {
+function __factor_add(p1: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U[] {
     // get gcd of all terms
     const temp1 = is_cons(p1) ? p1.tail().reduce(function (x, y) {
         return gcd(x, y, $);
@@ -141,7 +146,7 @@ function __factor_add(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone'
     const stack: U[] = [];
     // check gcd
     let p2 = temp1;
-    if ($.isone(p2)) {
+    if (isone(p2, $)) {
         stack.push(p1, one);
         return stack;
     }
@@ -169,7 +174,7 @@ function __factor_add(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone'
     // divide each term by gcd
     p2 = inverse(p2, $);
     const temp2 = is_cons(p1)
-        ? p1.tail().reduce((a: U, b: U) => $.add(a, $.multiply(p2, b)), zero)
+        ? p1.tail().reduce((a: U, b: U) => add($, a, multiply($, p2, b)), zero)
         : cdr(p1);
 
     stack.push(temp2, one);

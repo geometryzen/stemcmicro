@@ -1,13 +1,22 @@
-import { is_blade } from "math-expression-atoms";
+import { create_int, is_blade, is_flt, is_rat, is_sym, zero } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { is_atom, is_cons, items_to_cons, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { zero } from "../../tree/rat/Rat";
-import { is_cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
-import { is_rat } from "../rat/rat_extension";
-import { is_sym } from "../sym/is_sym";
+
+const GRADE = native_sym(Native.grade);
 
 export function extract_grade(arg: U, grade: number, $: ExtensionEnv): U {
+    if (is_atom(arg)) {
+        const handler = $.handlerFor(arg);
+        const argList = items_to_cons(create_int(grade));
+        try {
+            return handler.dispatch(arg, GRADE, argList, $);
+        }
+        finally {
+            argList.release();
+        }
+    }
     // TODO: Do we need a generic grade(arg, n) function?
     if (is_blade(arg)) {
         const extracted = arg.extractGrade(grade);

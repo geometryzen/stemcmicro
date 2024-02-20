@@ -1,29 +1,15 @@
 import { Err, is_err, Sym } from "math-expression-atoms";
-import { AtomHandler } from "math-expression-context";
-import { is_native, Native } from "math-expression-native";
+import { ExprContext } from "math-expression-context";
+import { is_native, Native, native_sym } from "math-expression-native";
 import { cons, Cons, nil, U } from 'math-expression-tree';
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
+import { infixform } from "../../helpers/infixform";
+import { ProgrammingError } from "../../programming/ProgrammingError";
 
-const ENGLISH_UNDEFINED = 'undefined';
+const GRADE = native_sym(Native.grade);
 
-/*
-export function error_compare(lhs: Err, rhs: Err): Sign {
-    const str1 = lhs.message;
-    const str2 = rhs.message;
-    if (str1 === str2) {
-        return SIGN_EQ;
-    }
-    else if (str1 > str2) {
-        return SIGN_GT;
-    }
-    else {
-        return SIGN_LT;
-    }
-}
-*/
-
-export class ErrExtension implements Extension<Err>, AtomHandler<Err> {
+export class ErrExtension implements Extension<Err> {
     readonly #hash = hash_for_atom(new Err(nil));
     constructor() {
         // Nothing to see here.
@@ -40,11 +26,29 @@ export class ErrExtension implements Extension<Err>, AtomHandler<Err> {
         }
         throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(lhs: Err, opr: Sym, rhs: U, expr: ExprContext): U {
+        // Do we make a hierarchy of causes?
+        return lhs;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(rhs: Err, opr: Sym, lhs: U, expr: ExprContext): U {
+        // Do we make a hierarchy of causes?
+        return rhs;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(target: Err, opr: Sym, argList: Cons, env: ExprContext): U {
+        if (opr.equalsSym(GRADE)) {
+            // We could create nested errors...
+            return target;
+        }
+        throw new ProgrammingError(`ErrExtension.dispatch ${target} ${opr} ${argList} method not implemented.`);
+    }
     iscons(): false {
         return false;
     }
     operator(): never {
-        throw new Error();
+        throw new ProgrammingError();
     }
     evaluate(expr: Err, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(expr, argList));
@@ -67,17 +71,41 @@ export class ErrExtension implements Extension<Err>, AtomHandler<Err> {
         }
         return expr;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(expr: Err, $: ExtensionEnv): string {
-        return ENGLISH_UNDEFINED;
+    toHumanString(err: Err, $: ExprContext): string {
+        const cause = err.cause;
+        try {
+            return infixform(cause, $);
+        }
+        finally {
+            cause.release();
+        }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toLatexString(expr: Err, $: ExtensionEnv): string {
-        return ENGLISH_UNDEFINED;
+    toInfixString(err: Err, $: ExprContext): string {
+        const cause = err.cause;
+        try {
+            return infixform(cause, $);
+        }
+        finally {
+            cause.release();
+        }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(expr: Err, $: ExtensionEnv): string {
-        return ENGLISH_UNDEFINED;
+    toLatexString(err: Err, $: ExprContext): string {
+        const cause = err.cause;
+        try {
+            return infixform(cause, $);
+        }
+        finally {
+            cause.release();
+        }
+    }
+    toListString(err: Err, $: ExprContext): string {
+        const cause = err.cause;
+        try {
+            return infixform(cause, $);
+        }
+        finally {
+            cause.release();
+        }
     }
 }
 

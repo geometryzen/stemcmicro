@@ -1,7 +1,7 @@
-import { Boo, Cell, create_int, create_rat, create_sym, Flt, is_flt, is_rat, is_sym, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
-import { AtomHandler, LambdaExpr } from 'math-expression-context';
-import { is_native_sym, Native, native_sym } from 'math-expression-native';
-import { Atom, Cons, items_to_cons, nil, U } from 'math-expression-tree';
+import { Boo, Cell, create_int, create_rat, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
+import { ExprHandler, LambdaExpr } from 'math-expression-context';
+import { Native, native_sym } from 'math-expression-native';
+import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
@@ -9,10 +9,9 @@ import { InfixOptions, to_infix } from '../eigenmath/infixform';
 import { make_stack_draw } from '../eigenmath/make_stack_draw';
 import { make_stack_print } from '../eigenmath/make_stack_print';
 import { make_stack_run } from '../eigenmath/make_stack_run';
-import { print_value_and_input_as_svg_or_infix } from '../eigenmath/print_value_and_input_as_svg_or_infix';
 import { ProgramEnv } from '../eigenmath/ProgramEnv';
-import { render_svg, SvgRenderConfig } from '../eigenmath/render_svg';
-import { should_engine_render_svg } from '../eigenmath/should_engine_render_svg';
+import { ProgramStack } from '../eigenmath/ProgramStack';
+import { render_svg } from '../eigenmath/render_svg';
 import { stack_infixform } from '../eigenmath/stack_infixform';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, directive_from_flag, ExtensionEnv } from '../env/ExtensionEnv';
@@ -38,6 +37,9 @@ import { Visitor } from '../visitor/Visitor';
 export interface ParseConfig {
     useCaretForExponentiation: boolean;
     useParenForTensors: boolean;
+    explicitAssocAdd: boolean;
+    explicitAssocExt: boolean;
+    explicitAssocMul: boolean;
 }
 
 /**
@@ -55,8 +57,9 @@ function reify_boolean(optionValue: boolean | undefined, defaultValue: boolean =
 export function stemc_parse_config(options: Partial<ParseConfig>): STEMCParseOptions {
     const config: STEMCParseOptions = {
         catchExceptions: false,
-        explicitAssocAdd: false,
-        explicitAssocMul: false,
+        explicitAssocAdd: options.explicitAssocAdd,
+        explicitAssocExt: options.explicitAssocExt,
+        explicitAssocMul: options.explicitAssocMul,
         useCaretForExponentiation: reify_boolean(options.useCaretForExponentiation),
         useParenForTensors: reify_boolean(options.useParenForTensors)
     };
@@ -360,8 +363,8 @@ class MicroEngine implements ExprEngine {
     defineUserSymbol(name: Sym): void {
         this.#env.defineUserSymbol(name);
     }
-    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
-        return this.#env.handlerFor(atom);
+    handlerFor<T extends U>(expr: T): ExprHandler<T> {
+        return this.#env.handlerFor(expr);
     }
     clearBindings(): void {
         this.#env.clearBindings();
@@ -413,13 +416,25 @@ class MicroEngine implements ExprEngine {
     simplify(expr: U): U {
         return simplify(expr, this.#env);
     }
-    valueOf(expr: U): U {
+    valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U {
         const { value } = transform_tree(expr, {}, this.#env);
-        // This seems harmless enough but it causes one unit test to hang.
-        // return simplify(value, this.#env);
-        return value;
+        if (stack) {
+            try {
+                stack.push(value);
+                return nil;
+            }
+            finally {
+                value.release();
+            }
+        }
+        else {
+            // This seems harmless enough but it causes one unit test to hang.
+            // return simplify(value, this.#env);
+            return value;
+        }
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
+        // console.lg("MicroEngine.renderAsString", `${expr}`);
         this.#env.pushDirective(Directive.useCaretForExponentiation, directive_from_flag(config.useCaretForExponentiation));
         this.#env.pushDirective(Directive.useParenForTensors, directive_from_flag(config.useParenForTensors));
         try {
@@ -504,8 +519,8 @@ class ClojureScriptEngine implements ExprEngine {
     defineUserSymbol(name: Sym): void {
         this.#env.defineUserSymbol(name);
     }
-    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
-        return this.#env.handlerFor(atom);
+    handlerFor<T extends U>(expr: T): ExprHandler<T> {
+        return this.#env.handlerFor(expr);
     }
     clearBindings(): void {
         this.#env.clearBindings();
@@ -568,9 +583,20 @@ class ClojureScriptEngine implements ExprEngine {
     simplify(expr: U): U {
         return simplify(expr, this.#env);
     }
-    valueOf(expr: U): U {
+    valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U {
         const { value } = transform_tree(expr, {}, this.#env);
-        return value;
+        if (stack) {
+            try {
+                stack.push(value);
+                return nil;
+            }
+            finally {
+                value.release();
+            }
+        }
+        else {
+            return value;
+        }
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
         assert_U(expr, "ExprEngine.renderAsString(expr, config)", "expr");
@@ -654,13 +680,8 @@ class ScriptVarsPrintConfig implements PrintConfig {
     constructor(scriptVars: ScriptVars) {
         this.#scriptVars = scriptVars;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    add(...args: U[]): U {
-        throw new Error('Method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    factorize(poly: U, x: U): U {
-        throw new Error('Method not implemented.');
+    handlerFor<T extends U>(expr: T): ExprHandler<T> {
+        return this.#scriptVars.handlerFor(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     pushDirective(directive: number, value: number): void {
@@ -697,56 +718,6 @@ class ScriptVarsPrintConfig implements PrintConfig {
         throw new Error('getSymbolPrintName method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isone(expr: U): boolean {
-        if (expr.isnil) {
-            return false;
-        }
-        else if (is_rat(expr)) {
-            return expr.isOne();
-        }
-        else if (is_flt(expr)) {
-            return expr.isOne();
-        }
-        else {
-            return false;
-        }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    iszero(expr: U): boolean {
-        throw new Error('iszero method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    multiply(...args: U[]): U {
-        throw new Error('multiply method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    negate(expr: U): U {
-        throw new Error('negate method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    power(base: U, expo: U): U {
-        throw new Error('power method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    subtract(lhs: U, rhs: U): U {
-        throw new Error('subtract method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(expr: Sym | Keyword): string {
-        throw new Error('toInfixString method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toLatexString(expr: Sym | Keyword): string {
-        if (is_sym(expr)) {
-            return expr.key();
-        }
-        throw new Error(`toLatexString ${expr} method not implemented.`);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toSExprString(expr: U): string {
-        throw new Error('toSExprString method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: U): U {
         throw new Error('valueOf method not implemented.');
     }
@@ -775,8 +746,8 @@ class EigenmathEngine implements ExprEngine {
     defineUserSymbol(name: Sym): void {
         this.#scriptVars.defineUserSymbol(name);
     }
-    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
-        return this.#scriptVars.handlerFor(atom);
+    handlerFor<T extends U>(expr: T): ExprHandler<T> {
+        return this.#scriptVars.handlerFor(expr);
     }
     clearBindings(): void {
         this.#scriptVars.clearBindings();
@@ -834,22 +805,33 @@ class EigenmathEngine implements ExprEngine {
         eigenmath_simplify(this.#scriptVars, this.#scriptVars, this.#scriptVars);
         return this.#scriptVars.pop();
     }
-    valueOf(expr: U): U {
-        const value = evaluate_expression(expr, this.#scriptVars, this.#scriptVars, this.#scriptVars);
-        return value;
+    valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U {
+        const retval = evaluate_expression(expr, this.#scriptVars, this.#scriptVars, this.#scriptVars);
+        if (stack) {
+            try {
+                stack.push(retval);
+                return nil;
+            }
+            finally {
+                retval.release();
+            }
+        }
+        else {
+            return retval;
+        }
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
         switch (config.format) {
             case 'Ascii': {
                 // TODO
-                return to_infix(expr, eigenmath_infix_config(config));
+                return to_infix(expr, this.#scriptVars, this.#scriptVars, eigenmath_infix_config(config));
             }
             case 'Human': {
                 // TODO
-                return to_infix(expr, eigenmath_infix_config(config));
+                return to_infix(expr, this.#scriptVars, this.#scriptVars, eigenmath_infix_config(config));
             }
             case 'Infix': {
-                return to_infix(expr, eigenmath_infix_config(config));
+                return to_infix(expr, this.#scriptVars, this.#scriptVars, eigenmath_infix_config(config));
             }
             case 'LaTeX': {
                 return render_as_latex(expr, new ScriptVarsPrintConfig(this.#scriptVars));
@@ -861,7 +843,7 @@ class EigenmathEngine implements ExprEngine {
                 return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
             }
             default: {
-                return to_infix(expr, eigenmath_infix_config(config));
+                return to_infix(expr, this.#scriptVars, this.#scriptVars, eigenmath_infix_config(config));
             }
         }
     }
@@ -908,7 +890,7 @@ class PythonEngine implements ExprEngine {
         throw new Error('Method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
+    handlerFor<T extends U>(expr: T): ExprHandler<T> {
         throw new Error('Method not implemented.');
     }
     clearBindings(): void {
@@ -952,7 +934,7 @@ class PythonEngine implements ExprEngine {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: U): U {
-        throw new Error('valueOf method not implemented.');
+        throw new Error('PythonEngine.valueOf method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getBinding(sym: Sym): U {
@@ -1127,87 +1109,3 @@ export function run_module(module: Cons, handler: ScriptHandler<Stepper>): void 
         stepper.removeListener(listen);
     }
 }
-
-/**
- * An adapter for the print_result_and_output(...) function.
- * @deprecated
- */
-class PrintScriptListener implements ExprEngineListener {
-    constructor(private readonly element: HTMLElement) {
-    }
-    /**
-     * Appends the `output` to `this.element.innerHTML`.
-     */
-    output(output: string): void {
-        this.element.innerHTML += output;
-    }
-}
-
-/**
- * A utility for rendering expressions to the DOM (Document Object Model).
- * @deprecated Use ExprEngine.renderAsString(expr, { format: 'SVG'})
- */
-export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
-    /**
-     * @param element The `HTMLElement` whose `innerHTML` property will be targeted.
-     */
-    constructor(readonly element: HTMLElement) {
-    }
-    /**
-     * Sets the `innerHTML` property of `this.element` to the empty string.
-     */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    begin($: ExprEngine): void {
-        this.element.innerHTML = "";
-    }
-    /**
-     * Does nothing.
-     */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    end($: ExprEngine): void {
-        // Nothing to see here.
-    }
-    /**
-     * Appends `input` = `value` in SVG to `this.element.innerHTML`.
-     */
-    output(value: U, input: U, $: ExprEngine): void {
-        const ec: SvgRenderConfig = {
-            useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
-            useImaginaryJ: false,//isimaginaryunit(get_binding(symbol(J_LOWER), $))
-        };
-        // 
-        const listener = new PrintScriptListener(this.element);
-        function should_annotate_symbol(x: Sym, value: U): boolean {
-            if ($.hasUserFunction(x)) {
-                if (x.equals(value) || value.isnil) {
-                    return false;
-                }
-                /*
-                if (x.equals(I_LOWER) && isimaginaryunit(value))
-                    return false;
-        
-                if (x.equals(J_LOWER) && isimaginaryunit(value))
-                    return false;
-                */
-
-                return true;
-            }
-            else {
-                if (is_native_sym(x)) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
-            }
-        }
-        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg($), ec, [listener], should_annotate_symbol);
-    }
-    /**
-     * Appends `text` to `this.element.innerHTML`.
-     */
-    text(text: string): void {
-        this.element.innerHTML += text;
-    }
-}
-

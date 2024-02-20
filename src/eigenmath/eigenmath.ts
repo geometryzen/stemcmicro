@@ -1,7 +1,7 @@
 import { Adapter, assert_num, assert_tensor, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
-import { AtomHandler, CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
+import { CompareFn, ExprContext, ExprHandler, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
-import { assert_cons_or_nil, Atom, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
+import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprContextFromProgram } from '../adapters/ExprContextFromProgram';
 import { make_stack } from '../adapters/make_stack';
 import { StackFunction } from '../adapters/StackFunction';
@@ -16,11 +16,12 @@ import { predicate_return_value } from '../helpers/predicate_return_value';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { is_boo } from '../operators/boo/is_boo';
 import { eval_deg } from '../operators/degree/degree';
+import { flt_extension_builder } from '../operators/flt/flt_extension';
 import { hadamard, stack_hadamard } from '../operators/hadamard/stack_hadamard';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_lambda } from '../operators/lambda/is_lambda';
 import { mag, stack_mag } from '../operators/mag/stack_mag';
-import { rat_extension } from '../operators/rat/rat_extension';
+import { rat_extension_builder } from '../operators/rat/rat_extension';
 import { stack_rotate } from '../operators/rotate/stack_rotate';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { sym_extension_builder } from '../operators/sym/sym_extension';
@@ -28,6 +29,7 @@ import { stack_uom } from '../operators/uom/stack_uom';
 import { SyntaxKind } from '../parser/parser';
 import { ProgrammingError } from '../programming/ProgrammingError';
 import { is_power } from '../runtime/helpers';
+import { flatten_items } from '../stack/flatten_items';
 import { assert_cons } from '../tree/cons/assert_cons';
 import { Lambda } from '../tree/lambda/Lambda';
 import { half, two } from '../tree/rat/Rat';
@@ -52,6 +54,141 @@ import { ProgramEnv } from './ProgramEnv';
 import { ProgramFrame } from './ProgramFrame';
 import { ProgramIO } from './ProgramIO';
 import { ProgramStack } from './ProgramStack';
+
+const ABS = native_sym(Native.abs);
+const ADJ = create_sym("adj");
+const ALGEBRA = create_sym("algebra");
+const AND = create_sym("and");
+const ARCCOS = native_sym(Native.arccos);
+const ARCCOSH = native_sym(Native.arccosh);
+const ARCSIN = native_sym(Native.arcsin);
+const ARCSINH = native_sym(Native.arcsinh);
+const ARCTAN = native_sym(Native.arctan);
+const ARCTANH = native_sym(Native.arctanh);
+const ARG = native_sym(Native.arg);
+const BINDING = create_sym("binding");
+const CEILING = create_sym("ceiling");
+const CHECK = create_sym("check");
+const CIRCEXP = create_sym("circexp");
+const CLEAR = create_sym("clear");
+const CLOCK = create_sym("clock");
+const COFACTOR = create_sym("cofactor");
+const CONJ = native_sym(Native.conj);
+const CONTRACT = create_sym("contract");
+const COS = native_sym(Native.cos);
+const COSH = native_sym(Native.cosh);
+const DEFINT = create_sym("defint");
+const DENOMINATOR = create_sym("denominator");
+const DERIVATIVE = create_sym("derivative");
+const DET = create_sym("det");
+const DIM = create_sym("dim");
+const DO = create_sym("do");
+const DOT = create_sym("dot");
+const EIGENVEC = create_sym("eigenvec");
+const ERF = create_sym("erf");
+const ERFC = create_sym("erfc");
+const EVAL = create_sym("eval");
+const EXIT = create_sym("exit");
+const EXP = native_sym(Native.exp);
+const EXPCOS = create_sym("expcos");
+const EXPCOSH = create_sym("expcosh");
+const EXPSIN = create_sym("expsin");
+const EXPSINH = create_sym("expsinh");
+const EXPTAN = create_sym("exptan");
+const EXPTANH = create_sym("exptanh");
+const FACTORIAL = create_sym("factorial");
+const FLOAT = create_sym("float");
+const FLOOR = create_sym("floor");
+const FOR = create_sym("for");
+const HADAMARD = create_sym("hadamard");
+const IMAG = native_sym(Native.imag);
+const INNER = create_sym("inner");
+const INTEGRAL = create_sym("integral");
+const INV = create_sym("inv");
+const KRONECKER = create_sym("kronecker");
+const LOG = native_sym(Native.log);
+const MAG = create_sym("mag");
+const MINOR = create_sym("minor");
+const MINORMATRIX = create_sym("minormatrix");
+const MOD = create_sym("mod");
+const NOEXPAND = create_sym("noexpand");
+const NOT = create_sym("not");
+const NROOTS = create_sym("nroots");
+const NUMBER = create_sym("number");
+const NUMERATOR = create_sym("numerator");
+const OR = create_sym("or");
+const POLAR = native_sym(Native.polar);
+const PREFIXFORM = create_sym("prefixform");
+const PRODUCT = create_sym("product");
+const QUOTE = create_sym("quote");
+const RANK = create_sym("rank");
+const RATIONALIZE = create_sym("rationalize");
+const REAL = native_sym(Native.real);
+const RECT = native_sym(Native.rect);
+const ROOTS = create_sym("roots");
+const ROTATE = create_sym("rotate");
+const SGN = create_sym("sgn");
+const SIMPLIFY = create_sym("simplify");
+const SIN = native_sym(Native.sin);
+const SINH = native_sym(Native.sinh);
+const SQRT = create_sym("sqrt");
+const STATUS = create_sym("status");
+const STOP = create_sym("stop");
+const SUBST = create_sym("subst");
+const SUM = create_sym("sum");
+const TAN = native_sym(Native.tan);
+const TANH = native_sym(Native.tanh);
+const TAU = native_sym(Native.tau);
+const TAYLOR = create_sym("taylor");
+const TEST = create_sym("test");
+const TESTEQ = create_sym("testeq");
+const TESTGE = create_sym("testge");
+const TESTGT = create_sym("testgt");
+const TESTLE = create_sym("testle");
+const TESTLT = create_sym("testlt");
+const TRANSPOSE = create_sym("transpose");
+export const TTY = create_sym("tty");
+const UNIT = create_sym("unit");
+const UOM = create_sym("uom");
+const ZERO = create_sym("zero");
+
+const ADD = native_sym(Native.add);
+const MULTIPLY = native_sym(Native.multiply);
+const POWER = native_sym(Native.pow);
+const INDEX = native_sym(Native.component);
+const ASSIGN = native_sym(Native.assign);
+
+export const LAST = create_sym("last");
+
+const MATH_E = native_sym(Native.E);
+const MATH_PI = native_sym(Native.PI);
+
+const TRACE = create_sym("trace");
+
+/**
+ * 'd'
+ */
+const D_LOWER = create_sym("d");
+/**
+ * 'i'
+ */
+const I_LOWER = create_sym("i");
+const J_LOWER = create_sym("j");
+const X_LOWER = create_sym("x");
+
+const DOLLAR_A = create_sym("$a");
+const DOLLAR_B = create_sym("$b");
+const DOLLAR_X = create_sym("$x");
+
+const ARG1 = create_sym("$1");
+const ARG2 = create_sym("$2");
+const ARG3 = create_sym("$3");
+const ARG4 = create_sym("$4");
+const ARG5 = create_sym("$5");
+const ARG6 = create_sym("$6");
+const ARG7 = create_sym("$7");
+const ARG8 = create_sym("$8");
+const ARG9 = create_sym("$9");
 
 function alloc_tensor<T extends U>(): Tensor<T> {
     return new Tensor<T>([], []);
@@ -584,7 +721,7 @@ function complexity(p: U): number {
  * 
  * b must be cons or nil.
  */
-function cons($: Pick<ProgramStack, 'push' | 'pop'>): void {
+export function cons($: Pick<ProgramStack, 'push' | 'pop'>): void {
     const b = assert_cons_or_nil(pop($));
     const a = pop($);
     try {
@@ -595,141 +732,6 @@ function cons($: Pick<ProgramStack, 'push' | 'pop'>): void {
         b.release();
     }
 }
-
-const ABS = native_sym(Native.abs);
-const ADJ = create_sym("adj");
-const ALGEBRA = create_sym("algebra");
-const AND = create_sym("and");
-const ARCCOS = native_sym(Native.arccos);
-const ARCCOSH = native_sym(Native.arccosh);
-const ARCSIN = native_sym(Native.arcsin);
-const ARCSINH = native_sym(Native.arcsinh);
-const ARCTAN = native_sym(Native.arctan);
-const ARCTANH = native_sym(Native.arctanh);
-const ARG = native_sym(Native.arg);
-const BINDING = create_sym("binding");
-const CEILING = create_sym("ceiling");
-const CHECK = create_sym("check");
-const CIRCEXP = create_sym("circexp");
-const CLEAR = create_sym("clear");
-const CLOCK = create_sym("clock");
-const COFACTOR = create_sym("cofactor");
-const CONJ = native_sym(Native.conj);
-const CONTRACT = create_sym("contract");
-const COS = native_sym(Native.cos);
-const COSH = native_sym(Native.cosh);
-const DEFINT = create_sym("defint");
-const DENOMINATOR = create_sym("denominator");
-const DERIVATIVE = create_sym("derivative");
-const DET = create_sym("det");
-const DIM = create_sym("dim");
-const DO = create_sym("do");
-const DOT = create_sym("dot");
-const EIGENVEC = create_sym("eigenvec");
-const ERF = create_sym("erf");
-const ERFC = create_sym("erfc");
-const EVAL = create_sym("eval");
-const EXIT = create_sym("exit");
-const EXP = native_sym(Native.exp);
-const EXPCOS = create_sym("expcos");
-const EXPCOSH = create_sym("expcosh");
-const EXPSIN = create_sym("expsin");
-const EXPSINH = create_sym("expsinh");
-const EXPTAN = create_sym("exptan");
-const EXPTANH = create_sym("exptanh");
-const FACTORIAL = create_sym("factorial");
-const FLOAT = create_sym("float");
-const FLOOR = create_sym("floor");
-const FOR = create_sym("for");
-const HADAMARD = create_sym("hadamard");
-const IMAG = native_sym(Native.imag);
-const INNER = create_sym("inner");
-const INTEGRAL = create_sym("integral");
-const INV = create_sym("inv");
-const KRONECKER = create_sym("kronecker");
-const LOG = native_sym(Native.log);
-const MAG = create_sym("mag");
-const MINOR = create_sym("minor");
-const MINORMATRIX = create_sym("minormatrix");
-const MOD = create_sym("mod");
-const NOEXPAND = create_sym("noexpand");
-const NOT = create_sym("not");
-const NROOTS = create_sym("nroots");
-const NUMBER = create_sym("number");
-const NUMERATOR = create_sym("numerator");
-const OR = create_sym("or");
-const POLAR = native_sym(Native.polar);
-const PREFIXFORM = create_sym("prefixform");
-const PRODUCT = create_sym("product");
-const QUOTE = create_sym("quote");
-const RANK = create_sym("rank");
-const RATIONALIZE = create_sym("rationalize");
-const REAL = native_sym(Native.real);
-const RECT = native_sym(Native.rect);
-const ROOTS = create_sym("roots");
-const ROTATE = create_sym("rotate");
-const SGN = create_sym("sgn");
-const SIMPLIFY = create_sym("simplify");
-const SIN = native_sym(Native.sin);
-const SINH = native_sym(Native.sinh);
-const SQRT = create_sym("sqrt");
-const STATUS = create_sym("status");
-const STOP = create_sym("stop");
-const SUBST = create_sym("subst");
-const SUM = create_sym("sum");
-const TAN = native_sym(Native.tan);
-const TANH = native_sym(Native.tanh);
-const TAU = native_sym(Native.tau);
-const TAYLOR = create_sym("taylor");
-const TEST = create_sym("test");
-const TESTEQ = create_sym("testeq");
-const TESTGE = create_sym("testge");
-const TESTGT = create_sym("testgt");
-const TESTLE = create_sym("testle");
-const TESTLT = create_sym("testlt");
-const TRANSPOSE = create_sym("transpose");
-export const TTY = create_sym("tty");
-const UNIT = create_sym("unit");
-const UOM = create_sym("uom");
-const ZERO = create_sym("zero");
-
-const ADD = native_sym(Native.add);
-const MULTIPLY = native_sym(Native.multiply);
-const POWER = native_sym(Native.pow);
-const INDEX = native_sym(Native.component);
-const ASSIGN = native_sym(Native.assign);
-
-export const LAST = create_sym("last");
-
-const MATH_E = native_sym(Native.E);
-const MATH_PI = native_sym(Native.PI);
-
-const TRACE = create_sym("trace");
-
-/**
- * 'd'
- */
-const D_LOWER = create_sym("d");
-/**
- * 'i'
- */
-const I_LOWER = create_sym("i");
-const J_LOWER = create_sym("j");
-const X_LOWER = create_sym("x");
-
-const DOLLAR_A = create_sym("$a");
-const DOLLAR_B = create_sym("$b");
-const DOLLAR_X = create_sym("$x");
-
-const ARG1 = create_sym("$1");
-const ARG2 = create_sym("$2");
-const ARG3 = create_sym("$3");
-const ARG4 = create_sym("$4");
-const ARG5 = create_sym("$5");
-const ARG6 = create_sym("$6");
-const ARG7 = create_sym("$7");
-const ARG8 = create_sym("$8");
-const ARG9 = create_sym("$9");
 
 export function copy_tensor<T extends U>(source: Tensor<T>): Tensor<T> {
 
@@ -921,16 +923,16 @@ function dupl($: ProgramStack): void {
     }
 }
 
-function equal(p1: U, p2: U): boolean {
-    return cmp(p1, p2) === 0;
+function equal(lhs: U, rhs: U): boolean {
+    return cmp(lhs, rhs) === 0;
 }
 
-export function stack_abs(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    $.push(expr);
-    $.rest();
-    $.head();
-    value_of(env, ctrl, $);
-    absfunc(env, ctrl, $);
+export function stack_abs(expr: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
+    _.push(expr);
+    _.rest();
+    _.head();
+    value_of(env, ctrl, _);
+    absfunc(env, ctrl, _);
 }
 
 export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -938,11 +940,16 @@ export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
     const x = pop($);
     try {
         if (is_atom(x)) {
-            if (is_blade(x)) {
-                // throw new ProgrammingError("abs(Blade)");
-            }
             const handler = env.handlerFor(x);
-            handler.test;
+            const retval = handler.dispatch(x, ABS, nil, new ExprContextFromProgram(env, ctrl, $));
+            try {
+                $.push(retval);
+                return;
+            }
+            finally {
+                retval.release();
+            }
+            /*
             if (is_num(x)) {
                 push(x, $);
                 if (isnegativenumber(x)) {
@@ -969,6 +976,7 @@ export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
                 push(x, $);
                 return;
             }
+            */
         }
 
         push(x, $);
@@ -1052,9 +1060,9 @@ export function value_of_args(env: ProgramEnv, ctrl: ProgramControl, _: ProgramS
     return _.length - L0 + 1;       // Adding 1 because we replaced the (x1 x2 ... xn)
 }
 
-function assert_stack_length(expectedLength: number, _: ProgramStack): void | never {
+export function assert_stack_length(expectedLength: number, _: ProgramStack): void | never {
     if (_.length !== expectedLength) {
-        throw new ProgrammingError();
+        throw new ProgrammingError(`expected stack length, ${expectedLength}, does not match actual ${_.length}`);
     }
 }
 
@@ -1062,7 +1070,6 @@ function assert_stack_length(expectedLength: number, _: ProgramStack): void | ne
  * [...] => [..., X], where X is the sum of the evaluated terms, (x1 x2 x3 ... xn).
  */
 export function stack_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
-    // console.lg("stack_add", `${expr}`);
     ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
     try {
         const L0 = _.length;                            // [...]
@@ -1089,7 +1096,7 @@ export function add(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): voi
 /**
  * [..., v1, v2, ..., vn] => [..., X] where X is the sum of v1 through vn
  */
-function sum_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
+export function sum_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
 
     if (n < 0) {
         throw new ProgrammingError(`n => ${n}`);
@@ -1097,7 +1104,7 @@ function sum_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramS
 
     const start = _.length - n;
 
-    flatten_terms(start, _);
+    flatten_items(start, ADD, _);
 
     const sigma = sum_tensors(start, env, ctrl, _);
 
@@ -1139,25 +1146,6 @@ function sum_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramS
     }
 }
 
-/**
- * @param start The starting position on the stack.
- */
-function flatten_terms(start: number, _: ProgramStack): void {
-    const end = _.length;
-    for (let i = start; i < end; i++) {
-        let p1 = _.getAt(i);
-        if (car(p1).equals(ADD)) {
-            _.setAt(i, cadr(p1));
-            p1 = cddr(p1);
-            while (is_cons(p1)) {
-                _.push(p1);
-                _.head();
-                p1 = cdr(p1);
-            }
-        }
-    }
-}
-
 export function sum_atoms(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): Tensor {
     let T: U = nil;
     for (let i = start; i < _.length; i++) {
@@ -1179,7 +1167,7 @@ export function sum_atoms(start: number, env: ProgramEnv, ctrl: ProgramControl, 
     return T as Tensor;
 }
 
-function sum_tensors(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): Rat | Tensor {
+export function sum_tensors(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): Rat | Tensor {
     let sum: Rat | Tensor = zero;
     for (let i = start; i < _.length; i++) {
         const rhs = _.getAt(i);
@@ -1226,7 +1214,7 @@ function add_2_tensors(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
     push(C, $);                 //  [..., (+ A B)]
 }
 
-function combine_terms(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
+export function combine_terms(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
     sort_terms(start, ctrl, _);
     for (let i = start; i < _.length - 1; i++) {
         if (combine_terms_nib(i, i + 1, env, ctrl, _)) {
@@ -1448,7 +1436,7 @@ function make_terms_compare_fn(compareFactors: CompareFn): CompareFn {
     };
 }
 
-function simplify_terms(h: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): number {
+export function simplify_terms(h: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): number {
     let n = 0;
     for (let i = h; i < $.length; i++) {
         const p1 = $.getAt(i);
@@ -2748,7 +2736,7 @@ export function stack_cofactor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, 
 
     push(cadr(p1), $);
     value_of(env, ctrl, $);
-    const p2 = pop($) as Tensor;
+    const p2 = assert_tensor(pop($));
 
     push(caddr(p1), $);
     value_of(env, ctrl, $);
@@ -2761,8 +2749,9 @@ export function stack_cofactor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, 
     if (!issquarematrix(p2))
         stopf("cofactor: square matrix expected");
 
-    if (i < 1 || i > p2.dims[0] || j < 0 || j > p2.dims[1])
+    if (i < 1 || i > p2.dims[0] || j < 0 || j > p2.dims[1]) {
         stopf("cofactor: index err");
+    }
 
     push(p2, $);
 
@@ -2780,7 +2769,7 @@ export function stack_conj(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
     conjfunc(env, ctrl, $);
 }
 
-function conjfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function conjfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     conjfunc_subst(env, ctrl, $);
     value_of(env, ctrl, $);
 }
@@ -3388,22 +3377,35 @@ function derivative(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): voi
     const F = pop($);
 
     if (is_tensor(F)) {
-        if (is_tensor(X))
+        if (is_tensor(X)) {
             d_tensor_tensor(F, X, env, ctrl, $);
-        else
+        }
+        else {
             d_tensor_scalar(F, X, env, ctrl, $);
+        }
     }
     else {
-        if (is_tensor(X))
+        if (is_tensor(X)) {
             d_scalar_tensor(F, X, env, ctrl, $);
-        else
+        }
+        else {
             d_scalar_scalar(F, X, env, ctrl, $);
+        }
     }
 }
 
 function d_scalar_scalar(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (!(is_sym(X) && env.hasUserFunction(X)))
-        stopf("derivative: symbol expected");
+    if (is_sym(X)) {
+        if (env.hasUserFunction(X)) {
+            // OK
+        }
+        else {
+            stopf(`derivative: symbol '${X.key()}' must have user function.`);
+        }
+    }
+    else {
+        stopf(`derivative: symbol expected.`);
+    }
 
     // d(x,x)?
 
@@ -4290,19 +4292,24 @@ function erfcfunc(env: ProgramEnv, $: ProgramStack): void {
     list(2, $);
 }
 
-export function stack_eval(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-    p1 = cddr(p1);
+/**
+ * (eval f x1 a1 x2 a2 ...)
+ */
+export function stack_eval(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
+    _.push(expr);                   //  [expr]
+    _.rest();                       //  [expr.rest]
+    _.head();                       //  [expr.rest.head]
+    value_of(env, ctrl, _);         //  [F]
+    let p1 = cddr(expr);
     while (is_cons(p1)) {
-        push(car(p1), $);
-        value_of(env, ctrl, $);
-        push(cadr(p1), $);
-        value_of(env, ctrl, $);
-        subst($);
+        push(car(p1), _);           //  [F, expr.rest.rest.head]
+        value_of(env, ctrl, _);     //  [F, x]
+        push(cadr(p1), _);          //  [F, x, expr.rest.rest.rest.head]
+        value_of(env, ctrl, _);     //  [F, x, a]
+        subst(_);
         p1 = cddr(p1);
     }
-    value_of(env, ctrl, $);
+    value_of(env, ctrl, _);
 }
 
 export function stack_exit(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -4858,7 +4865,7 @@ export function stack_inner(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
     }
 }
 
-function inner(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function inner(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     let p2 = pop($);
     let p1 = pop($);
@@ -8745,49 +8752,53 @@ export function stack_subst(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
     value_of(env, ctrl, $); // normalize
 }
 
-function subst($: ProgramStack): void {
+/**
+ * [..., F, x, a]
+ */
+function subst(_: Pick<ProgramStack, 'length' | 'pop' | 'push'>): void {
 
-    const p3 = pop($); // new expr
-    const p2 = pop($); // old expr
+    const a = pop(_); // new expr
+    const x = pop(_); // old expr
 
-    if (p2.isnil || p3.isnil)
+    if (x.isnil || a.isnil) {
         return;
+    }
 
-    let p1 = pop($); // expr
+    let F = pop(_); // expr
 
-    if (is_tensor(p1)) {
-        const T = copy_tensor(p1);
+    if (is_tensor(F)) {
+        const T = copy_tensor(F);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i], $);
-            push(p2, $);
-            push(p3, $);
-            subst($);
-            T.elems[i] = pop($);
+            push(T.elems[i], _);
+            push(x, _);
+            push(a, _);
+            subst(_);
+            T.elems[i] = pop(_);
         }
-        push(T, $);
+        push(T, _);
         return;
     }
 
-    if (equal(p1, p2)) {
-        push(p3, $);
+    if (equal(F, x)) {
+        push(a, _);
         return;
     }
 
-    if (is_cons(p1)) {
-        const h = $.length;
-        while (is_cons(p1)) {
-            push(car(p1), $);
-            push(p2, $);
-            push(p3, $);
-            subst($);
-            p1 = cdr(p1);
+    if (is_cons(F)) {
+        const h = _.length;
+        while (is_cons(F)) {
+            push(car(F), _);
+            push(x, _);
+            push(a, _);
+            subst(_);
+            F = cdr(F);
         }
-        list($.length - h, $);
+        list(_.length - h, _);
         return;
     }
 
-    push(p1, $);
+    push(F, _);
 }
 
 /**
@@ -9230,23 +9241,28 @@ export function stack_test(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
 }
 
 export function stack_testeq(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(expr), $);
-    value_of(env, ctrl, $);
-    push(caddr(expr), $);
-    value_of(env, ctrl, $);
-    subtract(env, ctrl, $);
-    simplify(env, ctrl, $);
-    const p1 = pop($);
-    if (iszero(p1, env)) {
-        push(predicate_return_value(true, ctrl), $);
+    push(expr.rest.head, $);        //  [expr.rest.head]
+    value_of(env, ctrl, $);         //  [lhs]
+    push(expr.rest.rest.head, $);   //  [lhs, expr.rest.rest.head]
+    value_of(env, ctrl, $);         //  [lhs, rhs]
+    subtract(env, ctrl, $);         //  [lhs-rhs]
+    simplify(env, ctrl, $);         //  [lhs-rhs]
+    const diff = pop($);
+    try {
+        if (iszero(diff, env)) {
+            push(predicate_return_value(true, ctrl), $);
+        }
+        else {
+            push(predicate_return_value(false, ctrl), $);
+        }
     }
-    else {
-        push(predicate_return_value(false, ctrl), $);
+    finally {
+        diff.release();
     }
 }
 
-export function stack_testge(expr1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (cmp_args(expr1, env, ctrl, $) >= 0) {
+export function stack_testge(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    if (cmp_args(expr, env, ctrl, $) >= 0) {
         push(predicate_return_value(true, ctrl), $);
     }
     else {
@@ -9282,7 +9298,7 @@ export function stack_testlt(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, 
 
 function cmp_args(expr: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): Sign {
     //                              [...]
-    push(expr, _);               //  [..., expr]
+    _.push(expr);               //  [..., expr]
     _.rest();                   //  [..., expr.rest]
     _.dupl();                   //  [..., expr.rest, expr.rest]
     _.head();                   //  [..., expr.rest, expr.rest.head]
@@ -9294,21 +9310,26 @@ function cmp_args(expr: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStac
     // We now get into dubious territory....
     // For example ex-ex is zero => SIGN_EQ.
     // ex-ey => ex - ey
-    subtract(env, ctrl, _);     //  [..., (lhs-rhs)]
+    subtract(env, ctrl, _);     //  [..., lhs-rhs]
     simplify(env, ctrl, _);
     floatfunc(env, ctrl, _);
-    const p1 = pop(_);          //  [...]
-    if (iszero(p1, env)) {
-        return SIGN_EQ;
+    const diff = pop(_);        //  [...]
+    try {
+        if (iszero(diff, env)) {
+            return SIGN_EQ;
+        }
+        if (!is_num(diff)) {
+            stopf("compare err");
+        }
+        if (isnegativenumber(diff)) {
+            return SIGN_LT;
+        }
+        else {
+            return SIGN_GT;
+        }
     }
-    if (!is_num(p1)) {
-        stopf("compare err");
-    }
-    if (isnegativenumber(p1)) {
-        return SIGN_LT;
-    }
-    else {
-        return SIGN_GT;
+    finally {
+        diff.release();
     }
 }
 
@@ -9669,6 +9690,12 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
     }
 }
 
+/**
+ * By the context of usage, I think the name here means evaluate predicate.
+ * @param env 
+ * @param ctrl 
+ * @param $ 
+ */
 function evalp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const expr = pop($);
     try {
@@ -10560,22 +10587,6 @@ function findf(p: U, q: U): 0 | 1 {
     return 0;
 }
 
-function flatten_factors(start: number, $: ProgramStack): void {
-    const end = $.length;
-    for (let i = start; i < end; i++) {
-        let p1 = $.getAt(i);
-        if (car(p1).equals(MULTIPLY)) {
-            p1 = cdr(p1);
-            $.setAt(i, car(p1));
-            p1 = cdr(p1);
-            while (is_cons(p1)) {
-                push(car(p1), $);
-                p1 = cdr(p1);
-            }
-        }
-    }
-}
-
 export function get_binding(opr: Sym, target: Cons, env: ProgramEnv): U {
     if (!is_sym(opr)) {
         stopf(`get_binding(${opr}) argument must be a Sym.`);
@@ -10843,7 +10854,7 @@ export function multiply_factors(n: number, env: ProgramEnv, ctrl: ProgramContro
      */
     const start = $.length - n;
 
-    flatten_factors(start, $);
+    flatten_items(start, MULTIPLY, $);
 
     // console.lg(`after flatten factors: ${ $.stack } `);
     const uom = multiply_uom_factors(start, $);
@@ -13461,7 +13472,6 @@ export function stopf(errmsg: string): never {
  * [..., x, y] => [..., (+ x (* -1 y))]
  */
 export function subtract(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    //                              [..., x, y]
     negate(env, ctrl, $);       //  [..., x, (* -1 y)]
     sum_terms(2, env, ctrl, $); //  [..., (+ x (* -1 y))]
 }
@@ -13673,6 +13683,10 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.define_stack_function(UOM, stack_uom);
         this.define_stack_function(ZERO, stack_zero);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getSymbolPrintName(sym: Sym): string {
+        throw new Error('Method not implemented.');
+    }
     init(): void {
         this.#directiveStack.push(Directive.depth, 0);
         this.#directiveStack.push(Directive.drawing, 0);
@@ -13732,12 +13746,16 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         assert_sym(sym);
         return this.usrfunc[sym.key()];
     }
-    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
-        switch (atom.type) {
-            case 'rational': return rat_extension;
-            case 'symbol': return sym_extension_builder.create(this.#config) as unknown as AtomHandler<A>;
+    handlerFor<T extends U>(expr: T): ExprHandler<T> {
+        if (is_atom(expr)) {
+            switch (expr.type) {
+                // FIXME: casting
+                case 'number': return flt_extension_builder.create(this.#config) as unknown as ExprHandler<T>;
+                case 'rational': return rat_extension_builder.create(this.#config) as unknown as ExprHandler<T>;
+                case 'symbol': return sym_extension_builder.create(this.#config) as unknown as ExprHandler<T>;
+            }
         }
-        throw new Error(`ScriptVars.handlerFor ${atom.type} method not implemented.`);
+        throw new Error(`ScriptVars.handlerFor ${expr} method not implemented.`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     hasBinding(opr: Sym, target: Cons): boolean {
@@ -13762,10 +13780,25 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     setUserFunction(sym: Sym, usrfunc: U): void {
         this.usrfunc[sym.key()] = usrfunc;
     }
-    valueOf(expr: U): U {
-        push(expr, this);
-        value_of(this, this, this);
-        return pop(this);
+    valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U {
+        // console.lg("ScriptVars.valueOf");
+        if (stack) {
+            push(expr, this);
+            value_of(this, this, this);
+            const retval = pop(this);
+            try {
+                stack.push(retval);
+                return nil;
+            }
+            finally {
+                retval.release();
+            }
+        }
+        else {
+            push(expr, this);
+            value_of(this, this, this);
+            return pop(this);
+        }
     }
     define_stack_function(sym: Sym, func: StackFunction): void {
         this.#stackFunctions.set(sym.key(), func);

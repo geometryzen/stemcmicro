@@ -197,26 +197,8 @@ export function eval_not(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-/* and =====================================================================
-
-Tags
-----
-scripting, JS, internal, treenode, general concept
-
-Parameters
-----------
-a,b,...
-
-General description
--------------------
-Logical-and of predicate expressions.
-
-*/
-
-// and definition
-export function eval_and(p1: Cons, $: ExtensionEnv): U {
-    const wholeAndExpression = p1;
-    let andPredicates = cdr(wholeAndExpression);
+export function eval_and(expr: Cons, $: ExtensionEnv): U {
+    let andPredicates = cdr(expr);
     let somePredicateUnknown = false;
     while (is_cons(andPredicates)) {
         const value = $.valueOf(replace_assign_with_testeq(car(andPredicates)));
@@ -252,7 +234,7 @@ export function eval_and(p1: Cons, $: ExtensionEnv): U {
     // If all the predicates were known, then we can conclude
     // that the test returns true.
     if (somePredicateUnknown) {
-        return wholeAndExpression;
+        return expr;
     }
     else {
         return predicate_return_value(true, $);

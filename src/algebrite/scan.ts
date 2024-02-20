@@ -70,8 +70,29 @@ export interface ScanOptions {
      * This is used to emulate Eigenmath.
      */
     useParenForTensors: boolean;
+    /**
+     * Determines how the parser will return additive expressions.
+     * 
+     * "a + b + c" => (+ a b c)         explicitAssocAdd=false
+     * "a + b + c" => (+ (+ a b) c)     explicitAssocAdd=true
+     */
     explicitAssocAdd: boolean;
+    /**
+     * Determines how the parser will return multiplicative expressions.
+     * 
+     * "a * b * c" => (* a b c)         explicitAssocMul=false
+     * "a * b * c" => (* (* a b) c)     explicitAssocMul=true
+     */
     explicitAssocMul: boolean;
+    /**
+     * Determines how the parser will return exterior product expressions.
+     * 
+     * "a ^ b ^ c" => (^ a b c)         explicitAssocExt=false
+     * "a ^ b ^ c" => (^ (^ a b) c)     explicitAssocExt=true
+     */
+    explicitAssocExt: boolean;
+
+    // TODO: Consider replacing these by something more general (Sym,boolean) pairs?
 }
 
 /**
@@ -81,7 +102,7 @@ export interface ScanOptions {
  * @param offset The number which must be added to all (pos,end) pairs to make positions.
  * @returns The number of characters scanned.
  */
-export function scan(sourceText: string, offset: number, options: ScanOptions): [scanned: number, tree: U] {
+export function scan(sourceText: string, offset: number, options: Readonly<ScanOptions>): [scanned: number, tree: U] {
 
     const state = new InputState(sourceText, 0, offset);
 
@@ -96,7 +117,7 @@ export function scan(sourceText: string, offset: number, options: ScanOptions): 
     return [state.scanned, expr];
 }
 
-export function scan_meta(sourceText: string, options: ScanOptions): U {
+export function scan_meta(sourceText: string, options: Readonly<ScanOptions>): U {
     const state = new InputState(sourceText, 0, 0);
     state.meta_mode = true;
     state.get_token();
@@ -109,7 +130,7 @@ export function scan_meta(sourceText: string, options: ScanOptions): U {
 /**
  * ':='
  */
-function is_quote_assign(code: TokenCode): boolean {
+function is_colon_equals(code: TokenCode): boolean {
     switch (code) {
         case T_COLON_EQ: {
             return true;
@@ -123,7 +144,7 @@ function is_quote_assign(code: TokenCode): boolean {
 /**
  * '='
  */
-function is_assign(code: TokenCode): boolean {
+function is_equals(code: TokenCode): boolean {
     switch (code) {
         case T_EQ: {
             return true;
@@ -139,10 +160,10 @@ function is_assign(code: TokenCode): boolean {
  */
 function is_assignment_operator(code: TokenCode): boolean {
     // console.lg("is_stmt", code);
-    return is_quote_assign(code) || is_assign(code);
+    return is_colon_equals(code) || is_equals(code);
 }
 
-function scan_assignment_stmt(state: InputState, options: ScanOptions): U {
+function scan_assignment_stmt(state: InputState, options: Readonly<ScanOptions>): U {
     // console.lg(`scan_assignment_stmt(state.code.text=${state.code.text})`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
@@ -163,7 +184,7 @@ function scan_assignment_stmt(state: InputState, options: ScanOptions): U {
         const op = state.tokenToSym();
         pos = Math.min(assert_pos(op.pos), pos);
         end = Math.max(assert_end(op.end), pos);
-        const was_quote_assign = is_quote_assign(state.code);
+        const was_quote_assign = is_colon_equals(state.code);
 
         state.get_token_skip_newlines();
 
@@ -212,7 +233,7 @@ function is_relational(code: TokenCode): boolean {
 /**
  * relational ::= add [REL add]?
  */
-function scan_relational_expr(state: InputState, options: ScanOptions): U {
+function scan_relational_expr(state: InputState, options: Readonly<ScanOptions>): U {
     // console.lg(`scan_relational_expr(state.code.text=${state.code.text})`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
@@ -262,8 +283,9 @@ function is_additive_operator(code: TokenCode): boolean {
         }
     }
 }
-function scan_additive_expr(state: InputState, options: ScanOptions): U {
+function scan_additive_expr(state: InputState, options: Readonly<ScanOptions>): U {
     // console.lg(`scan_additive_expr(state.code.text=${state.code.text})`);
+    // console.lg("explicitAssocAdd", options.explicitAssocAdd);
     if (options.explicitAssocAdd) {
         return scan_additive_expr_explicit(state, options);
     }
@@ -273,9 +295,9 @@ function scan_additive_expr(state: InputState, options: ScanOptions): U {
 }
 
 /**
- * 
+ * a + b + c => (+ a b c)
  */
-function scan_additive_expr_implicit(state: InputState, options: ScanOptions): U {
+function scan_additive_expr_implicit(state: InputState, options: Readonly<ScanOptions>): U {
     const terms: U[] = [native_sym(Native.add)];
 
     let pos: number = Number.MAX_SAFE_INTEGER;
@@ -371,7 +393,10 @@ function negate(expr: U): U {
     }
 }
 
-function scan_additive_expr_explicit(state: InputState, options: ScanOptions): U {
+/**
+ * a + b + c => (a + b) + c
+ */
+function scan_additive_expr_explicit(state: InputState, options: Readonly<ScanOptions>): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`scan_additive => ${retval} @ ${description}`);
@@ -434,7 +459,7 @@ function is_multiplicative_operator_or_factor_pending(code: TokenCode): boolean 
     }
     return false;
 }
-export function scan_multiplicative_expr(state: InputState, options: ScanOptions): U {
+export function scan_multiplicative_expr(state: InputState, options: Readonly<ScanOptions>): U {
     // console.lg(`scan_multiplicative_expr(state.code.text=${state.code.text})`);
     if (options.explicitAssocMul) {
         return scan_multiplicative_expr_explicit(state, options);
@@ -447,7 +472,7 @@ export function scan_multiplicative_expr(state: InputState, options: ScanOptions
 /**
  * 
  */
-export function scan_multiplicative_expr_implicit(state: InputState, options: ScanOptions): U {
+export function scan_multiplicative_expr_implicit(state: InputState, options: Readonly<ScanOptions>): U {
 
     let pos: number = Number.MAX_SAFE_INTEGER;
     let end: number = Number.MIN_SAFE_INTEGER;
@@ -533,7 +558,7 @@ function simplify_1_in_products(factors: U[]): void {
 /**
  * Corresponds to scan_term
  */
-export function scan_multiplicative_expr_explicit(state: InputState, options: ScanOptions): U {
+export function scan_multiplicative_expr_explicit(state: InputState, options: Readonly<ScanOptions>): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`scan_multiplicative => ${retval} @ ${description}`);
@@ -590,7 +615,7 @@ function is_outer(code: TokenCode, useCaretForExponentiation: boolean): boolean 
     return false;
 }
 
-function scan_outer_expr(state: InputState, options: ScanOptions): U {
+function scan_outer_expr(state: InputState, options: Readonly<ScanOptions>): U {
 
     let pos: number = Number.MAX_SAFE_INTEGER;
     let end: number = Number.MIN_SAFE_INTEGER;
@@ -627,7 +652,7 @@ function is_inner_or_contraction(code: TokenCode): boolean {
     return code === T_LTLT || code === T_GTGT || code === T_VBAR || code === T_MIDDLE_DOT;
 }
 
-function scan_inner_expr(state: InputState, options: ScanOptions): U {
+function scan_inner_expr(state: InputState, options: Readonly<ScanOptions>): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`results (INNER) => ${retval} @ ${description}`);
@@ -710,7 +735,7 @@ function is_power(code: TokenCode, useCaretForExponentiation: boolean): boolean 
     }
 }
 
-function scan_power_expr(state: InputState, options: ScanOptions): U {
+function scan_power_expr(state: InputState, options: Readonly<ScanOptions>): U {
     // Using a stack because exponentiation is right-associative.
     // We'll push the operands as well in order to retain scanning location information.
     let pos: number = Number.MAX_SAFE_INTEGER;
@@ -748,7 +773,7 @@ function scan_power_expr(state: InputState, options: ScanOptions): U {
     throw new Error();
 }
 
-function scan_unary_expr(state: InputState, options: ScanOptions): U {
+function scan_unary_expr(state: InputState, options: Readonly<ScanOptions>): U {
 
     const code = state.code;
     switch (code) {
@@ -796,7 +821,7 @@ function scan_unary_expr(state: InputState, options: ScanOptions): U {
     }
 }
 
-function scan_grouping_expr(state: InputState, options: ScanOptions): U {
+function scan_grouping_expr(state: InputState, options: Readonly<ScanOptions>): U {
     // console.lg(`scan_grouping_expr(state.code.text=${state.code.text})`);
     const code = state.code;
     if (code === T_LPAR) {
@@ -815,7 +840,7 @@ function scan_grouping_expr(state: InputState, options: ScanOptions): U {
 /**
  *
  */
-function scan_atom(state: InputState, options: ScanOptions): [is_num: boolean, expr: U] {
+function scan_atom(state: InputState, options: Readonly<ScanOptions>): [is_num: boolean, expr: U] {
     // let pos: number = Number.MAX_SAFE_INTEGER;
     // let end: number = Number.MIN_SAFE_INTEGER;
 
@@ -891,7 +916,7 @@ function scan_string(state: InputState): U {
     return str;
 }
 
-function scan_factor(state: InputState, options: ScanOptions): U {
+function scan_factor(state: InputState, options: Readonly<ScanOptions>): U {
 
     let pos: number = assert_pos(Number.MAX_SAFE_INTEGER);
     let end: number = assert_end(Number.MIN_SAFE_INTEGER);
@@ -946,7 +971,7 @@ function scan_factor(state: InputState, options: ScanOptions): U {
     return result;
 }
 
-function scan_index(indexable: U, state: InputState, options: ScanOptions): U {
+function scan_index(indexable: U, state: InputState, options: Readonly<ScanOptions>): U {
 
     let pos: number = Number.MAX_SAFE_INTEGER;
     let end: number = Number.MIN_SAFE_INTEGER;
@@ -1019,7 +1044,7 @@ function scan_symbol(state: InputState): U {
     return hook(sym, "A");
 }
 
-function scan_function_call(state: InputState, options: ScanOptions): U {
+function scan_function_call(state: InputState, options: Readonly<ScanOptions>): U {
 
     state.expect(T_FUNCTION);
 
@@ -1066,7 +1091,7 @@ function scan_function_call(state: InputState, options: ScanOptions): U {
     return pos_end_items_to_cons(assert_pos(pos), assert_end(end), ...fcall);
 }
 
-function scan_function_call_without_function_name(lhs: U, state: InputState, options: ScanOptions): U {
+function scan_function_call_without_function_name(lhs: U, state: InputState, options: Readonly<ScanOptions>): U {
 
     let pos: number = Number.MAX_SAFE_INTEGER;
     let end: number = Number.MIN_SAFE_INTEGER;
@@ -1115,7 +1140,7 @@ function scan_function_call_without_function_name(lhs: U, state: InputState, opt
 /**
  * An expression that is enclosed in parentheses.
  */
-function scan_grouping(state: InputState, options: ScanOptions): U {
+function scan_grouping(state: InputState, options: Readonly<ScanOptions>): U {
     state.expect(T_LPAR);
     state.get_token();
     const result = scan_assignment_stmt(state, options);
@@ -1127,7 +1152,7 @@ function scan_grouping(state: InputState, options: ScanOptions): U {
 export const stuff = { a: 1, b: 2 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function scan_map(state: InputState, options: ScanOptions): Map {
+function scan_map(state: InputState, options: Readonly<ScanOptions>): Map {
     let pos: number = Number.MAX_SAFE_INTEGER;
     let end: number = Number.MIN_SAFE_INTEGER;
 
@@ -1202,7 +1227,7 @@ function scan_map(state: InputState, options: ScanOptions): Map {
     return new Map(entries, assert_pos(pos), assert_end(end));
 }
 
-function scan_tensor(state: InputState, options: ScanOptions): Tensor {
+function scan_tensor(state: InputState, options: Readonly<ScanOptions>): Tensor {
     let pos: number = Number.MAX_SAFE_INTEGER;
     let end: number = Number.MIN_SAFE_INTEGER;
 

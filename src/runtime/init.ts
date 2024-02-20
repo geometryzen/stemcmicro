@@ -1,6 +1,5 @@
 import { scan } from '../algebrite/scan';
 import { Directive, ExtensionEnv, flag_from_directive } from "../env/ExtensionEnv";
-import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { defs } from './defs';
 
 /**
@@ -24,8 +23,6 @@ export const stemc_prolog = [
     // TODO: remove these and make sure it still works when these are not bound.
     'last=0',
     'trace=0',
-    'forceFixedPrintout=1',
-    `${VARNAME_MAX_FIXED_PRINTOUT_DIGITS}=${DEFAULT_MAX_FIXED_PRINTOUT_DIGITS}`,
     'printLeaveEAlone=1',
     'printLeaveXAlone=0',
     // TODO: Function definitions here will mask the standard operators.
@@ -61,7 +58,8 @@ export function execute_definition(sourceText: string, $: ExtensionEnv): void {
             useCaretForExponentiation: flag_from_directive($.getDirective(Directive.useCaretForExponentiation)),
             useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
             explicitAssocAdd: false,
-            explicitAssocMul: false
+            explicitAssocMul: false,
+            explicitAssocExt: false
         });
         try {
             if (scanned > 0) {

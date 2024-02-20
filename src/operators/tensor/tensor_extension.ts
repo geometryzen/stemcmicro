@@ -1,14 +1,23 @@
 import { is_tensor, Sym, Tensor } from "math-expression-atoms";
-import { AtomHandler, ExprContext } from "math-expression-context";
-import { cons, Cons, nil, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExprContext } from "math-expression-context";
+import { Native, native_sym } from "math-expression-native";
+import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
+import { conjfunc, inner, power, push_rational } from "../../eigenmath/eigenmath";
+import { Directive, Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { StackU } from "../../env/StackU";
 import { HASH_TENSOR } from "../../hashing/hash_info";
-import { print_tensor } from "../../print/print";
-import { to_infix_string } from "../../print/to_infix_string";
+import { PrintConfig, print_str, render_using_non_sexpr_print_mode } from "../../print/print";
+import { ProgrammingError } from "../../programming/ProgrammingError";
 import { MAXDIM } from "../../runtime/constants";
-import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
+import { defs, PrintMode, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_SEXPR } from "../../runtime/defs";
+import { assert_square_matrix_tensor } from "../../tensor";
+import { cofactor } from "../cofactor/cofactor";
 import { simplify } from "../simplify/simplify";
 import { subst } from "../subst/subst";
+
+const ABS = native_sym(Native.abs);
+const ADD = native_sym(Native.add);
+const ADJ = native_sym(Native.adj);
 
 function equal_elements(as: U[], bs: U[], $: ExtensionEnv): boolean {
     const length = as.length;
@@ -49,12 +58,22 @@ export function equal_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): bo
     return true;
 }
 
-export function add_tensor_tensor(A: Tensor, B: Tensor, $: ExtensionEnv): Cons | Tensor {
+function add(lhs: U, rhs: U, env: ExprContext): U {
+    const expr = items_to_cons(ADD, lhs, rhs);
+    try {
+        return env.valueOf(expr);
+    }
+    finally {
+        expr.release();
+    }
+}
+
+export function add_tensor_tensor(A: Tensor, B: Tensor, env: ExprContext): Cons | Tensor {
     if (!A.sameDimensions(B)) {
         return nil;
     }
     return A.map(function (a, i) {
-        return $.add(a, B.elem(i));
+        return add(a, B.elem(i), env);
     });
 }
 
@@ -78,7 +97,7 @@ export function outer_tensor_tensor(lhs: Tensor, rhs: Tensor, $: ExtensionEnv): 
     return new Tensor(sizes, elems);
 }
 
-class TensorExtension implements Extension<Tensor>, AtomHandler<Tensor>{
+class TensorExtension implements Extension<Tensor> {
     constructor() {
         // Nothing to see here.
     }
@@ -86,13 +105,51 @@ class TensorExtension implements Extension<Tensor>, AtomHandler<Tensor>{
     dependencies?: FEATURE[] | undefined;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(atom: Tensor, opr: Sym, env: ExprContext): boolean {
-        throw new Error(`${this.name}.dispatch(${atom},${opr}) method not implemented.`);
+        throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
+    }
+    binL(lhs: Tensor, opr: Sym, rhs: U, env: ExprContext): U {
+        if (opr.equalsSym(ADD)) {
+            if (is_atom(rhs)) {
+                if (is_tensor(rhs)) {
+                    return add_tensor_tensor(lhs, rhs, env);
+                }
+            }
+        }
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(atom: Tensor, opr: Sym, lhs: U, expr: ExprContext): U {
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(x: Tensor, opr: Sym, argList: Cons, env: ExprContext): U {
+        if (opr.equalsSym(ABS)) {
+            // Using the Eigenmath implementation right now as it is a bit simpler than abs_of_tensor.
+            const _ = new StackU();
+            if (x.ndim > 1) {
+                _.push(ABS);
+                _.push(x);
+                _.list(2);
+                return _.pop();
+            }
+            _.push(x);                  //  [x]
+            _.push(x);                  //  [x, x]
+            conjfunc(env, env, _);      //  [x, conj(x)]
+            inner(env, env, _);         //  [x | conj(x)]
+            push_rational(1, 2, _);     //  [x | conj(x), 1/2]
+            power(env, env, _);         //  [sqrt(x | conj(x))]
+            return _.pop();
+        }
+        else if (opr.equalsSym(ADJ)) {
+            return adj(x, env);
+        }
+        throw new ProgrammingError(`TensorExtension.dispatch ${x} ${opr} ${argList} method not implemented.`);
     }
     iscons(): false {
         return false;
     }
     operator(): never {
-        throw new Error();
+        throw new ProgrammingError();
     }
     get hash(): string {
         return HASH_TENSOR;
@@ -118,13 +175,30 @@ class TensorExtension implements Extension<Tensor>, AtomHandler<Tensor>{
             return expr.withElements(elems);
         }
     }
-    toInfixString(matrix: Tensor, $: ExtensionEnv): string {
-        return to_infix_string(matrix, $);
+    toHumanString(matrix: Tensor, $: ExprContext): string {
+        const printMode: PrintMode = defs.printMode;
+        defs.setPrintMode(PRINTMODE_HUMAN);
+        try {
+            return print_tensor(matrix, $);
+        }
+        finally {
+            defs.setPrintMode(printMode);
+        }
     }
-    toLatexString(matrix: Tensor, $: ExtensionEnv): string {
-        return to_infix_string(matrix, $);
+    toInfixString(matrix: Tensor, $: ExprContext): string {
+        const printMode: PrintMode = defs.printMode;
+        defs.setPrintMode(PRINTMODE_INFIX);
+        try {
+            return print_tensor(matrix, $);
+        }
+        finally {
+            defs.setPrintMode(printMode);
+        }
     }
-    toListString(matrix: Tensor, $: ExtensionEnv): string {
+    toLatexString(matrix: Tensor, $: ExprContext): string {
+        return print_tensor_latex(matrix, $);
+    }
+    toListString(matrix: Tensor, $: ExprContext): string {
         const printMode: PrintMode = defs.printMode;
         defs.setPrintMode(PRINTMODE_SEXPR);
         try {
@@ -176,3 +250,160 @@ class TensorExtension implements Extension<Tensor>, AtomHandler<Tensor>{
 export const tensor_extension = new TensorExtension();
 
 export const tensor_extension_builder = mkbuilder(TensorExtension);
+
+export function print_tensor(p: Tensor<U>, $: PrintConfig): string {
+    return print_tensor_inner(p, 0, 0, $)[1];
+}
+
+/**
+ * 
+ * @param p 
+ * @param j scans the dimensions
+ * @param k is an increment for all the printed elements
+ * @param $ 
+ * @returns 
+ */
+function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: PrintConfig): [number, string] {
+    let accumulator = '';
+
+    const useParenForTensors = $.getDirective(Directive.useParenForTensors);
+
+    if (useParenForTensors) {
+        accumulator += print_str('(');
+    }
+    else {
+        accumulator += print_str('[');
+    }
+
+    // only the last dimension prints the actual elements
+    // e.g. in a matrix, the first dimension contains
+    // vectors, not elements, and the second dimension
+    // actually contains the elements
+
+    // if not the last dimension, we are just printing wrappers
+    // and recursing down i.e. we print the next dimension
+    if (j < p.ndim - 1) {
+        for (let i = 0; i < p.dim(j); i++) {
+            let retString: string;
+            [k, retString] = Array.from(print_tensor_inner(p, j + 1, k, $)) as [
+                number,
+                string
+            ];
+            accumulator += retString;
+            // add separator between elements dimensions
+            // "above" the inner-most dimension
+            if (i !== p.dim(j) - 1) {
+                if (defs.printMode === PRINTMODE_SEXPR) {
+                    accumulator += print_str(' ');
+                }
+                else {
+                    accumulator += print_str(',');
+                }
+            }
+        }
+        // if we reached the last dimension, we print the actual
+        // elements
+    }
+    else {
+        for (let i = 0; i < p.dim(j); i++) {
+            accumulator += render_using_non_sexpr_print_mode(p.elem(k), $);
+            // add separator between elements in the
+            // inner-most dimension
+            if (i !== p.dim(j) - 1) {
+                if (defs.printMode === PRINTMODE_SEXPR) {
+                    accumulator += print_str(' ');
+                }
+                else {
+                    accumulator += print_str(',');
+                }
+            }
+            k++;
+        }
+    }
+
+    if (useParenForTensors) {
+        accumulator += print_str(')');
+    }
+    else {
+        accumulator += print_str(']');
+    }
+    return [k, accumulator];
+}
+
+function print_tensor_latex(p: Tensor<U>, $: PrintConfig): string {
+    if (p.ndim <= 2) {
+        return print_tensor_inner_latex(true, p, 0, 0, $)[1];
+    }
+    else {
+        return '';
+    }
+}
+
+// firstLevel is needed because printing a matrix
+// is not exactly an elegant recursive procedure:
+// the vector on the first level prints the latex
+// "wrap", while the vectors that make up the
+// rows don't. so it's a bit asymmetric and this
+// flag helps.
+// j scans the dimensions
+// k is an increment for all the printed elements
+//   since they are all together in sequence in one array
+function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, k: number, $: PrintConfig): [number, string] {
+    let accumulator = '';
+
+    // open the outer latex wrap
+    if (firstLevel) {
+        accumulator += '\\begin{bmatrix} ';
+    }
+
+    // only the last dimension prints the actual elements
+    // e.g. in a matrix, the first dimension contains
+    // vectors, not elements, and the second dimension
+    // actually contains the elements
+
+    // if not the last dimension, we are just printing wrappers
+    // and recursing down i.e. we print the next dimension
+    if (j < p.ndim - 1) {
+        for (let i = 0; i < p.dim(j); i++) {
+            let retString: string;
+            [k, retString] = Array.from(
+                print_tensor_inner_latex(false, p, j + 1, k, $)
+            ) as [number, string];
+            accumulator += retString;
+            if (i !== p.dim(j) - 1) {
+                // add separator between rows
+                accumulator += print_str(' \\\\ ');
+            }
+        }
+        // if we reached the last dimension, we print the actual
+        // elements
+    }
+    else {
+        for (let i = 0; i < p.dim(j); i++) {
+            accumulator += render_using_non_sexpr_print_mode(p.elem(k), $);
+            // separator between elements in each row
+            if (i !== p.dim(j) - 1) {
+                accumulator += print_str(' & ');
+            }
+            k++;
+        }
+    }
+
+    // close the outer latex wrap
+    if (firstLevel) {
+        accumulator += ' \\end{bmatrix}';
+    }
+
+    return [k, accumulator];
+}
+
+export function adj(m: Tensor, $: Pick<ExprContext, 'valueOf'>): U {
+    const n = assert_square_matrix_tensor(m);
+    const elems = new Array<U>(m.nelem);
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            elems[n * j + i] = cofactor(m, i, j, $);
+        }
+    }
+    return m.withElements(elems);
+}

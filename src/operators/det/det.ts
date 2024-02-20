@@ -1,12 +1,14 @@
-import { create_int, one, zero } from 'math-expression-atoms';
-import { ExtensionEnv, Sign } from '../../env/ExtensionEnv';
+import { create_int, is_num, one, Tensor, zero } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
+import { items_to_cons, U } from 'math-expression-tree';
+import { Sign } from '../../env/ExtensionEnv';
+import { add } from '../../helpers/add';
 import { divide } from '../../helpers/divide';
-import { items_to_cons } from '../../makeList';
+import { equals } from '../../helpers/equals';
+import { multiply } from '../../helpers/multiply';
+import { negate } from '../../helpers/negate';
 import { DET } from '../../runtime/constants';
 import { is_square_matrix } from '../../tensor';
-import { Tensor } from '../../tree/tensor/Tensor';
-import { U } from '../../tree/tree';
-import { is_num } from '../num/is_num';
 
 /* det =====================================================================
 
@@ -29,7 +31,7 @@ Example:
   > -2
 
 */
-export function det(M: Tensor, $: ExtensionEnv): U {
+export function det(M: Tensor, $: ExprContext): U {
     const hook = function (retval: U): U {
         // console.lg(`det of ${$.toInfixString(M)} => ${$.toInfixString(retval)}`);
         return retval;
@@ -51,7 +53,7 @@ export function det(M: Tensor, $: ExtensionEnv): U {
 }
 
 // determinant of n * n matrix elements on the stack
-export function determinant_symbolic(elements: readonly U[], n: number, $: ExtensionEnv): U {
+export function determinant_symbolic(elements: readonly U[], n: number, $: Pick<ExprContext,'valueOf'>): U {
     if (n === 0) {
         // The remainder of this code should do this!
         return one;
@@ -74,10 +76,10 @@ export function determinant_symbolic(elements: readonly U[], n: number, $: Exten
         let temp: U = create_int(sign_);
         for (let i = 0; i < n; i++) {
             const k = (n * a[i] + i);
-            temp = $.multiply(temp, elements[k]); // FIXME -- problem here
+            temp = multiply($, temp, elements[k]); // FIXME -- problem here
         }
 
-        outerTemp = $.add(outerTemp, temp);
+        outerTemp = add($, outerTemp, temp);
 
         // next permutation (Knuth's algorithm P)
         let j = n - 1;
@@ -127,7 +129,7 @@ export function determinant_symbolic(elements: readonly U[], n: number, $: Exten
  * @param $ 
  * @returns 
  */
-function determinant_numeric(m: Tensor, $: ExtensionEnv): U {
+function determinant_numeric(m: Tensor, $: ExprContext): U {
     const n = m.dim(0);
     const elements = m.copyElements();
     const decomp = lu_decomp(elements, n, $);
@@ -149,14 +151,14 @@ function setM(arr: U[], n: number, i: number, j: number, value: U) {
 //  Output:    upper diagonal matrix
 //
 //-----------------------------------------------------------------------------
-function lu_decomp(elements: U[], n: number, $: ExtensionEnv): U {
+function lu_decomp(elements: U[], n: number, $: ExprContext): U {
     let p1: U = one;
 
     for (let d = 0; d < n - 1; d++) {
-        if ($.equals(getM(elements, n, d, d), zero)) {
+        if (equals(getM(elements, n, d, d), zero, $)) {
             let i = 0;
             for (i = d + 1; i < n; i++) {
-                if (!$.equals(getM(elements, n, i, d), zero)) {
+                if (!equals(getM(elements, n, i, d), zero, $)) {
                     break;
                 }
             }
@@ -174,26 +176,26 @@ function lu_decomp(elements: U[], n: number, $: ExtensionEnv): U {
             }
 
             // negate det
-            p1 = $.negate(p1);
+            p1 = negate(p1, $);
         }
 
         // update det
-        p1 = $.multiply(p1, getM(elements, n, d, d));
+        p1 = multiply($, p1, getM(elements, n, d, d));
 
         // update lower diagonal matrix
         for (let i = d + 1; i < n; i++) {
-            const p2 = $.negate(divide(getM(elements, n, i, d), getM(elements, n, d, d), $));
+            const p2 = negate(divide(getM(elements, n, i, d), getM(elements, n, d, d), $), $);
 
             // update one row
             setM(elements, n, i, d, zero); // clear column below pivot d
 
             for (let j = d + 1; j < n; j++) {
-                const added = $.add($.multiply(getM(elements, n, d, j), p2), getM(elements, n, i, j));
+                const added = add($, multiply($, getM(elements, n, d, j), p2), getM(elements, n, i, j));
                 setM(elements, n, i, j, added);
             }
         }
     }
 
     // last diagonal element
-    return $.multiply(p1, getM(elements, n, n - 1, n - 1));
+    return multiply($, p1, getM(elements, n, n - 1, n - 1));
 }

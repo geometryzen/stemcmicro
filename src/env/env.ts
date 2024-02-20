@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { assert_sym, Boo, Cell, CellHost, create_sym, Err, Flt, is_boo, is_cell, is_flt, is_lambda, is_rat, is_sym, Keyword, Lambda, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
-import { AtomHandler, ExprContext, LambdaExpr } from 'math-expression-context';
+import { ExprContext, ExprHandler, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprEngineListener } from '../..';
@@ -8,6 +8,7 @@ import { ExtensionEnvFromExprContext } from '../adapters/ExtensionEnvFromExprCon
 import { make_eval } from '../adapters/make_eval';
 import { StackFunction } from '../adapters/StackFunction';
 import { AtomListener, UndeclaredVars } from '../api/api';
+import { ProgramStack } from '../eigenmath/ProgramStack';
 import { eval_function } from "../eval_function";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_for_atom, hash_info, hash_nonop_cons, hash_target } from "../hashing/hash_info";
@@ -531,10 +532,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         defineExtension(builder: ExtensionBuilder<U>): void {
             builders.push(builder);
         },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        defineAssociative(opr: Sym, id: Rat): void {
-            // Do nothing.
-        },
         divide(lhs: U, rhs: U): U {
             return $.multiply(lhs, $.power(rhs, negOne));
         },
@@ -550,6 +547,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 };
             }
             else {
+                throw new ProgrammingError(`${opr} missing compareFn`);
                 return function (lhs: U, rhs: U): Sign {
                     return new StableExprComparator(opr).compare(lhs, rhs, $);
                 };
@@ -849,8 +847,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         negate(x: U): U {
             return $.multiply(negOne, x);
         },
-        handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
-            return selectAtomExtension(atom)!;
+        handlerFor<T extends U>(expr: T): ExprHandler<T> {
+            if (is_atom(expr)) {
+                return selectAtomExtension(expr)!;
+            }
+            else {
+                throw new ProgrammingError();
+            }
         },
         extensionFor(expr: U): Extension<U> | undefined {
             if (is_cons(expr)) {
@@ -960,6 +963,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return $.add(lhs, $.negate(rhs));
         },
         toInfixString(expr: U): string {
+            // console.lg(`ExtensionEnv.toInfixString ${expr}`);
             const op = $.extensionFor(expr);
             if (op) {
                 return op.toInfixString(expr, $);
@@ -987,6 +991,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         transform(expr: U): [TFLAGS, U] {
+            // console.lg("trnsfrm", $.toInfixString(expr));
             // We short-circuit some expressions in order to improve performance.
             if (is_cons(expr)) {
                 // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
@@ -1029,7 +1034,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     // const hash = head.name;
                     const ops: Extension<U>[] = currentOpsByHash()['Rat'];
                     // TODO: The operator will be acting on the argList, not the entire expression.
-                    const op = unambiguous_operator(expr.argList, ops, $);
+                    const op = unambiguous_extension(expr.argList, ops, $);
                     if (op) {
                         // console.lg(`We found the ${op.name} operator!`);
                         return op.evaluate(opr, expr.argList, $);
@@ -1049,7 +1054,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     // console.lg(`Looking for key: ${JSON.stringify(key)} expr: ${expr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                     // Determine whether there are handlers in the bucket.
                     if (Array.isArray(ops)) {
-                        const op = unambiguous_operator(expr, ops, $);
+                        const op = unambiguous_extension(expr, ops, $);
                         if (op) {
                             const composite = op.transform(expr, $);
                             // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite[1])} flags: ${composite[0]}`);
@@ -1102,12 +1107,25 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
         },
-        valueOf(expr: U): U {
+        valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U {
+            // console.lg("valueOf", $.toInfixString(expr));
             // TOOD: We'd like to do this the newWay = !oldWay.
             // This flag makes it easier to switch back and forth.
             const oldWay = true;
             if (oldWay) {
-                return $.transform(expr)[1];
+                const retval = $.transform(expr)[1];
+                if (stack) {
+                    try {
+                        stack.push(retval);
+                        return nil;
+                    }
+                    finally {
+                        retval.release();
+                    }
+                }
+                else {
+                    return retval;
+                }
             }
             // console.lg("transform", expr.toString(), "is_sym", is_sym(expr));
             // We short-circuit some expressions in order to improve performance.
@@ -1119,7 +1137,19 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
                     const value = $.getBinding(opr, expr);
                     if (is_lambda(value)) {
-                        return value.body(expr.argList, $);
+                        const retval = value.body(expr.argList, $);
+                        if (stack) {
+                            try {
+                                stack.push(retval);
+                                return nil;
+                            }
+                            finally {
+                                retval.release();
+                            }
+                        }
+                        else {
+                            return retval;
+                        }
                     }
                 }
                 else if (is_rat(opr)) {
@@ -1128,10 +1158,22 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     // const hash = head.name;
                     const ops: Extension<U>[] = currentOpsByHash()['Rat'];
                     // TODO: The operator will be acting on the argList, not the entire expression.
-                    const op = unambiguous_operator(expr.argList, ops, $);
+                    const op = unambiguous_extension(expr.argList, ops, $);
                     if (op) {
                         // console.lg(`We found the ${op.name} operator!`);
-                        return op.valueOf(opr, $);
+                        const retval = op.valueOf(opr, $);
+                        if (stack) {
+                            try {
+                                stack.push(retval);
+                                return nil;
+                            }
+                            finally {
+                                retval.release();
+                            }
+                        }
+                        else {
+                            return retval;
+                        }
                     }
                     else {
                         // eslint-disable-next-line no-console
@@ -1148,12 +1190,23 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     // console.lg(`Looking for key: ${JSON.stringify(key)} expr: ${expr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                     // Determine whether there are handlers in the bucket.
                     if (Array.isArray(ops)) {
-                        const op = unambiguous_operator(expr, ops, $);
+                        const op = unambiguous_extension(expr, ops, $);
                         if (op) {
-                            const composite = op.valueOf(expr, $);
-                            // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite)}`);
-                            // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite)}`);
-                            return composite;
+                            const retval = op.valueOf(expr, $);
+                            // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(retval)}`);
+                            // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(retval)}`);
+                            if (stack) {
+                                try {
+                                    stack.push(retval);
+                                    return nil;
+                                }
+                                finally {
+                                    retval.release();
+                                }
+                            }
+                            else {
+                                return retval;
+                            }
                         }
                     }
                     else {
@@ -1170,9 +1223,19 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                             // return newExpr;
                                         }
                                         else if (binding.opr.equals(FUNCTION)) {
-                                            const newExpr = eval_function(expr, $);
-                                            // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
-                                            return newExpr;
+                                            const retval = eval_function(expr, $);
+                                            if (stack) {
+                                                try {
+                                                    stack.push(retval);
+                                                    return nil;
+                                                }
+                                                finally {
+                                                    retval.release();
+                                                }
+                                            }
+                                            else {
+                                                return retval;
+                                            }
                                         }
                                     }
                                     else {
@@ -1184,19 +1247,49 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     }
                 }
                 // Once an expression has been transformed into a stable condition, it should not be transformed until a different phase.
-                return expr;
+                if (stack) {
+                    stack.push(expr);
+                    return nil;
+                }
+                else {
+                    return expr;
+                }
             }
             else if (is_nil(expr)) {
-                return expr;
+                if (stack) {
+                    stack.push(expr);
+                    return nil;
+                }
+                else {
+                    return expr;
+                }
             }
             else {
                 // If it's not a list or nil, then it's an atom.
                 const op = $.extensionFor(expr);
                 if (op) {
-                    return op.valueOf(expr, $);
+                    const retval = op.valueOf(expr, $);
+                    if (stack) {
+                        try {
+                            stack.push(retval);
+                            return nil;
+                        }
+                        finally {
+                            retval.release();
+                        }
+                    }
+                    else {
+                        return retval;
+                    }
                 }
                 else {
-                    return expr;
+                    if (stack) {
+                        stack.push(expr);
+                        return nil;
+                    }
+                    else {
+                        return expr;
+                    }
                 }
             }
         }
@@ -1264,7 +1357,7 @@ function dependencies_satisfied(deps: FEATURE[] | undefined, includes: FEATURE[]
     }
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function unambiguous_operator(expr: Cons, ops: Extension<U>[], $: ExtensionEnv): Extension<U> | undefined {
+function unambiguous_extension(expr: Cons, ops: Extension<U>[], $: ExtensionEnv): Extension<U> | undefined {
     // console.lg(`unambiguous_operator for ${$.toInfixString(expr)} from ${ops.length} choice(s).`);
     const candidates: Extension<U>[] = [];
     for (const op of ops) {

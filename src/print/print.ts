@@ -1,19 +1,23 @@
-import { booT, create_sym, is_blade, is_boo, is_err, is_flt, is_keyword, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Keyword, one, Rat, Sym, Tensor, zero } from 'math-expression-atoms';
+import { create_sym, is_blade, is_err, is_flt, is_keyword, is_num, is_rat, is_sym, is_uom, one, Rat, Sym, zero } from 'math-expression-atoms';
+import { ExprContext, ExprHandler } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { car, cdr, Cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
+import { is_localizable } from '../diagnostics/diagnostics';
 import { Directive } from '../env/ExtensionEnv';
+import { isone } from '../helpers/isone';
+import { negate } from '../helpers/negate';
 import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from '../is';
 import { denominator } from '../operators/denominator/denominator';
 import { is_hyp } from '../operators/hyp/is_hyp';
 import { is_imu } from '../operators/imu/is_imu';
 import { numerator } from '../operators/numerator/numerator';
 import { is_pi } from '../operators/pi/is_pi';
-import { str_extension } from '../operators/str/str_extension';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../predicates/is_negative';
 import { is_num_and_negative } from '../predicates/is_negative_number';
+import { ProgrammingError } from '../programming/ProgrammingError';
 import {
     ADD,
     ARCCOS,
@@ -59,8 +63,6 @@ import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from '../tree/helpers
 import { print_number } from './print_number';
 import { render_as_sexpr } from './render_as_sexpr';
 
-const ENGLISH_UNDEFINED = 'undefined';
-
 const MATH_E = native_sym(Native.E);
 const MATH_IMU = native_sym(Native.IMU);
 const MATH_PI = native_sym(Native.PI);
@@ -71,22 +73,12 @@ const COMPONENT = native_sym(Native.component);
  * 
  */
 export interface PrintConfig {
-    add(...args: U[]): U;
-    factorize(poly: U, x: U): U;
     pushDirective(directive: number, value: number): void;
     popDirective(): void;
     getBinding(opr: Sym, target: Cons): U;
     getDirective(directive: number): number;
     getSymbolPrintName(sym: Sym): string;
-    isone(expr: U): boolean;
-    iszero(expr: U): boolean;
-    multiply(...args: U[]): U;
-    negate(expr: U): U;
-    power(base: U, expo: U): U;
-    subtract(lhs: U, rhs: U): U;
-    toInfixString(expr: Keyword | Sym): string;
-    toLatexString(expr: Keyword | Sym): string;
-    toSExprString(expr: U): string;
+    handlerFor<T extends U>(expr: T): ExprHandler<T>;
     valueOf(expr: U): U;
 }
 
@@ -180,7 +172,7 @@ function print_denom(p: U, d: number, $: PrintConfig): string {
     // prepare the exponent
     // (needs to be negated)
     // before printing it out
-    EXPO = $.negate(EXPO);
+    EXPO = negate(EXPO, $);
     str += print_power(BASE, EXPO, $);
     if (d === 1) {
         str += print_char(')');
@@ -204,10 +196,10 @@ function print_a_over_b(p: Cons, $: PrintConfig): string {
     if (is_rat(p2)) {
         A = mp_numerator(p2).abs();
         B = mp_denominator(p2);
-        if (!$.isone(A)) {
+        if (!isone(A, $)) {
             n++;
         }
-        if (!$.isone(B)) {
+        if (!isone(B, $)) {
             d++;
         }
         p1 = cdr(p1);
@@ -219,7 +211,7 @@ function print_a_over_b(p: Cons, $: PrintConfig): string {
 
     while (is_cons(p1)) {
         p2 = car(p1);
-        if (is_denominator(p2, $)) {
+        if (is_denominator(p2)) {
             d++;
         }
         else {
@@ -242,13 +234,13 @@ function print_a_over_b(p: Cons, $: PrintConfig): string {
         if (is_rat(car(p1))) {
             p1 = cdr(p1);
         }
-        if (!$.isone(A)) {
+        if (!isone(A, $)) {
             str += print_factor(A, false, false, $);
             flag = 1;
         }
         while (is_cons(p1)) {
             p2 = car(p1);
-            if (!is_denominator(p2, $)) {
+            if (!is_denominator(p2)) {
                 if (flag) {
                     str += print_multiply_sign();
                 }
@@ -280,14 +272,14 @@ function print_a_over_b(p: Cons, $: PrintConfig): string {
         p1 = cdr(p1);
     }
 
-    if (!$.isone(B)) {
+    if (!isone(B, $)) {
         str += print_factor(B, false, false, $);
         flag = 1;
     }
 
     while (is_cons(p1)) {
         p2 = car(p1);
-        if (is_denominator(p2, $)) {
+        if (is_denominator(p2)) {
             if (flag) {
                 str += print_multiply_sign();
             }
@@ -486,7 +478,7 @@ function print_multiply_when_no_denominators(expr: Cons, $: PrintConfig) {
 
 export function print_multiplicative_expr(expr: U, $: PrintConfig): string {
     if (is_cons(expr) && is_multiply(expr)) {
-        if (any_denominators(expr, $)) {
+        if (any_denominators(expr)) {
             return print_a_over_b(expr, $);
         }
         else {
@@ -839,151 +831,6 @@ function print_DEFINT_latex(p: U, $: PrintConfig): string {
         p = cdr(cdr(theVariable));
     }
     return accumulator;
-}
-
-export function print_tensor(p: Tensor<U>, $: PrintConfig): string {
-    return print_tensor_inner(p, 0, 0, $)[1];
-}
-
-/**
- * 
- * @param p 
- * @param j scans the dimensions
- * @param k is an increment for all the printed elements
- * @param $ 
- * @returns 
- */
-function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: PrintConfig): [number, string] {
-    let accumulator = '';
-
-    const useParenForTensors = $.getDirective(Directive.useParenForTensors);
-
-    if (useParenForTensors) {
-        accumulator += print_str('(');
-    }
-    else {
-        accumulator += print_str('[');
-    }
-
-    // only the last dimension prints the actual elements
-    // e.g. in a matrix, the first dimension contains
-    // vectors, not elements, and the second dimension
-    // actually contains the elements
-
-    // if not the last dimension, we are just printing wrappers
-    // and recursing down i.e. we print the next dimension
-    if (j < p.ndim - 1) {
-        for (let i = 0; i < p.dim(j); i++) {
-            let retString: string;
-            [k, retString] = Array.from(print_tensor_inner(p, j + 1, k, $)) as [
-                number,
-                string
-            ];
-            accumulator += retString;
-            // add separator between elements dimensions
-            // "above" the inner-most dimension
-            if (i !== p.dim(j) - 1) {
-                if (defs.printMode === PRINTMODE_SEXPR) {
-                    accumulator += print_str(' ');
-                }
-                else {
-                    accumulator += print_str(',');
-                }
-            }
-        }
-        // if we reached the last dimension, we print the actual
-        // elements
-    }
-    else {
-        for (let i = 0; i < p.dim(j); i++) {
-            accumulator += render_using_non_sexpr_print_mode(p.elem(k), $);
-            // add separator between elements in the
-            // inner-most dimension
-            if (i !== p.dim(j) - 1) {
-                if (defs.printMode === PRINTMODE_SEXPR) {
-                    accumulator += print_str(' ');
-                }
-                else {
-                    accumulator += print_str(',');
-                }
-            }
-            k++;
-        }
-    }
-
-    if (useParenForTensors) {
-        accumulator += print_str(')');
-    }
-    else {
-        accumulator += print_str(']');
-    }
-    return [k, accumulator];
-}
-
-function print_tensor_latex(p: Tensor<U>, $: PrintConfig): string {
-    let accumulator = '';
-    if (p.ndim <= 2) {
-        accumulator += print_tensor_inner_latex(true, p, 0, 0, $)[1];
-    }
-    return accumulator;
-}
-
-// firstLevel is needed because printing a matrix
-// is not exactly an elegant recursive procedure:
-// the vector on the first level prints the latex
-// "wrap", while the vectors that make up the
-// rows don't. so it's a bit asymmetric and this
-// flag helps.
-// j scans the dimensions
-// k is an increment for all the printed elements
-//   since they are all together in sequence in one array
-function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, k: number, $: PrintConfig): [number, string] {
-    let accumulator = '';
-
-    // open the outer latex wrap
-    if (firstLevel) {
-        accumulator += '\\begin{bmatrix} ';
-    }
-
-    // only the last dimension prints the actual elements
-    // e.g. in a matrix, the first dimension contains
-    // vectors, not elements, and the second dimension
-    // actually contains the elements
-
-    // if not the last dimension, we are just printing wrappers
-    // and recursing down i.e. we print the next dimension
-    if (j < p.ndim - 1) {
-        for (let i = 0; i < p.dim(j); i++) {
-            let retString: string;
-            [k, retString] = Array.from(
-                print_tensor_inner_latex(false, p, j + 1, k, $)
-            ) as [number, string];
-            accumulator += retString;
-            if (i !== p.dim(j) - 1) {
-                // add separator between rows
-                accumulator += print_str(' \\\\ ');
-            }
-        }
-        // if we reached the last dimension, we print the actual
-        // elements
-    }
-    else {
-        for (let i = 0; i < p.dim(j); i++) {
-            accumulator += render_using_non_sexpr_print_mode(p.elem(k), $);
-            // separator between elements in each row
-            if (i !== p.dim(j) - 1) {
-                accumulator += print_str(' & ');
-            }
-            k++;
-        }
-    }
-
-    // close the outer latex wrap
-    if (firstLevel) {
-        accumulator += ' \\end{bmatrix}';
-    }
-
-    return [k, accumulator];
 }
 
 function print_SUM_latex(p: U, $: PrintConfig): string {
@@ -1379,7 +1226,7 @@ function print_power(base: U, expo: U, $: PrintConfig) {
                     str += print_str('1/');
                 }
 
-                const newExponent = $.negate(expo);
+                const newExponent = negate(expo, $);
 
                 if (is_cons(base) && defs.printMode !== PRINTMODE_LATEX) {
                     str += print_str('(');
@@ -1415,7 +1262,7 @@ function print_power(base: U, expo: U, $: PrintConfig) {
         }
     }
 
-    if (defs.printMode === PRINTMODE_LATEX && $.isone(expo)) {
+    if (defs.printMode === PRINTMODE_LATEX && isone(expo, $)) {
         // if we are in latex mode we turn many
         // radicals into a radix sign with a power
         // underneath, and the power is often one
@@ -1560,12 +1407,12 @@ function print_index_function(p: U, $: PrintConfig): string {
     return str;
 }
 
-function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: PrintConfig): string {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: PrintConfig): string {
     // console.lg(`print_factor expr = ${expr} omitParens = ${omitParens}`);
     const omtPrns = omitParens;
     // console.lg(`print_factor ${expr} omitParens => ${omitParens} pastFirstFactor => ${false}`);
     if (is_num(expr)) {
-        let str = '';
         // in an evaluated term, all the numeric parts
         // are at the beginning of the term.
         // When printing the EXPRESSION,
@@ -1577,59 +1424,85 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
         // skip printing the minus if the number is negative,
         // because it's already been printed.
         if (pastFirstFactor && lt_num_num(expr, zero)) {
+            let str = '';
             str += '(';
-        }
-        str += print_number(expr, pastFirstFactor, $);
-        if (pastFirstFactor && lt_num_num(expr, zero)) {
+            str += print_number(expr, pastFirstFactor, _);
             str += ')';
+            return str;
         }
-        return str;
+        else {
+            return print_number(expr, pastFirstFactor, _);
+        }
     }
-
-    if (is_boo(expr)) {
-        return expr.equals(booT) ? 'true' : 'false';
-    }
-
-    if (is_str(expr)) {
+    if (is_atom(expr)) {
+        // TODO: Fix the casting.
+        const handler = _.handlerFor(expr);
         switch (defs.printMode) {
             case PRINTMODE_HUMAN: {
-                return str_extension.toHumanString(expr);
+                // FIXME
+                return handler.toHumanString(expr, _ as unknown as ExprContext);
             }
             case PRINTMODE_INFIX: {
-                return str_extension.toInfixString(expr);
+                return handler.toInfixString(expr, _ as unknown as ExprContext);
             }
             case PRINTMODE_LATEX: {
-                return str_extension.toLatexString(expr);
+                return handler.toLatexString(expr, _ as unknown as ExprContext);
             }
             case PRINTMODE_SEXPR: {
-                return str_extension.toListString(expr);
+                return handler.toListString(expr, _ as unknown as ExprContext);
             }
             default: {
                 throw new Error(`${defs.printMode}`);
             }
         }
-    }
-
-    if (is_tensor(expr)) {
-        let str = '';
-        if (defs.printMode === PRINTMODE_LATEX) {
-            str += print_tensor_latex(expr, $);
+        /*
+    
+        if (is_boo(expr)) {
+            return expr.equals(booT) ? 'true' : 'false';
         }
-        else {
-            str += print_tensor(expr, $);
+    
+        if (is_str(expr)) {
+            switch (defs.printMode) {
+                case PRINTMODE_HUMAN: {
+                    return str_extension.toHumanString(expr);
+                }
+                case PRINTMODE_INFIX: {
+                    return str_extension.toInfixString(expr);
+                }
+                case PRINTMODE_LATEX: {
+                    return str_extension.toLatexString(expr);
+                }
+                case PRINTMODE_SEXPR: {
+                    return str_extension.toListString(expr);
+                }
+                default: {
+                    throw new Error(`${defs.printMode}`);
+                }
+            }
         }
-        return str;
-    }
-
-    if (is_blade(expr)) {
-        let str = '';
-        if (defs.printMode === PRINTMODE_LATEX) {
-            str += expr.toLatexString();
+    
+        if (is_tensor(expr)) {
+            let str = '';
+            if (defs.printMode === PRINTMODE_LATEX) {
+                str += print_tensor_latex(expr, _);
+            }
+            else {
+                str += print_tensor(expr, _);
+            }
+            return str;
         }
-        else {
-            str += expr.toInfixString();
+    
+        if (is_blade(expr)) {
+            let str = '';
+            if (defs.printMode === PRINTMODE_LATEX) {
+                str += expr.toLatexString();
+            }
+            else {
+                str += expr.toInfixString();
+            }
+            return str;
         }
-        return str;
+        */
     }
 
     if (is_cons(expr) && is_multiply(expr)) {
@@ -1644,7 +1517,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
                 }
             }
         }
-        str += render_using_non_sexpr_print_mode(expr, $);
+        str += render_using_non_sexpr_print_mode(expr, _);
         if (!omtPrns) {
             if (sign_of_term(expr) === '-' || defs.printMode !== PRINTMODE_LATEX) {
                 if (defs.printMode === PRINTMODE_LATEX) {
@@ -1662,7 +1535,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
         if (!omtPrns) {
             str += print_str('(');
         }
-        str += render_using_non_sexpr_print_mode(expr, $);
+        str += render_using_non_sexpr_print_mode(expr, _);
         if (!omtPrns) {
             str += print_str(')');
         }
@@ -1670,7 +1543,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
     }
 
     if (is_power(expr)) {
-        return print_power(expr.base, expr.expo, $);
+        return print_power(expr.base, expr.expo, _);
     }
 
     //  if (car(p) == _list) {
@@ -1706,7 +1579,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
                         const paramList = argList.item(0);
                         try {
                             str += print_str('fn ');
-                            const returned = render_as_sexpr(paramList, $);
+                            const returned = render_as_sexpr(paramList, _);
                             str += returned;
                             str += print_str(' -> ');
                         }
@@ -1714,7 +1587,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
                             paramList.release();
                         }
                     }
-                    str += render_using_non_sexpr_print_mode(body, $);
+                    str += render_using_non_sexpr_print_mode(body, _);
                     return str;
                 }
                 finally {
@@ -1729,7 +1602,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
                         const paramList = argList.item(1);
                         try {
                             str += print_str('function ');
-                            const returned = render_as_sexpr(paramList, $);
+                            const returned = render_as_sexpr(paramList, _);
                             str += returned;
                             str += print_str(' -> ');
                         }
@@ -1737,7 +1610,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
                             paramList.release();
                         }
                     }
-                    str += render_using_non_sexpr_print_mode(body, $);
+                    str += render_using_non_sexpr_print_mode(body, _);
                     return str;
                 }
                 finally {
@@ -1753,7 +1626,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
 
     if (car(expr).equals(PATTERN)) {
         let str = '';
-        str += render_using_non_sexpr_print_mode(caadr(expr), $);
+        str += render_using_non_sexpr_print_mode(caadr(expr), _);
         if (defs.printMode === PRINTMODE_LATEX) {
             str += print_str(' \\rightarrow ');
         }
@@ -1766,30 +1639,30 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
             }
         }
 
-        str += render_using_non_sexpr_print_mode(car(cdr(cadr(expr))), $);
+        str += render_using_non_sexpr_print_mode(car(cdr(cadr(expr))), _);
         return str;
     }
 
     if (car(expr).equals(COMPONENT) && is_sym(cadr(expr))) {
         let str = '';
-        str += print_index_function(expr, $);
+        str += print_index_function(expr, _);
         return str;
     }
 
     // TODO: The generalization here would be that we look up the operator then ask for the right format
     // based upon defs.printMode, defs.codeGen
     if (is_cons(expr) && is_factorial(expr)) {
-        return print_factorial_function(expr, $);
+        return print_factorial_function(expr, _);
     }
     else if (is_cons(expr) && is_abs(expr)) {
         // console.lg(`print_factor ${expr} omitParens => ${omitParens} pastFirstFactor => ${false} printMode: ${defs.printMode}`);
         switch (defs.printMode) {
             case PRINTMODE_HUMAN:
             case PRINTMODE_INFIX: {
-                return print_abs_infix(expr, $);
+                return print_abs_infix(expr, _);
             }
             case PRINTMODE_LATEX: {
-                return print_abs_latex(expr, $);
+                return print_abs_latex(expr, _);
             }
             default: {
                 // PRINTMODE_ASCII and PRINTMODE_SEXPR is the other mode but that doesn't use this function.
@@ -1799,114 +1672,114 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
     }
     else if (car(expr).equals(SQRT) && defs.printMode === PRINTMODE_LATEX) {
         let str = '';
-        str += print_SQRT_latex(expr, $);
+        str += print_SQRT_latex(expr, _);
         return str;
         // eslint-disable-next-line no-dupe-else-if
     }
     else if (is_transpose(expr)) {
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_TRANSPOSE_latex(expr, $);
+            str += print_TRANSPOSE_latex(expr, _);
             return str;
         }
         else if (defs.codeGen) {
             let str = '';
-            str += print_TRANSPOSE_codegen(expr, $);
+            str += print_TRANSPOSE_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(UNIT)) {
         if (defs.codeGen) {
             let str = '';
-            str += print_UNIT_codegen(expr, $);
+            str += print_UNIT_codegen(expr, _);
             return str;
         }
     }
     else if (is_cons(expr) && is_opr_eq_inv(expr)) {
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_INV_latex(expr, $);
+            str += print_INV_latex(expr, _);
             return str;
         }
         else if (defs.codeGen) {
             let str = '';
-            str += print_INV_codegen(expr, $);
+            str += print_INV_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(BINOMIAL) && defs.printMode === PRINTMODE_LATEX) {
         let str = '';
-        str += print_BINOMIAL_latex(expr, $);
+        str += print_BINOMIAL_latex(expr, _);
         return str;
     }
     else if (car(expr).equals(DEFINT) && defs.printMode === PRINTMODE_LATEX) {
         let str = '';
-        str += print_DEFINT_latex(expr, $);
+        str += print_DEFINT_latex(expr, _);
         return str;
     }
     else if (is_inner_or_dot(expr)) {
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_DOT_latex(expr, $);
+            str += print_DOT_latex(expr, _);
             return str;
         }
         else if (defs.codeGen) {
             let str = '';
-            str += print_DOT_codegen(expr, $);
+            str += print_DOT_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(SIN)) {
         if (defs.codeGen) {
             let str = '';
-            str += print_SIN_codegen(expr, $);
+            str += print_SIN_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(COS)) {
         if (defs.codeGen) {
             let str = '';
-            str += print_COS_codegen(expr, $);
+            str += print_COS_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(TAN)) {
         if (defs.codeGen) {
             let str = '';
-            str += print_TAN_codegen(expr, $);
+            str += print_TAN_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(ARCSIN)) {
         if (defs.codeGen) {
             let str = '';
-            str += print_ARCSIN_codegen(expr, $);
+            str += print_ARCSIN_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(ARCCOS)) {
         if (defs.codeGen) {
             let str = '';
-            str += print_ARCCOS_codegen(expr, $);
+            str += print_ARCCOS_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(ARCTAN)) {
         if (defs.codeGen) {
             let str = '';
-            str += print_ARCTAN_codegen(expr, $);
+            str += print_ARCTAN_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(SUM)) {
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_SUM_latex(expr, $);
+            str += print_SUM_latex(expr, _);
             return str;
         }
         else if (defs.codeGen) {
             let str = '';
-            str += print_SUM_codegen(expr, $);
+            str += print_SUM_codegen(expr, _);
             return str;
         }
         //else if car(p) == symbol(QUOTE)
@@ -1917,38 +1790,38 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
     else if (car(expr).equals(PRODUCT)) {
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_PRODUCT_latex(expr, $);
+            str += print_PRODUCT_latex(expr, _);
             return str;
         }
         else if (defs.codeGen) {
             let str = '';
-            str += print_PRODUCT_codegen(expr, $);
+            str += print_PRODUCT_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(FOR)) {
         if (defs.codeGen) {
             let str = '';
-            str += print_FOR_codegen(expr, $);
+            str += print_FOR_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(DO)) {
         if (defs.codeGen) {
             let str = '';
-            str += print_DO_codegen(expr, $);
+            str += print_DO_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(TEST)) {
         if (defs.codeGen) {
             let str = '';
-            str += print_TEST_codegen(expr, $);
+            str += print_TEST_codegen(expr, _);
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_TEST_latex(expr, $);
+            str += print_TEST_latex(expr, _);
             return str;
         }
     }
@@ -1956,12 +1829,12 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_using_non_sexpr_print_mode(cadr(expr), $) + ') < (' + render_using_non_sexpr_print_mode(caddr(expr), $) + '))';
+                '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') < (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_TESTLT_latex(expr, $);
+            str += print_TESTLT_latex(expr, _);
             return str;
         }
     }
@@ -1969,12 +1842,12 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_using_non_sexpr_print_mode(cadr(expr), $) + ') <= (' + render_using_non_sexpr_print_mode(caddr(expr), $) + '))';
+                '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') <= (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_TESTLE_latex(expr, $);
+            str += print_TESTLE_latex(expr, _);
             return str;
         }
     }
@@ -1982,12 +1855,12 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_using_non_sexpr_print_mode(cadr(expr), $) + ') > (' + render_using_non_sexpr_print_mode(caddr(expr), $) + '))';
+                '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') > (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_TESTGT_latex(expr, $);
+            str += print_TESTGT_latex(expr, _);
             return str;
         }
     }
@@ -1995,12 +1868,12 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_using_non_sexpr_print_mode(cadr(expr), $) + ') >= (' + render_using_non_sexpr_print_mode(caddr(expr), $) + '))';
+                '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') >= (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_TESTGE_latex(expr, $);
+            str += print_TESTGE_latex(expr, _);
             return str;
         }
     }
@@ -2008,67 +1881,67 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_using_non_sexpr_print_mode(cadr(expr), $) + ') === (' + render_using_non_sexpr_print_mode(caddr(expr), $) + '))';
+                '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') === (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_testeq_latex(expr, $);
+            str += print_testeq_latex(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(FLOOR)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.floor(' + render_using_non_sexpr_print_mode(cadr(expr), $) + '),$';
+            str += 'Math.floor(' + render_using_non_sexpr_print_mode(cadr(expr), _) + '),$';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += ' \\lfloor {' + render_using_non_sexpr_print_mode(cadr(expr), $) + '} \\rfloor ,$';
+            str += ' \\lfloor {' + render_using_non_sexpr_print_mode(cadr(expr), _) + '} \\rfloor ,$';
             return str;
         }
     }
     else if (car(expr).equals(CEILING)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.ceiling(' + render_using_non_sexpr_print_mode(cadr(expr), $) + '),$';
+            str += 'Math.ceiling(' + render_using_non_sexpr_print_mode(cadr(expr), _) + '),$';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += ' \\lceil {' + render_using_non_sexpr_print_mode(cadr(expr), $) + '} \\rceil ,$';
+            str += ' \\lceil {' + render_using_non_sexpr_print_mode(cadr(expr), _) + '} \\rceil ,$';
             return str;
         }
     }
     else if (car(expr).equals(ROUND)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.round(' + render_using_non_sexpr_print_mode(cadr(expr), $) + '),$';
+            str += 'Math.round(' + render_using_non_sexpr_print_mode(cadr(expr), _) + '),$';
             return str;
         }
     }
     else if (car(expr).equals(ASSIGN)) {
         if (defs.codeGen) {
             let str = '';
-            str += print_SETQ_codegen(expr, $);
+            str += print_SETQ_codegen(expr, _);
             return str;
         }
         else {
             let str = '';
-            str += render_using_non_sexpr_print_mode(cadr(expr), $);
+            str += render_using_non_sexpr_print_mode(cadr(expr), _);
             str += print_str('=');
-            str += render_using_non_sexpr_print_mode(caddr(expr), $);
+            str += render_using_non_sexpr_print_mode(caddr(expr), _);
             return str;
         }
     }
-    return print_factor_fallback(expr, omtPrns, $);
+    return print_factor_fallback(expr, omtPrns, _);
 }
 
-function print_factor_fallback(expr: U, omtPrns: boolean, $: PrintConfig): string {
+function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
     if (is_cons(expr)) {
         let str = '';
-        str += print_factor(expr.car, false, false, $);
+        str += print_factor(expr.car, false, false, _);
         expr = expr.cdr;
         if (expr.isnil) {
             return str;
@@ -2078,11 +1951,11 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: PrintConfig): strin
                 str += print_str('(');
             }
             if (is_cons(expr)) {
-                str += render_using_non_sexpr_print_mode(car(expr), $);
+                str += render_using_non_sexpr_print_mode(car(expr), _);
                 expr = cdr(expr);
                 while (is_cons(expr)) {
                     str += print_str(',');
-                    str += render_using_non_sexpr_print_mode(car(expr), $);
+                    str += render_using_non_sexpr_print_mode(car(expr), _);
                     expr = cdr(expr);
                 }
             }
@@ -2090,6 +1963,19 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: PrintConfig): strin
                 str += print_str(')');
             }
             return str;
+        }
+    }
+    else if (is_atom(expr)) {
+        if (is_err(expr)) {
+            // Ignore
+        }
+        else if (is_localizable(expr)) {
+            // const handler = _.handlerFor(expr);
+
+            // Ignore
+        }
+        else {
+            throw new ProgrammingError(`${expr}`);
         }
     }
 
@@ -2117,7 +2003,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: PrintConfig): strin
                 return print_str('e');
             }
             else {
-                return print_str($.getSymbolPrintName(MATH_E));
+                return print_str(_.getSymbolPrintName(MATH_E));
             }
         }
     }
@@ -2126,16 +2012,19 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: PrintConfig): strin
             return print_str('\\pi');
         }
         else {
-            return print_str($.getSymbolPrintName(MATH_PI));
+            return print_str(_.getSymbolPrintName(MATH_PI));
         }
     }
     else {
         if (is_sym(expr)) {
+            const handler = _.handlerFor(expr);
             if (defs.printMode === PRINTMODE_INFIX) {
-                return $.toInfixString(expr);
+                // FIXME: casting
+                return handler.toInfixString(expr, _ as unknown as ExprContext);
             }
             if (defs.printMode === PRINTMODE_LATEX) {
-                return $.toLatexString(expr);
+                // FIXME: casting
+                return handler.toLatexString(expr, _ as unknown as ExprContext);
             }
             return expr.key();
         }
@@ -2143,23 +2032,32 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: PrintConfig): strin
             return expr.printname;
         }
         if (is_keyword(expr)) {
+            const handler = _.handlerFor(expr);
             if (defs.printMode === PRINTMODE_INFIX) {
-                return $.toInfixString(expr);
+                // FIXME: casting
+                return handler.toInfixString(expr, _ as unknown as ExprContext);
             }
             if (defs.printMode === PRINTMODE_LATEX) {
-                return $.toLatexString(expr);
+                // FIXME: casting
+                return handler.toLatexString(expr, _ as unknown as ExprContext);
             }
             return expr.key();
         }
         if (is_err(expr)) {
-            return ENGLISH_UNDEFINED;
+            const cause = expr.cause;
+            try {
+                return render_using_non_sexpr_print_mode(cause, _);
+            }
+            finally {
+                cause.release();
+            }
         }
         if (is_imu(expr)) {
             if (defs.printMode === PRINTMODE_LATEX) {
                 return print_str('i');
             }
             else {
-                return print_str($.getSymbolPrintName(MATH_IMU));
+                return print_str(_.getSymbolPrintName(MATH_IMU));
             }
         }
         if (is_atom(expr)) {
@@ -2171,14 +2069,14 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: PrintConfig): strin
                 case 'PRINTMODE_LATEX':
                 case 'PRINTMODE_SEXPR':
                 default: {
-                    return expr.toString();
+                    throw new ProgrammingError(`${expr}: ${expr.type}`);
                 }
             }
         }
         if (expr.isnil) {
-            return print_str($.getSymbolPrintName(native_sym(Native.NIL)));
+            return print_str(_.getSymbolPrintName(native_sym(Native.NIL)));
         }
-        throw new Error(`${expr} ???`);
+        throw new ProgrammingError(`${expr} ???`);
     }
 }
 
@@ -2196,7 +2094,7 @@ function print_multiply_sign(): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function is_denominator(expr: U, $: PrintConfig): boolean {
+function is_denominator(expr: U): boolean {
     if (is_cons(expr)) {
         if (is_power(expr)) {
             const argList = expr.cdr;
@@ -2217,11 +2115,11 @@ function is_denominator(expr: U, $: PrintConfig): boolean {
 
 // don't consider the leading fraction
 // we want 2/3*a*b*c instead of 2*a*b*c/3
-function any_denominators(expr: Cons, $: PrintConfig): boolean {
+function any_denominators(expr: Cons): boolean {
     let p = expr.cdr;
     while (is_cons(p)) {
         const q = p.car;
-        if (is_denominator(q, $)) {
+        if (is_denominator(q)) {
             return true;
         }
         p = p.cdr;

@@ -1,6 +1,6 @@
 import { is_keyword, Keyword, Sym } from "math-expression-atoms";
-import { AtomHandler } from "math-expression-context";
-import { Cons, U } from "math-expression-tree";
+import { ExprContext } from "math-expression-context";
+import { Cons, nil, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 
@@ -13,7 +13,7 @@ function verify_keyword(x: Keyword): Keyword | never {
     }
 }
 
-class KeywordExtension implements Extension<Keyword>, AtomHandler<Keyword> {
+class KeywordExtension implements Extension<Keyword> {
     readonly #hash = hash_for_atom(new Keyword('a', 'ns'));
     constructor() {
         // Nothing to see here.
@@ -21,7 +21,19 @@ class KeywordExtension implements Extension<Keyword>, AtomHandler<Keyword> {
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
     test(atom: Keyword, opr: Sym): boolean {
-        throw new Error(`${this.name}.dispatch(${atom},${opr}) method not implemented.`);
+        throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(atom: Keyword, opr: Sym, rhs: U, expr: ExprContext): U {
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(atom: Keyword, opr: Sym, lhs: U, expr: ExprContext): U {
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(target: Keyword, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
     }
     iscons(): false {
         return false;
@@ -55,6 +67,9 @@ class KeywordExtension implements Extension<Keyword>, AtomHandler<Keyword> {
             }
         }
         return expr;
+    }
+    toHumanString(keyword: Keyword): string {
+        return keyword.key();
     }
     toInfixString(keyword: Keyword): string {
         return keyword.key();

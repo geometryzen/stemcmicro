@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Rat, Sym, Tensor } from "math-expression-atoms";
+import { Sym, Tensor } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
 import { Cons, U } from "math-expression-tree";
@@ -72,9 +72,6 @@ export class BaseEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     defineKeyword(sym: Sym, runner: KeywordRunner): void {
-        throw new Error("Method not implemented.");
-    }
-    defineAssociative(opr: Sym, id: Rat): void {
         throw new Error("Method not implemented.");
     }
     divide(lhs: U, rhs: U): U {

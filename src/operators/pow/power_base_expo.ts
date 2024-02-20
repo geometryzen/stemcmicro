@@ -1,20 +1,22 @@
-import { is_blade, is_flt, is_num, is_rat, is_tensor, is_uom, QQ } from "math-expression-atoms";
+import { create_sym, is_blade, is_flt, is_num, is_rat, is_tensor, is_uom, QQ } from "math-expression-atoms";
 import { is_native, Native, native_sym } from "math-expression-native";
-import { car, is_cons, items_to_cons, U } from "math-expression-tree";
+import { car, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
 import { nativeDouble, rational } from "../../bignum";
 import { complex_conjugate } from "../../complex_conjugate";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { divide } from "../../helpers/divide";
 import { iscomplexnumberdouble, is_complex_number, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_gt_zero, is_plus_or_minus_one, is_rat_and_even_integer } from "../../is";
 import { is_rat_and_integer } from "../../is_rat_and_integer";
-import { multiply } from "../../multiply";
+import { multiply_binary } from "../../multiply";
 import { is_integer_and_in_safe_number_range, nativeInt } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { is_negative } from "../../predicates/is_negative";
-import { ARCTAN, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, POWER, SIN } from "../../runtime/constants";
+import { ProgrammingError } from "../../programming/ProgrammingError";
+import { ARCTAN, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, SIN } from "../../runtime/constants";
 import { doexpand_binary } from "../../runtime/defs";
 import { is_abs, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_PI } from "../../runtime/ns_math";
@@ -25,6 +27,9 @@ import { half, negOne, one, two } from "../../tree/rat/Rat";
 import { is_sym } from "../sym/is_sym";
 import { dpow } from "./dpow";
 import { pow } from "./pow";
+
+
+const POW = native_sym(Native.pow);
 
 function multiply_terms(lhs: U[], rhs: U[], $: ExtensionEnv) {
     const parts: U[] = [];
@@ -54,6 +59,27 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
         return retval;
     };
 
+    if (is_atom(base) && is_atom(expo)) {
+        const extB = $.extensionFor(base)!;
+        const extE = $.extensionFor(expo)!;
+        const powL = extB.binL(base, POW, expo, $);
+        if (is_nil(powL)) {
+            const powR = extE.binR(expo, POW, base, $);
+            if (is_nil(powR)) {
+                const err = diagnostic(Diagnostics.Operator_0_cannot_be_applied_to_types_1_and_2, POW, create_sym(base.type), create_sym(expo.type));
+                return hook(err, "AA1");
+            }
+            else {
+                return hook(powR, "AA2");
+            }
+        }
+        else {
+            return hook(powL, "AA3");
+        }
+
+        throw new ProgrammingError(`${base}`);
+    }
+
     // first, some very basic simplifications right away
 
     //  1 ^ a    ->  1
@@ -77,7 +103,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
     //   -1 ^ 1/2  ->  i
     if (is_num_and_eq_minus_one(base) && is_num_and_equal_one_half(expo)) {
         if ($.getDirective(Directive.complexAsClock)) {
-            return items_to_cons(POWER, base, expo);
+            return items_to_cons(POW, base, expo);
         }
         else {
             return hook(imu, "D");
@@ -87,7 +113,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
     //   -1 ^ -1/2  ->  -i
     if (is_num_and_eq_minus_one(base) && is_num_and_equal_minus_half(expo)) {
         if ($.getDirective(Directive.complexAsClock)) {
-            return items_to_cons(POWER, base, expo);
+            return items_to_cons(POW, base, expo);
         }
         else {
             const result = $.negate(imu);
@@ -108,14 +134,14 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
         // console.lg("expo", $.toInfixString(expo));
         // console.lg("typeof expo.a", typeof expo.a);
         if (expo.numer().compare(expo.denom()) < 0) {
-            return hook(items_to_cons(POWER, base, expo), "F");
+            return hook(items_to_cons(POW, base, expo), "F");
         }
         else {
             const raw = items_to_cons(
                 MULTIPLY,
                 base,
                 items_to_cons(
-                    POWER,
+                    POW,
                     base,
                     rational(expo.a.mod(expo.b), expo.b)
                 )
@@ -205,7 +231,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
     if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(MATH_PI) && !$.getDirective(Directive.complexAsPolar)) {
         // TODO: We could simply use origExpr now that it is an argument.
         // TODO: Given that we have exp(i*pi*something), why don't we remove the imu and use Euler's formula? 
-        const tmp = items_to_cons(POWER, base, expo);
+        const tmp = items_to_cons(POW, base, expo);
         const retval = $.rect(tmp); // put new (hopefully simplified expr) in exponent
         if (!retval.contains(MATH_PI)) {
             // console.lg(`hopefullySimplified=${hopefullySimplified}`);
@@ -255,7 +281,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
         // console.lg(`x => ${$.toInfixString(x)} a => ${$.toInfixString(a)} b => ${$.toInfixString(b)}`);
         // console.lg(`ispositive(${$.toInfixString(x)}) => ${$.ispositive(x)}`);
         if ($.ispositive(x)) {
-            const ab = doexpand_binary(multiply, a, b, $);
+            const ab = doexpand_binary(multiply_binary, a, b, $);
             const result = $.valueOf(pow(x, ab));
             return hook(result, "R");
         }
@@ -405,7 +431,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
             //  * we can't go back to other forms.
             // so leave the power as it is.
             if (avoidCalculatingPowersIntoArctans && tmp.contains(ARCTAN)) {
-                tmp = items_to_cons(POWER, base, expo);
+                tmp = items_to_cons(POW, base, expo);
             }
 
             return hook(tmp, "X");
@@ -418,13 +444,14 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
     }
 
     // Normalize so that a manifestly negative base is always made positive.
-    // This seems to cause infinite looping...
+    // This seems to cause infinite looping... No kidding.
     if (is_one_over_something_negative(base, expo)) {
+        // console.lg("base", `${base}`);
         return hook($.negate($.power($.negate(base), expo)), 'ZZ');
     }
 
     // None of the above. Don't evaluate, that would cause an infinite loop.
-    return hook(items_to_cons(POWER, base, expo), "Z");
+    return hook(items_to_cons(POW, base, expo), "Z");
 }
 
 export function is_one_over_something(base: U, expo: U): boolean {

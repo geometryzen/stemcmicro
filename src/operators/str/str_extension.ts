@@ -1,8 +1,11 @@
-import { Str, Sym } from "math-expression-atoms";
-import { AtomHandler, ExprContext } from "math-expression-context";
-import { cons, Cons, U } from "math-expression-tree";
+import { create_str, Str, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
+import { Native, native_sym } from "math-expression-native";
+import { cons, Cons, is_atom, nil, U } from "math-expression-tree";
 import { Extension, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_STR } from "../../hashing/hash_info";
+
+const ADD = native_sym(Native.add);
 
 
 export function strcmp(str1: string, str2: string): Sign {
@@ -21,13 +24,32 @@ export function is_str(arg: unknown): arg is Str {
     return arg instanceof Str;
 }
 
-class StrExtension implements Extension<Str>, AtomHandler<Str> {
+class StrExtension implements Extension<Str> {
     constructor() {
         // Nothing to see here.
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(atom: Str, opr: Sym, env: ExprContext): boolean {
         return false;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(lhs: Str, opr: Sym, rhs: U, expr: ExprContext): U {
+        if (opr.equalsSym(ADD)) {
+            if (is_atom(rhs)) {
+                if (is_str(rhs)) {
+                    return create_str(lhs.str + rhs.str);
+                }
+            }
+        }
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(rhs: Str, opr: Sym, lhs: U, expr: ExprContext): U {
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(expr: Str, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
     }
     iscons(): false {
         return false;
@@ -91,6 +113,9 @@ class StrExtension implements Extension<Str>, AtomHandler<Str> {
     }
     toListString(str: Str): string {
         return JSON.stringify(str.str);
+    }
+    toString(): string {
+        return this.name;
     }
     evaluate(str: Str, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(str, argList));

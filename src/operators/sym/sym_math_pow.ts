@@ -1,8 +1,9 @@
 import { assert_sym, is_sym, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Directive, Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 
 const MATH_POW = native_sym(Native.pow);
@@ -16,6 +17,18 @@ class SymMathPow implements Extension<Sym> {
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(expr: Sym, opr: Sym, rhs: U, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(expr: Sym, opr: Sym, lhs: U, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(expr: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(expr: Sym, opr: Sym): boolean {
         throw new Error("Method not implemented.");
@@ -49,8 +62,7 @@ class SymMathPow implements Extension<Sym> {
             return expr;
         }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(expr: Sym, $: ExtensionEnv): string {
+    toHumanString(expr: Sym, $: ExprContext): string {
         if ($.getDirective(Directive.useCaretForExponentiation)) {
             return '^';
         }
@@ -59,11 +71,20 @@ class SymMathPow implements Extension<Sym> {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toLatexString(expr: Sym): string {
+    toInfixString(expr: Sym, $: ExprContext): string {
+        if ($.getDirective(Directive.useCaretForExponentiation)) {
+            return '^';
+        }
+        else {
+            return '**';
+        }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toLatexString(expr: Sym, $: ExprContext): string {
         return ' ^ ';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(expr: Sym, $: ExtensionEnv): string {
+    toListString(expr: Sym, $: ExprContext): string {
         return $.getSymbolPrintName(MATH_POW);
     }
     valueOf(expr: Sym): Sym {

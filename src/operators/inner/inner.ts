@@ -73,7 +73,7 @@ function inner_product(lhs: U, rhs: U, $: ExtensionEnv): U {
 }
 
 /**
- * The inner product is not associative (where you put the parens matters).
+ * The inner product is NOT associative (where you put the parens matters).
  * So it only makes sense to implement a strictly binary operator.
  */
 class Inner extends Function2<LHS, RHS> implements Extension<EXP> {

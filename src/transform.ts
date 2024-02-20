@@ -1,6 +1,6 @@
 import { is_num, one } from 'math-expression-atoms';
 import { assert_cons, car, cdr, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
-import { scan_meta } from './algebrite/scan';
+import { ScanOptions, scan_meta } from './algebrite/scan';
 import { polyform } from './bake';
 import { decomp } from './decomp';
 import { Directive, ExtensionEnv } from './env/ExtensionEnv';
@@ -148,19 +148,38 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
                     // console.lg("sourceText:", JSON.stringify(sourceText));
                     // Note that expr is (f A B C1 C2 C3 ...),
                     // where A is the expression to be integrated, B is the integral solution, Cn are optional conditions.
-                    const expr = assert_cons(scan_meta(sourceText, { useCaretForExponentiation: false, useParenForTensors: false, explicitAssocAdd: false, explicitAssocMul: false }));
-                    const argList = expr.argList;
-                    const A = argList.head;
-                    // console.lg("A:", $.toInfixString(A));
-                    B = cadr(argList);
-                    // console.lg("B:", $.toInfixString(B));
-                    const C = cdddr(expr);
-                    // console.lg("C:", $.toSExprString(C));
+                    const options: ScanOptions = {
+                        useCaretForExponentiation: false,
+                        useParenForTensors: false,
+                        explicitAssocAdd: false,
+                        explicitAssocMul: false,
+                        explicitAssocExt: false
+                    };
+                    const expr = assert_cons(scan_meta(sourceText, options));
+                    try {
+                        const argList = expr.argList;
+                        try {
+                            const A = argList.head;
+                            try {
+                                B = cadr(argList);
+                                const C = cdddr(expr);
 
-                    if (f_equals_a([one, ...results], generalTransform, F, A, C, $)) {
-                        // The result is in B, which must be evaluated to convert the meta variables to the correct values.
-                        retvalFlag = true;
-                        break;
+                                if (f_equals_a([one, ...results], generalTransform, F, A, C, $)) {
+                                    // The result is in B, which must be evaluated to convert the meta variables to the correct values.
+                                    retvalFlag = true;
+                                    break;
+                                }
+                            }
+                            finally {
+                                A.release();
+                            }
+                        }
+                        finally {
+                            argList.release();
+                        }
+                    }
+                    finally {
+                        expr.release();
                     }
                 }
             }

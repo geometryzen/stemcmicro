@@ -28,7 +28,7 @@ const guardR = is_rat;
 /**
  * (pow (pow x 2) 1/2) => abs(x)
  */
-class Op extends Function2<LHS, RHS> implements Extension<EXP> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
     readonly phases = MODE_FACTORING;
     constructor() {
@@ -36,10 +36,6 @@ class Op extends Function2<LHS, RHS> implements Extension<EXP> {
         this.#hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
     }
     dependencies?: FEATURE[] | undefined;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    test(expr: EXP, opr: Sym): boolean {
-        throw new Error("Method not implemented.");
-    }
     get hash(): string {
         return this.#hash;
     }

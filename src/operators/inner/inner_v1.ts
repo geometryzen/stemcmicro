@@ -31,6 +31,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
         p1 = $.negate(p1);
     }
 
+    // DGH: In general, the inner product is NOT associative.
     // since inner is associative, put it in a canonical form i.e.
     // inner(inner(a,b),c) -> inner(a,inner(b,c))
     // so that we can recognise when they are equal.

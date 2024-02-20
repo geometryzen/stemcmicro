@@ -1,6 +1,8 @@
-import { is_rat, Rat } from "math-expression-atoms";
-import { bignum_equal } from "./bignum_equal";
+import { Rat } from "math-expression-atoms";
 
-export function isinteger(p: Rat): boolean {
-    return is_rat(p) && bignum_equal(p.b, 1);
+/**
+ * @deprecated Use x.isInteger() instead.
+ */
+export function isinteger(x: Rat): boolean {
+    return x.isInteger();
 }

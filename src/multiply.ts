@@ -1,16 +1,18 @@
 import { one } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { U } from 'math-expression-tree';
 import { binop } from './calculators/binop';
 import { Directive, ExtensionEnv } from './env/ExtensionEnv';
+import { multiply } from './helpers/multiply';
 import { noexpand_binary, noexpand_unary } from './runtime/defs';
 import { MATH_MUL } from './runtime/ns_math';
 
-export function multiply(lhs: U, rhs: U, $: Pick<ExtensionEnv, 'valueOf'>): U {
+export function multiply_binary(lhs: U, rhs: U, _: Pick<ExtensionEnv, 'valueOf'>): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         return retval;
     };
-    return hook(binop(MATH_MUL, lhs, rhs, $), "A");
+    return hook(binop(MATH_MUL, lhs, rhs, _), "A");
 }
 
 // this is useful for example when you are just adding/removing
@@ -18,8 +20,8 @@ export function multiply(lhs: U, rhs: U, $: Pick<ExtensionEnv, 'valueOf'>): U {
 // e.g. if you factored x^2 + 3x + 2 into (x+1)(x+2)
 // and you want to divide by (x+1) , i.e. you multiply by (x-1)^-1,
 // then there is no need to expand.
-export function multiply_noexpand(arg1: U, arg2: U, $: Pick<ExtensionEnv, 'valueOf' | 'pushDirective' | 'popDirective'>): U {
-    return noexpand_binary(multiply, arg1, arg2, $);
+export function multiply_noexpand(arg1: U, arg2: U, _: Pick<ExprContext, 'valueOf' | 'pushDirective' | 'popDirective'>): U {
+    return noexpand_binary(multiply_binary, arg1, arg2, _);
 }
 
 /**
@@ -28,12 +30,12 @@ export function multiply_noexpand(arg1: U, arg2: U, $: Pick<ExtensionEnv, 'value
  * [a b c d ...] => (multiply (multiply a b) c)
  * @param items is an integer
  */
-export function multiply_items(items: U[], $: Pick<ExtensionEnv, 'multiply'>): U {
+export function multiply_items(items: U[], _: Pick<ExprContext, 'valueOf'>): U {
     // console.lg(`multiply_items items => ${items_to_infix(items, $)} ${items_to_sexpr(items, $)}`);
     if (items.length > 1) {
         let temp = items[0];
         for (let i = 1; i < items.length; i++) {
-            temp = $.multiply(temp, items[i]);
+            temp = multiply(_, temp, items[i]);
         }
         return temp;
     }
@@ -46,38 +48,20 @@ export function multiply_items(items: U[], $: Pick<ExtensionEnv, 'multiply'>): U
 }
 
 // n an integer
-export function multiply_items_factoring(items: U[], $: ExtensionEnv): U {
-    $.pushDirective(Directive.factoring, 1);
+export function multiply_items_factoring(items: U[], _: ExtensionEnv): U {
+    _.pushDirective(Directive.factoring, 1);
     try {
-        return multiply_items(items, $);
+        return multiply_items(items, _);
     }
     finally {
-        $.popDirective();
+        _.popDirective();
     }
 }
 
 
-export function negate_noexpand(p1: U, $: ExtensionEnv): U {
+export function negate_noexpand(p1: U, _: ExtensionEnv): U {
     const negate = function (x: U, $: ExtensionEnv): U {
         return $.negate(x);
     };
-    return noexpand_unary(negate, p1, $);
+    return noexpand_unary(negate, p1, _);
 }
-
-//-----------------------------------------------------------------------------
-//
-//  > a*hilbert(2)
-//  ((a,1/2*a),(1/2*a,1/3*a))
-//
-//  Note that "a" is presumed to be a scalar. Is this correct?
-//
-//  Yes, because "*" has no meaning if "a" is a tensor.
-//  To multiply tensors, "dot" or "outer" should be used.
-//
-//  > dot(a,hilbert(2))
-//  dot(a,((1,1/2),(1/2,1/3)))
-//
-//  In this case "a" could be a scalar or tensor so the result is not
-//  expanded.
-//
-//-----------------------------------------------------------------------------

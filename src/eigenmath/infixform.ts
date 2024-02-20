@@ -1,6 +1,8 @@
-import { Flt, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Tensor } from "math-expression-atoms";
+import { Flt, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, Num, Rat, Tensor } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
-import { car, cdr, Cons, is_atom, is_cons, is_nil, U } from "math-expression-tree";
+import { Atom, car, cdr, Cons, is_atom, is_cons, is_nil, U } from "math-expression-tree";
+import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
+import { StackU } from "../env/StackU";
 import { is_imu } from "../operators/imu/is_imu";
 import { caddr, cadr, cddr } from "../tree/helpers";
 import { bignum_itoa } from "./bignum_itoa";
@@ -15,6 +17,8 @@ import { isnegativeterm } from "./isnegativeterm";
 import { isnumerator } from "./isnumerator";
 import { isposint } from "./isposint";
 import { printname_from_symbol } from "./printname_from_symbol";
+import { ProgramControl } from "./ProgramControl";
+import { ProgramEnv } from "./ProgramEnv";
 
 const ADD = native_sym(Native.add);
 const ASSIGN = native_sym(Native.assign);
@@ -31,9 +35,9 @@ const TESTLT = native_sym(Native.testlt);
 const MATH_E = native_sym(Native.E);
 
 
-function infixform_subexpr(p: U, config: InfixConfig, outbuf: string[]): void {
+function infixform_subexpr(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
     infixform_write("(", config, outbuf);
-    infixform_expr(p, config, outbuf);
+    infixform_expr(p, env, ctrl, config, outbuf);
     infixform_write(")", config, outbuf);
 }
 
@@ -55,41 +59,51 @@ export function infix_config_from_options(options: InfixOptions): InfixConfig {
     return config;
 }
 
-export function to_infix(expr: U, options: InfixOptions = {}): string {
+export function to_infix(expr: U, env: ProgramEnv, ctrl: ProgramControl, options: InfixOptions = {}): string {
     const config = infix_config_from_options(options);
     const outbuf: string[] = [];
-    infixform_expr(expr, config, outbuf);
+    infixform_expr(expr, env, ctrl, config, outbuf);
     return outbuf.join('');
 }
 
-export function infixform_expr(p: U, config: InfixConfig, outbuf: string[]): void {
-    if (isnegativeterm(p) || (car(p).equals(ADD) && isnegativeterm(cadr(p))))
-        infixform_write("-", config, outbuf);
-    if (car(p).equals(ADD))
-        infixform_expr_nib(p, config, outbuf);
-    else
-        infixform_term(p, config, outbuf);
+export function infixform_expr(x: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
+    if (is_cons(x)) {
+        if (isnegativeterm(x) || (car(x).equals(ADD) && isnegativeterm(cadr(x)))) {
+            infixform_write("-", config, outbuf);
+        }
+    }
+    else {
+        if (isnegativeterm(x)) {
+            infixform_write("-", config, outbuf);
+        }
+    }
+    if (car(x).equals(ADD)) {
+        infixform_expr_nib(x, env, ctrl, config, outbuf);
+    }
+    else {
+        infixform_term(x, env, ctrl, config, outbuf);
+    }
 }
 
-function infixform_expr_nib(p: U, config: InfixConfig, outbuf: string[]): void {
-    infixform_term(cadr(p), config, outbuf);
+function infixform_expr_nib(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
+    infixform_term(cadr(p), env, ctrl, config, outbuf);
     p = cddr(p);
     while (is_cons(p)) {
         if (isnegativeterm(car(p)))
             infixform_write(" - ", config, outbuf);
         else
             infixform_write(" + ", config, outbuf);
-        infixform_term(car(p), config, outbuf);
+        infixform_term(car(p), env, ctrl, config, outbuf);
         p = cdr(p);
     }
 }
 
-function infixform_term(p: U, config: InfixConfig, outbuf: string[]): void {
-    if (is_cons(p) && p.opr.equals(MULTIPLY)) {
-        infixform_term_nib(p, config, outbuf);
+function infixform_term(x: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
+    if (is_cons(x) && x.opr.equals(MULTIPLY)) {
+        infixform_term_nib(x, env, ctrl, config, outbuf);
     }
     else {
-        infixform_factor(p, config, outbuf);
+        infixform_factor(x, env, ctrl, config, outbuf);
     }
 }
 
@@ -100,11 +114,11 @@ function infixform_term(p: U, config: InfixConfig, outbuf: string[]): void {
  * @param outbuf 
  * @returns 
  */
-function infixform_term_nib(p: Cons, config: InfixConfig, outbuf: string[]): void {
+function infixform_term_nib(p: Cons, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
     if (find_denominator(p)) {
-        infixform_numerators(p, config, outbuf);
+        infixform_numerators(p, env, ctrl, config, outbuf);
         infixform_write(" / ", config, outbuf);
-        infixform_denominators(p, config, outbuf);
+        infixform_denominators(p, env, ctrl, config, outbuf);
         return;
     }
 
@@ -115,18 +129,18 @@ function infixform_term_nib(p: Cons, config: InfixConfig, outbuf: string[]): voi
     if (isminusone(car(p)))
         p = cdr(p); // sign already emitted
 
-    infixform_factor(car(p), config, outbuf);
+    infixform_factor(car(p), env, ctrl, config, outbuf);
 
     p = cdr(p);
 
     while (is_cons(p)) {
         infixform_write(" ", config, outbuf); // space in between factors
-        infixform_factor(car(p), config, outbuf);
+        infixform_factor(car(p), env, ctrl, config, outbuf);
         p = cdr(p);
     }
 }
 
-function infixform_numerators(p: Cons, config: InfixConfig, outbuf: string[]): void {
+function infixform_numerators(p: Cons, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
 
     let k = 0;
 
@@ -149,14 +163,14 @@ function infixform_numerators(p: Cons, config: InfixConfig, outbuf: string[]): v
             continue;
         }
 
-        infixform_factor(q, config, outbuf);
+        infixform_factor(q, env, ctrl, config, outbuf);
     }
 
     if (k === 0)
         infixform_write("1", config, outbuf);
 }
 
-function infixform_denominators(p: Cons, config: InfixConfig, outbuf: string[]): void {
+function infixform_denominators(p: Cons, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
 
     const n = count_denominators(p);
 
@@ -186,10 +200,10 @@ function infixform_denominators(p: Cons, config: InfixConfig, outbuf: string[]):
 
         if (isminusone(caddr(q))) {
             q = cadr(q);
-            infixform_factor(q, config, outbuf);
+            infixform_factor(q, env, ctrl, config, outbuf);
         }
         else {
-            infixform_base(cadr(q), config, outbuf);
+            infixform_base(cadr(q), env, ctrl, config, outbuf);
             if (config.useCaretForExponentiation) {
                 infixform_write("^", config, outbuf);
             }
@@ -204,127 +218,127 @@ function infixform_denominators(p: Cons, config: InfixConfig, outbuf: string[]):
         infixform_write(")", config, outbuf);
 }
 
-function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
+function infixform_factor(x: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
     // Rat
-    if (is_rat(p)) {
-        infixform_rational(p, config, outbuf);
+    if (is_rat(x)) {
+        infixform_rational(x, config, outbuf);
         return;
     }
 
     // Flt
-    if (is_flt(p)) {
-        infixform_double(p, config, outbuf);
+    if (is_flt(x)) {
+        infixform_double(x, config, outbuf);
         return;
     }
 
     // Sym
-    if (is_sym(p)) {
-        if (p.equalsSym(MATH_E)) {
+    if (is_sym(x)) {
+        if (x.equalsSym(MATH_E)) {
             infixform_write("exp(1)", config, outbuf);
         }
         else {
-            infixform_write(printname_from_symbol(p), config, outbuf);
+            infixform_write(printname_from_symbol(x), config, outbuf);
         }
         return;
     }
 
     // Str
-    if (is_str(p)) {
-        infixform_write(p.str, config, outbuf);
+    if (is_str(x)) {
+        infixform_write(x.str, config, outbuf);
         return;
     }
 
     // Tensor
-    if (is_tensor(p)) {
-        infixform_tensor(p, config, outbuf);
+    if (is_tensor(x)) {
+        infixform_tensor(x, env, ctrl, config, outbuf);
         return;
     }
 
-    if (is_atom(p)) {
-        infixform_atom(p, config, outbuf);
+    if (is_atom(x)) {
+        infixform_atom(x, env, ctrl, config, outbuf);
         return;
     }
 
-    if (is_cons(p) && (p.opr.equals(ADD) || p.opr.equals(MULTIPLY))) {
-        infixform_subexpr(p, config, outbuf);
+    if (is_cons(x) && (x.opr.equals(ADD) || x.opr.equals(MULTIPLY))) {
+        infixform_subexpr(x, env, ctrl, config, outbuf);
         return;
     }
 
-    if (is_cons(p) && p.opr.equals(POWER)) {
-        infixform_power(p, config, outbuf);
+    if (is_cons(x) && x.opr.equals(POWER)) {
+        infixform_power(x, env, ctrl, config, outbuf);
         return;
     }
 
-    if (car(p).equals(FACTORIAL)) {
-        infixform_factorial(p, config, outbuf);
+    if (car(x).equals(FACTORIAL)) {
+        infixform_factorial(x, env, ctrl, config, outbuf);
         return;
     }
 
-    if (car(p).equals(INDEX)) {
-        infixform_index(p, config, outbuf);
+    if (car(x).equals(INDEX)) {
+        infixform_index(x, env, ctrl, config, outbuf);
         return;
     }
 
     // use d if for derivative if d not defined
 
-    if (car(p).equals(DERIVATIVE) /*&& is_nil(get_usrfunc(symbol(D_LOWER), $))*/) {
+    if (car(x).equals(DERIVATIVE) /*&& is_nil(get_usrfunc(symbol(D_LOWER), $))*/) {
         infixform_write("d", config, outbuf);
-        infixform_arglist(p, config, outbuf);
+        infixform_arglist(x, env, ctrl, config, outbuf);
         return;
     }
 
-    if (is_cons(p) && p.opr.equals(ASSIGN)) {
-        const lhs = p.lhs;
-        const rhs = p.rhs;
-        infixform_expr(lhs, config, outbuf);
+    if (is_cons(x) && x.opr.equals(ASSIGN)) {
+        const lhs = x.lhs;
+        const rhs = x.rhs;
+        infixform_expr(lhs, env, ctrl, config, outbuf);
         infixform_write(" = ", config, outbuf);
-        infixform_expr(rhs, config, outbuf);
+        infixform_expr(rhs, env, ctrl, config, outbuf);
         return;
     }
 
-    if (car(p).equals(TESTEQ)) {
-        infixform_expr(cadr(p), config, outbuf);
+    if (car(x).equals(TESTEQ)) {
+        infixform_expr(cadr(x), env, ctrl, config, outbuf);
         infixform_write(" == ", config, outbuf);
-        infixform_expr(caddr(p), config, outbuf);
+        infixform_expr(caddr(x), env, ctrl, config, outbuf);
         return;
     }
 
-    if (car(p).equals(TESTGE)) {
-        infixform_expr(cadr(p), config, outbuf);
+    if (car(x).equals(TESTGE)) {
+        infixform_expr(cadr(x), env, ctrl, config, outbuf);
         infixform_write(" >= ", config, outbuf);
-        infixform_expr(caddr(p), config, outbuf);
+        infixform_expr(caddr(x), env, ctrl, config, outbuf);
         return;
     }
 
-    if (car(p).equals(TESTGT)) {
-        infixform_expr(cadr(p), config, outbuf);
+    if (car(x).equals(TESTGT)) {
+        infixform_expr(cadr(x), env, ctrl, config, outbuf);
         infixform_write(" > ", config, outbuf);
-        infixform_expr(caddr(p), config, outbuf);
+        infixform_expr(caddr(x), env, ctrl, config, outbuf);
         return;
     }
 
-    if (car(p).equals(TESTLE)) {
-        infixform_expr(cadr(p), config, outbuf);
+    if (car(x).equals(TESTLE)) {
+        infixform_expr(cadr(x), env, ctrl, config, outbuf);
         infixform_write(" <= ", config, outbuf);
-        infixform_expr(caddr(p), config, outbuf);
+        infixform_expr(caddr(x), env, ctrl, config, outbuf);
         return;
     }
 
-    if (car(p).equals(TESTLT)) {
-        infixform_expr(cadr(p), config, outbuf);
+    if (car(x).equals(TESTLT)) {
+        infixform_expr(cadr(x), env, ctrl, config, outbuf);
         infixform_write(" < ", config, outbuf);
-        infixform_expr(caddr(p), config, outbuf);
+        infixform_expr(caddr(x), env, ctrl, config, outbuf);
         return;
     }
 
     // other function
 
-    if (is_cons(p)) {
-        infixform_base(car(p), config, outbuf);
-        infixform_arglist(p, config, outbuf);
+    if (is_cons(x)) {
+        infixform_base(car(x), env, ctrl, config, outbuf);
+        infixform_arglist(x, env, ctrl, config, outbuf);
         return;
     }
-    else if (is_nil(p)) {
+    else if (is_nil(x)) {
         infixform_write("nil", config, outbuf);
     }
     else {
@@ -333,10 +347,10 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
 
 }
 
-function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
+function infixform_power(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
     if (cadr(p).equals(MATH_E)) {
         infixform_write("exp(", config, outbuf);
-        infixform_expr(caddr(p), config, outbuf);
+        infixform_expr(caddr(p), env, ctrl, config, outbuf);
         infixform_write(")", config, outbuf);
         return;
     }
@@ -358,11 +372,11 @@ function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
 
     const expo = caddr(p);
     if (is_num(expo) && isnegativenumber(expo)) {
-        infixform_reciprocal(p, config, outbuf);
+        infixform_reciprocal(p, env, ctrl, config, outbuf);
         return;
     }
 
-    infixform_base(cadr(p), config, outbuf);
+    infixform_base(cadr(p), env, ctrl, config, outbuf);
 
     if (config.useCaretForExponentiation) {
         infixform_write("^", config, outbuf);
@@ -377,23 +391,23 @@ function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
         infixform_numeric_exponent(p, config, outbuf);
     }
     else if (is_cons(p) && (p.opr.equals(ADD) || p.opr.equals(MULTIPLY) || p.opr.equals(POWER) || p.opr.equals(FACTORIAL))) {
-        infixform_subexpr(p, config, outbuf);
+        infixform_subexpr(p, env, ctrl, config, outbuf);
     }
     else {
-        infixform_expr(p, config, outbuf);
+        infixform_expr(p, env, ctrl, config, outbuf);
     }
 }
 
 // p = y^x where x is a negative number
 
-function infixform_reciprocal(p: U, config: InfixConfig, outbuf: string[]): void {
+function infixform_reciprocal(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
     infixform_write("1 / ", config, outbuf); // numerator
     if (isminusone(caddr(p))) {
         p = cadr(p);
-        infixform_factor(p, config, outbuf);
+        infixform_factor(p, env, ctrl, config, outbuf);
     }
     else {
-        infixform_base(cadr(p), config, outbuf);
+        infixform_base(cadr(p), env, ctrl, config, outbuf);
         if (config.useCaretForExponentiation) {
             infixform_write("^", config, outbuf);
         }
@@ -404,36 +418,36 @@ function infixform_reciprocal(p: U, config: InfixConfig, outbuf: string[]): void
     }
 }
 
-function infixform_factorial(p: U, config: InfixConfig, outbuf: string[]): void {
-    infixform_base(cadr(p), config, outbuf);
+function infixform_factorial(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
+    infixform_base(cadr(p), env, ctrl, config, outbuf);
     infixform_write("!", config, outbuf);
 }
 
-function infixform_index(p: U, config: InfixConfig, outbuf: string[]): void {
-    infixform_base(cadr(p), config, outbuf);
+function infixform_index(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
+    infixform_base(cadr(p), env, ctrl, config, outbuf);
     infixform_write("[", config, outbuf);
     p = cddr(p);
     if (is_cons(p)) {
-        infixform_expr(car(p), config, outbuf);
+        infixform_expr(car(p), env, ctrl, config, outbuf);
         p = cdr(p);
         while (is_cons(p)) {
             infixform_write(",", config, outbuf);
-            infixform_expr(car(p), config, outbuf);
+            infixform_expr(car(p), env, ctrl, config, outbuf);
             p = cdr(p);
         }
     }
     infixform_write("]", config, outbuf);
 }
 
-function infixform_arglist(p: U, config: InfixConfig, outbuf: string[]): void {
+function infixform_arglist(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
     infixform_write("(", config, outbuf);
     p = cdr(p);
     if (is_cons(p)) {
-        infixform_expr(car(p), config, outbuf);
+        infixform_expr(car(p), env, ctrl, config, outbuf);
         p = cdr(p);
         while (is_cons(p)) {
             infixform_write(",", config, outbuf);
-            infixform_expr(car(p), config, outbuf);
+            infixform_expr(car(p), env, ctrl, config, outbuf);
             p = cdr(p);
         }
     }
@@ -442,17 +456,18 @@ function infixform_arglist(p: U, config: InfixConfig, outbuf: string[]): void {
 
 // sign is not emitted
 
-function infixform_rational(p: Rat, config: InfixConfig, outbuf: string[]): void {
+function infixform_rational(x: Rat, config: InfixConfig, outbuf: string[]): void {
     // DGH: For sign to not be emitted we should abs() here.
-    const a = bignum_itoa(p.a);
+    const a = bignum_itoa(x.a);
     infixform_write(a, config, outbuf);
 
-    if (isinteger(p))
+    if (x.isInteger()) {
         return;
+    }
 
     infixform_write("/", config, outbuf);
 
-    const b = bignum_itoa(p.b);
+    const b = bignum_itoa(x.b);
     infixform_write(b, config, outbuf);
 }
 
@@ -511,23 +526,23 @@ function infixform_double(p: Flt, config: InfixConfig, outbuf: string[]): void {
     }
 }
 
-function infixform_base(p: U, config: InfixConfig, outbuf: string[]): void {
+function infixform_base(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
     if (is_num(p)) {
-        infixform_numeric_base(p, config, outbuf);
+        infixform_numeric_base(p, env, ctrl, config, outbuf);
     }
     else if (is_cons(p) && (p.opr.equals(ADD) || p.opr.equals(MULTIPLY) || p.opr.equals(POWER) || p.opr.equals(FACTORIAL))) {
-        infixform_subexpr(p, config, outbuf);
+        infixform_subexpr(p, env, ctrl, config, outbuf);
     }
     else {
-        infixform_expr(p, config, outbuf);
+        infixform_expr(p, env, ctrl, config, outbuf);
     }
 }
 
-function infixform_numeric_base(p: U, config: InfixConfig, outbuf: string[]): void {
+function infixform_numeric_base(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
     if (is_rat(p) && isposint(p))
         infixform_rational(p, config, outbuf);
     else
-        infixform_subexpr(p, config, outbuf);
+        infixform_subexpr(p, env, ctrl, config, outbuf);
 }
 
 // sign is not emitted
@@ -550,14 +565,14 @@ function infixform_numeric_exponent(p: Num, config: InfixConfig, outbuf: string[
     infixform_write(")", config, outbuf);
 }
 
-function infixform_tensor(p: Tensor, config: InfixConfig, outbuf: string[]): void {
-    infixform_tensor_nib(p, 0, 0, config, outbuf);
+function infixform_tensor(p: Tensor, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
+    infixform_tensor_nib(p, 0, 0, env, ctrl, config, outbuf);
 }
 
-function infixform_tensor_nib(p: Tensor, d: number, k: number, config: InfixConfig, outbuf: string[]): void {
+function infixform_tensor_nib(p: Tensor, d: number, k: number, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
 
     if (d === p.ndim) {
-        infixform_expr(p.elems[k], config, outbuf);
+        infixform_expr(p.elems[k], env, ctrl, config, outbuf);
         return;
     }
 
@@ -580,7 +595,7 @@ function infixform_tensor_nib(p: Tensor, d: number, k: number, config: InfixConf
 
     for (let i = 0; i < n; i++) {
 
-        infixform_tensor_nib(p, d + 1, k, config, outbuf);
+        infixform_tensor_nib(p, d + 1, k, env, ctrl, config, outbuf);
 
         if (i < n - 1)
             infixform_write(",", config, outbuf);
@@ -595,13 +610,11 @@ function infixform_tensor_nib(p: Tensor, d: number, k: number, config: InfixConf
         infixform_write("]", config, outbuf);
     }
 }
-function infixform_atom(p: U, config: InfixConfig, outbuf: string[]): void {
-    if (is_uom(p)) {
-        infixform_write(`${p.toInfixString()}`, config, outbuf);
-    }
-    else {
-        infixform_write(`${p}`, config, outbuf);
-    }
+function infixform_atom(atom: Atom, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
+    const stack = new StackU();
+    const $ = new ExprContextFromProgram(env, ctrl, stack);
+    const handler = env.handlerFor(atom);
+    infixform_write(JSON.stringify(handler.toInfixString(atom, $)), config, outbuf);
 }
 
 export function infixform_write(s: string, config: InfixConfig, outbuf: string[]): void {

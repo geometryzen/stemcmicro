@@ -1,6 +1,6 @@
 import { Sym } from "math-expression-atoms";
-import { AtomHandler, CompareFn, ExprContext } from "math-expression-context";
-import { Atom, Cons, U } from "math-expression-tree";
+import { CompareFn, ExprContext, ExprHandler } from "math-expression-context";
+import { Cons, U } from "math-expression-tree";
 import { value_of } from "../eigenmath/eigenmath";
 import { ProgramControl } from "../eigenmath/ProgramControl";
 import { ProgramEnv } from "../eigenmath/ProgramEnv";
@@ -28,8 +28,8 @@ export class ExprContextFromProgram implements ExprContext {
     popDirective(): void {
         this.ctrl.popDirective();
     }
-    handlerFor<A extends Atom>(atom: A): AtomHandler<A> {
-        return this.env.handlerFor(atom);
+    handlerFor<T extends U>(expr: T): ExprHandler<T> {
+        return this.env.handlerFor(expr);
     }
     hasBinding(opr: Sym, target: Cons): boolean {
         return this.env.hasBinding(opr, target);
@@ -57,5 +57,8 @@ export class ExprContextFromProgram implements ExprContext {
         this.$.push(expr);
         value_of(this.env, this.ctrl, this.$);
         return this.$.pop();
+    }
+    getSymbolPrintName(sym: Sym): string {
+        return this.ctrl.getSymbolPrintName(sym);
     }
 }

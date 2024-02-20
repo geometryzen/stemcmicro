@@ -1,6 +1,7 @@
 import { Sym } from "math-expression-atoms";
-import { AtomHandler } from "math-expression-context";
-import { Atom, Cons, U } from "math-expression-tree";
+import { ExprHandler } from "math-expression-context";
+import { Cons, U } from "math-expression-tree";
+import { ProgramStack } from "./ProgramStack";
 
 export interface ProgramEnv {
     clearBindings(): void;
@@ -12,6 +13,9 @@ export interface ProgramEnv {
     setBinding(opr: Sym, binding: U): void;
     setUserFunction(name: Sym, userfunc: U): void;
     defineUserSymbol(name: Sym): void;
-    handlerFor<A extends Atom>(atom: A): AtomHandler<A>;
-    valueOf(expr: U): U;
+    handlerFor<T extends U>(expr: T): ExprHandler<T>;
+    /**
+     * If a stack is provided, the computed value is pushed onto the stack and nil is returned. 
+     */
+    valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U;
 }

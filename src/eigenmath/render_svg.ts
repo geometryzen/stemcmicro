@@ -12,7 +12,6 @@ import { fmtnum } from "./fmtnum";
 import { isdenominator } from "./isdenominator";
 import { isdigit } from "./isdigit";
 import { isfraction } from "./isfraction";
-import { isinteger } from "./isinteger";
 import { isminusone } from "./isminusone";
 import { isnegativenumber } from "./isnegativenumber";
 import { isnegativeterm } from "./isnegativeterm";
@@ -940,10 +939,10 @@ function emit_power(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
     emit_exponent(caddr(p), $, ec);
 }
 
-function emit_rational(p: Rat, $: ProgramStack): void {
+function emit_rational(x: Rat, $: ProgramStack): void {
 
-    if (isinteger(p)) {
-        const s = bignum_itoa(p.a);
+    if (x.isInteger()) {
+        const s = bignum_itoa(x.a);
         emit_roman_string(s, $);
         return;
     }
@@ -951,12 +950,12 @@ function emit_rational(p: Rat, $: ProgramStack): void {
     emit_level++;
 
     let t = $.length;
-    let s = bignum_itoa(p.a);
+    let s = bignum_itoa(x.a);
     emit_roman_string(s, $);
     emit_update_list(t, $);
 
     t = $.length;
-    s = bignum_itoa(p.b);
+    s = bignum_itoa(x.b);
     emit_roman_string(s, $);
     emit_update_list(t, $);
 

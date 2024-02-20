@@ -1,4 +1,4 @@
-import { ExtensionEnv } from "../env/ExtensionEnv";
+import { ExprContext } from "math-expression-context";
 import { is_flt } from "../operators/flt/is_flt";
 import { is_num } from "../operators/num/is_num";
 import { is_rat } from "../operators/rat/is_rat";
@@ -8,18 +8,20 @@ import { negOne } from "../tree/rat/Rat";
 import { items_to_cons, U } from "../tree/tree";
 
 /**
- * TODO: Exactly what kind of inverse is this?
- * @param expr 
- * @param $ 
- * @returns 
+ * (inverse arg) => (pow arg -1)
  */
-export function inverse(expr: U, $: Pick<ExtensionEnv, 'valueOf'>): U {
-    const value = $.valueOf(expr);
-    if (is_num(value)) {
-        return invert_number(value);
+export function inverse(arg: U, $: Pick<ExprContext, 'valueOf'>): U {
+    const value = $.valueOf(arg);
+    try {
+        if (is_num(value)) {
+            return invert_number(value);
+        }
+        else {
+            return $.valueOf(items_to_cons(MATH_POW, value, negOne));
+        }
     }
-    else {
-        return $.valueOf(items_to_cons(MATH_POW, value, negOne));
+    finally {
+        value.release();
     }
 }
 

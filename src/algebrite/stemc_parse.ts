@@ -15,13 +15,17 @@ export interface STEMCParseOptions {
      */
     useParenForTensors?: boolean;
     /**
-     * Determines whether the parser makes associativity explicit or implicit in additive expressions.
+     * Determines whether the parser makes associativity explicit or implicit in additive (+) expressions.
      */
     explicitAssocAdd?: boolean;
     /**
-     * Determines whether the parser makes associativity explicit or implicit in multiplicative expressions.
+     * Determines whether the parser makes associativity explicit or implicit in multiplicative (*) expressions.
      */
     explicitAssocMul?: boolean;
+    /**
+     * Determines whether the parser makes associativity explicit or implicit in exterior product (^) expressions.
+     */
+    explicitAssocExt?: boolean;
 }
 
 interface ScanConfig {
@@ -29,6 +33,7 @@ interface ScanConfig {
     useParenForTensors: boolean;
     explicitAssocAdd: boolean;
     explicitAssocMul: boolean;
+    explicitAssocExt: boolean;
 }
 
 function config_from_options(options: STEMCParseOptions | undefined): ScanConfig {
@@ -37,7 +42,8 @@ function config_from_options(options: STEMCParseOptions | undefined): ScanConfig
             useCaretForExponentiation: !!options.useCaretForExponentiation,
             useParenForTensors: !!options.useParenForTensors,
             explicitAssocAdd: !!options.explicitAssocAdd,
-            explicitAssocMul: !!options.explicitAssocMul
+            explicitAssocExt: !!options.explicitAssocExt,
+            explicitAssocMul: !!options.explicitAssocMul,
         };
     }
     else {
@@ -45,6 +51,7 @@ function config_from_options(options: STEMCParseOptions | undefined): ScanConfig
             useCaretForExponentiation: false,
             useParenForTensors: false,
             explicitAssocAdd: false,
+            explicitAssocExt: false,
             explicitAssocMul: false
         };
     }
@@ -55,7 +62,7 @@ function config_from_options(options: STEMCParseOptions | undefined): ScanConfig
  * @param sourceText The source text. May contain embedded newline characters.
  * @param options Determine how the parsing behaves.
  */
-export function stemcmicro_parse(sourceText: string, options?: STEMCParseOptions): { trees: U[], errors: Error[] } {
+export function stemcmicro_parse(sourceText: string, options: STEMCParseOptions = {}): { trees: U[], errors: Error[] } {
     // console.lg(`scan(sourceText = ${JSON.stringify(sourceText)})`);
 
     const config: ScanConfig = config_from_options(options);
@@ -72,7 +79,7 @@ export function stemcmicro_parse(sourceText: string, options?: STEMCParseOptions
     while (true) {
         // while we can keep scanning commands out of the
         // passed input AND we can execute them...
-        if (options?.catchExceptions) {
+        if (options.catchExceptions) {
             try {
                 [scanned, tree] = scan_substring(normalizedScript, index_of_part_remaining_to_be_parsed, config);
             }
@@ -117,6 +124,7 @@ function scan_substring(sourceText: string, start: number, config: ScanConfig): 
         useCaretForExponentiation: config.useCaretForExponentiation,
         useParenForTensors: config.useParenForTensors,
         explicitAssocAdd: config.explicitAssocAdd,
-        explicitAssocMul: config.explicitAssocMul
+        explicitAssocExt: config.explicitAssocExt,
+        explicitAssocMul: config.explicitAssocMul,
     });
 }

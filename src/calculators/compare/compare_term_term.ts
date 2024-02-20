@@ -1,4 +1,4 @@
-import { is_blade } from "math-expression-atoms";
+import { is_blade, is_boo } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { is_cons, U } from "math-expression-tree";
 import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
@@ -6,6 +6,7 @@ import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { is_imu } from "../../operators/imu/is_imu";
 import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { is_num } from "../../operators/num/is_num";
+import { is_str } from "../../operators/str/is_str";
 import { is_tensor } from "../../operators/tensor/is_tensor";
 import { count_factors } from "../count_factors";
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
@@ -19,6 +20,17 @@ export class AddComparator implements ExprComparator {
     compare(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         const lhsR = canonical_factor_num_rhs(lhs);
         const rhsR = canonical_factor_num_rhs(rhs);
+
+        // Under addition, we don't want strings to be sorted because they don't commute.
+        // Perhaps the only thing that doesn't commute under addition?
+        if (is_str(lhsR) && is_str(rhsR)) {
+            return SIGN_EQ;
+        }
+
+        if (is_boo(lhsR) || is_boo(rhsR)) {
+            return SIGN_EQ;
+        }
+
         switch (compare_terms_core(lhsR, rhsR, $)) {
             case SIGN_GT: {
                 return SIGN_GT;

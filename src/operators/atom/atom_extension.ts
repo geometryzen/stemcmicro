@@ -1,14 +1,14 @@
 import { Cell, is_cell, Sym } from "math-expression-atoms";
-import { AtomHandler, ExprContext } from "math-expression-context";
+import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, U } from "math-expression-tree";
+import { cons, Cons, is_atom, nil, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_CELL } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
 const ISZERO = native_sym(Native.iszero);
 
-class CellExtension implements Extension<Cell>, AtomHandler<Cell> {
+class CellExtension implements Extension<Cell> {
     constructor() {
         // Nothing to see here.
     }
@@ -25,6 +25,18 @@ class CellExtension implements Extension<Cell>, AtomHandler<Cell> {
             }
         }
         return false;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(cell: Cell, opr: Sym, rhs: U, expr: ExprContext): U {
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(cell: Cell, opr: Sym, lhs: U, expr: ExprContext): U {
+        return nil;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(target: Cell, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
     }
     iscons(): boolean {
         return false;
@@ -50,6 +62,10 @@ class CellExtension implements Extension<Cell>, AtomHandler<Cell> {
             return newExpr;
         }
         return cell;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toHumanString(cell: Cell): string {
+        throw new ProgrammingError();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toInfixString(cell: Cell): string {

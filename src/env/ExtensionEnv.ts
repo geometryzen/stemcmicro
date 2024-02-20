@@ -1,5 +1,5 @@
-import { CellHost, Rat, Sym, Tensor } from "math-expression-atoms";
-import { ExprContext, LambdaExpr } from "math-expression-context";
+import { CellHost, Sym, Tensor } from "math-expression-atoms";
+import { ExprContext, ExprHandler, LambdaExpr } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
 import { StackFunction } from "../adapters/StackFunction";
 import { AtomListener } from "../api/api";
@@ -174,7 +174,9 @@ export enum Directive {
     useParenForTensors,
     depth,
     drawing,
-    nonstop
+    nonstop,
+    forceFixedPrintout,
+    maxFixedPrintoutDigits
 }
 
 export function flag_from_directive(value: number): boolean {
@@ -331,7 +333,6 @@ export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, P
      */
     defineKeyword(sym: Sym, runner: KeywordRunner): void;
     defineExtension(builder: ExtensionBuilder<U>): void;
-    defineAssociative(opr: Sym, id: Rat): void;
     defineUserSymbol(name: Sym): void;
     derivedEnv(): ExtensionEnv;
     divide(lhs: U, rhs: U): U;
@@ -475,7 +476,10 @@ export const MODE_FLAGS_NONE = 0;
 export const MODE_FLAGS_ALL = MODE_EXPANDING | MODE_FACTORING;
 export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTORING;
 
-export interface Extension<T extends U> {
+/**
+ * 
+ */
+export interface Extension<T extends U> extends ExprHandler<T> {
     readonly hash: string;
     readonly name: string;
     readonly phases?: number;
@@ -483,11 +487,10 @@ export interface Extension<T extends U> {
     iscons(): this is Extension<Cons>;
     operator(): Sym;
     isKind(expr: U, $: ExtensionEnv): boolean;
-    subst(expr: T, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'extensionFor'>): U;
-    test(expr: T, opr: Sym, env: ExprContext): boolean;
-    toInfixString(expr: T, $: ExtensionEnv): string;
-    toLatexString(expr: T, $: ExtensionEnv): string;
-    toListString(expr: T, $: ExtensionEnv): string;
+    toHumanString(expr: T, $: ExprContext): string;
+    toInfixString(expr: T, $: ExprContext): string;
+    toLatexString(expr: T, $: ExprContext): string;
+    toListString(expr: T, $: ExprContext): string;
     evaluate(opr: T, argList: Cons, $: ExtensionEnv): [TFLAGS, U];
     transform(expr: T, $: ExtensionEnv): [TFLAGS, U];
     valueOf(expr: T, $: ExtensionEnv): U;

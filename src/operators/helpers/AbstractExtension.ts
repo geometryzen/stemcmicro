@@ -1,4 +1,5 @@
 import { is_sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { is_cons, items_to_cons, U } from "math-expression-tree";
 import { ExtensionEnv, Sign } from "../../env/ExtensionEnv";
 import { render_as_infix } from "../../print/render_as_infix";
@@ -27,7 +28,7 @@ export abstract class AbstractExtension<T extends U> {
     compareTerms(lhs: U, rhs: U): Sign {
         throw new Error("AbtractExtension compareTerms method not implemented.");
     }
-    subst(expr: T, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'extensionFor'>): U {
+    subst(expr: T, oldExpr: U, newExpr: U, $: Pick<ExprContext, 'handlerFor'>): U {
         if (expr.equals(oldExpr)) {
             return newExpr;
         }
@@ -67,6 +68,9 @@ export abstract class AbstractExtension<T extends U> {
             }
         }
         throw new SystemError();
+    }
+    toHumanString(expr: T, $: ExtensionEnv): string {
+        return render_as_infix(expr, $);
     }
     toInfixString(expr: T, $: ExtensionEnv): string {
         return render_as_infix(expr, $);

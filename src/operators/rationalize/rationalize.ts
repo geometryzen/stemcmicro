@@ -1,9 +1,12 @@
 import { is_tensor, one, zero } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { Cons, is_cons, U } from 'math-expression-tree';
 import { condense } from '../../condense';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
+import { add } from '../../helpers/add';
 import { divide } from '../../helpers/divide';
 import { inverse } from '../../helpers/inverse';
+import { multiply } from '../../helpers/multiply';
 import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
@@ -19,7 +22,7 @@ export function eval_rationalize(expr: Cons, $: ExtensionEnv): U {
     return rationalize_factoring(value, $);
 }
 
-export function rationalize_factoring(argList: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
+export function rationalize_factoring(argList: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     $.pushDirective(Directive.factoring, 1);
     try {
         return yyrationalize(argList, $);
@@ -29,7 +32,7 @@ export function rationalize_factoring(argList: U, $: Pick<ExtensionEnv, 'add' | 
     }
 }
 
-function yyrationalize(arg: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
+function yyrationalize(arg: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     // console.lg(`yyrationalize ${render_as_infix(arg, $)}`);
     if (is_tensor(arg)) {
         return __rationalize_tensor(arg, $);
@@ -52,7 +55,7 @@ function yyrationalize(arg: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'mult
         temp = arg
             .tail()
             .reduce(
-                (acc: U, term: U) => $.add(acc, $.multiply(commonDenominator, term)),
+                (acc: U, term: U) => add($, acc, multiply($, commonDenominator, term)),
                 temp
             );
     }
@@ -66,7 +69,7 @@ function yyrationalize(arg: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'mult
     return rationalized;
 }
 
-function multiply_denominators(p: U, $: Pick<ExtensionEnv, 'factorize' | 'multiply' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
+function multiply_denominators(p: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     if (is_add(p)) {
         return p
             .tail()
@@ -78,7 +81,7 @@ function multiply_denominators(p: U, $: Pick<ExtensionEnv, 'factorize' | 'multip
     return multiply_denominators_term(p, one, $);
 }
 
-function multiply_denominators_term(p: U, p2: U, $: Pick<ExtensionEnv, 'factorize' | 'multiply' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
+function multiply_denominators_term(p: U, p2: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     if (is_multiply(p)) {
         return p
             .tail()
@@ -88,7 +91,7 @@ function multiply_denominators_term(p: U, p2: U, $: Pick<ExtensionEnv, 'factoriz
     return multiply_denominators_factor(p, p2, $);
 }
 
-function multiply_denominators_factor(p: U, p2: U, $: Pick<ExtensionEnv, 'factorize' | 'multiply' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
+function multiply_denominators_factor(p: U, p2: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     if (!is_power(p)) {
         return p2;
     }
@@ -111,7 +114,7 @@ function multiply_denominators_factor(p: U, p2: U, $: Pick<ExtensionEnv, 'factor
     return p2;
 }
 
-function __rationalize_tensor(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
+function __rationalize_tensor(p1: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
 
     if (!is_tensor(p1)) {
         // might be zero
@@ -125,6 +128,6 @@ function __rationalize_tensor(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' |
     return p1.withElements(elems);
 }
 
-function __lcm(p1: U, p2: U, $: Pick<ExtensionEnv, 'factorize' | 'multiply' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
-    return divide($.multiply(p1, p2), gcd(p1, p2, $ as ExtensionEnv), $);
+function __lcm(p1: U, p2: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
+    return divide(multiply($, p1, p2), gcd(p1, p2, $), $);
 }

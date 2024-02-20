@@ -54,6 +54,10 @@ export interface ParseOptions {
      * Determines whether the parser makes associativity explicit or implicit in multiplicative expressions.
      */
     explicitAssocMul?: boolean;
+    /**
+     * Determines whether the parser makes associativity explicit or implicit in exterior product expressions.
+     */
+    explicitAssocExt?: boolean;
 }
 
 export function parse_expr(sourceText: string, options?: ParseOptions): U {
@@ -174,6 +178,7 @@ function stemc_parse_options(options?: ParseOptions): STEMCParseOptions {
     if (options) {
         return {
             explicitAssocAdd: options.explicitAssocAdd,
+            explicitAssocExt: options.explicitAssocExt,
             explicitAssocMul: options.explicitAssocMul,
             useCaretForExponentiation: options.useCaretForExponentiation,
             useParenForTensors: options.useParenForTensors
@@ -226,6 +231,7 @@ function python_parse_options(options?: ParseOptions): PythonScriptParseOptions 
         }
         return {
             explicitAssocAdd: options.explicitAssocAdd,
+            explicitAssocExt: options.explicitAssocExt,
             explicitAssocMul: options.explicitAssocMul
         };
     }

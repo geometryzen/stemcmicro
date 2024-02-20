@@ -3,6 +3,8 @@ import { Native, native_sym } from "math-expression-native";
 import { is_nil, items_to_cons, U } from "math-expression-tree";
 import { ExprEngineListener } from "../api/api";
 import { infix_config_from_options } from "./infixform";
+import { ProgramControl } from "./ProgramControl";
+import { ProgramEnv } from "./ProgramEnv";
 import { render_as_html_infix } from "./render_as_html_infix";
 import { render_svg, SvgRenderConfig } from "./render_svg";
 
@@ -35,7 +37,7 @@ export type ShouldAnnotateFunction = (sym: Sym, value: U) => boolean;
  * @param should_annotate_symbol A callback function that determines whether a symbol should be annotated.
  * @returns 
  */
-export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boolean, options: SvgRenderConfig, listeners: ExprEngineListener[], should_annotate_symbol: ShouldAnnotateFunction): void {
+export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boolean, env: ProgramEnv, ctrl: ProgramControl, options: SvgRenderConfig, listeners: ExprEngineListener[], should_annotate_symbol: ShouldAnnotateFunction): void {
 
     if (is_nil(value)) {
         return;
@@ -57,7 +59,7 @@ export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boole
     else {
         const config = infix_config_from_options({});
         for (const listener of listeners) {
-            listener.output(render_as_html_infix(value, config));
+            listener.output(render_as_html_infix(value, env, ctrl, config));
         }
     }
 }

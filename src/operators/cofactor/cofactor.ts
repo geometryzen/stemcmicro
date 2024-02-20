@@ -1,11 +1,12 @@
-import { determinant_symbolic } from '../det/det';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { ExprContext } from 'math-expression-context';
+import { negate } from '../../helpers/negate';
 import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
 import { is_square_matrix } from '../../tensor';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { Cons, U } from '../../tree/tree';
+import { determinant_symbolic } from '../det/det';
 
 /* cofactor =====================================================================
 
@@ -24,7 +25,7 @@ Let c be the cofactor matrix of matrix m, i.e. tranpose(c) = adj(m).
 This function returns c[i,j].
 
 */
-export function eval_cofactor(expr: Cons, $: ExtensionEnv): U {
+export function eval_cofactor(expr: Cons, $: ExprContext): U {
     const m = $.valueOf(cadr(expr));
     if (!is_square_matrix(m)) {
         halt('cofactor: 1st arg: square matrix expected');
@@ -42,7 +43,7 @@ export function eval_cofactor(expr: Cons, $: ExtensionEnv): U {
     return cofactor(m, i - 1, j - 1, $);
 }
 
-export function cofactor<T extends U>(m: Tensor<T>, row: number, col: number, $: ExtensionEnv): U {
+export function cofactor<T extends U>(m: Tensor<T>, row: number, col: number, $: Pick<ExprContext, 'valueOf'>): U {
     const hook = function (retval: U): U {
         return retval;
     };
@@ -59,7 +60,7 @@ export function cofactor<T extends U>(m: Tensor<T>, row: number, col: number, $:
 
     const det = determinant_symbolic(elements, n - 1, $);
     if ((row + col) % 2) {
-        return hook($.negate(det));
+        return hook(negate(det, $));
     }
     else {
         return hook(det);

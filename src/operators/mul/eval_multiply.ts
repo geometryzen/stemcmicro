@@ -1,61 +1,78 @@
-import { is_blade, is_num, is_rat, is_tensor, is_uom, Num, one, zero } from "math-expression-atoms";
+import { create_sym, is_blade, is_num, is_rat, is_tensor, is_uom, Num, one, zero } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
-import { car, cdr, cons, Cons, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
+import { car, cdr, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { contains_single_uom } from "../../calculators/compare/contains_single_uom";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { extract_single_uom } from "../../calculators/compare/extract_single_uom";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { remove_factors } from "../../calculators/remove_factors";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { ExtensionEnv, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { OPERATOR } from "../../runtime/constants";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { cddr } from "../../tree/helpers";
 
+const MUL = native_sym(Native.multiply);
+
 export function eval_multiply(expr: Cons, $: ExtensionEnv): U {
-    const args = expr.argList;
+    const argList = expr.argList;
     try {
-        const vals = args.map((arg) => {
-            return $.valueOf(arg);
-        });
+        const values = argList.map(arg => $.valueOf(arg));
         try {
-            return multiply_values(vals, expr, $);
+            return multiply_values(values, expr, $);
         }
         finally {
-            vals.release();
+            values.release();
         }
     }
     finally {
-        args.release();
+        argList.release();
     }
 }
 
-export function multiply_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {
-    const args = expr.argList;
-    if (vals.equals(args)) {
-        // For multiplication, the expression (*) evaluates to 1.
-        if (vals.isnil) {
-            return one;
+function multiply_values(values: Cons, expr: Cons, $: ExtensionEnv): U {
+    const head = expr.head;
+    const argList = expr.argList;
+    try {
+        // console.lg("multiply_values", `${values}`, `${$.toSExprString(expr)}`);
+        if (values.equals(argList)) {
+            // For multiplication, the expression (*) evaluates to 1.
+            if (values.isnil) {
+                return one;
+            }
+            else {
+                // const factors = [...vals];
+                // flatten factors
+                // sort
+                // perform pairwise multiplication
+                // recombine
+                const retval = values.car;
+                const remaining = values.cdr;
+                if (is_cons(remaining)) {
+                    return [...remaining].reduce((prev: U, curr: U) => multiply(prev, curr, $), retval);
+                }
+                else {
+                    return retval;
+                }
+            }
         }
         else {
-            // const factors = [...vals];
-            // flatten factors
-            // sort
-            // perform pairwise multiplication
-            // recombine
-            const retval = vals.car;
-            const remaining = vals.cdr;
-            if (is_cons(remaining)) {
-                return [...remaining].reduce((prev: U, curr: U) => multiply(prev, curr, $), retval);
+            // Evaluation of the arguments has produced changes so we give other operators a chance to evaluate.
+            // console.lg("multiply_values", $.toSExprString(expr));
+            const retval = cons(head, values);
+            try {
+                return $.valueOf(retval);
             }
-            return retval;
+            finally {
+                retval.release();
+            }
         }
     }
-    else {
-        // Evaluation of the arguments has produced changes so we give other operators a chance to evaluate.
-        // console.lg("multiply_values", $.toSExprString(expr));
-        return $.valueOf(cons(expr.car, vals));
+    finally {
+        head.release();
+        argList.release();
     }
 }
 
@@ -73,7 +90,7 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // if (is_cons(lhs) && is_power(lhs) && is_exp(lhs.base) && is_cons(rhs) && is_add(rhs)) {
-        //     console.lg("multiply", `lhs => ${$.toInfixString(lhs)} rhs => ${$.toInfixString(rhs)}`, $.toInfixString(retval), description);
+        // console.lg("multiply", `lhs => ${$.toInfixString(lhs)} rhs => ${$.toInfixString(rhs)}`, $.toInfixString(retval), description);
         // }
         return retval;
     };
@@ -94,6 +111,36 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
 
     // TODO: This function should not known anything about Flt(s) and Rat(s).
     // These optimizations should be introduced by extensions to multiplication.
+    if (is_atom(lhs) && is_atom(rhs)) {
+        const lhsExt = $.handlerFor(lhs);    // Assume that for atoms an extension can be found.
+        const rhsExt = $.handlerFor(rhs);    // Assume that for atoms an extension can be found.
+        const binLhs = lhsExt.binL(lhs, MUL, rhs, $);
+        if (is_nil(binLhs)) {
+            const binRhs = rhsExt.binR(rhs, MUL, lhs, $);
+            if (is_nil(binRhs)) {
+                // console.lg("combine_atoms", `${lhs}`, `${rhs}`, `${lhsExt}`, `${rhsExt}`, `${lhs.type}`, `${rhs.type}`);
+                const err = diagnostic(Diagnostics.Operator_0_cannot_be_applied_to_types_1_and_2, MUL, create_sym(lhs.type), create_sym(rhs.type));
+                return hook(err, "A");
+            }
+            else {
+                if (is_multiply(binRhs)) {
+                    // Ignore.
+                }
+                else {
+                    return hook(binRhs, "A");
+                }
+            }
+        }
+        else {
+            if (is_multiply(binLhs)) {
+                // Ignore.
+            }
+            else {
+                return hook(binLhs, "A");
+            }
+        }
+    }
+
     if (is_num(lhs) && is_num(rhs)) {
         return hook(multiply_num_num(lhs, rhs), "A");
     }
@@ -143,8 +190,6 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
             }
         }
     }
-
-    const compareFactors = $.compareFn(MATH_MUL);
 
     // Dealing with Blades avoids issues with non-commutativity later on.
     if (contains_single_blade(lhs) && contains_single_blade(rhs)) {
@@ -211,6 +256,9 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     else {
         factors.push(one);
     }
+
+    // Let's get this now before going into the while loop...
+    const compareFactors = $.compareFn(MATH_MUL);
 
     while (is_cons(p1) && is_cons(p2)) {
         const head1 = p1.car;
@@ -335,7 +383,7 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function base_and_expo(expr: U, $: ExtensionEnv): [base: U, expo: U] {
-    // console.lg("base_and_power", render_as_infix(expr, $));
+    // console.lg("base_and_power", $.toInfixString(expr));
     if (is_power(expr)) {
         return [expr.base, expr.expo];
     }

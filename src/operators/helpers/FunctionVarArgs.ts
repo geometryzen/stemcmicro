@@ -39,6 +39,18 @@ export abstract class FunctionVarArgs<T extends Cons> extends AbstractExtension<
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binL(expr: T, opr: Sym, rhs: U, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    binR(expr: T, opr: Sym, lhs: U, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dispatch(expr: T, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(expr: T, opr: Sym, env: ExprContext): boolean {
         throw new Error("Method not implemented.");
     }

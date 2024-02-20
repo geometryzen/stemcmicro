@@ -1,6 +1,5 @@
-import { is_rat, Rat } from "math-expression-atoms";
-import { isinteger } from "./isinteger";
+import { Rat } from "math-expression-atoms";
 
-export function isfraction(p: Rat): boolean {
-    return is_rat(p) && !isinteger(p);
+export function isfraction(x: Rat): boolean {
+    return x.isFraction();
 }

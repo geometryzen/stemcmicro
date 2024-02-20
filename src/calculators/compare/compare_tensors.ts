@@ -5,7 +5,7 @@ import { compare_expr_expr } from "./compare_expr_expr";
 /**
  * FIXME: Needs more testing. When does it make sense to reorder tensors?
  */
- export function compare_tensors(lhs: Tensor, rhs: Tensor, $: ExtensionEnv): Sign {
+export function compare_tensors(lhs: Tensor, rhs: Tensor, $: Pick<ExtensionEnv, 'toInfixString'>): Sign {
     // console.lg("compare_term_tensors", $.toInfixString(lhs), $.toInfixString(rhs));
     if (lhs.ndim < rhs.ndim) {
         return SIGN_LT;

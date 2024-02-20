@@ -1,3 +1,4 @@
+import { ExprContext } from "math-expression-context";
 import { car, cdr, is_atom, is_cons, nil, U } from "math-expression-tree";
 import { PrintConfig } from "./print";
 
@@ -25,10 +26,14 @@ export function render_as_sexpr(expr: U, $: PrintConfig): string {
         return str;
     }
     else if (is_atom(expr)) {
-        return $.toSExprString(expr);
+        const handler = $.handlerFor(expr);
+        // FIXME: casting
+        return handler.toListString(expr, $ as unknown as ExprContext);
     }
     else if (expr.isnil) {
-        return $.toSExprString(expr);
+        const handler = $.handlerFor(expr);
+        // FIXME: casting
+        return handler.toListString(expr, $ as unknown as ExprContext);
     }
     else {
         throw new Error();

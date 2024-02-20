@@ -6,6 +6,7 @@ import { Extension, FEATURE, mkbuilder, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS,
 import { HASH_BLADE } from "../../hashing/hash_info";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
+import { is_sym } from "../sym/is_sym";
 
 const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
@@ -47,7 +48,7 @@ class BladeExtension implements Extension<Blade> {
         return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    binL(lhs: Blade, opr: Sym, rhs: U, expr: ExprContext): U {
+    binL(lhs: Blade, opr: Sym, rhs: U, env: ExprContext): U {
         if (opr.equalsSym(ADD)) {
             if (is_atom(rhs)) {
                 if (is_blade(rhs)) {
@@ -56,9 +57,14 @@ class BladeExtension implements Extension<Blade> {
             }
         }
         else if (opr.equalsSym(MUL)) {
-            throw new ProgrammingError(`${rhs}`);
+            if (is_atom(rhs)) {
+                if (is_sym(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+            }
+            throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
         }
-        throw new ProgrammingError(`${rhs}`);
+        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
         //        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

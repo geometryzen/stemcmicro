@@ -1,4 +1,4 @@
-import { create_sym, is_blade, is_err, is_rat, is_sym, one, Sym } from "math-expression-atoms";
+import { create_sym, is_blade, is_err, is_flt, is_rat, is_sym, one, Sym } from "math-expression-atoms";
 import { ExprContext, SIGN_GT, SIGN_LT } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, is_nil, items_to_cons, nil, U } from "math-expression-tree";
@@ -84,6 +84,17 @@ class SymExtension implements Extension<Sym> {
         else if (opr.equalsSym(POW)) {
             if (is_atom(rhs)) {
                 if (is_rat(rhs)) {
+                    if (rhs.isZero()) {
+                        return one;
+                    }
+                    else if (rhs.isOne()) {
+                        return lhs;
+                    }
+                    else {
+                        return items_to_cons(POW, lhs, rhs);
+                    }
+                }
+                else if (is_flt(rhs)) {
                     if (rhs.isZero()) {
                         return one;
                     }

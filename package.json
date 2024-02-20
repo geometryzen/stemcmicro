@@ -54,6 +54,7 @@
         "example-infixform": "mocha 'examples/infixform.spec.ts'",
         "example-log": "mocha 'examples/log.spec.ts'",
         "example-mag": "mocha 'examples/mag.spec.ts'",
+        "example-misc": "mocha 'examples/misc.spec.ts'",
         "example-multiply": "mocha 'examples/multiply.spec.ts'",
         "example-numerator": "mocha 'examples/numerator.spec.ts'",
         "example-real": "mocha 'examples/real.spec.ts'",

@@ -1,4 +1,4 @@
-import { create_sym, Flt, is_boo, is_err, is_flt, is_rat, is_sym, Sym } from "math-expression-atoms";
+import { create_sym, Flt, is_blade, is_boo, is_err, is_flt, is_rat, is_sym, is_uom, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, U } from "math-expression-tree";
@@ -64,8 +64,20 @@ export class FltExtension implements Extension<Flt> {
         }
         else if (opr.equalsSym(MUL)) {
             if (is_atom(rhs)) {
-                if (is_flt(rhs)) {
+                if (is_blade(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_flt(rhs)) {
                     return lhs.mul(rhs);
+                }
+                else if (is_rat(rhs)) {
+                    return create_flt(lhs.toNumber() * rhs.toNumber());
+                }
+                else if (is_sym(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
+                }
+                else if (is_uom(rhs)) {
+                    return order_binary(MUL, lhs, rhs, env);
                 }
             }
         }

@@ -1,4 +1,4 @@
-import { Blade, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_tensor, is_uom, one, Sym } from "math-expression-atoms";
+import { Blade, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_tensor, is_uom, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
@@ -7,6 +7,7 @@ import { HASH_BLADE } from "../../hashing/hash_info";
 import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
+import { power_blade_rat } from "../pow/power_blade_int";
 import { is_sym } from "../sym/is_sym";
 
 const ABS = native_sym(Native.abs);
@@ -95,15 +96,7 @@ class BladeExtension implements Extension<Blade> {
         else if (opr.equalsSym(POW)) {
             if (is_atom(rhs)) {
                 if (is_rat(rhs)) {
-                    if (rhs.isZero()) {
-                        return one;
-                    }
-                    else if (rhs.isOne()) {
-                        return lhs;
-                    }
-                    else if (rhs.isTwo()) {
-                        return lhs.mul(lhs);
-                    }
+                    return power_blade_rat(lhs, rhs, env);
                 }
             }
         }

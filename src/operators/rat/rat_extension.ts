@@ -1,7 +1,7 @@
 import { assert_rat, create_flt, create_sym, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_sym, is_tensor, is_uom, one, Rat, Sym, zero } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, is_cons, is_singleton, items_to_cons, U } from "math-expression-tree";
+import { cons, Cons, is_atom, is_cons, is_singleton, items_to_cons, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Directive, Extension, ExtensionBuilder, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
@@ -42,9 +42,7 @@ export class RatExtension implements Extension<Rat> {
             throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
         }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binL(lhs: Rat, opr: Sym, rhs: U, env: ExprContext): U {
-        // console.lg(`RatExtension.binL ${lhs} ${opr} ${rhs}`);
         if (opr.equalsSym(ADD)) {
             if (is_atom(rhs)) {
                 if (is_boo(rhs)) {
@@ -65,7 +63,6 @@ export class RatExtension implements Extension<Rat> {
             }
         }
         else if (opr.equalsSym(MUL)) {
-            // console.lg(`RatExtension.binL ${lhs} ${opr} ${rhs}`);
             if (is_atom(rhs)) {
                 if (is_blade(rhs)) {
                     return order_binary(MUL, lhs, rhs, env);
@@ -114,9 +111,8 @@ export class RatExtension implements Extension<Rat> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binR(rhs: Rat, opr: Sym, lhs: U, env: ExprContext): U {
         if (opr.equalsSym(MUL)) {
             if (is_atom(lhs)) {
@@ -131,9 +127,8 @@ export class RatExtension implements Extension<Rat> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Rat, opr: Sym, argList: Cons, env: ExprContext): U {
         if (opr.equalsSym(ABS)) {
             return target.abs();
@@ -152,7 +147,7 @@ export class RatExtension implements Extension<Rat> {
                 head.release();
             }
         }
-        throw new ProgrammingError(`RatExtension.dispatch ${target} ${opr} ${argList} method not implemented.`);
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

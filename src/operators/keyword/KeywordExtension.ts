@@ -1,6 +1,7 @@
-import { is_keyword, Keyword, Sym } from "math-expression-atoms";
+import { create_sym, is_keyword, Keyword, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 
@@ -33,7 +34,7 @@ class KeywordExtension implements Extension<Keyword> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Keyword, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Sym } from "math-expression-atoms";
+import { create_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Cons, nil, U } from "math-expression-tree";
-import { Diagnostics, is_localizable, Localizable } from "../../diagnostics/diagnostics";
+import { diagnostic, Diagnostics, is_localizable, Localizable } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, mkbuilder } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
@@ -90,8 +90,8 @@ export class LocalizableExtension implements Extension<Localizable> {
         throw new Error("Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    dispatch(expr: Localizable, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+    dispatch(target: Localizable, opr: Sym, argList: Cons, env: ExprContext): U {
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     subst(expr: Localizable, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U {
         throw new Error("Method not implemented.");

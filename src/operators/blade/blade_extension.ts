@@ -1,12 +1,12 @@
-import { Blade, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_tensor, is_uom, Sym } from "math-expression-atoms";
+import { Blade, create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_tensor, is_uom, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
+import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, FEATURE, mkbuilder, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
 import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
-import { ProgrammingError } from "../../programming/ProgrammingError";
 import { power_blade_rat } from "../pow/power_blade_int";
 import { is_sym } from "../sym/is_sym";
 
@@ -91,7 +91,6 @@ class BladeExtension implements Extension<Blade> {
                     return order_binary(MUL, lhs, rhs, env);
                 }
             }
-            throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
         }
         else if (opr.equalsSym(POW)) {
             if (is_atom(rhs)) {
@@ -100,8 +99,7 @@ class BladeExtension implements Extension<Blade> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
-        //        return nil;
+        return nil;
     }
     binR(rhs: Blade, opr: Sym, lhs: U, env: ExprContext): U {
         if (opr.equalsSym(MUL)) {
@@ -120,8 +118,7 @@ class BladeExtension implements Extension<Blade> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
-        //        return nil;
+        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Blade, opr: Sym, argList: Cons, env: ExprContext): U {
@@ -145,7 +142,7 @@ class BladeExtension implements Extension<Blade> {
                 head.release();
             }
         }
-        throw new Error(`BladeExtenson.dispatch ${opr} method not implemented.`);
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): boolean {
         return false;

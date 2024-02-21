@@ -1,7 +1,8 @@
-import { assert_sym, is_sym, Sym } from "math-expression-atoms";
+import { assert_sym, create_sym, is_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, cons, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Directive, Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
@@ -26,8 +27,8 @@ class SymMathPow implements Extension<Sym> {
         throw new Error("Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    dispatch(expr: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+    dispatch(target: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(expr: Sym, opr: Sym): boolean {

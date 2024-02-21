@@ -1,7 +1,8 @@
-import { Err, is_err, Sym } from "math-expression-atoms";
+import { create_sym, Err, is_err, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { is_native, Native, native_sym } from "math-expression-native";
 import { cons, Cons, nil, U } from 'math-expression-tree';
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { infixform } from "../../helpers/infixform";
@@ -42,7 +43,7 @@ export class ErrExtension implements Extension<Err> {
             // We could create nested errors...
             return target;
         }
-        throw new ProgrammingError(`ErrExtension.dispatch ${target} ${opr} ${argList} method not implemented.`);
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

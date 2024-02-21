@@ -1,7 +1,8 @@
-import { epsilon, Hyp, is_hyp, is_tensor, is_uom, Sym } from "math-expression-atoms";
+import { create_sym, epsilon, Hyp, is_hyp, is_tensor, is_uom, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { multiply } from "../../helpers/multiply";
@@ -47,7 +48,7 @@ class HypExtension implements Extension<Hyp> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Hyp, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

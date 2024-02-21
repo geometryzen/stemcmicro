@@ -1,7 +1,8 @@
-import { Cell, is_cell, Sym } from "math-expression-atoms";
+import { Cell, create_sym, is_cell, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_CELL } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
@@ -48,7 +49,7 @@ class CellExtension implements Extension<Cell> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Cell, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): boolean {
         return false;

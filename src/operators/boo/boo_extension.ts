@@ -1,10 +1,9 @@
 import { Boo, booT, create_sym, is_boo, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, U } from "math-expression-tree";
+import { cons, Cons, is_atom, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { ProgrammingError } from "../../programming/ProgrammingError";
 
 const ADD = native_sym(Native.add);
 
@@ -23,15 +22,15 @@ export class BooExtension implements Extension<Boo> {
                 return diagnostic(Diagnostics.Operator_0_cannot_be_applied_to_types_1_and_2, ADD, create_sym(lhs.type), create_sym(rhs.type));
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binR(rhs: Boo, opr: Sym, lhs: U, expr: ExprContext): U {
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Boo, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

@@ -1,7 +1,8 @@
-import { create_int, is_hyp, is_tensor, is_uom, QQ, Sym, Uom } from "math-expression-atoms";
+import { create_int, create_sym, is_hyp, is_tensor, is_uom, QQ, Sym, Uom } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
 import { multiply } from "../../helpers/multiply";
@@ -74,7 +75,7 @@ class UomExtension implements Extension<Uom> {
         if (opr.equalsSym(ABS)) {
             return target;
         }
-        throw new ProgrammingError(`UomExtension.dispatch ${target} ${opr} ${argList} method not implemented.`);
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

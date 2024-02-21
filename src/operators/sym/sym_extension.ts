@@ -2,6 +2,7 @@ import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, i
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, is_nil, items_to_cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Directive, Extension, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { float } from "../../helpers/float";
@@ -43,7 +44,9 @@ class SymExtension implements Extension<Sym> {
         else if (opr.equalsSym(ISZERO)) {
             return false;
         }
-        throw new ProgrammingError(`SymExtension.test ${atom} ${opr}`);
+        else {
+            return false;
+        }
     }
     binL(lhs: Sym, opr: Sym, rhs: U, env: ExprContext): U {
         if (opr.equalsSym(ADD)) {
@@ -125,7 +128,7 @@ class SymExtension implements Extension<Sym> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
     binR(rhs: Sym, opr: Sym, lhs: U, env: ExprContext): U {
         if (opr.equalsSym(MUL)) {
@@ -141,7 +144,7 @@ class SymExtension implements Extension<Sym> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
     dispatch(target: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
         if (opr.equalsSym(ABS)) {
@@ -162,7 +165,7 @@ class SymExtension implements Extension<Sym> {
                 head.release();
             }
         }
-        throw new ProgrammingError(`SymExtension.dispatch ${target} ${opr} ${argList} method not implemented.`);
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

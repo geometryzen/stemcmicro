@@ -72,7 +72,8 @@ function diag(code: number, key: string, message: string): DiagnosticMessage {
 
 export const Diagnostics = {
     Hello_World: diag(0, "", ""),
-    Operator_0_cannot_be_applied_to_types_1_and_2: diag(1000, "Operator_0_cannot_be_applied_to_types_1_and_2_1000", "Operator '{0}' cannot be applied to types '{1}' and '{2}'.")
+    Operator_0_cannot_be_applied_to_types_1_and_2: diag(1000, "Operator_0_cannot_be_applied_to_types_1_and_2_1000", "Operator '{0}' cannot be applied to types '{1}' and '{2}'."),
+    Poperty_0_does_not_exist_on_type_1: diag(1001, "Property_0_does_not_exist_on_type_1_1001", "Property '{0}' does not exist on type '{1}'.")
 };
 
 export function diagnostic(message: DiagnosticMessage, ...args: DiagnosticArguments): Err {

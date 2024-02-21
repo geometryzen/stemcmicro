@@ -1,13 +1,13 @@
 
-import { imu, Imu, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, negOne, one, Sym } from "math-expression-atoms";
+import { create_sym, imu, Imu, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, negOne, one, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
+import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_IMU } from "../../hashing/hash_info";
 import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
-import { ProgrammingError } from "../../programming/ProgrammingError";
 import { MATH_IMU } from "../../runtime/ns_math";
 import { half, two } from "../../tree/rat/Rat";
 
@@ -98,7 +98,7 @@ class ImuExtension implements Extension<Imu> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binR(rhs: Imu, opr: Sym, lhs: U, env: ExprContext): U {
@@ -115,11 +115,11 @@ class ImuExtension implements Extension<Imu> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    dispatch(expr: Imu, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+    dispatch(target: Imu, opr: Sym, argList: Cons, env: ExprContext): U {
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     test(expr: Imu, opr: Sym): boolean {
         if (opr.equalsSym(ISONE)) {

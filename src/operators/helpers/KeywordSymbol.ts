@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { assert_sym, is_sym, Sym } from "math-expression-atoms";
+import { assert_sym, create_sym, is_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { is_native, Native } from "math-expression-native";
 import { cons, Cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS } from "../../env/ExtensionEnv";
 import { ProgrammingError } from "../../programming/ProgrammingError";
@@ -24,8 +25,8 @@ export abstract class AbstractKeywordExtension implements Extension<Sym> {
         return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    dispatch(expr: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+    dispatch(target: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     test(expr: Sym, opr: Sym, env: ExprContext): boolean {
         if (is_native(opr, Native.iszero)) {

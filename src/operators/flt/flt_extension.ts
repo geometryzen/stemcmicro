@@ -1,13 +1,12 @@
 import { create_sym, Flt, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
+import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { iszero } from "../../helpers/iszero";
 import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
-import { ProgrammingError } from "../../programming/ProgrammingError";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
 import { create_flt, oneAsFlt, zeroAsFlt } from "../../tree/flt/Flt";
 
@@ -143,7 +142,7 @@ export class FltExtension implements Extension<Flt> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
     binR(rhs: Flt, opr: Sym, lhs: U, env: ExprContext): U {
         if (opr.equalsSym(ADD)) {
@@ -179,7 +178,7 @@ export class FltExtension implements Extension<Flt> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Flt, opr: Sym, argList: Cons, env: ExprContext): U {
@@ -200,7 +199,7 @@ export class FltExtension implements Extension<Flt> {
                 head.release();
             }
         }
-        throw new ProgrammingError(`FltExtension.dispatch ${target} ${opr} ${argList} method not implemented.`);
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

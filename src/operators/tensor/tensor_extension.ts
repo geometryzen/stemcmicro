@@ -1,7 +1,8 @@
-import { is_tensor, is_uom, Sym, Tensor } from "math-expression-atoms";
+import { create_sym, is_tensor, is_uom, Sym, Tensor } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { conjfunc, inner, power, push_rational } from "../../eigenmath/eigenmath";
 import { Directive, Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";
@@ -178,19 +179,18 @@ class TensorExtension implements Extension<Tensor> {
     binR(atom: Tensor, opr: Sym, lhs: U, expr: ExprContext): U {
         return nil;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    dispatch(x: Tensor, opr: Sym, argList: Cons, env: ExprContext): U {
+    dispatch(target: Tensor, opr: Sym, argList: Cons, env: ExprContext): U {
         if (opr.equalsSym(ABS)) {
             // Using the Eigenmath implementation right now as it is a bit simpler than abs_of_tensor.
             const _ = new StackU();
-            if (x.ndim > 1) {
+            if (target.ndim > 1) {
                 _.push(ABS);
-                _.push(x);
+                _.push(target);
                 _.list(2);
                 return _.pop();
             }
-            _.push(x);                  //  [x]
-            _.push(x);                  //  [x, x]
+            _.push(target);                  //  [x]
+            _.push(target);                  //  [x, x]
             conjfunc(env, env, _);      //  [x, conj(x)]
             inner(env, env, _);         //  [x | conj(x)]
             push_rational(1, 2, _);     //  [x | conj(x), 1/2]
@@ -198,9 +198,9 @@ class TensorExtension implements Extension<Tensor> {
             return _.pop();
         }
         else if (opr.equalsSym(ADJ)) {
-            return adj(x, env);
+            return adj(target, env);
         }
-        throw new ProgrammingError(`TensorExtension.dispatch ${x} ${opr} ${argList} method not implemented.`);
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

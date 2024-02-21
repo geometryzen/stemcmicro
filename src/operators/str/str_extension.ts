@@ -1,7 +1,8 @@
-import { create_str, Str, Sym } from "math-expression-atoms";
+import { create_str, create_sym, Str, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_STR } from "../../hashing/hash_info";
 
@@ -48,8 +49,8 @@ class StrExtension implements Extension<Str> {
         return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    dispatch(expr: Str, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+    dispatch(target: Str, opr: Sym, argList: Cons, env: ExprContext): U {
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

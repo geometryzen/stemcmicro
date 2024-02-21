@@ -1,12 +1,12 @@
-import { is_blade, is_err, is_flt, is_imu, is_sym, is_tensor, is_uom, one, Sym } from "math-expression-atoms";
+import { create_sym, is_blade, is_err, is_flt, is_imu, is_sym, is_tensor, is_uom, one, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, items_to_cons, U } from "math-expression-tree";
+import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
-import { ProgrammingError } from "../../programming/ProgrammingError";
 import { MATH_PI } from "../../runtime/ns_math";
 import { create_flt } from "../../tree/flt/Flt";
 import { is_hyp } from "../hyp/is_hyp";
@@ -22,12 +22,10 @@ const POW = native_sym(Native.pow);
  * 
  */
 class SymMathPi implements Extension<Sym> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor() {
     }
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binL(lhs: Sym, opr: Sym, rhs: U, env: ExprContext): U {
         if (opr.equalsSym(MUL)) {
             if (is_atom(rhs)) {
@@ -75,9 +73,8 @@ class SymMathPi implements Extension<Sym> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binR(rhs: Sym, opr: Sym, lhs: U, env: ExprContext): U {
         if (opr.equalsSym(MUL)) {
             if (is_atom(lhs)) {
@@ -92,11 +89,11 @@ class SymMathPi implements Extension<Sym> {
                 }
             }
         }
-        throw new ProgrammingError(` ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    dispatch(expr: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+    dispatch(target: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     test(expr: Sym, opr: Sym): boolean {
         if (opr.equalsSym(ISZERO)) {

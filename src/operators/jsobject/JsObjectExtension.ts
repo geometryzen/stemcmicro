@@ -1,6 +1,7 @@
-import { assert_jsobject, is_jsobject, JsObject, Sym } from "math-expression-atoms";
+import { assert_jsobject, create_sym, is_jsobject, JsObject, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
@@ -23,8 +24,8 @@ export class JsObjectExtension implements Extension<JsObject> {
         return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    dispatch(expr: JsObject, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+    dispatch(target: JsObject, opr: Sym, argList: Cons, env: ExprContext): U {
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

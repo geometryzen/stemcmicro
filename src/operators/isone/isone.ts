@@ -1,9 +1,8 @@
-import { Boo, create_boo } from 'math-expression-atoms';
+import { Boo, booF, create_boo } from 'math-expression-atoms';
 import { ExprContext } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
 import { Cons, is_atom, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { ProgrammingError } from '../../programming/ProgrammingError';
 
 const ISONE = native_sym(Native.isone);
 
@@ -36,6 +35,6 @@ function isone(x: U, $: ExprContext): Boo {
         return create_boo(retval);
     }
     else {
-        throw new ProgrammingError(` isone ${x}`);
+        return booF;
     }
 }

@@ -7,7 +7,7 @@ import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
 import { ProgramIO } from "./ProgramIO";
 import { ProgramStack } from "./ProgramStack";
-import { draw_formula, emit_list, height, set_emit_small_font, SvgRenderConfig, width } from "./render_svg";
+import { draw_formula, emit_list, height, set_emit_small_font, SvgRenderConfig, SvgRenderEnv, width } from "./render_svg";
 
 interface DrawContext {
     /**
@@ -131,7 +131,7 @@ export function make_stack_draw(io: Pick<ProgramIO, 'listeners'>): StackFunction
                         useImaginaryI: is_imu(get_binding(I_LOWER, nil, env)),
                         useImaginaryJ: is_imu(get_binding(J_LOWER, nil, env))
                     };
-                    emit_graph(points, $, dc, ec, outbuf);
+                    emit_graph(points, env, $, dc, ec, outbuf);
 
                     const output = outbuf.join('');
 
@@ -336,7 +336,7 @@ function sample(funcExpr: U, varName: Sym, t: number, points: { t: number; x: nu
     }
 }
 
-function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ProgramStack, dc: DrawContext, ec: SvgRenderConfig, outbuf: string[]): void {
+function emit_graph(draw_array: { t: number; x: number; y: number }[], env: SvgRenderEnv, $: ProgramStack, dc: DrawContext, ec: SvgRenderConfig, outbuf: string[]): void {
 
     const h = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_BOTTOM_PAD;
     const w = DRAW_LEFT_PAD + DRAW_WIDTH + DRAW_RIGHT_PAD;
@@ -348,7 +348,7 @@ function emit_graph(draw_array: { t: number; x: number; y: number }[], $: Progra
 
     emit_axes(dc, outbuf);
     emit_box(dc, outbuf);
-    emit_labels($, dc, ec, outbuf);
+    emit_labels(env, $, dc, ec, outbuf);
     emit_points(draw_array, dc, outbuf);
 
     outbuf.push("</svg>");
@@ -385,30 +385,30 @@ function emit_box(dc: DrawContext, outbuf: string[]): void {
     draw_line(x2, y1, x2, y2, 0.5, outbuf); // right line
 }
 
-function emit_labels($: ProgramStack, dc: DrawContext, ec: SvgRenderConfig, outbuf: string[]): void {
+function emit_labels(env: SvgRenderEnv, $: ProgramStack, dc: DrawContext, ec: SvgRenderConfig, outbuf: string[]): void {
     set_emit_small_font();
-    emit_list(new Flt(dc.ymax), $, ec);
+    emit_list(new Flt(dc.ymax), env, $, ec);
     const YMAX = $.pop()!;
     let x = DRAW_LEFT_PAD - width(YMAX) - DRAW_YLABEL_MARGIN;
     let y = DRAW_TOP_PAD + height(YMAX);
     draw_formula(x, y, YMAX, outbuf);
 
     set_emit_small_font();
-    emit_list(new Flt(dc.ymin), $, ec);
+    emit_list(new Flt(dc.ymin), env, $, ec);
     const YMIN = $.pop();
     x = DRAW_LEFT_PAD - width(YMIN) - DRAW_YLABEL_MARGIN;
     y = DRAW_TOP_PAD + DRAW_HEIGHT;
     draw_formula(x, y, YMIN, outbuf);
 
     set_emit_small_font();
-    emit_list(new Flt(dc.xmin), $, ec);
+    emit_list(new Flt(dc.xmin), env, $, ec);
     const XMIN = $.pop();
     x = DRAW_LEFT_PAD - width(XMIN) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
     draw_formula(x, y, XMIN, outbuf);
 
     set_emit_small_font();
-    emit_list(new Flt(dc.xmax), $, ec);
+    emit_list(new Flt(dc.xmax), env, $, ec);
     const XMAX = $.pop();
     x = DRAW_LEFT_PAD + DRAW_WIDTH - width(XMAX) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;

@@ -53,7 +53,7 @@ export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boole
 
     if (svg) {
         for (const listener of listeners) {
-            listener.output(render_svg(value, options));
+            listener.output(render_svg(value, env, options));
         }
     }
     else {

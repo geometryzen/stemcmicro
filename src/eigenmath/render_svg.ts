@@ -1,6 +1,7 @@
 import { Blade, Boo, create_flt, create_sym, Flt, Imu, is_blade, is_boo, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, Sym, Tensor, Uom } from "math-expression-atoms";
+import { ExprContext, ExprHandler } from "math-expression-context";
 import { is_native, Native, native_sym } from "math-expression-native";
-import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { assert_cons_or_nil, Atom, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { StackU } from "../env/StackU";
 import { is_imu } from "../operators/imu/is_imu";
 import { str_extension } from "../operators/str/str_extension";
@@ -86,6 +87,7 @@ function list(n: number, $: ProgramStack): void {
         cons($);
     }
 }
+
 function cons($: ProgramStack): void {
     const pop1 = assert_cons_or_nil($.pop());
     const pop2 = $.pop();
@@ -365,17 +367,21 @@ class SvgProgramStack implements ProgramStack {
     }
 }
 
+export interface SvgRenderEnv {
+    handlerFor<T extends U>(expr: T): ExprHandler<T>;
+}
+
 export interface SvgRenderConfig {
     useImaginaryI: boolean;
     useImaginaryJ: boolean;
 }
 
-export function render_svg(expr: U, options: SvgRenderConfig): string {
+export function render_svg(expr: U, env: SvgRenderEnv, options: SvgRenderConfig): string {
     const $ = new SvgProgramStack();
 
     emit_level = 0;
 
-    emit_list(expr, $, options);
+    emit_list(expr, env, $, options);
 
     const codes = $.pop()!;
 
@@ -405,39 +411,39 @@ export function render_svg(expr: U, options: SvgRenderConfig): string {
 /**
  * Converts an expression into an encoded form with opcode, height, depth, width, and data (depends on opcode).
  */
-export function emit_list(expr: U, $: ProgramStack, ec: SvgRenderConfig): void {
+export function emit_list(expr: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     const t = $.length;
-    emit_expr(expr, $, ec);
+    emit_expr(expr, env, $, ec);
     emit_update_list(t, $);
 }
 
-function emit_expr(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_expr(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     if (isnegativeterm(p) || (car(p).equals(ADD) && isnegativeterm(cadr(p)))) {
         emit_roman_char(MINUS_SIGN, $);
         emit_thin_space($);
     }
 
     if (car(p).equals(ADD))
-        emit_expr_nib(p, $, ec);
+        emit_expr_nib(p, env, $, ec);
     else
-        emit_term(p, $, ec);
+        emit_term(p, env, $, ec);
 }
 
-function emit_expr_nib(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_expr_nib(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     p = cdr(p);
-    emit_term(car(p), $, ec);
+    emit_term(car(p), env, $, ec);
     p = cdr(p);
     while (is_cons(p)) {
         if (isnegativeterm(car(p)))
             emit_infix_operator(MINUS_SIGN, $);
         else
             emit_infix_operator(PLUS_SIGN, $);
-        emit_term(car(p), $, ec);
+        emit_term(car(p), env, $, ec);
         p = cdr(p);
     }
 }
 
-function emit_args(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_args(p: Cons, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
 
     p = cdr(p);
 
@@ -449,14 +455,14 @@ function emit_args(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
 
     const t = $.length;
 
-    emit_expr(car(p), $, ec);
+    emit_expr(car(p), env, $, ec);
 
     p = cdr(p);
 
     while (is_cons(p)) {
         emit_roman_string(",", $);
         emit_thin_space($);
-        emit_expr(car(p), $, ec);
+        emit_expr(car(p), env, $, ec);
         p = cdr(p);
     }
 
@@ -465,14 +471,14 @@ function emit_args(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
     emit_update_subexpr($);
 }
 
-function emit_base(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_base(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     if (is_num(p) && isnegativenumber(p) || (is_rat(p) && isfraction(p)) || is_flt(p) || car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER))
-        emit_subexpr(p, $, ec);
+        emit_subexpr(p, env, $, ec);
     else
-        emit_expr(p, $, ec);
+        emit_expr(p, env, $, ec);
 }
 
-function emit_denominators(p: Cons, $: ProgramStack, ec: SvgRenderConfig) {
+function emit_denominators(p: Cons, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig) {
 
     const t = $.length;
     const n = count_denominators(p);
@@ -498,12 +504,12 @@ function emit_denominators(p: Cons, $: ProgramStack, ec: SvgRenderConfig) {
         if (isminusone(caddr(q))) {
             q = cadr(q);
             if (car(q).equals(ADD) && n === 1)
-                emit_expr(q, $, ec); // parens not needed
+                emit_expr(q, env, $, ec); // parens not needed
             else
-                emit_factor(q, $, ec);
+                emit_factor(q, env, $, ec);
         }
         else {
-            emit_base(cadr(q), $, ec);
+            emit_base(cadr(q), env, $, ec);
             emit_numeric_exponent(caddr(q) as Num, $); // sign is not emitted
         }
     }
@@ -581,20 +587,20 @@ function emit_double(p: Flt, $: ProgramStack): void {
     emit_update_superscript($);
 }
 
-function emit_exponent(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_exponent(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     if (is_num(p) && !isnegativenumber(p)) {
         emit_numeric_exponent(p, $); // sign is not emitted
         return;
     }
 
     emit_level++;
-    emit_list(p, $, ec);
+    emit_list(p, env, $, ec);
     emit_level--;
 
     emit_update_superscript($);
 }
 
-function emit_factor(p: U, $: ProgramStack, ec: SvgRenderConfig) {
+function emit_factor(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig) {
     if (is_rat(p)) {
         emit_rational(p, $);
         return;
@@ -616,7 +622,7 @@ function emit_factor(p: U, $: ProgramStack, ec: SvgRenderConfig) {
     }
 
     if (is_tensor(p)) {
-        emit_tensor(p, $, ec);
+        emit_tensor(p, env, $, ec);
         return;
     }
 
@@ -642,13 +648,13 @@ function emit_factor(p: U, $: ProgramStack, ec: SvgRenderConfig) {
 
     if (is_cons(p)) {
         if (car(p).equals(POWER)) {
-            emit_power(p, $, ec);
+            emit_power(p, env, $, ec);
         }
         else if (car(p).equals(ADD) || car(p).equals(MULTIPLY)) {
-            emit_subexpr(p, $, ec);
+            emit_subexpr(p, env, $, ec);
         }
         else {
-            emit_function(p, $, ec);
+            emit_function(p, env, $, ec);
         }
         return;
     }
@@ -658,23 +664,23 @@ function emit_factor(p: U, $: ProgramStack, ec: SvgRenderConfig) {
     }
 
     if (is_atom(p)) {
-        emit_atom(p, $);
+        emit_atom(p, env, $);
         return;
     }
 }
 
-function emit_fraction(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
-    emit_numerators(p, $, ec);
-    emit_denominators(p, $, ec);
+function emit_fraction(p: Cons, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
+    emit_numerators(p, env, $, ec);
+    emit_denominators(p, env, $, ec);
     emit_update_fraction($);
 }
 
-function emit_function(expr: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_function(expr: Cons, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     // d(f(x),x)
 
     if (car(expr).equals(DERIVATIVE)) {
         emit_roman_string("d", $);
-        emit_args(expr, $, ec);
+        emit_args(expr, env, $, ec);
         return;
     }
 
@@ -683,10 +689,10 @@ function emit_function(expr: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
     if (car(expr).equals(FACTORIAL)) {
         const p = cadr(expr);
         if (is_rat(p) && isposint(p) || is_sym(p)) {
-            emit_expr(p, $, ec);
+            emit_expr(p, env, $, ec);
         }
         else {
-            emit_subexpr(p, $, ec);
+            emit_subexpr(p, env, $, ec);
         }
         emit_roman_string("!", $);
         return;
@@ -700,43 +706,43 @@ function emit_function(expr: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
         if (is_sym(leading))
             emit_symbol(leading, $);
         else
-            emit_subexpr(leading, $, ec);
-        emit_indices(p, $, ec);
+            emit_subexpr(leading, env, $, ec);
+        emit_indices(p, env, $, ec);
         return;
     }
 
     if (is_cons(expr) && (expr.opr.equals(ASSIGN) || expr.opr.equals(TESTEQ))) {
-        emit_expr(cadr(expr), $, ec);
+        emit_expr(cadr(expr), env, $, ec);
         emit_infix_operator(EQUALS_SIGN, $);
-        emit_expr(caddr(expr), $, ec);
+        emit_expr(caddr(expr), env, $, ec);
         return;
     }
 
     if (car(expr).equals(TESTGE)) {
-        emit_expr(cadr(expr), $, ec);
+        emit_expr(cadr(expr), env, $, ec);
         emit_infix_operator(GREATEREQUAL, $);
-        emit_expr(caddr(expr), $, ec);
+        emit_expr(caddr(expr), env, $, ec);
         return;
     }
 
     if (car(expr).equals(TESTGT)) {
-        emit_expr(cadr(expr), $, ec);
+        emit_expr(cadr(expr), env, $, ec);
         emit_infix_operator(GREATER_SIGN, $);
-        emit_expr(caddr(expr), $, ec);
+        emit_expr(caddr(expr), env, $, ec);
         return;
     }
 
     if (car(expr).equals(TESTLE)) {
-        emit_expr(cadr(expr), $, ec);
+        emit_expr(cadr(expr), env, $, ec);
         emit_infix_operator(LESSEQUAL, $);
-        emit_expr(caddr(expr), $, ec);
+        emit_expr(caddr(expr), env, $, ec);
         return;
     }
 
     if (car(expr).equals(TESTLT)) {
-        emit_expr(cadr(expr), $, ec);
+        emit_expr(cadr(expr), env, $, ec);
         emit_infix_operator(LESS_SIGN, $);
-        emit_expr(caddr(expr), $, ec);
+        emit_expr(caddr(expr), env, $, ec);
         return;
     }
 
@@ -746,23 +752,23 @@ function emit_function(expr: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
     if (is_sym(leading))
         emit_symbol(leading, $);
     else
-        emit_subexpr(leading, $, ec);
+        emit_subexpr(leading, env, $, ec);
 
-    emit_args(expr, $, ec);
+    emit_args(expr, env, $, ec);
 }
 
-function emit_indices(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_indices(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     emit_roman_string("[", $);
 
     p = cdr(p);
 
     if (is_cons(p)) {
-        emit_expr(car(p), $, ec);
+        emit_expr(car(p), env, $, ec);
         p = cdr(p);
         while (is_cons(p)) {
             emit_roman_string(",", $);
             emit_thin_space($);
-            emit_expr(car(p), $, ec);
+            emit_expr(car(p), env, $, ec);
             p = cdr(p);
         }
     }
@@ -806,10 +812,10 @@ function emit_italic_string(s: 'i' | 'j', $: ProgramStack): void {
         emit_italic_char(s.charCodeAt(i), $);
 }
 
-function emit_matrix(p: Tensor, d: number, k: number, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_matrix(p: Tensor, d: number, k: number, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
 
     if (d === p.ndim) {
-        emit_list(p.elems[k], $, ec);
+        emit_list(p.elems[k], env, $, ec);
         return;
     }
 
@@ -827,7 +833,7 @@ function emit_matrix(p: Tensor, d: number, k: number, $: ProgramStack, ec: SvgRe
 
     for (let i = 0; i < n; i++)
         for (let j = 0; j < m; j++)
-            emit_matrix(p, d + 2, k + (i * m + j) * span, $, ec);
+            emit_matrix(p, d + 2, k + (i * m + j) * span, env, $, ec);
 
     emit_update_table(n, m, $);
 }
@@ -848,7 +854,7 @@ function emit_medium_space($: ProgramStack): void {
     list(4, $);
 }
 
-function emit_numerators(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_numerators(p: Cons, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
 
     const t = $.length;
     const n = count_numerators(p);
@@ -871,14 +877,17 @@ function emit_numerators(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
             continue;
         }
 
-        if (car(q).equals(ADD) && n === 1)
-            emit_expr(q, $, ec); // parens not needed
-        else
-            emit_factor(q, $, ec);
+        if (car(q).equals(ADD) && n === 1) {
+            emit_expr(q, env, $, ec); // parens not needed
+        }
+        else {
+            emit_factor(q, env, $, ec);
+        }
     }
 
-    if ($.length === t)
+    if ($.length === t) {
         emit_roman_string("1", $); // no numerators
+    }
 
     emit_update_list(t, $);
 }
@@ -911,10 +920,10 @@ function emit_numeric_exponent(p: Num, $: ProgramStack) {
     emit_update_superscript($);
 }
 
-function emit_power(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_power(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     if (cadr(p).equals(MATH_E)) {
         emit_roman_string("exp", $);
-        emit_args(cdr(p), $, ec);
+        emit_args(cdr(p), env, $, ec);
         return;
     }
 
@@ -931,12 +940,12 @@ function emit_power(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
 
     const X = caddr(p);
     if (is_num(X) && isnegativenumber(X)) {
-        emit_reciprocal(p, $, ec);
+        emit_reciprocal(p, env, $, ec);
         return;
     }
 
-    emit_base(cadr(p), $, ec);
-    emit_exponent(caddr(p), $, ec);
+    emit_base(cadr(p), env, $, ec);
+    emit_exponent(caddr(p), env, $, ec);
 }
 
 function emit_rational(x: Rat, $: ProgramStack): void {
@@ -966,16 +975,16 @@ function emit_rational(x: Rat, $: ProgramStack): void {
 
 // p = y^x where x is a negative number
 
-function emit_reciprocal(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_reciprocal(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
 
     emit_roman_string("1", $); // numerator
 
     const t = $.length;
 
     if (isminusone(caddr(p)))
-        emit_expr(cadr(p), $, ec);
+        emit_expr(cadr(p), env, $, ec);
     else {
-        emit_base(cadr(p), $, ec);
+        emit_base(cadr(p), env, $, ec);
         emit_numeric_exponent(caddr(p) as Num, $); // sign is not emitted
     }
 
@@ -1018,8 +1027,8 @@ function emit_string(str: Str, $: ProgramStack): void {
     emit_roman_string(human, $);
 }
 
-function emit_subexpr(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
-    emit_list(p, $, ec);
+function emit_subexpr(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
+    emit_list(p, env, $, ec);
     emit_update_subexpr($);
 }
 
@@ -1180,8 +1189,10 @@ function emit_blade(blade: Blade, $: ProgramStack): void {
     emit_roman_string(str, $);
 }
 
-function emit_atom(atom: U, $: ProgramStack): void {
-    const str = atom.toString();
+function emit_atom(atom: Atom, env: SvgRenderEnv, $: ProgramStack): void {
+    const handler = env.handlerFor(atom);
+    // TODO: This will probably have much in common with the Ascii rendering.
+    const str = handler.toInfixString(atom, env as unknown as ExprContext);
     emit_roman_string(str, $);
 }
 
@@ -1197,11 +1208,11 @@ function emit_imaginary_unit(imu: Imu, $: ProgramStack, ec: SvgRenderConfig): vo
     }
 }
 
-function emit_tensor(p: Tensor, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_tensor(p: Tensor, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     if (p.ndim % 2 === 1)
-        emit_vector(p, $, ec); // odd rank
+        emit_vector(p, env, $, ec); // odd rank
     else
-        emit_matrix(p, 0, 0, $, ec); // even rank
+        emit_matrix(p, 0, 0, env, $, ec); // even rank
 }
 
 function emit_boo(boo: Boo, $: ProgramStack): void {
@@ -1223,16 +1234,16 @@ function emit_uom(uom: Uom, $: ProgramStack): void {
     // emit_roman_string(str, $);
 }
 
-function emit_term(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_term(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     if (is_cons(p) && p.opr.equals(MULTIPLY))
-        emit_term_nib(p, $, ec);
+        emit_term_nib(p, env, $, ec);
     else
-        emit_factor(p, $, ec);
+        emit_factor(p, env, $, ec);
 }
 
-function emit_term_nib(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_term_nib(p: Cons, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     if (find_denominator(p)) {
-        emit_fraction(p, $, ec);
+        emit_fraction(p, env, $, ec);
         return;
     }
 
@@ -1243,13 +1254,13 @@ function emit_term_nib(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
     if (isminusone(car(p)) && !is_flt(car(p)))
         p = cdr(p); // sign already emitted
 
-    emit_factor(car(p), $, ec);
+    emit_factor(car(p), env, $, ec);
 
     p = cdr(p);
 
     while (is_cons(p)) {
         emit_medium_space($);
-        emit_factor(car(p), $, ec);
+        emit_factor(car(p), env, $, ec);
         p = cdr(p);
     }
 }
@@ -1564,7 +1575,7 @@ function emit_update_table(n: number, m: number, $: ProgramStack): void {
     list(10, $);
 }
 
-function emit_vector(p: Tensor, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_vector(p: Tensor, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
     // compute element span
 
     let span = 1;
@@ -1577,7 +1588,7 @@ function emit_vector(p: Tensor, $: ProgramStack, ec: SvgRenderConfig): void {
     n = p.dims[0]; // number of rows
 
     for (let i = 0; i < n; i++)
-        emit_matrix(p, 1, i * span, $, ec);
+        emit_matrix(p, 1, i * span, env, $, ec);
 
     emit_update_table(n, 1, $); // n rows, 1 column
 }

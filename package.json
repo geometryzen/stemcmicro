@@ -101,6 +101,7 @@
         "unit-eigenmath": "mocha 'units/eigenmath.spec.ts'",
         "unit-eigenmath-mul": "mocha 'units/eigenmath-mul.spec.ts'",
         "unit-eigenvec": "mocha 'units/eigenvec.spec.ts'",
+        "unit-error": "mocha 'units/error.spec.ts'",
         "unit-example": "mocha 'units/example.spec.ts'",
         "unit-exp": "mocha 'units/exp.spec.ts'",
         "unit-factor": "mocha 'units/factor.spec.ts'",

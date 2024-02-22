@@ -1,30 +1,18 @@
-import { Blade, is_blade, is_uom, Uom } from 'math-expression-atoms';
-import { is_native } from 'math-expression-native';
+import { Blade, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, one, Rat, Str, Sym, Tensor, Uom } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
+import { is_native, Native } from 'math-expression-native';
+import { Atom, car, cdr, Cons, is_atom, is_cons, U } from 'math-expression-tree';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { Directive } from '../env/ExtensionEnv';
 import { isone } from '../helpers/isone';
 import { is_num_and_eq_minus_one, is_rat_and_fraction } from '../is';
-import { Native } from '../native/Native';
-import { is_flt } from '../operators/flt/is_flt';
-import { is_num } from '../operators/num/is_num';
-import { is_rat } from '../operators/rat/is_rat';
-import { is_str } from '../operators/str/is_str';
 import { str_extension } from '../operators/str/str_extension';
-import { is_sym } from '../operators/sym/is_sym';
-import { is_tensor } from '../operators/tensor/is_tensor';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { is_num_and_negative } from '../predicates/is_negative_number';
 import { ADD, ASSIGN, FACTORIAL, MULTIPLY, POWER } from '../runtime/constants';
 import { is_add, is_factorial, is_multiply, is_power } from '../runtime/helpers';
 import { number_to_floating_point_string } from '../runtime/number_to_floating_point_string';
-import { Flt } from '../tree/flt/Flt';
 import { caar, caddr, cadr } from '../tree/helpers';
-import { Num } from '../tree/num/Num';
-import { one, Rat } from '../tree/rat/Rat';
-import { Str } from '../tree/str/Str';
-import { Sym } from '../tree/sym/Sym';
-import { Tensor } from '../tree/tensor/Tensor';
-import { car, cdr, Cons, is_cons, U } from '../tree/tree';
 import { PrintConfig, render_using_non_sexpr_print_mode } from './print';
 
 /*
@@ -71,16 +59,16 @@ is 1/x^2 but it also looks a little like x^(1/2)
 //-----------------------------------------------------------------------------
 
 const YMAX = 10000;
-class glyph {
+class Glyph {
     public c: string | number = 0;
     public x = 0;
     public y = 0;
 }
 
 // will contain glyphs
-let chartab: glyph[] = [];
+const chartab: Glyph[] = [];
 for (let charTabIndex = 0; charTabIndex < YMAX; charTabIndex++) {
-    chartab[charTabIndex] = new glyph();
+    chartab[charTabIndex] = new Glyph();
 }
 
 let yindex = 0;
@@ -101,7 +89,6 @@ function printchar(character: string) {
 }
 
 export function render_as_ascii(expr: U, $: PrintConfig): string {
-    // console.lg(`render_as_ascii: ${p}`);
     yindex = 0;
     level = 0;
     emit_x = 0;
@@ -109,21 +96,17 @@ export function render_as_ascii(expr: U, $: PrintConfig): string {
 
     // if too wide then print flat
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [h, w, y] = Array.from(get_size(0, yindex));
+    const [h, w, y] = get_size(0, yindex);
 
     if (w > 100) {
-        render_using_non_sexpr_print_mode(expr, $);
-        return '';
+        return render_using_non_sexpr_print_mode(expr, $);
     }
 
-    const beenPrinted = print_glyphs();
-
-    return beenPrinted;
+    return print_glyphs(chartab);
 }
 
 function emit_top_expr(p: U, $: PrintConfig): void {
-    // console.lg(`emit_top_expr:   ${p}`);
-    if (car(p).equals(ASSIGN)) {
+    if (is_cons(p) && p.opr.equals(ASSIGN)) {
         emit_expr(cadr(p), $);
         __emit_str(' = ');
         emit_expr(caddr(p), $);
@@ -131,7 +114,7 @@ function emit_top_expr(p: U, $: PrintConfig): void {
     }
 
     if (is_tensor(p)) {
-        emit_tensor(p, $);
+        emit_tensor(p, __emit_char, $);
     }
     else {
         emit_expr(p, $);
@@ -161,11 +144,6 @@ function will_be_displayed_as_fraction(p: U): boolean {
 }
 
 function emit_expr(p: U, $: PrintConfig): void {
-    // console.lg(`emit_expr:       ${p}`);
-    //  if (level > 0) {
-    //    printexpr(p)
-    //    return
-    //  }
     if (is_add(p)) {
         p = cdr(p);
         if (__is_negative(car(p))) {
@@ -244,7 +222,6 @@ function __is_negative(p: U): boolean {
 }
 
 function emit_term(p: U, $: PrintConfig) {
-    // console.lg(`emit_term:       ${p}`);
     if (is_multiply(p)) {
         const n = count_denominators(p);
         if (n && level === 0) {
@@ -500,14 +477,13 @@ function emit_denominators(expr: Cons, $: PrintConfig): void {
 }
 
 function emit_factor(p: U, $: PrintConfig) {
-    // console.lg(`emit_factor:     ${p}`);
     if (is_tensor(p)) {
         if (level === 0) {
             //emit_tensor(p)
-            emit_flat_tensor(p, $);
+            emit_flat_tensor(p, __emit_char, $);
         }
         else {
-            emit_flat_tensor(p, $);
+            emit_flat_tensor(p, __emit_char, $);
         }
         return;
     }
@@ -560,6 +536,27 @@ function emit_factor(p: U, $: PrintConfig) {
 
     if (is_uom(p)) {
         emit_uom(p);
+    }
+
+    if (is_atom(p)) {
+        emit_atom(p, __emit_char, $);
+    }
+}
+
+type Emitter = (ch: string) => number | undefined;
+
+/**
+ * Work In Progress to tease out the required API to support atoms.
+ */
+function emit_atom(atom: Atom, emitter: Emitter, $: PrintConfig): void {
+    const handler = $.handlerFor(atom);
+    // There is no toAsciiString.
+    // Probably shouldn't be.
+    // Tensor is a better example to generalize.
+    // The cast shows that we need to narrow the interfaces in the toXyzString methods.
+    const representation = handler.toInfixString(atom, $ as unknown as ExprContext);
+    for (let i = 0; i < representation.length; i++) {
+        emitter(representation[i]);
     }
 }
 
@@ -860,9 +857,9 @@ function fixup_fraction(x: number, k1: number, k2: number): void {
     let dx = 0;
     let dy = 0;
 
-    const [h1, w1, y1] = Array.from(get_size(k1, k2));
+    const [h1, w1, y1] = get_size(k1, k2);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [h2, w2, y2] = Array.from(get_size(k2, yindex));
+    const [h2, w2, y2] = get_size(k2, yindex);
 
     if (w2 > w1) {
         dx = (w2 - w1) / 2; // shift numerator right
@@ -917,9 +914,9 @@ function fixup_power(k1: number, k2: number) {
     let y2 = 0;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    [h1, w1, y1] = Array.from(get_size(k1, k2));
+    [h1, w1, y1] = get_size(k1, k2);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    [h2, w2, y2] = Array.from(get_size(k2, yindex));
+    [h2, w2, y2] = get_size(k2, yindex);
 
     // move superscript to baseline
     dy = -y2 - h2 + 1;
@@ -937,8 +934,13 @@ function move(j: number, k: number, dx: number, dy: number) {
     }
 }
 
-// finds the bounding rectangle and vertical position
-function get_size(j: number, k: number) {
+/**
+ * finds the bounding rectangle and vertical position.
+ * @param j 
+ * @param k 
+ * @returns 
+ */
+function get_size(j: number, k: number): [h: number, w: number, y: number] {
     let min_x = chartab[j].x;
     let max_x = chartab[j].x;
     let min_y = chartab[j].y;
@@ -963,11 +965,11 @@ function get_size(j: number, k: number) {
     return [h, w, y];
 }
 
-function __emit_char(c: string) {
+function __emit_char(ch: string): number | undefined {
     if (yindex === YMAX) {
         return;
     }
-    chartab[yindex].c = c;
+    chartab[yindex].c = ch;
     chartab[yindex].x = emit_x;
     chartab[yindex].y = 0;
     yindex++;
@@ -1016,8 +1018,10 @@ function emit_number(p: Num, emit_sign: number, $: Pick<PrintConfig, 'getDirecti
     }
 }
 
-// a and b are glyphs
-function cmpGlyphs(a: glyph, b: glyph): 1 | -1 | 0 {
+/**
+ * Used to sort glyphs vertically then horizontally.
+ */
+function cmpGlyphs(a: Glyph, b: Glyph): 1 | -1 | 0 {
     if (a.y < b.y) {
         return -1;
     }
@@ -1037,41 +1041,38 @@ function cmpGlyphs(a: glyph, b: glyph): 1 | -1 | 0 {
     return 0;
 }
 
-function print_glyphs() {
-    let accumulator = '';
+function print_glyphs(glyphs: Glyph[]) {
+    let buf = '';
 
     // now sort the glyphs by their vertical positions,
     // since we are going to build a string where obviously the
     // "upper" line has to printed out first, followed by
     // a new line, followed by the other lines.
-    //qsort(chartab, yindex, sizeof (struct glyph), __cmp)
-    const subsetOfStack = chartab.slice(0, yindex);
-    subsetOfStack.sort(cmpGlyphs);
-    const slices = chartab.slice(yindex);
-    chartab.length = 0;
-    chartab = chartab.concat(subsetOfStack).concat(slices);
+    const sorted = glyphs.slice(0, yindex).sort(cmpGlyphs);
+    const others = glyphs.slice(yindex);
+    const gs = sorted.concat(others);
 
     let x = 0;
-    let { y } = chartab[0];
+    let { y } = gs[0];
 
     for (let i = 0; i < yindex; i++) {
-        while (chartab[i].y > y) {
-            accumulator += printchar('\n');
+        while (gs[i].y > y) {
+            buf += printchar('\n');
             x = 0;
             y++;
         }
 
-        while (chartab[i].x > x) {
-            accumulator += printchar_nowrap(' ');
+        while (gs[i].x > x) {
+            buf += printchar_nowrap(' ');
             x++;
         }
 
-        accumulator += printchar_nowrap(chartab[i].c);
+        buf += printchar_nowrap(gs[i].c);
 
         x++;
     }
 
-    return accumulator;
+    return buf;
 }
 
 const N = 100;
@@ -1093,13 +1094,13 @@ for (let elelmIndex = 0; elelmIndex < 10000; elelmIndex++) {
 const SPACE_BETWEEN_COLUMNS = 3;
 const SPACE_BETWEEN_ROWS = 1;
 
-function emit_tensor(p: Tensor<U>, $: PrintConfig) {
+function emit_tensor(p: Tensor<U>, emitter: Emitter, $: PrintConfig) {
     let ncol = 0;
     let dx = 0;
     let dy = 0;
 
     if (p.ndim > 2) {
-        emit_flat_tensor(p, $);
+        emit_flat_tensor(p, emitter, $);
         return;
     }
 
@@ -1115,7 +1116,7 @@ function emit_tensor(p: Tensor<U>, $: PrintConfig) {
     const n = nrow * ncol;
 
     if (n > N) {
-        emit_flat_tensor(p, $);
+        emit_flat_tensor(p, emitter, $);
         return;
     }
 
@@ -1133,9 +1134,7 @@ function emit_tensor(p: Tensor<U>, $: PrintConfig) {
         elem[i].x = emit_x;
         emit_expr(p.elem(i), $);
         elem[i].count = yindex - elem[i].index;
-        [elem[i].h, elem[i].w, elem[i].y] = Array.from(
-            get_size(elem[i].index, yindex)
-        );
+        [elem[i].h, elem[i].w, elem[i].y] = get_size(elem[i].index, yindex);
     }
 
     // find element height and width
@@ -1229,24 +1228,24 @@ function emit_tensor(p: Tensor<U>, $: PrintConfig) {
     */
 }
 
-function emit_flat_tensor(p: Tensor<U>, $: PrintConfig) {
-    emit_tensor_inner(p, 0, 0, $);
+function emit_flat_tensor(p: Tensor<U>, emitter: Emitter, $: PrintConfig) {
+    emit_tensor_inner(p, 0, 0, emitter, $);
 }
 
-function emit_tensor_inner(p: Tensor<U>, j: number, k: number, $: PrintConfig) {
-    __emit_char('(');
+function emit_tensor_inner(p: Tensor<U>, j: number, k: number, emitter: Emitter, $: PrintConfig) {
+    emitter('(');
     for (let i = 0; i < p.dim(j); i++) {
         if (j + 1 === p.ndim) {
             emit_expr(p.elem(k), $);
             k = k + 1;
         }
         else {
-            k = emit_tensor_inner(p, j + 1, k, $);
+            k = emit_tensor_inner(p, j + 1, k, emitter, $);
         }
         if (i + 1 < p.dim(j)) {
-            __emit_char(',');
+            emitter(',');
         }
     }
-    __emit_char(')');
+    emitter(')');
     return k;
 }

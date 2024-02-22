@@ -2,13 +2,13 @@ import { create_sym } from 'math-expression-atoms';
 import { nil } from 'math-expression-tree';
 import { EigenmathParseConfig, eigenmath_prolog, evaluate_expression, scan_inbuf, ScriptContentHandler, ScriptErrorHandler, ScriptVars, set_symbol } from './eigenmath';
 import { make_stack_draw } from './make_stack_draw';
-import { stack_infixform } from './stack_infixform';
 import { make_stack_print } from './make_stack_print';
 import { make_stack_run } from './make_stack_run';
 import { ProgramControl } from './ProgramControl';
 import { ProgramEnv } from './ProgramEnv';
 import { ProgramIO } from './ProgramIO';
 import { ProgramStack } from './ProgramStack';
+import { stack_infixform } from './stack_infixform';
 
 export const LAST = create_sym("last");
 
@@ -20,7 +20,7 @@ function eigenmath_parse_config_from_options(options: Partial<EigenmathParseConf
     return config;
 }
 
-export function execute_eigenmath_script(sourceText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler, options: Partial<EigenmathParseConfig> = {}): void {
+export function execute_eigenmath_script(sourceText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler, options: Partial<EigenmathParseConfig> = {}): [env: ProgramEnv, ctrl: ProgramControl] {
     const config = eigenmath_parse_config_from_options(options);
     const vars = new ScriptVars(config);
     const env: ProgramEnv = vars;
@@ -70,4 +70,5 @@ export function execute_eigenmath_script(sourceText: string, contentHandler: Scr
     finally {
         contentHandler.end($);
     }
+    return [env, ctrl];
 }

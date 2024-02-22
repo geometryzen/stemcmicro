@@ -455,7 +455,7 @@ class MicroEngine implements ExprEngine {
                     return render_as_sexpr(expr, this.#env);
                 }
                 case 'SVG': {
-                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
+                    return render_svg(expr, this.#env, { useImaginaryI: false, useImaginaryJ: false });
                 }
                 default: {
                     return render_as_infix(expr, this.#env);
@@ -620,7 +620,7 @@ class ClojureScriptEngine implements ExprEngine {
                     return render_as_sexpr(expr, this.#env);
                 }
                 case 'SVG': {
-                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
+                    return render_svg(expr, this.#env, { useImaginaryI: false, useImaginaryJ: false });
                 }
                 default: {
                     return render_as_infix(expr, this.#env);
@@ -840,7 +840,7 @@ class EigenmathEngine implements ExprEngine {
                 return to_sexpr(expr);
             }
             case 'SVG': {
-                return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
+                return render_svg(expr, this.#scriptVars, { useImaginaryI: false, useImaginaryJ: false });
             }
             default: {
                 return to_infix(expr, this.#scriptVars, this.#scriptVars, eigenmath_infix_config(config));

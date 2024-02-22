@@ -66,6 +66,7 @@
         "example-rank": "mocha 'examples/rank.spec.ts'",
         "example-real": "mocha 'examples/real.spec.ts'",
         "example-sandbox": "mocha 'examples/sandbox.spec.ts'",
+        "example-spacetime": "mocha 'examples/spacetime.spec.ts'",
         "example-sub": "mocha 'examples/sub.spec.ts'",
         "example-svg": "mocha 'examples/svg.spec.ts'",
         "example-sym": "mocha 'examples/sym.spec.ts'",

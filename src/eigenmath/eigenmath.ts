@@ -699,11 +699,21 @@ function compatible_dimensions(p1: U, p2: U): 0 | 1 {
     return 1;
 }
 
-function complexity(p: U): number {
+/**
+ * Used in simplify functions to assess progress.
+ * complexity(Atom) => 1
+ * complexity(Nil)  => 1
+ * complexity(Cons) => Sum of complexity of each item.
+ */
+export function complexity(expr: U): number {
     let n = 1;
-    while (is_cons(p)) {
-        n += complexity(car(p));
-        p = cdr(p);
+    if (is_cons(expr)) {
+        let xs: Cons = expr;
+        while (is_cons(xs)) {
+            const head = xs.head;
+            n += complexity(head);
+            xs = xs.rest;
+        }
     }
     return n;
 }
@@ -8360,8 +8370,9 @@ function simplify_pass1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
         push(denom, $);
         divide(env, ctrl, $);
         T = pop($);
-        if (complexity(T) < complexity(p1))
+        if (complexity(T) < complexity(p1)) {
             p1 = T;
+        }
         push(p1, $);
         return;
     }

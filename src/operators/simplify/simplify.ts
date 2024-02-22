@@ -1,8 +1,10 @@
 import { create_int, is_num, is_rat, is_tensor, one, Sym, zero } from 'math-expression-atoms';
-import { car, cdr, Cons2, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
+import { Native, native_sym } from 'math-expression-native';
+import { car, cdr, Cons2, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
 import { condense, yycondense } from '../../condense';
+import { complexity } from '../../eigenmath/eigenmath';
 import { Directive, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { inverse } from '../../helpers/inverse';
@@ -30,6 +32,7 @@ import { rationalize_factoring } from '../rationalize/rationalize';
 import { re } from '../real/real';
 import { tensor_extension } from '../tensor/tensor_extension';
 import { transpose_factoring } from '../transpose/transpose';
+import { wrap_as_transform } from '../wrap_as_transform';
 
 function simplify_if_contains_factorial(expr: U, $: ExtensionEnv): U {
     if (expr.contains(FACTORIAL)) {
@@ -42,52 +45,54 @@ function simplify_if_contains_factorial(expr: U, $: ExtensionEnv): U {
     }
 }
 
-export function simplify(expr: U, $: ExtensionEnv): U {
+export function simplify(x: U, $: ExtensionEnv): U {
+    // console.lg("simplify", $.toInfixString(x));
     const hook = function (retval: U): U {
         return retval;
     };
 
-    const scode = expr;
-
     // The following illustrates how we should be handling all atoms.
     // Of course, the extension should be looked up from the context.
-    if (is_tensor(scode)) {
-        const extension = $.extensionFor(scode);
+    if (is_atom(x)) {
+        const handler = $.handlerFor(x);
+        return hook(handler.dispatch(x, native_sym(Native.simplify), nil, $));
+    }
+    if (is_tensor(x)) {
+        const extension = $.extensionFor(x);
         extension;
-        return hook(tensor_extension.simplify(scode, $));
+        return hook(tensor_extension.simplify(x, $));
     }
 
-    const sfact = simplify_if_contains_factorial(expr, $);
+    const A = simplify_if_contains_factorial(x, $);
+    // console.lg("A => ", $.toInfixString(A));
 
-    // console.lg(`0 ${$.toInfixString(sfact)}`);
+    const B = simplify_by_i_dunno_what(A, $);
+    // console.lg("B => ", $.toInfixString(B));
 
-    let p1 = simplify_by_i_dunno_what(sfact, $);
-    // console.lg(`A ${$.toInfixString(p1)}`);
+    const C = simplify_by_rationalizing(B, $);
+    // console.lg("C => ", $.toInfixString(C));
 
-    p1 = simplify_by_rationalizing(p1, $);
-    // console.lg(`B ${$.toInfixString(p1)}`);
+    const D = simplify_by_condensing(C, $);
+    // console.lg("D => ", $.toInfixString(D));
 
-    p1 = simplify_by_condensing(p1, $);
-    // console.lg(`C ${$.toInfixString(p1)}`);
+    const E = simplify_a_minus_b_divided_by_b_minus_a(D, $);
+    // console.lg("E => ", $.toInfixString(E));
 
-    p1 = simplify_a_minus_b_divided_by_b_minus_a(p1, $);
-    // console.lg(`D ${$.toInfixString(p1)}`);
+    const F = simplify_by_expanding_denominators(E, $);
+    // console.lg("F => ", $.toInfixString(F));
 
-    p1 = simplify_by_expanding_denominators(p1, $);
-    // console.lg(`E ${$.toInfixString(p1)}`);
+    const G = simplify_trig(F, $);
+    // console.lg("G => ", $.toInfixString(G));
 
-    p1 = simplify_trig(p1, $);
-    // console.lg(`F ${$.toInfixString(p1)}`);
+    const H = simplify_terms(G, $);
+    // console.lg("H => ", $.toInfixString(H));
 
-    p1 = simplify_terms(p1, $);
-    // console.lg(`G ${$.toInfixString(p1)}`);
-
-    p1 = simplify_polarRect(p1, $);
-    // console.lg(`H ${$.toInfixString(p1)}`);
+    const I = simplify_polarRect(H, $);
+    // console.lg("I => ", $.toInfixString(I));
 
     if (do_simplify_nested_radicals) {
-        let simplify_nested_radicalsResult: TFLAGS;
-        [simplify_nested_radicalsResult, p1] = simplify_nested_radicals(p1, $);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [flags, R] = simplify_nested_radicals(I, $);
         // console.lg(`I ${$.toInfixString(p1)}`);
         // if there is some de-nesting then
         // re-run a simplification because
@@ -95,18 +100,23 @@ export function simplify(expr: U, $: ExtensionEnv): U {
         // have changed significantly.
         // e.g. simplify(14^(1/2) - (16 - 4*7^(1/2))^(1/2))
         // needs some more simplification after the de-nesting.
-        if (simplify_nested_radicalsResult) {
-            return hook(simplify(p1, $));
+        if (R.equals(I)) {
+            // No progress was made, so we fall through.
+            // console.lg("R => ", $.toInfixString(R));
+        }
+        else {
+            // Progress was made so we try to simplify again.
+            return hook(simplify(R, $));
         }
     }
 
-    p1 = simplify_rect_to_clock(p1, $);
-    // console.lg(`J ${$.toInfixString(p1)}`);
+    const J = simplify_rect_to_clock(I, $);
+    // console.lg("J => ", $.toInfixString(J));
 
-    p1 = simplify_rational_expressions(p1, $);
-    // console.lg(`K ${$.toInfixString(p1)}`);
+    const K = simplify_rational_expressions(J, $);
+    // console.lg("K => ", $.toInfixString(K));
 
-    return hook(p1);
+    return hook(K);
 }
 
 // try rationalizing
@@ -388,15 +398,18 @@ function nterms(p: U) {
     return 1;
 }
 
-function simplify_nested_radicals(p1: U, $: ExtensionEnv): [TFLAGS, U] {
+function simplify_nested_radicals(x: U, $: ExtensionEnv): [TFLAGS, U] {
+
+    // console.lg("simplify_nested_radicals", `${$.toInfixString(x)}`);
+
     if (defs.recursionLevelNestedRadicalsRemoval > 0) {
-        return [TFLAG_NONE, p1];
+        return [TFLAG_NONE, x];
     }
 
-    const [
-        simplificationWithoutCondense,
-        somethingSimplified,
-    ] = take_care_of_nested_radicals(p1, $);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [red, red_flags] = take_care_of_nested_radicals(x, $);
+
+    // console.lg("red", `${$.toInfixString(red)}`);
 
     // in this paragraph we check whether we can collect
     // common factors without complicating the expression
@@ -408,36 +421,43 @@ function simplify_nested_radicals(p1: U, $: ExtensionEnv): [TFLAGS, U] {
     //   17/2+3/2*5^(1/2) into 1/2*(17+3*5^(1/2))
     // so what we do is we count the powers and we check
     // which version has the least number of them.
-    const simplificationWithCondense = noexpand_unary(yycondense, simplificationWithoutCondense, $);
 
-    // console.lg("occurrences of powers in " + simplificationWithoutCondense + " :" + countOccurrencesOfSymbol(POWER,simplificationWithoutCondense))
-    // console.lg("occurrences of powers in " + simplificationWithCondense + " :" + countOccurrencesOfSymbol(POWER,simplificationWithCondense))
+    // We have a problem here, probably cause by the noexpand.
+    const green = noexpand_unary(yycondense, red, $);
+    // console.lg("red", `${$.toInfixString(red)}`);
+    // console.lg("green", `${$.toInfixString(green)}`);
 
-    p1 =
-        countOccurrencesOfSymbol(POWER, simplificationWithoutCondense, $) <
-            countOccurrencesOfSymbol(POWER, simplificationWithCondense, $)
-            ? simplificationWithoutCondense
-            : simplificationWithCondense;
+    // This code traps the case where green is actually more complex than red.
+    // However, it would seem to cover up a problem in the computation of green.
+    const blue = complexity(red) < complexity(green) ? red : green;
+
+    // console.lg("blue", `${$.toInfixString(blue)}`);
+    // console.lg("complexity(red)  ", complexity(red));
+    // console.lg("complexity(green)", complexity(green));
+
+    const best = countOccurrencesOfSymbol(POWER, red, $) < countOccurrencesOfSymbol(POWER, blue, $) ? red : blue;
+
+    // console.lg("best", `${$.toInfixString(best)}`);
 
     // we got out result, wrap up
-    return [somethingSimplified, p1];
+    return wrap_as_transform(best, x);
 }
 
-function take_care_of_nested_radicals(p1: U, $: ExtensionEnv): [U, TFLAGS] {
+function take_care_of_nested_radicals(x: U, $: ExtensionEnv): [U, TFLAGS] {
     if (defs.recursionLevelNestedRadicalsRemoval > 0) {
-        return [p1, TFLAG_NONE];
+        return [x, TFLAG_NONE];
     }
 
-    if (is_cons(p1)) {
-        if (is_pow_2_any_any(p1)) {
-            return _nestedPowerSymbol(p1, $);
+    if (is_cons(x)) {
+        if (is_pow_2_any_any(x)) {
+            return _nestedPowerSymbol(x, $);
         }
         else {
-            return _nestedCons(p1, $);
+            return _nestedCons(x, $);
         }
     }
 
-    return [p1, TFLAG_NONE];
+    return [x, TFLAG_NONE];
 }
 
 function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] {

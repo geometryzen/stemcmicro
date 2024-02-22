@@ -7,6 +7,7 @@ import { Extension, ExtensionEnv, FEATURE } from "./ExtensionEnv";
 export class UnknownConsExtension implements Extension<Cons> {
     name: string;
     constructor(private readonly $: ExtensionEnv) {
+        // console.lg("constructor UnknownConsExtension(): UnknownConsExtension");
         this.name = "unknown";
     }
     binL(expr: Cons, opr: Sym, rhs: U, env: ExprContext): U {

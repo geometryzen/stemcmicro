@@ -991,13 +991,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         transform(expr: U): [TFLAGS, U] {
-            // console.lg("trnsfrm", $.toInfixString(expr));
+            // console.lg("trnsfrm", `${expr}`);
             // We short-circuit some expressions in order to improve performance.
             if (is_cons(expr)) {
                 // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
                 // to the left or right. This implies that I have distinct right and left evaluations.
                 const opr = expr.opr;
                 if (is_cons(opr)) {
+                    // This is non-standard stuff, the operator (leftmost element) in a combination will usually be a symbol.
                     const head_opr = opr.opr;
                     try {
                         if (head_opr.equals(FN)) {
@@ -1017,8 +1018,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     }
                 }
                 else if (is_sym(opr)) {
+                    // We're handling the case here of an operator that is shadowed by a binding.
                     // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
                     if (symTab.hasBinding(opr)) {
+                        // FIXME: I think we should be calling on the symTab, not $.
                         const value = $.getBinding(opr, expr);
                         if (is_lambda(value)) {
                             return wrap_as_transform(value.body(expr.argList, $), expr);
@@ -1026,6 +1029,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         else {
                             // And if it is not we fall through to the operator stuff.
                         }
+                    }
+                    else {
+                        // we fall through to look for the operator symbol using the built-in extensions.
                     }
                 }
                 else if (is_rat(opr)) {
@@ -1090,7 +1096,26 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         }
                     }
                 }
-                // Once an expression has been transformed into a stable condition, it should not be transformed until a different phase.
+                if (is_sym(opr)) {
+                    const arg = expr.arg;
+                    try {
+                        if (is_atom(arg)) {
+                            const handler = $.handlerFor(arg);
+                            const retval = handler.dispatch(arg, opr, nil, $);
+                            try {
+                                return wrap_as_transform(retval, expr);
+                            }
+                            finally {
+                                retval.release();
+                            }
+                        }
+                        // TODO: Generalize this delegation approach for handling cons and nil.
+                        // By doing so, we'll get error messages rather than unevaluated combinations. 
+                    }
+                    finally {
+                        arg.release();
+                    }
+                }
                 return [TFLAG_NONE, expr];
             }
             else if (is_nil(expr)) {
@@ -1108,7 +1133,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U {
-            // console.lg("valueOf", $.toInfixString(expr));
+            // console.lg("valueOf", `${expr}`);
             // TOOD: We'd like to do this the newWay = !oldWay.
             // This flag makes it easier to switch back and forth.
             const oldWay = true;

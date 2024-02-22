@@ -9,6 +9,7 @@ import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 
 const MUL = native_sym(Native.multiply);
+const SIMPLIFY = native_sym(Native.simplify);
 
 function verify_hyp(hyp: Hyp): Hyp | never {
     if (is_hyp(hyp)) {
@@ -48,6 +49,9 @@ class HypExtension implements Extension<Hyp> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Hyp, opr: Sym, argList: Cons, env: ExprContext): U {
+        if (opr.equalsSym(SIMPLIFY)) {
+            return target;
+        }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {

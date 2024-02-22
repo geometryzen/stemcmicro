@@ -17,6 +17,7 @@ const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
+const SIMPLIFY = native_sym(Native.simplify);
 
 export function compare_flts(lhs: Flt, rhs: Flt): Sign {
     if (lhs.d < rhs.d) {
@@ -198,6 +199,9 @@ export class FltExtension implements Extension<Flt> {
             finally {
                 head.release();
             }
+        }
+        else if (opr.equalsSym(SIMPLIFY)) {
+            return target;
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }

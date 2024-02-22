@@ -15,6 +15,7 @@ const ADD = native_sym(Native.add);
 const GRADE = native_sym(Native.grade);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
+const SIMPLIFY = native_sym(Native.simplify);
 const SQRT = native_sym(Native.sqrt);
 
 /**
@@ -141,6 +142,9 @@ class BladeExtension implements Extension<Blade> {
             finally {
                 head.release();
             }
+        }
+        else if (opr.equalsSym(SIMPLIFY)) {
+            return target;
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }

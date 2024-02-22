@@ -18,6 +18,7 @@ const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
+const SIMPLIFY = native_sym(Native.simplify);
 
 export function is_rat(p: unknown): p is Rat {
     return p instanceof Rat;
@@ -146,6 +147,9 @@ export class RatExtension implements Extension<Rat> {
             finally {
                 head.release();
             }
+        }
+        else if (opr.equalsSym(SIMPLIFY)) {
+            return target;
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }

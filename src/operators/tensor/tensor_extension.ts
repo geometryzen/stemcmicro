@@ -10,6 +10,7 @@ import { HASH_TENSOR } from "../../hashing/hash_info";
 import { isone } from "../../helpers/isone";
 import { iszero } from "../../helpers/iszero";
 import { multiply } from "../../helpers/multiply";
+import { simplify } from "../../helpers/simplify";
 import { PrintConfig, print_str, render_using_non_sexpr_print_mode } from "../../print/print";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { MAXDIM } from "../../runtime/constants";
@@ -17,7 +18,6 @@ import { defs, PrintMode, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_SEXPR } fr
 import { assert_square_matrix_tensor, is_line_matrix, is_square_matrix } from "../../tensor";
 import { cofactor } from "../cofactor/cofactor";
 import { is_hyp } from "../hyp/is_hyp";
-import { simplify } from "../simplify/simplify";
 import { subst } from "../subst/subst";
 
 const ABS = native_sym(Native.abs);
@@ -25,6 +25,7 @@ const ADD = native_sym(Native.add);
 const ADJ = native_sym(Native.adj);
 const ISONE = native_sym(Native.isone);
 const MUL = native_sym(Native.multiply);
+const SIMPLIFY = native_sym(Native.simplify);
 
 function equal_elements(as: U[], bs: U[], $: ExtensionEnv): boolean {
     const length = as.length;
@@ -199,6 +200,9 @@ class TensorExtension implements Extension<Tensor> {
         }
         else if (opr.equalsSym(ADJ)) {
             return adj(target, env);
+        }
+        else if (opr.equalsSym(SIMPLIFY)) {
+            return target.map(x => simplify(x, env));
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }

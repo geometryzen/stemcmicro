@@ -6,6 +6,7 @@ import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 
 const ADD = native_sym(Native.add);
+const SIMPLIFY = native_sym(Native.simplify);
 
 export class BooExtension implements Extension<Boo> {
     constructor() {
@@ -30,6 +31,9 @@ export class BooExtension implements Extension<Boo> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Boo, opr: Sym, argList: Cons, env: ExprContext): U {
+        if (opr.equalsSym(SIMPLIFY)) {
+            return target;
+        }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {

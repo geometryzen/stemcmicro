@@ -9,6 +9,7 @@ import { infixform } from "../../helpers/infixform";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
 const GRADE = native_sym(Native.grade);
+const SIMPLIFY = native_sym(Native.simplify);
 
 export class ErrExtension implements Extension<Err> {
     readonly #hash = hash_for_atom(new Err(nil));
@@ -40,7 +41,9 @@ export class ErrExtension implements Extension<Err> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Err, opr: Sym, argList: Cons, env: ExprContext): U {
         if (opr.equalsSym(GRADE)) {
-            // We could create nested errors...
+            return target;
+        }
+        else if (opr.equalsSym(SIMPLIFY)) {
             return target;
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));

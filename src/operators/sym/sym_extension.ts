@@ -21,6 +21,7 @@ const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
 const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
+const SIMPLIFY = native_sym(Native.simplify);
 
 function verify_sym(x: Sym): Sym | never {
     if (is_sym(x)) {
@@ -164,6 +165,9 @@ class SymExtension implements Extension<Sym> {
             finally {
                 head.release();
             }
+        }
+        else if (opr.equalsSym(SIMPLIFY)) {
+            return target;
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }

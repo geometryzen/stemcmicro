@@ -16,6 +16,7 @@ const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
 const negImu = items_to_cons(MUL, negOne, imu);
+const SIMPLIFY = native_sym(Native.simplify);
 
 function divide(numer: U, denom: U, env: ExprContext): U {
     const rhs = items_to_cons(POW, denom, negOne);
@@ -119,6 +120,9 @@ class ImuExtension implements Extension<Imu> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Imu, opr: Sym, argList: Cons, env: ExprContext): U {
+        if (opr.equalsSym(SIMPLIFY)) {
+            return target;
+        }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     test(expr: Imu, opr: Sym): boolean {

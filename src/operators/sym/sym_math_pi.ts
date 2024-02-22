@@ -17,6 +17,7 @@ import { assert_sym } from "./assert_sym";
 const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
+const SIMPLIFY = native_sym(Native.simplify);
 
 /**
  * 
@@ -93,6 +94,9 @@ class SymMathPi implements Extension<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
+        if (opr.equalsSym(SIMPLIFY)) {
+            return target;
+        }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     test(expr: Sym, opr: Sym): boolean {

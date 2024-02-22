@@ -15,6 +15,7 @@ const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
+const SIMPLIFY = native_sym(Native.simplify);
 
 class UomExtension implements Extension<Uom> {
     constructor() {
@@ -73,6 +74,9 @@ class UomExtension implements Extension<Uom> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Uom, opr: Sym, argList: Cons, env: ExprContext): U {
         if (opr.equalsSym(ABS)) {
+            return target;
+        }
+        else if (opr.equalsSym(SIMPLIFY)) {
             return target;
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));

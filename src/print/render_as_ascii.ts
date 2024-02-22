@@ -528,18 +528,22 @@ function emit_factor(p: U, $: PrintConfig) {
 
     if (is_str(p)) {
         emit_string(p);
+        return;
     }
 
     if (is_blade(p)) {
         emit_blade(p);
+        return;
     }
 
     if (is_uom(p)) {
         emit_uom(p);
+        return;
     }
 
     if (is_atom(p)) {
         emit_atom(p, __emit_char, $);
+        return;
     }
 }
 

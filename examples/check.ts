@@ -1,11 +1,11 @@
 import { assert } from "chai";
 import { is_atom } from "math-expression-tree";
-import { UndeclaredVars } from "../src/api/api";
+import { RenderConfig, UndeclaredVars } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
-import { infix } from "./infix";
 import { munge } from "./munge";
+import { render_as_string } from "./render_as_string";
 
-export interface CheckConfig {
+export interface CheckConfig extends Partial<RenderConfig> {
     syntaxKind: SyntaxKind;
     allowUndeclaredVars: UndeclaredVars;
 }
@@ -13,7 +13,7 @@ export interface CheckConfig {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function check(actual: string, expected: string, options: Partial<CheckConfig> = {}): void {
     const actualU = munge(actual, options);
-    const actualS = infix(actualU);
+    const actualS = render_as_string(actualU, options);
     if (actualS !== expected) {
         if (is_atom(actualU)) {
             // eslint-disable-next-line no-console

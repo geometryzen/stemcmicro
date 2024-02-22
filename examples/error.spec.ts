@@ -52,7 +52,7 @@ describe("error", function () {
     it("Operator cannot be applied ...", function () {
         check('true * 23', `"Operator '*' cannot be applied to types 'boolean' and 'rational'."`);
     });
-    it("...", function () {
+    it("Property 0 does not exist on type 1.", function () {
         check('foobar(23)', `"Property 'foobar' does not exist on type 'rational'."`);
     });
 });

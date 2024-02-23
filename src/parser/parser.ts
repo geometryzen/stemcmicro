@@ -1,9 +1,7 @@
 import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_str, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from "math-expression-atoms";
 import { pos_end_items_to_cons, U } from "math-expression-tree";
 import { stemcmicro_parse, STEMCParseOptions } from "../algebrite/stemc_parse";
-import { EigenmathErrorHandler } from "../api/api";
 import { EDNListParser, ParseConfig } from "../edn";
-import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eigenmath/eigenmath";
 import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
 import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
 
@@ -158,17 +156,11 @@ export function delegate_parse_script(sourceText: string, options?: ParseOptions
         case SyntaxKind.ClojureScript: {
             return clojurescript_parse(sourceText, clojurescript_parse_options(options));
         }
-        case SyntaxKind.Eigenmath: {
-            const emErrorHandler = new EigenmathErrorHandler();
-            const scriptVars = new ScriptVars({});
-            scriptVars.init();
-            const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_options(options), emErrorHandler, scriptVars);
-            return { trees, errors: emErrorHandler.errors };
-        }
         case SyntaxKind.PythonScript: {
             return pythonscript_parse(sourceText, python_parse_options(options));
         }
         default: {
+            // Handle Eigenmath and STEMCscript
             return stemcmicro_parse(sourceText, stemc_parse_options(options));
         }
     }
@@ -202,21 +194,6 @@ function clojurescript_parse_options(options?: ParseOptions): ClojureScriptParse
     else {
         return {
             lexicon: {}
-        };
-    }
-}
-
-function eigenmath_parse_options(options?: ParseOptions): EigenmathParseConfig {
-    if (options) {
-        return {
-            useCaretForExponentiation: !!options.useCaretForExponentiation,
-            useParenForTensors: !!options.useParenForTensors
-        };
-    }
-    else {
-        return {
-            useCaretForExponentiation: true,
-            useParenForTensors: true
         };
     }
 }

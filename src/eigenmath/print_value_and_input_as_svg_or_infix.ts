@@ -17,8 +17,6 @@ export type ShouldAnnotateFunction = (sym: Sym, value: U) => boolean;
  * 
  * PrintScriptHandler
  * 
- * PrintScriptContentHandler (DRY?)
- * 
  * eval_print       (Eigenmath)
  * 
  * eval_run         (Eigenmath)

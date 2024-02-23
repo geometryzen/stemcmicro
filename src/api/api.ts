@@ -4,15 +4,10 @@ import { Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
-import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
-import { InfixOptions, to_infix } from '../eigenmath/infixform';
-import { make_stack_draw } from '../eigenmath/make_stack_draw';
-import { make_stack_print } from '../eigenmath/make_stack_print';
-import { make_stack_run } from '../eigenmath/make_stack_run';
+import { EigenmathParseConfig } from '../eigenmath/eigenmath';
 import { ProgramEnv } from '../eigenmath/ProgramEnv';
 import { ProgramStack } from '../eigenmath/ProgramStack';
 import { render_svg } from '../eigenmath/render_svg';
-import { stack_infixform } from '../eigenmath/stack_infixform';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, directive_from_flag, ExtensionEnv } from '../env/ExtensionEnv';
 import { create_algebra_as_blades } from '../operators/algebra/create_algebra_as_tensor';
@@ -21,13 +16,11 @@ import { simplify } from '../operators/simplify/simplify';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, UOM_NAMES } from '../operators/uom/uom';
 import { clojurescript_parse, SyntaxKind } from '../parser/parser';
-import { PrintConfig } from '../print/print';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
 import { render_as_latex } from '../print/render_as_latex';
 import { render_as_sexpr } from '../print/render_as_sexpr';
-import { ProgrammingError } from '../programming/ProgrammingError';
 import { execute_script, transform_tree } from '../runtime/execute';
 import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from '../runtime/ns_script';
 import { env_term, init_env } from '../runtime/script_engine';
@@ -71,19 +64,6 @@ export function eigenmath_parse_config(options: Partial<ParseConfig>): Eigenmath
         useCaretForExponentiation: reify_boolean(options.useCaretForExponentiation, true),
         useParenForTensors: reify_boolean(options.useParenForTensors, true)
     };
-}
-
-export class EigenmathErrorHandler implements ScriptErrorHandler {
-    errors: Error[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    error(inbuf: string, start: number, end: number, err: unknown, $: ScriptVars): void {
-        if (err instanceof Error) {
-            this.errors.push(err);
-        }
-        else {
-            throw new ProgrammingError();
-        }
-    }
 }
 
 export interface RenderConfig {
@@ -667,219 +647,6 @@ class ClojureScriptEngine implements ExprEngine {
     }
 }
 
-function eigenmath_infix_config(config: Partial<RenderConfig>): InfixOptions {
-    const options: InfixOptions = {
-        useCaretForExponentiation: !!config.useCaretForExponentiation,
-        useParenForTensors: !!config.useParenForTensors
-    };
-    return options;
-}
-
-class ScriptVarsPrintConfig implements PrintConfig {
-    readonly #scriptVars: ScriptVars;
-    constructor(scriptVars: ScriptVars) {
-        this.#scriptVars = scriptVars;
-    }
-    handlerFor<T extends U>(expr: T): ExprHandler<T> {
-        return this.#scriptVars.handlerFor(expr);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    pushDirective(directive: number, value: number): void {
-        throw new Error('Method not implemented.');
-    }
-    popDirective(): void {
-        throw new Error('Method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getBinding(sym: Sym): U {
-        const key = sym.key();
-        switch (key) {
-            case 'printLeaveEAlone': {
-                return nil;
-            }
-            case 'printLeaveXAlone': {
-                return nil;
-            }
-            default: {
-                throw new Error(`getBinding ${sym}`);
-            }
-
-        }
-        // const binding = this.#scriptVars.getBinding(sym);
-        // console.lg("getBinding", `${sym}`);
-        // return binding;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getDirective(directive: number): number {
-        throw new Error('getDirective method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getSymbolPrintName(sym: Sym): string {
-        throw new Error('getSymbolPrintName method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    valueOf(expr: U): U {
-        throw new Error('valueOf method not implemented.');
-    }
-}
-
-class EigenmathEngine implements ExprEngine {
-    readonly #scriptVars: ScriptVars = new ScriptVars({});
-    constructor(options: Partial<EngineConfig>) {
-        // Determine whether options requested are compatible with Eigenmath.
-        // TODO: 
-        // const allowUndeclaredVars = allow_undeclared_vars(options, true);
-        this.#scriptVars.init();
-        this.#scriptVars.define_stack_function(create_sym("draw"), make_stack_draw(this.#scriptVars));
-        this.#scriptVars.define_stack_function(create_sym("infixform"), stack_infixform);
-        this.#scriptVars.define_stack_function(create_sym("print"), make_stack_print(this.#scriptVars));
-        this.#scriptVars.define_stack_function(create_sym("run"), make_stack_run(this.#scriptVars));
-        if (options.prolog) {
-            if (Array.isArray(options.prolog)) {
-                this.#scriptVars.executeProlog(options.prolog);
-            }
-            else {
-                throw new Error("prolog must be string[]");
-            }
-        }
-    }
-    defineUserSymbol(name: Sym): void {
-        this.#scriptVars.defineUserSymbol(name);
-    }
-    handlerFor<T extends U>(expr: T): ExprHandler<T> {
-        return this.#scriptVars.handlerFor(expr);
-    }
-    clearBindings(): void {
-        this.#scriptVars.clearBindings();
-    }
-    executeProlog(prolog: string[]): void {
-        this.#scriptVars.executeProlog(prolog);
-    }
-    executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[]; } {
-        const values: U[] = [];
-        const { trees, errors } = this.parse(sourceText);
-        for (let i = 0; i < trees.length; i++) {
-            const value = this.valueOf(trees[i]);
-            values.push(value);
-        }
-        return { values, errors, prints: [] };
-    }
-    defineFunction(name: Sym, lambda: LambdaExpr): void {
-        assert_sym(name);
-        this.#scriptVars.defineFunction(name, lambda);
-    }
-    parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
-        const emErrorHandler = new EigenmathErrorHandler();
-        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.#scriptVars);
-        return { trees, errors: emErrorHandler.errors };
-    }
-    parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
-        const emErrorHandler = new EigenmathErrorHandler();
-        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.#scriptVars);
-        const module = items_to_cons(create_sym('module'), ...trees);
-        return { module, errors: emErrorHandler.errors };
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getBinding(sym: Sym, target: Cons): U {
-        assert_sym(sym);
-        return get_binding(sym, target, this.#scriptVars);
-    }
-    hasBinding(sym: Sym, target: Cons): boolean {
-        assert_sym(sym);
-        const answer: boolean = this.#scriptVars.hasBinding(sym, target);
-        return answer;
-    }
-    setBinding(sym: Sym, binding: U): void {
-        set_binding(sym, binding, this.#scriptVars);
-    }
-    hasUserFunction(sym: Sym): boolean {
-        assert_sym(sym);
-        return this.#scriptVars.hasUserFunction(sym);
-    }
-    getUserFunction(sym: Sym): U {
-        assert_sym(sym);
-        return this.#scriptVars.getUserFunction(sym);
-    }
-    simplify(expr: U): U {
-        this.#scriptVars.push(expr);
-        eigenmath_simplify(this.#scriptVars, this.#scriptVars, this.#scriptVars);
-        return this.#scriptVars.pop();
-    }
-    valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U {
-        const retval = evaluate_expression(expr, this.#scriptVars, this.#scriptVars, this.#scriptVars);
-        if (stack) {
-            try {
-                stack.push(retval);
-                return nil;
-            }
-            finally {
-                retval.release();
-            }
-        }
-        else {
-            return retval;
-        }
-    }
-    renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
-        switch (config.format) {
-            case 'Ascii': {
-                // TODO
-                return to_infix(expr, this.#scriptVars, this.#scriptVars, eigenmath_infix_config(config));
-            }
-            case 'Human': {
-                // TODO
-                return to_infix(expr, this.#scriptVars, this.#scriptVars, eigenmath_infix_config(config));
-            }
-            case 'Infix': {
-                return to_infix(expr, this.#scriptVars, this.#scriptVars, eigenmath_infix_config(config));
-            }
-            case 'LaTeX': {
-                return render_as_latex(expr, new ScriptVarsPrintConfig(this.#scriptVars));
-            }
-            case 'SExpr': {
-                return to_sexpr(expr);
-            }
-            case 'SVG': {
-                return render_svg(expr, this.#scriptVars, { useImaginaryI: false, useImaginaryJ: false });
-            }
-            default: {
-                return to_infix(expr, this.#scriptVars, this.#scriptVars, eigenmath_infix_config(config));
-            }
-        }
-    }
-    release(): void {
-        // Do nothing (yet).
-    }
-    setUserFunction(name: Sym, userfunc: U): void {
-        set_user_function(name, userfunc, this.#scriptVars);
-    }
-    symbol(concept: Concept): Sym {
-        switch (concept) {
-            case Concept.Last: {
-                return LAST;
-            }
-            case Concept.TTY: {
-                return TTY;
-            }
-            default: {
-                throw new Error(`symbol(${concept}) not implemented.`);
-            }
-        }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    addAtomListener(listener: AtomListener): void {
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    removeAtomListener(listener: AtomListener): void {
-    }
-    addListener(listener: ExprEngineListener): void {
-        this.#scriptVars.addOutputListener(listener);
-    }
-    removeListener(listener: ExprEngineListener): void {
-        this.#scriptVars.removeOutputListener(listener);
-    }
-}
-
 class PythonEngine implements ExprEngine {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(options: Partial<EngineConfig>) {
@@ -978,14 +745,12 @@ class PythonEngine implements ExprEngine {
 export function create_engine(options: Partial<EngineConfig> = {}): ExprEngine {
     const engineKind = engine_kind_from_engine_options(options);
     switch (engineKind) {
+        case EngineKind.Eigenmath:
         case EngineKind.STEMCscript: {
             return new MicroEngine(options);
         }
         case EngineKind.ClojureScript: {
             return new ClojureScriptEngine(options);
-        }
-        case EngineKind.Eigenmath: {
-            return new EigenmathEngine(options);
         }
         case EngineKind.PythonScript: {
             return new PythonEngine(options);

@@ -1,13 +1,10 @@
 import { Adapter, assert_num, assert_tensor, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
-import { CompareFn, ExprContext, ExprHandler, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
+import { CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprContextFromProgram } from '../adapters/ExprContextFromProgram';
-import { make_stack } from '../adapters/make_stack';
 import { StackFunction } from '../adapters/StackFunction';
-import { ExprEngineListener, UndeclaredVars } from '../api/api';
-import { DirectiveStack } from '../env/DirectiveStack';
-import { EnvConfig } from '../env/EnvConfig';
+import { ExprEngineListener } from '../api/api';
 import { Directive } from '../env/ExtensionEnv';
 import { imu } from '../env/imu';
 import { StackU } from '../env/StackU';
@@ -15,23 +12,15 @@ import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings'
 import { predicate_return_value } from '../helpers/predicate_return_value';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { is_boo } from '../operators/boo/is_boo';
-import { eval_deg } from '../operators/degree/degree';
-import { flt_extension_builder } from '../operators/flt/flt_extension';
-import { hadamard, stack_hadamard } from '../operators/hadamard/stack_hadamard';
+import { hadamard } from '../operators/hadamard/stack_hadamard';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_lambda } from '../operators/lambda/is_lambda';
-import { mag, stack_mag } from '../operators/mag/stack_mag';
-import { rat_extension_builder } from '../operators/rat/rat_extension';
-import { stack_rotate } from '../operators/rotate/stack_rotate';
+import { mag } from '../operators/mag/stack_mag';
 import { assert_sym } from '../operators/sym/assert_sym';
-import { sym_extension_builder } from '../operators/sym/sym_extension';
-import { stack_uom } from '../operators/uom/stack_uom';
-import { SyntaxKind } from '../parser/parser';
 import { ProgrammingError } from '../programming/ProgrammingError';
 import { is_power } from '../runtime/helpers';
 import { flatten_items } from '../stack/flatten_items';
 import { assert_cons } from '../tree/cons/assert_cons';
-import { Lambda } from '../tree/lambda/Lambda';
 import { half, two } from '../tree/rat/Rat';
 import { bignum_equal } from './bignum_equal';
 import { bignum_itoa } from './bignum_itoa';
@@ -51,45 +40,22 @@ import { iszero } from './iszero';
 import { lengthf } from './lengthf';
 import { ProgramControl } from './ProgramControl';
 import { ProgramEnv } from './ProgramEnv';
-import { ProgramFrame } from './ProgramFrame';
 import { ProgramIO } from './ProgramIO';
 import { ProgramStack } from './ProgramStack';
 
 const ABS = native_sym(Native.abs);
-const ADJ = create_sym("adj");
-const ALGEBRA = create_sym("algebra");
-const AND = create_sym("and");
 const ARCCOS = native_sym(Native.arccos);
 const ARCCOSH = native_sym(Native.arccosh);
 const ARCSIN = native_sym(Native.arcsin);
 const ARCSINH = native_sym(Native.arcsinh);
 const ARCTAN = native_sym(Native.arctan);
 const ARCTANH = native_sym(Native.arctanh);
-const ARG = native_sym(Native.arg);
-const BINDING = create_sym("binding");
 const CEILING = create_sym("ceiling");
-const CHECK = create_sym("check");
-const CIRCEXP = create_sym("circexp");
-const CLEAR = create_sym("clear");
-const CLOCK = create_sym("clock");
-const COFACTOR = create_sym("cofactor");
-const CONJ = native_sym(Native.conj);
-const CONTRACT = create_sym("contract");
 const COS = native_sym(Native.cos);
 const COSH = native_sym(Native.cosh);
-const DEFINT = create_sym("defint");
-const DENOMINATOR = create_sym("denominator");
 const DERIVATIVE = create_sym("derivative");
-const DET = create_sym("det");
-const DIM = create_sym("dim");
-const DO = create_sym("do");
-const DOT = create_sym("dot");
-const EIGENVEC = create_sym("eigenvec");
 const ERF = create_sym("erf");
 const ERFC = create_sym("erfc");
-const EVAL = create_sym("eval");
-const EXIT = create_sym("exit");
-const EXP = native_sym(Native.exp);
 const EXPCOS = create_sym("expcos");
 const EXPCOSH = create_sym("expcosh");
 const EXPSIN = create_sym("expsin");
@@ -97,60 +63,21 @@ const EXPSINH = create_sym("expsinh");
 const EXPTAN = create_sym("exptan");
 const EXPTANH = create_sym("exptanh");
 const FACTORIAL = create_sym("factorial");
-const FLOAT = create_sym("float");
 const FLOOR = create_sym("floor");
-const FOR = create_sym("for");
-const HADAMARD = create_sym("hadamard");
-const IMAG = native_sym(Native.imag);
-const INNER = create_sym("inner");
 const INTEGRAL = create_sym("integral");
-const INV = create_sym("inv");
-const KRONECKER = create_sym("kronecker");
 const LOG = native_sym(Native.log);
-const MAG = create_sym("mag");
-const MINOR = create_sym("minor");
-const MINORMATRIX = create_sym("minormatrix");
 const MOD = create_sym("mod");
-const NOEXPAND = create_sym("noexpand");
-const NOT = create_sym("not");
-const NROOTS = create_sym("nroots");
-const NUMBER = create_sym("number");
-const NUMERATOR = create_sym("numerator");
-const OR = create_sym("or");
-const POLAR = native_sym(Native.polar);
-const PREFIXFORM = create_sym("prefixform");
-const PRODUCT = create_sym("product");
-const QUOTE = create_sym("quote");
-const RANK = create_sym("rank");
-const RATIONALIZE = create_sym("rationalize");
-const REAL = native_sym(Native.real);
-const RECT = native_sym(Native.rect);
-const ROOTS = create_sym("roots");
-const ROTATE = create_sym("rotate");
 const SGN = create_sym("sgn");
-const SIMPLIFY = create_sym("simplify");
 const SIN = native_sym(Native.sin);
 const SINH = native_sym(Native.sinh);
-const SQRT = create_sym("sqrt");
-const STATUS = create_sym("status");
-const STOP = create_sym("stop");
-const SUBST = create_sym("subst");
-const SUM = create_sym("sum");
 const TAN = native_sym(Native.tan);
 const TANH = native_sym(Native.tanh);
-const TAU = native_sym(Native.tau);
-const TAYLOR = create_sym("taylor");
-const TEST = create_sym("test");
 const TESTEQ = create_sym("testeq");
 const TESTGE = create_sym("testge");
 const TESTGT = create_sym("testgt");
 const TESTLE = create_sym("testle");
 const TESTLT = create_sym("testlt");
-const TRANSPOSE = create_sym("transpose");
 export const TTY = create_sym("tty");
-const UNIT = create_sym("unit");
-const UOM = create_sym("uom");
-const ZERO = create_sym("zero");
 
 const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
@@ -169,11 +96,6 @@ const TRACE = create_sym("trace");
  * 'd'
  */
 const D_LOWER = create_sym("d");
-/**
- * 'i'
- */
-const I_LOWER = create_sym("i");
-const J_LOWER = create_sym("j");
 const X_LOWER = create_sym("x");
 
 const DOLLAR_A = create_sym("$a");
@@ -464,6 +386,7 @@ function cmp(lhs: U, rhs: U): Sign {
     return SIGN_EQ;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function cmp_factors(lhs: U, rhs: U): Sign {
 
     const a = order_factor(lhs);
@@ -1354,6 +1277,7 @@ function sort_terms(start: number, ctrl: ProgramControl, $: ProgramStack): void 
     $.concat(sorted);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function make_terms_compare_fn(compareFactors: CompareFn): CompareFn {
     return function (lhs: U, rhs: U): Sign {
 
@@ -12698,53 +12622,6 @@ export class PrintScriptErrorHandler implements ScriptErrorHandler {
     }
 }
 
-/**
- * 
- * @param sourceText 
- * @param config 
- * @param errorHandler 
- * @param $ The scripting context, assumed to have been initialized.
- * @returns 
- */
-export function parse_eigenmath_script(sourceText: string, config: EigenmathParseConfig, errorHandler: ScriptErrorHandler, $: ScriptVars): U[] {
-    const exprs: U[] = [];
-    try {
-        $.inbuf = sourceText;
-
-        let k = 0;
-
-        for (; ;) {
-
-            k = scan_inbuf(k, $, $, $, $, config);
-
-            if (k === 0) {
-                break; // end of input
-            }
-
-            const input = pop($);
-            exprs.push(input);
-        }
-    }
-    catch (errmsg) {
-        if (errmsg instanceof Error) {
-            if ($.trace1 < $.trace2 && $.inbuf[$.trace2 - 1] === '\n') {
-                $.trace2--;
-            }
-            errorHandler.error($.inbuf, $.trace1, $.trace2, errmsg, $);
-        }
-        else if ((errmsg as string).length > 0) {
-            if ($.trace1 < $.trace2 && $.inbuf[$.trace2 - 1] === '\n') {
-                $.trace2--;
-            }
-            errorHandler.error($.inbuf, $.trace1, $.trace2, errmsg, $);
-        }
-    }
-    finally {
-        // term?
-    }
-    return exprs;
-}
-
 const T_INTEGER = 1001;
 const T_DOUBLE = 1002;
 const T_SYMBOL = 1003;
@@ -12758,7 +12635,7 @@ const T_EXPONENTIATION = 1010;
 const T_END = 1011;
 
 /**
- * TODO: Push into ScriptVars?
+ *
  */
 let scanning_integrals: boolean = false;
 let instring: string;
@@ -13525,388 +13402,11 @@ export function broadcast(text: string, io: Pick<ProgramIO, 'listeners'>): void 
     }
 }
 
-interface ScriptVarsConfig {
-
-}
-
-export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, ProgramStack, ProgramFrame, ProgramIO {
-    inbuf: string = "";
-    /**
-     * The start index into inbuf.
-     */
-    trace1: number = -1;
-    /**
-     * The end index into inbuf.
-     */
-    trace2: number = -1;
-    readonly #stack = new StackU();
-    readonly #bindings: Map<string, U> = new Map();
-    readonly #stackFunctions: Map<string, StackFunction> = new Map();
-    usrfunc: { [key: string]: U } = {};
-
-    readonly #directiveStack: DirectiveStack = new DirectiveStack();
-    listeners: ExprEngineListener[] = [];
-    readonly #prolog: string[] = [];
-    readonly #userFunctions: Map<string, UserFunction> = new Map();
-    readonly #config: Readonly<EnvConfig>;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(config: Readonly<ScriptVarsConfig>) {
-        this.#config = {
-            allowUndeclaredVars: UndeclaredVars.Nil,
-            assumes: {},
-            dependencies: [],
-            disable: [],
-            enable: [],
-            noOptimize: false,
-            useCaretForExponentiation: false,
-            useDerivativeShorthandLowerD: false,
-            useIntegersForPredicates: false,
-            useParenForTensors: false,
-            syntaxKind: SyntaxKind.STEMCscript,
-        };
-        this.defineUserSymbol(MATH_PI);
-        this.defineUserSymbol(MATH_E);
-
-        this.defineUserSymbol(LAST);
-        this.defineUserSymbol(TRACE);
-        this.defineUserSymbol(TTY);
-
-        this.defineUserSymbol(D_LOWER);
-        this.defineUserSymbol(I_LOWER);
-        this.defineUserSymbol(J_LOWER);
-        this.defineUserSymbol(X_LOWER);
-
-        this.defineUserSymbol(DOLLAR_A);
-        this.defineUserSymbol(DOLLAR_B);
-        this.defineUserSymbol(DOLLAR_X);
-
-        this.defineUserSymbol(ARG1);
-        this.defineUserSymbol(ARG2);
-        this.defineUserSymbol(ARG3);
-        this.defineUserSymbol(ARG4);
-        this.defineUserSymbol(ARG5);
-        this.defineUserSymbol(ARG6);
-        this.defineUserSymbol(ARG7);
-        this.defineUserSymbol(ARG8);
-        this.defineUserSymbol(ARG9);
-
-        this.define_stack_function(ABS, stack_abs);
-        this.define_stack_function(ADD, stack_add);
-        this.define_stack_function(ADJ, stack_adj);
-        this.define_stack_function(ALGEBRA, stack_algebra);
-        this.define_stack_function(ARCCOS, stack_arccos);
-        this.define_stack_function(ARCCOSH, stack_arccosh);
-        this.define_stack_function(ARCSIN, stack_arcsin);
-        this.define_stack_function(ARCSINH, stack_arcsinh);
-        this.define_stack_function(ARCTAN, stack_arctan);
-        this.define_stack_function(ARCTANH, stack_arctanh);
-        this.define_stack_function(AND, stack_and);
-        this.define_stack_function(ARG, stack_arg);
-        this.define_stack_function(BINDING, stack_binding);
-        this.define_stack_function(CEILING, stack_ceiling);
-        this.define_stack_function(CHECK, stack_check);
-        this.define_stack_function(CIRCEXP, stack_circexp);
-        this.define_stack_function(CLEAR, stack_clear);
-        this.define_stack_function(CLOCK, stack_clock);
-        this.define_stack_function(COFACTOR, stack_cofactor);
-        this.define_stack_function(CONJ, stack_conj);
-        this.define_stack_function(CONTRACT, stack_contract);
-        this.define_stack_function(COS, stack_cos);
-        this.define_stack_function(COSH, stack_cosh);
-        this.define_stack_function(DEFINT, stack_defint);
-        this.define_stack_function(native_sym(Native.deg), make_stack(eval_deg));
-        this.define_stack_function(DENOMINATOR, stack_denominator);
-        this.define_stack_function(DET, stack_det);
-        this.define_stack_function(DERIVATIVE, stack_derivative);
-        this.define_stack_function(DIM, stack_dim);
-        this.define_stack_function(DO, stack_do);
-        this.define_stack_function(DOT, stack_dot);
-        this.define_stack_function(EIGENVEC, stack_eigenvec);
-        this.define_stack_function(ERF, stack_erf);
-        this.define_stack_function(ERFC, stack_erfc);
-        this.define_stack_function(EVAL, stack_eval);
-        this.define_stack_function(EXIT, stack_exit);
-        this.define_stack_function(EXP, stack_exp);
-        this.define_stack_function(EXPCOS, stack_expcos);
-        this.define_stack_function(EXPCOSH, stack_expcosh);
-        this.define_stack_function(EXPSIN, stack_expsin);
-        this.define_stack_function(EXPSINH, stack_expsinh);
-        this.define_stack_function(EXPTAN, stack_exptan);
-        this.define_stack_function(EXPTANH, stack_exptanh);
-        this.define_stack_function(FACTORIAL, stack_factorial);
-        this.define_stack_function(FLOAT, stack_float);
-        this.define_stack_function(FLOOR, stack_floor);
-        this.define_stack_function(INTEGRAL, stack_integral);
-        this.define_stack_function(LOG, stack_log);
-        this.define_stack_function(native_sym(Native.multiply), stack_multiply);
-        this.define_stack_function(native_sym(Native.pow), stack_power);
-        this.define_stack_function(ROTATE, stack_rotate);
-        this.define_stack_function(INDEX, stack_index);
-        this.define_stack_function(ASSIGN, stack_assign);
-        this.define_stack_function(SIN, stack_sin);
-        this.define_stack_function(SINH, stack_sinh);
-        this.define_stack_function(SQRT, stack_sqrt);
-        this.define_stack_function(TAN, stack_tan);
-        this.define_stack_function(TANH, stack_tanh);
-        this.define_stack_function(TAU, stack_tau);
-        this.define_stack_function(TESTEQ, stack_testeq);
-        this.define_stack_function(TESTGE, stack_testge);
-        this.define_stack_function(TESTGT, stack_testgt);
-        this.define_stack_function(TESTLE, stack_testle);
-        this.define_stack_function(TESTLT, stack_testlt);
-
-        this.define_stack_function(FOR, stack_for);
-        this.define_stack_function(HADAMARD, stack_hadamard);
-        this.define_stack_function(IMAG, stack_imag);
-        this.define_stack_function(INNER, stack_inner);
-        this.define_stack_function(INV, stack_inv);
-        this.define_stack_function(KRONECKER, stack_kronecker);
-        this.define_stack_function(MAG, stack_mag);
-        this.define_stack_function(MINOR, stack_minor);
-        this.define_stack_function(MINORMATRIX, stack_minormatrix);
-        this.define_stack_function(MOD, stack_mod);
-        this.define_stack_function(NOEXPAND, stack_noexpand);
-        this.define_stack_function(NOT, stack_not);
-        this.define_stack_function(NROOTS, stack_nroots);
-        this.define_stack_function(NUMBER, stack_number);
-        this.define_stack_function(NUMERATOR, stack_numerator);
-        this.define_stack_function(OR, stack_or);
-        this.define_stack_function(native_sym(Native.outer), stack_outer);
-        this.define_stack_function(POLAR, stack_polar);
-        this.define_stack_function(PREFIXFORM, stack_prefixform);
-        this.define_stack_function(PRODUCT, stack_product);
-        this.define_stack_function(QUOTE, stack_quote);
-        this.define_stack_function(RANK, stack_rank);
-        this.define_stack_function(RATIONALIZE, stack_rationalize);
-        this.define_stack_function(REAL, stack_real);
-        this.define_stack_function(RECT, stack_rect);
-        this.define_stack_function(ROOTS, stack_roots);
-        this.define_stack_function(SGN, stack_sgn);
-        this.define_stack_function(SIMPLIFY, stack_simplify);
-        this.define_stack_function(STATUS, stack_status);
-        this.define_stack_function(STOP, stack_stop);
-        this.define_stack_function(SUBST, stack_subst);
-        this.define_stack_function(SUM, stack_sum);
-        this.define_stack_function(TAYLOR, stack_taylor);
-        this.define_stack_function(TEST, stack_test);
-        this.define_stack_function(TRANSPOSE, stack_transpose);
-        this.define_stack_function(UNIT, stack_unit);
-        this.define_stack_function(UOM, stack_uom);
-        this.define_stack_function(ZERO, stack_zero);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getSymbolPrintName(sym: Sym): string {
-        throw new Error('Method not implemented.');
-    }
-    init(): void {
-        this.#directiveStack.push(Directive.depth, 0);
-        this.#directiveStack.push(Directive.drawing, 0);
-        this.#directiveStack.push(Directive.expanding, 1);
-        this.#directiveStack.push(Directive.nonstop, 0);
-
-        this.#bindings.clear();
-        this.usrfunc = {};
-    }
-    clearBindings(): void {
-        this.#bindings.clear();
-        this.usrfunc = {};
-    }
-    compareFn(opr: Sym): CompareFn {
-        if (opr.equalsSym(ADD)) {
-            return make_terms_compare_fn(this.compareFn(MULTIPLY));
-        }
-        else if (opr.equalsSym(MULTIPLY)) {
-            return cmp_factors;
-        }
-        else {
-            throw new Error(`ScriptVars.compareFn ${opr} method not implemented.`);
-        }
-    }
-    executeProlog(script: string[]): void {
-        // The configuration should match the syntax in the initialization script.
-        const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
-        const n = script.length;
-
-        for (let i = 0; i < n; i++) {
-            scan(script[i], 0, this, this, this, this, config);
-            value_of(this, this, this);
-            this.pop().release();
-        }
-    }
-    defineUserSymbol(sym: Sym): void {
-        this.#userFunctions.set(sym.key(), evaluate_user_symbol);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getBinding(opr: Sym, target: Cons): U {
-        // console.lg("ScriptVars.getBinding", `${opr}`, `${target}`);
-        assert_sym(opr);
-        const key = opr.key();
-        if (this.#bindings.has(key)) {
-            return this.#bindings.get(key)!;
-        }
-        else if (this.#stackFunctions.has(key)) {
-            const stackFunction: StackFunction = this.#stackFunctions.get(key)!;
-            const bodyExpr = make_lambda_expr_from_stack_function(opr, stackFunction);
-            return new Lambda(bodyExpr, "???");
-        }
-        else {
-            return nil;
-        }
-    }
-    getUserFunction(sym: Sym): U {
-        assert_sym(sym);
-        return this.usrfunc[sym.key()];
-    }
-    handlerFor<T extends U>(expr: T): ExprHandler<T> {
-        if (is_atom(expr)) {
-            switch (expr.type) {
-                // FIXME: casting
-                case 'number': return flt_extension_builder.create(this.#config) as unknown as ExprHandler<T>;
-                case 'rational': return rat_extension_builder.create(this.#config) as unknown as ExprHandler<T>;
-                case 'symbol': return sym_extension_builder.create(this.#config) as unknown as ExprHandler<T>;
-            }
-        }
-        throw new Error(`ScriptVars.handlerFor ${expr} method not implemented.`);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    hasBinding(opr: Sym, target: Cons): boolean {
-        assert_sym(opr);
-        const key = opr.key();
-        if (this.#bindings.has(key)) {
-            return true;
-        }
-        else if (this.#stackFunctions.has(key)) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    hasUserFunction(sym: Sym): boolean {
-        return this.#userFunctions.has(sym.key());
-    }
-    setBinding(opr: Sym, binding: U): void {
-        this.#bindings.set(opr.key(), binding);
-    }
-    setUserFunction(sym: Sym, usrfunc: U): void {
-        this.usrfunc[sym.key()] = usrfunc;
-    }
-    valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U {
-        // console.lg("ScriptVars.valueOf");
-        if (stack) {
-            push(expr, this);
-            value_of(this, this, this);
-            const retval = pop(this);
-            try {
-                stack.push(retval);
-                return nil;
-            }
-            finally {
-                retval.release();
-            }
-        }
-        else {
-            push(expr, this);
-            value_of(this, this, this);
-            return pop(this);
-        }
-    }
-    define_stack_function(sym: Sym, func: StackFunction): void {
-        this.#stackFunctions.set(sym.key(), func);
-    }
-    /**
-     * 
-     */
-    defineFunction(name: Sym, lambda: LambdaExpr): void {
-        assert_sym(name);
-        const handler: StackFunction = (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void => {
-            const adapter = new ExprContextFromProgram(env, ctrl, $);
-            const retval = lambda(assert_cons(expr).argList, adapter);
-            push(retval, $);
-        };
-        this.define_stack_function(name, handler);
-    }
-    addOutputListener(listener: ExprEngineListener): void {
-        this.listeners.push(listener);
-    }
-    removeOutputListener(listener: ExprEngineListener): void {
-        const index = this.listeners.findIndex((value) => value === listener);
-        this.listeners.splice(index, 1);
-    }
-    get length(): number {
-        return this.#stack.length;
-    }
-    dupl(): void {
-        this.#stack.dupl();
-    }
-    concat(exprs: U[]): void {
-        for (let i = 0; i < exprs.length; i++) {
-            this.#stack.push(exprs[i]);
-        }
-    }
-    get isatom(): boolean {
-        return this.#stack.isatom;
-    }
-    get iscons(): boolean {
-        return this.#stack.iscons;
-    }
-    peek(): U {
-        const x = this.pop();
-        this.push(x);
-        return x;
-    }
-    pop(): U {
-        return this.#stack.pop();
-    }
-    push(expr: U): void {
-        this.#stack.push(expr);
-    }
-    getAt(i: number): U {
-        return this.#stack.getAt(i);
-    }
-    head(): void {
-        this.#stack.head();
-    }
-    rest(): void {
-        this.#stack.rest();
-    }
-    rotateL(n: number): void {
-        this.#stack.rotateL(n);
-    }
-    rotateR(n: number): void {
-        this.#stack.rotateR(n);
-    }
-    swap(): void {
-        this.#stack.swap();
-    }
-    setAt(i: number, expr: U): void {
-        this.#stack.setAt(i, expr);
-    }
-    splice(start: number, deleteCount?: number): U[] {
-        // Beware! An explicit undefined gets converted to zero.
-        if (typeof deleteCount === 'number') {
-            return this.#stack.splice(start, deleteCount);
-        }
-        else {
-            return this.#stack.splice(start);
-        }
-    }
-    getDirective(directive: number): number {
-        return this.#directiveStack.get(directive);
-    }
-    pushDirective(directive: number, value: number): void {
-        this.#directiveStack.push(directive, value);
-    }
-    popDirective(): void {
-        this.#directiveStack.pop();
-    }
-}
-
 const zero: Rat = create_int(0);
 const one: Rat = create_int(1);
 const minusone: Rat = create_int(-1);
 
-function make_lambda_expr_from_stack_function(sym: Sym, stackFunction: StackFunction): LambdaExpr {
+export function make_lambda_expr_from_stack_function(sym: Sym, stackFunction: StackFunction): LambdaExpr {
     return function (argList: Cons, ctxt: ExprContext): U {
         const $ = new StackU();
         stackFunction(create_cons(sym, argList), ctxt, ctxt, $);

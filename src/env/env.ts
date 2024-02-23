@@ -335,6 +335,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             throw new SystemError(`No matching operator for hash ${hash}`);
         }
         else {
+            // eslint-disable-next-line no-console
+            console.log(new Error().stack); // Use stack trace to determine the pathway to this point in the code.
             throw new ProgrammingError(`Missing Extension for atom type ${atom.type}.`);
         }
     }

@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Sym } from "math-expression-atoms";
+import { create_sym, Sym } from "math-expression-atoms";
 import { ExprContext, ExprHandler } from "math-expression-context";
-import { Atom, Cons, is_atom, U } from "math-expression-tree";
+import { Atom, Cons, is_atom, nil, U } from "math-expression-tree";
 import { ExprHandlerBuilder } from "../api/api";
 import { EnvConfig } from "../env/EnvConfig";
 import { Extension, ExtensionBuilder, ExtensionEnv } from "../env/ExtensionEnv";
+import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { ProgrammingError } from "../programming/ProgrammingError";
 
 class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
@@ -49,20 +50,26 @@ class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
     evaluate(opr: T, argList: Cons, $: ExtensionEnv): [number, U] {
         throw new Error("evaluate method not implemented.");
     }
-    transform(expr: T, $: ExtensionEnv): [number, U] {
-        throw new Error("transform method not implemented.");
+    transform(expr: T, env: ExprContext): [number, U] {
+        const newExpr = this.valueOf(expr, env);
+        try {
+            return wrap_as_transform(newExpr, expr);
+        }
+        finally {
+            newExpr.release();
+        }
     }
-    valueOf(expr: T, $: ExtensionEnv): U {
-        throw new Error("valueOf method not implemented.");
+    valueOf(expr: T, env: ExprContext): U {
+        return this.dispatch(expr, create_sym("valueof"), nil, env);
     }
     binL(lhs: T, opr: Sym, rhs: U, env: ExprContext): U {
-        throw new Error("bunL method not implemented.");
+        throw new Error("binL method not implemented.");
     }
     binR(rhs: T, opr: Sym, lhs: U, env: ExprContext): U {
         throw new Error("binR method not implemented.");
     }
     dispatch(expr: T, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("dispatch method not implemented.");
+        return this.handler.dispatch(expr, opr, argList, env);
     }
     subst(expr: T, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U {
         throw new Error("subst method not implemented.");

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { is_lambda, Lambda, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
-import { Cons, U } from "math-expression-tree";
+import { Cons, nil, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";
 import { HASH_LAMBDA } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
@@ -51,10 +51,10 @@ class LambdaExtension implements Extension<Lambda> {
         return expr;
     }
     binL(lhs: Lambda, opr: Sym, rhs: U, env: ExprContext): U {
-        throw new Error("LambdaExtension.binL method not implemented.");
+        return nil;
     }
     binR(rhs: Lambda, opr: Sym, lhs: U, env: ExprContext): U {
-        throw new Error("LambdaExtension.binR method not implemented.");
+        return nil;
     }
     dispatch(expr: Lambda, opr: Sym, argList: Cons, env: ExprContext): U {
         throw new Error("LambdaExtension.dispatch method not implemented.");

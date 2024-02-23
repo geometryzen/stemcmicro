@@ -1,7 +1,7 @@
 import { Adapter, assert_num, assert_sym, assert_tensor, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, imu, is_blade, is_boo, is_flt, is_imu, is_lambda, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
-import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
+import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprContextFromProgram } from '../adapters/ExprContextFromProgram';
 import { StackFunction } from '../adapters/StackFunction';
 import { ExprEngineListener } from '../api/api';
@@ -15,7 +15,6 @@ import { mag } from '../operators/mag/stack_mag';
 import { ProgrammingError } from '../programming/ProgrammingError';
 import { is_power } from '../runtime/helpers';
 import { flatten_items } from '../stack/flatten_items';
-import { assert_cons } from '../tree/cons/assert_cons';
 import { half, two } from '../tree/rat/Rat';
 import { bignum_equal } from './bignum_equal';
 import { bignum_itoa } from './bignum_itoa';
@@ -620,20 +619,28 @@ function compatible_dimensions(p1: U, p2: U): 0 | 1 {
 /**
  * Used in simplify functions to assess progress.
  * complexity(Atom) => 1
- * complexity(Nil)  => 1
+ * complexity(Nil)  => 0
  * complexity(Cons) => Sum of complexity of each item.
  */
 export function complexity(expr: U): number {
-    let n = 1;
-    if (is_cons(expr)) {
-        let xs: Cons = expr;
-        while (is_cons(xs)) {
-            const head = xs.head;
-            n += complexity(head);
-            xs = xs.rest;
+    if (is_nil(expr)) {
+        return 0;
+    }
+    else if (is_cons(expr)) {
+        const head = expr.head;
+        const rest = expr.rest;
+        try {
+            return complexity(head) + complexity(rest);
+        }
+        finally {
+            head.release();
+            rest.release();
         }
     }
-    return n;
+    else {
+        // Atoms have complexity of 1
+        return 1;
+    }
 }
 
 /**

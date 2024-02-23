@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Lambda, Sym } from "math-expression-atoms";
+import { is_lambda, Lambda, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, mkbuilder } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";
 import { HASH_LAMBDA } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
@@ -13,8 +13,6 @@ class LambdaExtension implements Extension<Lambda> {
     get name(): string {
         return 'LambdaExtension';
     }
-    phases?: number | undefined;
-    dependencies?: FEATURE[] | undefined;
     iscons(): this is Extension<Cons> {
         return false;
     }
@@ -22,7 +20,7 @@ class LambdaExtension implements Extension<Lambda> {
         throw new ProgrammingError();
     }
     isKind(expr: U, $: ExtensionEnv): boolean {
-        throw new Error("LambdaExtension.isKind method not implemented.");
+        return is_lambda(expr);
     }
     toHumanString(expr: Lambda, $: ExprContext): string {
         throw new Error("LambdaExtension.toHumanString method not implemented.");

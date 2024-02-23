@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
-import { Atom, Cons, U } from "math-expression-tree";
+import { Atom, Cons, nil, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, TFLAG_NONE } from "./ExtensionEnv";
 
 export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
@@ -50,10 +50,16 @@ export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
         throw new Error("valueOf Method not implemented.");
     }
     binL(lhs: A, opr: Sym, rhs: U, env: ExprContext): U {
-        throw new Error("binL Method not implemented.");
+        // eslint-disable-next-line no-console
+        console.log(`UnknownAtomExtension.binL lhs => ${lhs} opr => ${opr} rhs => ${rhs}`);
+        // We'll not participate in operator overloading.
+        return nil;
     }
     binR(rhs: A, opr: Sym, lhs: U, env: ExprContext): U {
-        throw new Error("binR Method not implemented.");
+        // eslint-disable-next-line no-console
+        console.log(`UnknownAtomExtension.binR rhs => ${rhs} opr => ${opr} lhs => ${lhs}`);
+        // We'll not participate in operator overloading.
+        return nil;
     }
     dispatch(expr: A, opr: Sym, argList: Cons, env: ExprContext): U {
         throw new Error("dispatch Method not implemented.");

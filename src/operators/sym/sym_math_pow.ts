@@ -7,7 +7,7 @@ import { EnvConfig } from "../../env/EnvConfig";
 import { Directive, Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 
-const MATH_POW = native_sym(Native.pow);
+const POW = native_sym(Native.pow);
 
 /**
  * 
@@ -20,14 +20,10 @@ class SymMathPow implements Extension<Sym> {
     dependencies?: FEATURE[] | undefined;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binL(lhs: Sym, opr: Sym, rhs: U, env: ExprContext): U {
-        // eslint-disable-next-line no-console
-        console.log(`${this.name}.binL ${lhs} ${opr} ${rhs}`);
         return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binR(rhs: Sym, opr: Sym, lhs: U, env: ExprContext): U {
-        // eslint-disable-next-line no-console
-        console.log(`${this.name}.binR ${rhs} ${opr} ${lhs}`);
         return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -57,7 +53,7 @@ class SymMathPow implements Extension<Sym> {
         return [this.isKind(expr) ? TFLAG_HALT : TFLAG_NONE, expr];
     }
     isKind(arg: U): arg is Sym {
-        return is_sym(arg) && MATH_POW.equals(arg);
+        return is_sym(arg) && POW.equals(arg);
     }
     subst(expr: Sym, oldExpr: U, newExpr: U): U {
         if (expr.equals(oldExpr)) {
@@ -90,7 +86,7 @@ class SymMathPow implements Extension<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Sym, $: ExprContext): string {
-        return $.getSymbolPrintName(MATH_POW);
+        return $.getSymbolPrintName(POW);
     }
     valueOf(expr: Sym): Sym {
         return assert_sym(this.transform(expr)[1]);

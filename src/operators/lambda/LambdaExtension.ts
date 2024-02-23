@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { is_lambda, Lambda, Sym } from "math-expression-atoms";
+import { create_sym, is_lambda, Lambda, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";
 import { HASH_LAMBDA } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
@@ -56,8 +57,8 @@ class LambdaExtension implements Extension<Lambda> {
     binR(rhs: Lambda, opr: Sym, lhs: U, env: ExprContext): U {
         return nil;
     }
-    dispatch(expr: Lambda, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("LambdaExtension.dispatch method not implemented.");
+    dispatch(target: Lambda, opr: Sym, argList: Cons, env: ExprContext): U {
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     subst(expr: Lambda, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U {
         throw new Error("LambdaExtension.subst method not implemented.");

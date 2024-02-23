@@ -5,7 +5,7 @@ import { is_native, Native } from "math-expression-native";
 import { cons, Cons, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Extension, ExtensionEnv, FEATURE, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, TFLAGS } from "../../env/ExtensionEnv";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
 /**
@@ -16,8 +16,6 @@ export abstract class AbstractKeywordExtension implements Extension<Sym> {
     constructor(keyword: Sym, readonly config: Readonly<EnvConfig>) {
         this.#keyword = assert_sym(keyword);
     }
-    phases?: number | undefined;
-    dependencies?: FEATURE[] | undefined;
     binL(expr: Sym, opr: Sym, rhs: U, env: ExprContext): U {
         return nil;
     }
@@ -45,7 +43,7 @@ export abstract class AbstractKeywordExtension implements Extension<Sym> {
     operator(): never {
         throw new ProgrammingError();
     }
-    isKind(expr: U, $: ExtensionEnv): expr is Sym {
+    isKind(expr: U): expr is Sym {
         if (is_sym(expr)) {
             return expr.equalsSym(this.#keyword);
         }

@@ -6,6 +6,7 @@ export {
     EngineConfig,
     ExprEngine,
     ExprEngineListener,
+    ExprHandlerBuilder,
     ParseConfig,
     RenderConfig,
     UndeclaredVars

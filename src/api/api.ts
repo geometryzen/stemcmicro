@@ -1,7 +1,8 @@
 import { Boo, Cell, create_int, create_rat, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { ExprHandler, LambdaExpr } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
-import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
+import { Atom, Cons, items_to_cons, nil, U } from 'math-expression-tree';
+import { AtomExtensionBuilderFromExprHandlerBuilder } from '../adapters/AtomExtensionBuilderFromExprHandlerBuilder';
 import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig } from '../eigenmath/eigenmath';
@@ -85,11 +86,16 @@ export interface ExprEngineListener {
     output(output: string): void;
 }
 
+export interface ExprHandlerBuilder<T extends U> {
+    create(): ExprHandler<T>;
+}
+
 export interface ExprEngine extends ProgramEnv {
     clearBindings(): void;
     executeProlog(prolog: string[]): void;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
 
+    defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void;
     defineFunction(name: Sym, lambda: LambdaExpr): void;
 
     parse(sourceText: string, options?: Partial<ParseConfig>): { trees: U[], errors: Error[] };
@@ -375,6 +381,10 @@ class MicroEngine implements ExprEngine {
         assert_sym(sym);
         return this.#env.getUserFunction(sym);
     }
+    defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void {
+        const builderX = new AtomExtensionBuilderFromExprHandlerBuilder<T>(builder, type, guard);
+        this.#env.defineExtension(builderX);
+    }
     defineFunction(name: Sym, lambda: LambdaExpr): void {
         assert_sym(name);
         const match = items_to_cons(name);
@@ -522,6 +532,10 @@ class ClojureScriptEngine implements ExprEngine {
     getUserFunction(sym: Sym): U {
         assert_sym(sym);
         return this.#env.getUserFunction(sym);
+    }
+    defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void {
+        const builderX = new AtomExtensionBuilderFromExprHandlerBuilder<T>(builder, type, guard);
+        this.#env.defineExtension(builderX);
     }
     defineFunction(name: Sym, lambda: LambdaExpr): void {
         assert_sym(name);
@@ -682,6 +696,10 @@ class PythonEngine implements ExprEngine {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getUserFunction(sym: Sym): U {
         throw new Error('getUserFunction method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void {
+        throw new Error('defineExprHandler method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     defineFunction(name: Sym, lambda: LambdaExpr): void {

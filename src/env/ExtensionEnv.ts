@@ -486,18 +486,18 @@ export interface Extension<T extends U> extends ExprHandler<T> {
     readonly dependencies?: FEATURE[];
     iscons(): this is Extension<Cons>;
     operator(): Sym;
-    isKind(expr: U, $: ExtensionEnv): boolean;
-    toHumanString(expr: T, $: ExprContext): string;
-    toInfixString(expr: T, $: ExprContext): string;
-    toLatexString(expr: T, $: ExprContext): string;
-    toListString(expr: T, $: ExprContext): string;
+    isKind(expr: U, env: ExprContext): boolean;
+    toHumanString(expr: T, env: ExprContext): string;
+    toInfixString(expr: T, env: ExprContext): string;
+    toLatexString(expr: T, env: ExprContext): string;
+    toListString(expr: T, env: ExprContext): string;
     /**
      * This method assumes that the opr is in the operator slot of a combination.
      * Except for Sym, that's an experimental proposition.
      */
-    evaluate(opr: T, argList: Cons, $: ExtensionEnv): [TFLAGS, U];
-    transform(expr: T, $: ExtensionEnv): [TFLAGS, U];
-    valueOf(expr: T, $: ExtensionEnv): U;
+    evaluate(opr: T, argList: Cons, $: ExprContext): [TFLAGS, U];
+    transform(expr: T, $: ExprContext): [TFLAGS, U];
+    valueOf(expr: T, $: ExprContext): U;
 }
 
 interface ExtensionConstructor<T extends U> {

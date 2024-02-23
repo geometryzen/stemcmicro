@@ -1,10 +1,11 @@
 import { Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
 import { AbstractKeywordExtension } from "../helpers/KeywordSymbol";
+import { wrap_as_transform } from "../wrap_as_transform";
 
 class ScriptLast extends AbstractKeywordExtension {
     constructor(readonly config: Readonly<EnvConfig>) {
@@ -16,11 +17,14 @@ class ScriptLast extends AbstractKeywordExtension {
     get name(): string {
         return 'ScriptLast';
     }
-    transform(expr: Sym, $: ExtensionEnv): [TFLAGS, U] {
-        if (this.isKind(expr, $)) {
-            return [TFLAG_DIFF, $.getBinding(RESERVED_KEYWORD_LAST, nil)];
+    transform(keyword: Sym, $: ExtensionEnv): [TFLAGS, U] {
+        const binding = $.getBinding(RESERVED_KEYWORD_LAST, nil);
+        try {
+            return wrap_as_transform(binding, keyword);
         }
-        return [TFLAG_NONE, expr];
+        finally {
+            binding.release();
+        }
     }
 }
 

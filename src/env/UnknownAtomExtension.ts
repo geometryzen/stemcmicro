@@ -1,31 +1,40 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { create_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
-import { Atom, Cons, nil, U } from "math-expression-tree";
+import { Atom, Cons, is_atom, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../diagnostics/diagnostics";
+import { hash_for_atom } from "../hashing/hash_info";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
-import { Extension, ExtensionEnv, FEATURE } from "./ExtensionEnv";
+import { ProgrammingError } from "../programming/ProgrammingError";
+import { Extension, ExtensionEnv } from "./ExtensionEnv";
 
 export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
-    constructor(atom: A) {
-
+    constructor(readonly atom: A) {
     }
     get hash(): string {
-        throw new Error("hash method not implemented.");
+        // We are not installed so this will not be called anyway.
+        return hash_for_atom(this.atom);
     }
     get name(): string {
-        throw new Error("name method not implemented.");
+        // We are not installed so this will not be called anyway.
+        return this.atom.type;
     }
-    phases?: number | undefined;
-    dependencies?: FEATURE[] | undefined;
     iscons(): this is Extension<Cons> {
-        throw new Error("iscons method not implemented.");
+        // We are not installed so this will not be called anyway.
+        return false;
     }
-    operator(): Sym {
-        throw new Error("operator method not implemented.");
+    operator(): never {
+        // We are not installed so this will not be called anyway.
+        throw new ProgrammingError();
     }
-    isKind(expr: U, $: ExtensionEnv): boolean {
-        throw new Error("isKind method not implemented.");
+    isKind(expr: U): boolean {
+        // We are not installed so this will not be called anyway.
+        if (is_atom(expr)) {
+            return expr.type === this.atom.type;
+        }
+        else {
+            return false;
+        }
     }
     toHumanString(expr: A, $: ExprContext): string {
         throw new Error("toHumanString method not implemented.");
@@ -70,6 +79,6 @@ export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
         throw new Error("subst method not implemented.");
     }
     test(expr: A, opr: Sym, env: ExprContext): boolean {
-        throw new Error("test method not implemented.");
+        return false;
     }
 }

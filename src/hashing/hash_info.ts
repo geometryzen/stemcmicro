@@ -1,4 +1,4 @@
-import { booT, Cell, CellHost, create_flt, create_int, create_str, create_sym, create_tensor, epsilon, Err, et, imu, is_keyword, is_rat, is_str, is_sym, Map, Sym } from "math-expression-atoms";
+import { booT, Cell, CellHost, create_flt, create_int, create_str, create_sym, create_tensor, epsilon, Err, et, imu, is_keyword, is_rat, is_str, is_sym, Lambda, Map, Sym } from "math-expression-atoms";
 import { Atom, Cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { create_uom } from "../operators/uom/uom";
 
@@ -44,6 +44,9 @@ class QuietCellHost implements CellHost {
 }
 const noopHost = new QuietCellHost();
 const darkCell = new Cell(nil, noopHost);
+function dummyLambdaExpr() {
+    return nil;
+}
 
 export const HASH_BLADE = hash_for_atom(et);
 export const HASH_BOO = hash_for_atom(booT);
@@ -53,6 +56,7 @@ export const HASH_ERR = hash_for_atom(new Err(nil));
 export const HASH_FLT = hash_for_atom(create_flt(1));
 export const HASH_HYP = hash_for_atom(epsilon);
 export const HASH_IMU = hash_for_atom(imu);
+export const HASH_LAMBDA = hash_for_atom(new Lambda(dummyLambdaExpr, "???"));
 export const HASH_RAT = hash_for_atom(create_int(1));
 export const HASH_STR = hash_for_atom(create_str("") as Atom);  // JsString is currently an alias for Str.
 export const HASH_SYM = hash_for_atom(create_sym('x'));

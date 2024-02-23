@@ -179,6 +179,7 @@ import { iszero_tensor_builder } from '../operators/iszero/iszero_tensor';
 import { jsobject_extension_builder } from '../operators/jsobject/JsObjectExtension';
 import { keyword_extension_builder } from '../operators/keyword/KeywordExtension';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
+import { lambda_extension_builder } from '../operators/lambda/is_lambda';
 import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
 import { lco_2_blade_blade } from '../operators/lco/lco_2_blade_blade';
@@ -701,6 +702,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(err_extension_builder);
     $.defineExtension(imu_extension_builder);
     $.defineExtension(keyword_extension_builder);
+    $.defineExtension(lambda_extension_builder);
     $.defineExtension(map_extension_builder);
 
     $.defineStackFunction(native_sym(Native.unit), stack_unit);

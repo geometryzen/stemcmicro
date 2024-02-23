@@ -5,6 +5,7 @@ import { Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";
 import { HASH_LAMBDA } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
+import { wrap_as_transform } from "../wrap_as_transform";
 
 class LambdaExtension implements Extension<Lambda> {
     get hash(): string {
@@ -37,11 +38,17 @@ class LambdaExtension implements Extension<Lambda> {
     evaluate(opr: Lambda, argList: Cons, $: ExtensionEnv): [number, U] {
         throw new Error("LambdaExtension.evaluate method not implemented.");
     }
-    transform(expr: Lambda, $: ExtensionEnv): [number, U] {
-        throw new Error("LambdaExtension.transform method not implemented.");
+    transform(expr: Lambda): [number, U] {
+        const newExpr = this.valueOf(expr);
+        try {
+            return wrap_as_transform(newExpr, expr);
+        }
+        finally {
+            newExpr.release();
+        }
     }
-    valueOf(expr: Lambda, $: ExtensionEnv): U {
-        throw new Error("LambdaExtension.valueOf method not implemented.");
+    valueOf(expr: Lambda): U {
+        return expr;
     }
     binL(lhs: Lambda, opr: Sym, rhs: U, env: ExprContext): U {
         throw new Error("LambdaExtension.binL method not implemented.");

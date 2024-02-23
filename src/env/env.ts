@@ -1127,7 +1127,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 // If it's not a list or nil, then it's an atom.
                 const op = $.extensionFor(expr);
                 if (op) {
-                    return op.transform(expr, $);
+                    try {
+                        return op.transform(expr, $);
+                    }
+                    catch (e) {
+                        // eslint-disable-next-line no-console
+                        console.log("expr => ", `${expr}`);
+                        throw e;
+                    }
                 }
                 else {
                     return [TFLAG_NONE, expr];

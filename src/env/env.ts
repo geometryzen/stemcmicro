@@ -31,6 +31,7 @@ import { CompareFn, Directive, directive_from_flag, EvalFunction, ExprComparator
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { extension_builder_from_keyword_runner } from "./operator_from_keyword_runner";
 import { extension_builder_from_cons_expression, hash_from_match, opr_from_match } from "./operator_from_legacy_transformer";
+import { UnknownAtomExtension } from './UnknownAtomExtension';
 import { UnknownConsExtension } from "./UnknownConsExtension";
 
 const ADD = native_sym(Native.add);
@@ -335,9 +336,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             throw new SystemError(`No matching operator for hash ${hash}`);
         }
         else {
-            // eslint-disable-next-line no-console
-            console.log(new Error().stack); // Use stack trace to determine the pathway to this point in the code.
-            throw new ProgrammingError(`Missing Extension for atom type ${atom.type}.`);
+            // Go along with the request in order to see WHY it was requested.
+            return new UnknownAtomExtension(atom);
         }
     }
 

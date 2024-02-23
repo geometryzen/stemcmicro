@@ -2,7 +2,7 @@
 import { Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Atom, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE } from "./ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, TFLAG_NONE } from "./ExtensionEnv";
 
 export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
     constructor(atom: A) {
@@ -40,8 +40,11 @@ export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
     evaluate(opr: A, argList: Cons, $: ExtensionEnv): [number, U] {
         throw new Error("evaluate Method not implemented.");
     }
-    transform(expr: A, $: ExtensionEnv): [number, U] {
-        throw new Error("transform Method not implemented.");
+    transform(atom: A, $: ExtensionEnv): [number, U] {
+        // eslint-disable-next-line no-console
+        console.log(`UnknownAtomExtension.transform ${atom}`);
+        // We'll assume that the atom has no internal structure.
+        return [TFLAG_NONE, atom];
     }
     valueOf(expr: A, $: ExtensionEnv): U {
         throw new Error("valueOf Method not implemented.");

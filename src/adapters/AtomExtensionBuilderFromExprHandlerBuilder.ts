@@ -35,40 +35,40 @@ class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
         }
     }
     toHumanString(expr: T, $: ExprContext): string {
-        throw new Error("Method not implemented.");
+        throw new Error("toHumanString method not implemented.");
     }
     toInfixString(expr: T, $: ExprContext): string {
-        throw new Error("Method not implemented.");
+        throw new Error("toInfixString method not implemented.");
     }
     toLatexString(expr: T, $: ExprContext): string {
-        throw new Error("Method not implemented.");
+        throw new Error("toLatexString method not implemented.");
     }
     toListString(expr: T, $: ExprContext): string {
-        throw new Error("Method not implemented.");
+        throw new Error("toListString method not implemented.");
     }
     evaluate(opr: T, argList: Cons, $: ExtensionEnv): [number, U] {
-        throw new Error("Method not implemented.");
+        throw new Error("evaluate method not implemented.");
     }
     transform(expr: T, $: ExtensionEnv): [number, U] {
-        throw new Error("Method not implemented.");
+        throw new Error("transform method not implemented.");
     }
     valueOf(expr: T, $: ExtensionEnv): U {
-        throw new Error("Method not implemented.");
+        throw new Error("valueOf method not implemented.");
     }
     binL(lhs: T, opr: Sym, rhs: U, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+        throw new Error("bunL method not implemented.");
     }
     binR(rhs: T, opr: Sym, lhs: U, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+        throw new Error("binR method not implemented.");
     }
     dispatch(expr: T, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+        throw new Error("dispatch method not implemented.");
     }
     subst(expr: T, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U {
-        throw new Error("Method not implemented.");
+        throw new Error("subst method not implemented.");
     }
     test(expr: T, opr: Sym, env: ExprContext): boolean {
-        throw new Error("Method not implemented.");
+        throw new Error("test method not implemented.");
     }
 }
 

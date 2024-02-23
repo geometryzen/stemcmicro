@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { create_sym, Sym } from "math-expression-atoms";
+import { create_sym, is_boo, Sym } from "math-expression-atoms";
 import { ExprContext, ExprHandler } from "math-expression-context";
 import { Atom, Cons, is_atom, nil, U } from "math-expression-tree";
 import { ExprHandlerBuilder } from "../api/api";
@@ -75,7 +75,13 @@ class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
         throw new Error("subst method not implemented.");
     }
     test(expr: T, opr: Sym, env: ExprContext): boolean {
-        throw new Error("test method not implemented.");
+        const response = this.handler.dispatch(expr, opr, nil, env);
+        if (is_boo(response)) {
+            return response.isTrue();
+        }
+        else {
+            throw new Error(`test receiving ${response} from dispatch`);
+        }
     }
 }
 

@@ -174,9 +174,15 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
     return dfunction(F, X, $);
 }
 
-function dsum(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const toAdd = is_cons(p1) ? p1.tail().map((el) => derivative(el, p2, $)) : [];
-    return add_terms(toAdd, $);
+function dsum(sumExpr: Cons, X: Sym, $: ExtensionEnv): U {
+    const argList = sumExpr.argList;
+    try {
+        const dterms = argList.map((term) => derivative(term, X, $));
+        return add_terms([...dterms], $);
+    }
+    finally {
+        argList.release();
+    }
 }
 
 function dlog(p1: U, p2: Sym, $: ExtensionEnv): U {

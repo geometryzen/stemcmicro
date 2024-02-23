@@ -1,18 +1,31 @@
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { U } from "../../tree/tree";
+import { ExprContext } from "math-expression-context";
+import { exp, log, multiply, real } from "math-expression-native";
+import { U } from "math-expression-tree";
 
-export function compute_r_from_base_and_expo(base: U, expo: U, $: ExtensionEnv): U {
-    // console.lg("compute_r_from_base_and_expo", $.toInfixString(base), $.toInfixString(expo));
-
-    // console.lg("base", $.toInfixString(base));
-    // console.lg("expo", $.toInfixString(expo));
-    const log_base = $.log(base);
-    // console.lg("log_base", $.toInfixString(log_base));
-    const expo_times_log_base = $.multiply(expo, log_base);
-    // console.lg("expo_times_log_base", $.toInfixString(expo_times_log_base));
-    const real_expo_times_log_base = $.re(expo_times_log_base);
-    // console.lg("real_expo_times_log_base", $.toInfixString(real_expo_times_log_base));
-    const r = $.exp(real_expo_times_log_base);
-    // console.lg("r", $.toInfixString(r));
-    return r;
+export function compute_r_from_base_and_expo(base: U, expo: U, $: Pick<ExprContext, 'valueOf'>): U {
+    const a = log(base);
+    try {
+        const b = multiply(expo, a);
+        try {
+            const c = real(b);
+            try {
+                const r = exp(c);
+                try {
+                    return $.valueOf(r);
+                }
+                finally {
+                    r.release();
+                }
+            }
+            finally {
+                c.release();
+            }
+        }
+        finally {
+            b.release();
+        }
+    }
+    finally {
+        a.release();
+    }
 }

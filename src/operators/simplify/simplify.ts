@@ -1,13 +1,24 @@
-import { create_int, is_num, is_rat, is_tensor, one, Sym, zero } from 'math-expression-atoms';
+import { create_int, is_num, is_rat, one, Sym, zero } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
 import { car, cdr, Cons2, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
 import { condense, yycondense } from '../../condense';
 import { complexity } from '../../eigenmath/eigenmath';
-import { Directive, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
+import { Directive, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
+import { add } from '../../helpers/add';
+import { clock } from '../../helpers/clock';
 import { divide } from '../../helpers/divide';
+import { equals } from '../../helpers/equals';
+import { inner } from '../../helpers/inner';
 import { inverse } from '../../helpers/inverse';
+import { iszero } from '../../helpers/iszero';
+import { multiply } from '../../helpers/multiply';
+import { negate } from '../../helpers/negate';
+import { polar } from '../../helpers/polar';
+import { power } from '../../helpers/power';
+import { rect } from '../../helpers/rect';
 import { is_num_and_equalq, is_num_and_eq_minus_one, is_plus_or_minus_one } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
 import { multiply_noexpand } from '../../multiply';
@@ -30,11 +41,10 @@ import { numerator } from "../numerator/numerator";
 import { is_pow_2_any_any } from '../pow/is_pow_2_any_any';
 import { rationalize_factoring } from '../rationalize/rationalize';
 import { re } from '../real/real';
-import { tensor_extension } from '../tensor/tensor_extension';
 import { transpose_factoring } from '../transpose/transpose';
 import { wrap_as_transform } from '../wrap_as_transform';
 
-function simplify_if_contains_factorial(expr: U, $: ExtensionEnv): U {
+function simplify_if_contains_factorial(expr: U, $: ExprContext): U {
     if (expr.contains(FACTORIAL)) {
         const p2 = simfac(expr, $);
         const p3 = simfac(rationalize_factoring(expr, $), $);
@@ -45,7 +55,7 @@ function simplify_if_contains_factorial(expr: U, $: ExtensionEnv): U {
     }
 }
 
-export function simplify(x: U, $: ExtensionEnv): U {
+export function simplify(x: U, $: ExprContext): U {
     // console.lg("simplify", $.toInfixString(x));
     const hook = function (retval: U): U {
         return retval;
@@ -56,11 +66,6 @@ export function simplify(x: U, $: ExtensionEnv): U {
     if (is_atom(x)) {
         const handler = $.handlerFor(x);
         return hook(handler.dispatch(x, native_sym(Native.simplify), nil, $));
-    }
-    if (is_tensor(x)) {
-        const extension = $.extensionFor(x);
-        extension;
-        return hook(tensor_extension.simplify(x, $));
     }
 
     const A = simplify_if_contains_factorial(x, $);
@@ -120,7 +125,7 @@ export function simplify(x: U, $: ExtensionEnv): U {
 }
 
 // try rationalizing
-function simplify_by_rationalizing(p1: U, $: ExtensionEnv): U {
+function simplify_by_rationalizing(p1: U, $: ExprContext): U {
     // console.lg(`simplify_by_rationalizing`);
 
     if (!(is_cons(p1) && is_add(p1))) {
@@ -134,7 +139,7 @@ function simplify_by_rationalizing(p1: U, $: ExtensionEnv): U {
 }
 
 // try condensing
-function simplify_by_condensing(p1: U, $: ExtensionEnv): U {
+function simplify_by_condensing(p1: U, $: ExprContext): U {
     if (!(is_cons(p1) && is_add(p1))) {
         return p1;
     }
@@ -146,15 +151,15 @@ function simplify_by_condensing(p1: U, $: ExtensionEnv): U {
 }
 
 // this simplifies forms like (A-B) / (B-A)
-function simplify_a_minus_b_divided_by_b_minus_a(p1: U, $: ExtensionEnv): U {
-    const p2 = rationalize_factoring($.negate(rationalize_factoring($.negate(rationalize_factoring(p1, $)), $)), $);
+function simplify_a_minus_b_divided_by_b_minus_a(p1: U, $: ExprContext): U {
+    const p2 = rationalize_factoring(negate($, rationalize_factoring(negate($, rationalize_factoring(p1, $)), $)), $);
     if (count(p2) < count(p1)) {
         p1 = p2;
     }
     return p1;
 }
 
-function simplify_by_i_dunno_what(p1: U, $: ExtensionEnv): U {
+function simplify_by_i_dunno_what(p1: U, $: ExprContext): U {
     // console.lg(`simplify_by_i_dunno_what`);
     const carp1 = car(p1);
     if (carp1.equals(MULTIPLY) || is_inner_or_dot(p1)) {
@@ -165,10 +170,10 @@ function simplify_by_i_dunno_what(p1: U, $: ExtensionEnv): U {
             const b = cadr(car(cdr(cdr(p1))));
             let arg1: U;
             if (carp1.equals(MULTIPLY)) {
-                arg1 = $.multiply(a, b);
+                arg1 = multiply($, a, b);
             }
             else if (is_inner_or_dot(p1)) {
-                arg1 = $.inner(b, a);
+                arg1 = inner(b, a, $);
             }
             else {
                 arg1 = stack_pop();
@@ -185,8 +190,8 @@ function simplify_by_i_dunno_what(p1: U, $: ExtensionEnv): U {
 }
 
 // try expanding denominators
-function simplify_by_expanding_denominators(expr: U, $: ExtensionEnv): U {
-    if ($.iszero(expr)) {
+function simplify_by_expanding_denominators(expr: U, $: ExprContext): U {
+    if (iszero(expr, $)) {
         return expr;
     }
     const A = rationalize_factoring(expr, $);
@@ -208,7 +213,7 @@ function simplify_by_expanding_denominators(expr: U, $: ExtensionEnv): U {
  * Simplifies trigonometric expressions.
  * This function won't go recursive, so it's quite safe to call anytime.
  */
-export function simplify_trig(expr: U, $: ExtensionEnv): U {
+export function simplify_trig(expr: U, $: ExprContext): U {
     // console.lg(`simplify_trig expr=${print_expr(expr, $)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
@@ -251,7 +256,7 @@ export function simplify_trig(expr: U, $: ExtensionEnv): U {
     }
 }
 
-function convert_sin_to_cos(expr: U, $: ExtensionEnv): U {
+function convert_sin_to_cos(expr: U, $: ExprContext): U {
     $.pushDirective(Directive.convertSinToCos, 1);
     try {
         return $.valueOf(expr);
@@ -261,7 +266,7 @@ function convert_sin_to_cos(expr: U, $: ExtensionEnv): U {
     }
 }
 
-function convert_cos_to_sin(expr: U, $: ExtensionEnv): U {
+function convert_cos_to_sin(expr: U, $: ExprContext): U {
     $.pushDirective(Directive.convertCosToSin, 1);
     try {
         return $.valueOf(expr);
@@ -272,7 +277,7 @@ function convert_cos_to_sin(expr: U, $: ExtensionEnv): U {
 }
 
 // if it's a sum then try to simplify each term
-function simplify_terms(p1: U, $: ExtensionEnv): U {
+function simplify_terms(p1: U, $: ExprContext): U {
 
     if (!(is_cons(p1) && is_add(p1))) {
         return p1;
@@ -281,7 +286,7 @@ function simplify_terms(p1: U, $: ExtensionEnv): U {
     let p2: U = cdr(p1);
     if (is_cons(p2)) {
         p2 = [...p2].reduce((acc: U, p: U) =>
-            simplify_rational_expressions($.add(acc, simplify(p, $)), $), zero);
+            simplify_rational_expressions(add($, acc, simplify(p, $)), $), zero);
     }
 
     if (count(p2) < count(p1)) {
@@ -290,7 +295,7 @@ function simplify_terms(p1: U, $: ExtensionEnv): U {
     return p1;
 }
 
-function simplify_rational_expressions(p1: U, $: ExtensionEnv): U {
+function simplify_rational_expressions(p1: U, $: ExprContext): U {
 
     const denom = denominator(p1, $);
     if (is_plus_or_minus_one(denom, $)) {
@@ -334,7 +339,7 @@ function simplify_rational_expressions(p1: U, $: ExtensionEnv): U {
 // things like 6*(cos(2/9*pi)+i*sin(2/9*pi)) = 6*exp(2/9*i*pi)
 // where we have sin and cos, those might start to
 // look better in clock form i.e.  6*(-1)^(2/9)
-function simplify_rect_to_clock(expr: U, $: ExtensionEnv): U {
+function simplify_rect_to_clock(expr: U, $: ExprContext): U {
     const oldExpr = expr;
     // console.lg(`simplify_rect_to_clock ${print_expr(oldExpr, $)}`);
     //breakpoint
@@ -343,7 +348,7 @@ function simplify_rect_to_clock(expr: U, $: ExtensionEnv): U {
         return oldExpr;
     }
 
-    const newExpr = $.clock($.valueOf(oldExpr));
+    const newExpr = clock($.valueOf(oldExpr), $);
 
     // console.lg(`before simplification clockform: ${oldExpr} after: ${newExpr}`);
 
@@ -355,7 +360,7 @@ function simplify_rect_to_clock(expr: U, $: ExtensionEnv): U {
     }
 }
 
-function simplify_polarRect(p1: U, $: ExtensionEnv): U {
+function simplify_polarRect(p1: U, $: ExprContext): U {
     const tmp = polarRectAMinusOneBase(p1, $);
 
     const p2 = $.valueOf(tmp); // put new (hopefully simplified expr) in p2
@@ -366,18 +371,18 @@ function simplify_polarRect(p1: U, $: ExtensionEnv): U {
     return p1;
 }
 
-function polarRectAMinusOneBase(p1: U, $: ExtensionEnv): U {
+function polarRectAMinusOneBase(p1: U, $: ExprContext): U {
     if (is_imu(p1)) {
         return p1;
     }
     if (car(p1).equals(POWER) && is_num_and_eq_minus_one(cadr(p1))) {
         // base we just said is minus 1
-        const base = $.negate(one);
+        const base = negate($, one);
 
         // exponent
         const exponent = polarRectAMinusOneBase(caddr(p1), $);
         // try to simplify it using polar and rect
-        return $.rect($.polar($.power(base, exponent)));
+        return rect(polar(power($, base, exponent), $), $);
     }
     if (is_cons(p1)) {
         const arr = [];
@@ -398,7 +403,7 @@ function nterms(p: U) {
     return 1;
 }
 
-function simplify_nested_radicals(x: U, $: ExtensionEnv): [TFLAGS, U] {
+function simplify_nested_radicals(x: U, $: ExprContext): [TFLAGS, U] {
 
     // console.lg("simplify_nested_radicals", `${$.toInfixString(x)}`);
 
@@ -443,7 +448,7 @@ function simplify_nested_radicals(x: U, $: ExtensionEnv): [TFLAGS, U] {
     return wrap_as_transform(best, x);
 }
 
-function take_care_of_nested_radicals(x: U, $: ExtensionEnv): [U, TFLAGS] {
+function take_care_of_nested_radicals(x: U, $: ExprContext): [U, TFLAGS] {
     if (defs.recursionLevelNestedRadicalsRemoval > 0) {
         return [x, TFLAG_NONE];
     }
@@ -460,7 +465,7 @@ function take_care_of_nested_radicals(x: U, $: ExtensionEnv): [U, TFLAGS] {
     return [x, TFLAG_NONE];
 }
 
-function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] {
+function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExprContext): [U, TFLAGS] {
     // console.lg("ok it's a power ")
     const base = p1.lhs;
     const expo = p1.rhs;
@@ -494,27 +499,27 @@ function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         return [p1, TFLAG_NONE];
     }
 
-    const binary_multiply = (lhs: U, rhs: U) => $.multiply(lhs, rhs);
+    const binary_multiply = (lhs: U, rhs: U) => multiply($, lhs, rhs);
     const A = firstTerm;
     const C = commonBases.reduce(binary_multiply, one);
     const B = termsThatAreNotPowers.reduce(binary_multiply, one);
 
     let temp: U = nil;
     if (is_num_and_equalq(expo, 1, 3)) {
-        const checkSize1 = divide($.multiply($.negate(A), C), B, $); // 4th coeff
+        const checkSize1 = divide(multiply($, negate($, A), C), B, $); // 4th coeff
         const result1 = nativeDouble(evaluate_as_float(re(checkSize1, $), $));
         if (Math.abs(result1) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
         }
 
-        const checkSize2 = $.multiply(three, C); // 3rd coeff
+        const checkSize2 = multiply($, three, C); // 3rd coeff
         const result2 = nativeDouble(evaluate_as_float(re(checkSize2, $), $));
         if (Math.abs(result2) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
         }
-        const arg1b = $.multiply(checkSize2, SECRETX);
+        const arg1b = multiply($, checkSize2, SECRETX);
 
-        const checkSize3 = divide($.multiply(create_int(-3), A), B, $); // 2nd coeff
+        const checkSize3 = divide(multiply($, create_int(-3), A), B, $); // 2nd coeff
         const result3 = nativeDouble(evaluate_as_float(re(checkSize3, $), $));
         if (Math.abs(result3) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
@@ -523,8 +528,8 @@ function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         const result = add_terms([
             checkSize1,
             arg1b,
-            $.multiply(checkSize3, $.power(SECRETX, two)),
-            $.multiply(one, $.power(SECRETX, three)),
+            multiply($, checkSize3, power($, SECRETX, two)),
+            multiply($, one, power($, SECRETX, three)),
         ], $);
         temp = result;
     }
@@ -534,16 +539,16 @@ function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
             return [p1, TFLAG_NONE];
         }
 
-        const checkSize = divide($.multiply(create_int(-2), A), B, $);
+        const checkSize = divide(multiply($, create_int(-2), A), B, $);
         const result2 = nativeDouble(evaluate_as_float(re(checkSize, $), $));
         if (Math.abs(result2) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
         }
-        temp = $.add(
+        temp = add($,
             C,
-            $.add(
-                $.multiply(checkSize, SECRETX),
-                $.multiply(one, $.power(SECRETX, two))
+            add($,
+                multiply($, checkSize, SECRETX),
+                multiply($, one, power($, SECRETX, two))
             )
         );
     }
@@ -584,31 +589,31 @@ function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     }
 
     if (is_num_and_equalq(expo, 1, 3)) {
-        const lowercase_b = $.power(
+        const lowercase_b = power($,
             divide(
                 A,
-                $.add(
-                    $.power(SOLUTION, three),
-                    $.multiply($.multiply(three, C), SOLUTION)
+                add($,
+                    power($, SOLUTION, three),
+                    multiply($, multiply($, three, C), SOLUTION)
                 )
                 , $),
             third
         );
-        const lowercase_a = $.multiply(lowercase_b, SOLUTION);
+        const lowercase_a = multiply($, lowercase_b, SOLUTION);
         const result = simplify(
-            $.add($.multiply(lowercase_b, $.power(C, half)), lowercase_a), $
+            add($, multiply($, lowercase_b, power($, C, half)), lowercase_a), $
         );
         return [result, TFLAG_DIFF];
     }
 
     if (is_num_and_equalq(expo, 1, 2)) {
-        const lowercase_b = $.power(
-            divide(A, $.add($.power(SOLUTION, two), C), $),
+        const lowercase_b = power($,
+            divide(A, add($, power($, SOLUTION, two), C), $),
             half
         );
-        const lowercase_a = $.multiply(lowercase_b, SOLUTION);
+        const lowercase_a = multiply($, lowercase_b, SOLUTION);
         const possibleNewExpression = simplify(
-            $.add($.multiply(lowercase_b, $.power(C, half)), lowercase_a), $
+            add($, multiply($, lowercase_b, power($, C, half)), lowercase_a), $
         );
         const possibleNewExpressionValue = evaluate_as_float(re(possibleNewExpression, $), $);
         if (!is_num_and_negative(possibleNewExpressionValue)) {
@@ -616,9 +621,9 @@ function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         }
 
         const result = simplify(
-            $.add(
-                $.multiply($.negate(lowercase_b), $.power(C, half)),
-                $.negate(lowercase_a)
+            add($,
+                multiply($, negate($, lowercase_b), power($, C, half)),
+                negate($, lowercase_a)
             ),
             $
         );
@@ -629,7 +634,7 @@ function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     // return [null, true];
 }
 
-function _listAll(secondTerm: U, $: ExtensionEnv): { commonBases: U[]; termsThatAreNotPowers: U[] } {
+function _listAll(secondTerm: U, $: ExprContext): { commonBases: U[]; termsThatAreNotPowers: U[] } {
     let commonInnerExponent = null;
     const commonBases: U[] = [];
     const termsThatAreNotPowers: U[] = [];
@@ -647,7 +652,7 @@ function _listAll(secondTerm: U, $: ExtensionEnv): { commonBases: U[]; termsThat
                             commonInnerExponent = innerexponent;
                             commonBases.push(innerbase);
                         }
-                        else if ($.equals(innerexponent, commonInnerExponent)) {
+                        else if (equals(innerexponent, commonInnerExponent, $)) {
                             commonBases.push(innerbase);
                         }
                     }
@@ -670,7 +675,7 @@ function _listAll(secondTerm: U, $: ExtensionEnv): { commonBases: U[]; termsThat
     return { commonBases, termsThatAreNotPowers };
 }
 
-function _nestedCons(p1: U, $: ExtensionEnv): [U, TFLAGS] {
+function _nestedCons(p1: U, $: ExprContext): [U, TFLAGS] {
     let anyRadicalSimplificationWorked = TFLAG_NONE;
     const arr = [];
     if (is_cons(p1)) {

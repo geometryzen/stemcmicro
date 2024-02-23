@@ -1,6 +1,8 @@
 import { create_int } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { car, cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { iszero } from './helpers/iszero';
 import { equaln, is_poly_expanded_form } from './is';
 import { coefficients } from './operators/coeff/coeff';
 import { ADD, FOR, MULTIPLY, POWER, SYMBOL_S, SYMBOL_T, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
@@ -63,7 +65,7 @@ export function bake_internal(expr: U, $: ExtensionEnv): U {
     }
 }
 
-export function polyform(p1: U, p2: U, $: ExtensionEnv): U {
+export function polyform(p1: U, p2: U, $: ExprContext): U {
     if (is_poly_expanded_form(p1, p2)) {
         return bake_poly(p1, p2, $);
     }
@@ -89,7 +91,7 @@ export function polyform(p1: U, p2: U, $: ExtensionEnv): U {
  * @param p The polynomial.
  * @param x The polynomial variable. 
  */
-function bake_poly(p: U, x: U, $: ExtensionEnv): U {
+function bake_poly(p: U, x: U, $: ExprContext): U {
     // console.lg(`bake_poly ${p} ${x}`);
     const beans = coefficients(p, x, $);
     // console.lg(`beans => ${beans}`);
@@ -115,8 +117,8 @@ function bake_poly(p: U, x: U, $: ExtensionEnv): U {
 // p1 points to coefficient of p2 ^ k
 
 // k is an int
-function bake_poly_term(k: number, coefficient: U, term: U, $: Pick<ExtensionEnv, 'iszero'>): U[] {
-    if ($.iszero(coefficient)) {
+function bake_poly_term(k: number, coefficient: U, term: U, $: Pick<ExprContext, 'valueOf'>): U[] {
+    if (iszero(coefficient, $)) {
         return [];
     }
 

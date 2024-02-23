@@ -179,7 +179,7 @@ function gcd_powers_with_same_base(base1: U, base2: U, $: Pick<ExprContext, 'val
     // are both exponents numerical?
     if (is_num(exponent1) && is_num(exponent2)) {
         const exponent = compare_num_num(exponent1, exponent2) < 0 ? exponent1 : exponent2;
-        return power(base1, exponent, $);
+        return power($, base1, exponent);
     }
 
     // are the exponents multiples of eah other?
@@ -194,10 +194,10 @@ function gcd_powers_with_same_base(base1: U, base2: U, $: Pick<ExprContext, 'val
         const p6 = is_multiply(exponent2) && is_num(cadr_expo2) ? cadr_expo2 : one;
 
         const exponent = compare_num_num(p5, p6) < 0 ? exponent1 : exponent2;
-        return power(base1, exponent, $);
+        return power($, base1, exponent);
     }
 
-    const expo1_minus_expo2 = subtract(exponent1, exponent2, $);
+    const expo1_minus_expo2 = subtract($, exponent1, exponent2);
 
     if (!is_num(expo1_minus_expo2)) {
         return one;
@@ -206,7 +206,7 @@ function gcd_powers_with_same_base(base1: U, base2: U, $: Pick<ExprContext, 'val
     // can't be equal because of test near beginning
     // TODO NumExtension.isNegative
     const exponent = is_num_and_negative(expo1_minus_expo2) ? exponent1 : exponent2;
-    return power(base1, exponent, $);
+    return power($, base1, exponent);
 }
 
 // in this case gcd is used as a composite function, i.e. gcd(gcd(gcd...

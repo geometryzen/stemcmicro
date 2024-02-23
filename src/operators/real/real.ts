@@ -1,8 +1,11 @@
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { complex_conjugate } from '../../complex_conjugate';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
+import { conj } from '../../helpers/conj';
+import { cos } from '../../helpers/cos';
 import { divide } from '../../helpers/divide';
+import { isreal } from '../../helpers/isreal';
+import { multiply } from '../../helpers/multiply';
 import { Native } from '../../native/Native';
 import { native_sym } from '../../native/native_sym';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
@@ -26,7 +29,7 @@ const RE = native_sym(Native.real);
  * @param $ 
  * @returns 
  */
-export function eval_real(expr: Cons, $: ExtensionEnv): U {
+export function eval_real(expr: Cons, $: ExprContext): U {
     // Do we evaluate the arguments or real_lambda?
     return real_lambda(expr.argList, $);
 }
@@ -38,10 +41,8 @@ export function eval_real(expr: Cons, $: ExtensionEnv): U {
  * @returns 
  */
 export const real_lambda: LambdaExpr = function (argList: Cons, $: ExprContext): U {
-    const env: ExtensionEnv = $ as unknown as ExtensionEnv;
-    // We could/should check the numbr of arguments.
-    const arg = env.valueOf(argList.car);
-    return re(arg, env);
+    const arg = $.valueOf(argList.car);
+    return re(arg, $);
 };
 
 /**
@@ -51,7 +52,7 @@ export const real_lambda: LambdaExpr = function (argList: Cons, $: ExprContext):
  * @param $ 
  * @returns 
  */
-export function re(expr: U, $: ExtensionEnv): U {
+export function re(expr: U, $: ExprContext): U {
     // console.lg(`real`, $.toInfixString(expr));
     // console.lg("real", $.toSExprString(expr));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -60,14 +61,14 @@ export function re(expr: U, $: ExtensionEnv): U {
         return retval;
     };
 
-    if ($.isreal(expr)) {
+    if (isreal(expr, $)) {
         return hook(expr, 'A');
     }
     else if (is_rat(expr)) {
         return expr;
     }
     else if (is_sym(expr)) {
-        if ($.isreal(expr)) {
+        if (isreal(expr, $)) {
             return expr;
         }
         else {
@@ -117,8 +118,8 @@ export function re(expr: U, $: ExtensionEnv): U {
             // console.lg("YIN");
             const r = compute_r_from_base_and_expo(base, expo, $);
             const theta = compute_theta_from_base_and_expo(base, expo, $);
-            const cos_theta = $.cos(theta);
-            const retval = $.multiply(r, cos_theta);
+            const cos_theta = cos(theta, $);
+            const retval = multiply($, r, cos_theta);
             return hook(retval, 'D');
         }
     }
@@ -128,7 +129,7 @@ export function re(expr: U, $: ExtensionEnv): U {
         const cs: U[] = []; // the complex factors
         [...expr.argList].forEach(function (factor) {
             // console.lg("testing the arg:", $.toInfixString(arg));
-            if ($.isreal(factor)) {
+            if (isreal(factor, $)) {
                 // console.lg("arg is real:", $.toInfixString(arg));
                 rs.push(factor);
             }
@@ -155,10 +156,10 @@ export function re(expr: U, $: ExtensionEnv): U {
                     const expo = factor.expo;
                     if (is_rat(expo) && expo.isMinusOne()) {
                         // Get the complex number out of the denominator.
-                        const z_star = $.conj(base);
+                        const z_star = conj(base, $);
                         const denom = $.valueOf(items_to_cons(MATH_MUL, z_star, base));
                         const one_over_denom = $.valueOf(items_to_cons(MATH_POW, denom, negOne));
-                        const z = $.multiply(z_star, one_over_denom);
+                        const z = multiply($, z_star, one_over_denom);
                         cs.push(z);
                     }
                     else {
@@ -184,7 +185,7 @@ export function re(expr: U, $: ExtensionEnv): U {
                     // Here we might encounter a function.
                     // So far we've handled math.pow.
                     // How to handle arbitrary functions. e.g. abs, sin, ...
-                    throw new Error($.toSExprString(factor));
+                    throw new Error(`${factor}`);
                 }
             }
         });
@@ -217,7 +218,7 @@ export function re(expr: U, $: ExtensionEnv): U {
     return hook(expr, 'E');
 }
 
-function multiply_factors(factors: U[], $: ExtensionEnv): U {
+function multiply_factors(factors: U[], $: ExprContext): U {
     if (factors.length > 1) {
         return $.valueOf(items_to_cons(MATH_MUL, ...factors));
     }

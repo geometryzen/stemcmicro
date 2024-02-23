@@ -1,6 +1,14 @@
 import { is_num, is_tensor, one, Tensor, zero } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
+import { add } from '../../helpers/add';
+import { equals } from '../../helpers/equals';
+import { inner } from '../../helpers/inner';
+import { isone } from '../../helpers/isone';
+import { iszero } from '../../helpers/iszero';
+import { is_expanding } from '../../helpers/is_expanding';
+import { multiply } from '../../helpers/multiply';
 import { is_num_and_eq_two } from '../../is';
 import { nativeInt } from '../../nativeInt';
 import { MAXDIM, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from '../../runtime/constants';
@@ -30,7 +38,7 @@ export function eval_transpose(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-export function transpose(p1: U, p2: U, p3: U, $: Pick<ExtensionEnv, 'add' | 'equals' | 'inner' | 'isExpanding' | 'isone' | 'iszero' | 'multiply'>): U {
+export function transpose(p1: U, p2: U, p3: U, $: ExprContext): U {
     let t = 0;
     const ai: number[] = Array(MAXDIM).fill(0);
     const an: number[] = Array(MAXDIM).fill(0);
@@ -41,7 +49,7 @@ export function transpose(p1: U, p2: U, p3: U, $: Pick<ExtensionEnv, 'add' | 'eq
     }
 
     // transposition goes away for identity matrix
-    if (($.isone(p2) && is_num_and_eq_two(p3)) || ($.isone(p3) && is_num_and_eq_two(p2))) {
+    if ((isone(p2, $) && is_num_and_eq_two(p3)) || (isone(p3, $) && is_num_and_eq_two(p2))) {
         if (is_identity_matrix(p1)) {
             return p1;
         }
@@ -54,36 +62,35 @@ export function transpose(p1: U, p2: U, p3: U, $: Pick<ExtensionEnv, 'add' | 'eq
         const innerTranspSwitch2 = car(cdr(cdr(cdr(p1))));
 
         if (
-            ($.equals(innerTranspSwitch1, p3) && $.equals(innerTranspSwitch2, p2)) ||
-            ($.equals(innerTranspSwitch2, p3) && $.equals(innerTranspSwitch1, p2)) ||
-            ($.equals(innerTranspSwitch1, nil) &&
-                $.equals(innerTranspSwitch2, nil) &&
-                (($.isone(p3) && is_num_and_eq_two(p2)) || ($.isone(p2) && is_num_and_eq_two(p3))))
+            (equals(innerTranspSwitch1, p3, $) && equals(innerTranspSwitch2, p2, $)) ||
+            (equals(innerTranspSwitch2, p3, $) && equals(innerTranspSwitch1, p2, $)) ||
+            (equals(innerTranspSwitch1, nil, $) && equals(innerTranspSwitch2, nil, $) &&
+                ((isone(p3, $) && is_num_and_eq_two(p2)) || (isone(p2, $) && is_num_and_eq_two(p3))))
         ) {
             return car(cdr(p1));
         }
     }
 
     // if operand is a sum then distribute (if we are in expanding mode)
-    if ($.isExpanding() && is_add(p1)) {
+    if (is_expanding($) && is_add(p1)) {
         // add the dimensions to switch but only if they are not the default ones.
         return p1
             .tail()
-            .reduce((a: U, b: U) => $.add(a, transpose(b, p2, p3, $)), zero);
+            .reduce((a: U, b: U) => add($, a, transpose(b, p2, p3, $)), zero);
     }
 
     // if operand is a multiplication then distribute (if we are in expanding mode)
-    if ($.isExpanding() && is_multiply(p1)) {
+    if (is_expanding($) && is_multiply(p1)) {
         // add the dimensions to switch but only if they are not the default ones.
         return p1
             .tail()
-            .reduce((a: U, b: U) => $.multiply(a, transpose(b, p2, p3, $)), one);
+            .reduce((a: U, b: U) => multiply($, a, transpose(b, p2, p3, $)), one);
     }
 
     // distribute the transpose of a dot if in expanding mode
     // note that the distribution happens in reverse as per tranpose rules.
     // The dot operator is not commutative, so, it matters.
-    if ($.isExpanding() && is_inner_or_dot(p1)) {
+    if (is_expanding($) && is_inner_or_dot(p1)) {
         const accumulator: U[][] = [];
         if (is_cons(p1)) {
             accumulator.push(...p1.tail().map((p) => [p, p2, p3]));
@@ -91,17 +98,17 @@ export function transpose(p1: U, p2: U, p3: U, $: Pick<ExtensionEnv, 'add' | 'eq
 
         accumulator.reverse();
         return accumulator.reduce(
-            (acc: U, p: U[]): U => $.inner(acc, transpose(p[0], p[1], p[2], $)),
+            (acc: U, p: U[]): U => inner(acc, transpose(p[0], p[1], p[2], $), $),
             SYMBOL_IDENTITY_MATRIX
         );
     }
 
     if (!is_tensor(p1)) {
-        if (!$.iszero(p1)) {
+        if (!iszero(p1, $)) {
             //stop("transpose: tensor expected, 1st arg is not a tensor")
             // remove the default "dimensions to be switched"
             // parameters
-            if ((!$.isone(p2) || !is_num_and_eq_two(p3)) && (!$.isone(p3) || !is_num_and_eq_two(p2))) {
+            if ((!isone(p2, $) || !is_num_and_eq_two(p3)) && (!isone(p3, $) || !is_num_and_eq_two(p2))) {
                 return items_to_cons(TRANSPOSE, p1, p2, p3);
             }
             return items_to_cons(TRANSPOSE, p1);
@@ -196,7 +203,7 @@ export function transpose(p1: U, p2: U, p3: U, $: Pick<ExtensionEnv, 'add' | 'eq
     return new Tensor(dims, elems);
 }
 
-export function transpose_factoring(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
+export function transpose_factoring(p1: U, p2: U, p3: U, $: ExprContext): U {
     $.pushDirective(Directive.factoring, 1);
     try {
         return transpose(p1, p2, p3, $);

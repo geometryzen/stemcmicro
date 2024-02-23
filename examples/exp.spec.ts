@@ -7,7 +7,7 @@ describe("exp", function () {
     it("exp(log(x))", function () {
         check("exp(log(x))", "x");
     });
-    xit("exp(i*theta)", function () {
-        check("exp(sqrt(-1)*theta)", "cos(theta)+i*sin(theta)");
+    it("exp(i*x)", function () {
+        check("exp(sqrt(-1)*x)", "e**(i*x)");
     });
 });

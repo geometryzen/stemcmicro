@@ -1,13 +1,14 @@
 import { is_rat, is_tensor, Tensor } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { rat_to_flt } from '../../bignum';
-import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
+import { Directive } from '../../env/ExtensionEnv';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { eAsFlt, Flt, piAsFlt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { is_pi } from '../pi/is_pi';
 
-export function eval_float(expr: Cons, $: ExtensionEnv): U {
+export function eval_float(expr: Cons, $: ExprContext): U {
     // console.lg("eval_float", $.toInfixString(expr));
     const A = cadr(expr);
     // console.lg("A", $.toInfixString(A));
@@ -26,7 +27,7 @@ export function eval_float(expr: Cons, $: ExtensionEnv): U {
  * @param $ 
  * @returns 
  */
-export function zzfloat(expr: U, $: ExtensionEnv): U {
+export function zzfloat(expr: U, $: ExprContext): U {
     $.pushDirective(Directive.evaluatingAsFloat, 1);
     try {
         return $.valueOf(evaluate_as_float($.valueOf(expr), $));
@@ -39,7 +40,7 @@ export function zzfloat(expr: U, $: ExtensionEnv): U {
 /**
  * coercion of the expr to a Flt, Tensor<Flt> etc.
  */
-export function evaluate_as_float(expr: U, $: Pick<ExtensionEnv, 'pushDirective' | 'popDirective' | 'valueOf'>): U {
+export function evaluate_as_float(expr: U, $: Pick<ExprContext, 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     // console.lg(`yyfloat`, render_as_sexpr(expr, $));
     $.pushDirective(Directive.evaluatingAsFloat, 1);
     try {
@@ -50,7 +51,7 @@ export function evaluate_as_float(expr: U, $: Pick<ExtensionEnv, 'pushDirective'
     }
 }
 
-function yyfloat_(expr: U, $: Pick<ExtensionEnv, 'valueOf'>): Flt | Cons | Tensor | U {
+function yyfloat_(expr: U, $: Pick<ExprContext, 'valueOf'>): Flt | Cons | Tensor | U {
     if (is_cons(expr)) {
         return $.valueOf(items_to_cons(...expr.map(function (x) {
             return yyfloat_(x, $);

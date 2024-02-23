@@ -149,7 +149,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExprContext, 'handlerFor' | '
                 let temp: U = zero;
                 for (let i = 0; i <= coeffIdx; i++) {
                     // p2: the free variable
-                    temp = add($, temp, multiply($, cs[i], power(X, create_int(i), $)));
+                    temp = add($, temp, multiply($, cs[i], power($, X, create_int(i))));
                 }
                 remainingPoly = temp;
             }
@@ -159,8 +159,8 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExprContext, 'handlerFor' | '
                 break;
             }
             else {
-                const firstFactor = subtract(a as U, X, $); // A, x
-                const secondFactor = subtract(complex_conjugate(a as U, $), X, $); // p4: A, p2: x
+                const firstFactor = subtract($, a as U, X); // A, x
+                const secondFactor = subtract($, complex_conjugate(a as U, $), X); // p4: A, p2: x
 
                 p8 = multiply($, firstFactor, secondFactor);
 
@@ -196,7 +196,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExprContext, 'handlerFor' | '
                     let temp: U = zero;
                     for (let i = 0; i <= coeffIdx; i++) {
                         // p2: the free variable
-                        temp = add($, temp, multiply($, cs[i], power(X, create_int(i), $)));
+                        temp = add($, temp, multiply($, cs[i], power($, X, create_int(i))));
                     }
                     remainingPoly = temp;
                 }
@@ -248,7 +248,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExprContext, 'handlerFor' | '
 
     let temp: U = zero;
     for (let i = 0; i <= coeffIdx; i++) {
-        temp = add($, temp, multiply($, cs[i], power(X, create_int(i), $)));
+        temp = add($, temp, multiply($, cs[i], power($, X, create_int(i))));
     }
 
     // console.lg("temp       II", render_as_infix(temp, $));
@@ -264,7 +264,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExprContext, 'handlerFor' | '
         //prev_expanding = expanding
         //expanding = 1
         //expanding = prev_expanding
-        return hook(multiply_noexpand(negate_noexpand(k, $ as ExtensionEnv), negate(remaining, $), $), "B");
+        return hook(multiply_noexpand(negate_noexpand(k, $ as ExtensionEnv), negate($, remaining), $), "B");
     }
     else {
         // console.lg("k", ($ as ExtensionEnv).toInfixString(k));
@@ -323,7 +323,7 @@ function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, a: U, 
             a = defs.stack[an + rootsTries_i] as U;
             b = defs.stack[a0 + rootsTries_j] as U;
 
-            const neg_root_candidate = negate(divide(b, a, $), $);
+            const neg_root_candidate = negate($, divide(b, a, $));
 
             const neg_poly = polynomial(neg_root_candidate, coeffs, coeffIdx, $);
 
@@ -332,9 +332,9 @@ function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, a: U, 
                 return [true, a, b];
             }
 
-            b = negate(b, $);
+            b = negate($, b);
 
-            const pos_root_candidate = negate(neg_root_candidate, $);
+            const pos_root_candidate = negate($, neg_root_candidate);
 
             const pos_poly = polynomial(pos_root_candidate, coeffs, coeffIdx, $);
 
@@ -364,7 +364,7 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
 
     // trying -1^(2/3) which generates a polynomial in Z
     // generates x^2 + 2x + 1
-    p4 = rect(power(negOne, rational(2, 3), _), _);
+    p4 = rect(power(_, negOne, rational(2, 3)), _);
     p3 = p4;
     stack_push(p3);
     p6 = polynomial(p3, polycoeff, factpoly_expo, _);
@@ -376,7 +376,7 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
     // trying 1^(2/3) which generates a polynomial in Z
     // http://www.wolframalpha.com/input/?i=(1)%5E(2%2F3)
     // generates x^2 - 2x + 1
-    p4 = rect(power(one, rational(2, 3), _), _);
+    p4 = rect(power(_, one, rational(2, 3)), _);
     p3 = p4;
     stack_push(p3);
     p6 = polynomial(p3, polycoeff, factpoly_expo, _);
@@ -428,7 +428,7 @@ function yydivpoly(a: U, b: U, coeffs: U[], k: number, _: Pick<ExprContext, 'val
         const divided = divide(coeffs[i], a, _);
         coeffs[i] = temp;
         temp = divided;
-        coeffs[i - 1] = subtract(coeffs[i - 1], multiply(_, temp, b), _);
+        coeffs[i - 1] = subtract(_, coeffs[i - 1], multiply(_, temp, b));
     }
     coeffs[0] = temp;
 }

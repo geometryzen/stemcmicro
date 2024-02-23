@@ -3,10 +3,10 @@ import { ExprContext } from "math-expression-context";
 import { U } from "math-expression-tree";
 import { multiply } from "./multiply";
 
-export function negate(arg: U, env: Pick<ExprContext, 'valueOf'>): U {
-    const raw = multiply(env, create_int(-1), arg);
+export function negate(_: Pick<ExprContext, 'valueOf'>, arg: U): U {
+    const raw = multiply(_, create_int(-1), arg);
     try {
-        return env.valueOf(raw);
+        return _.valueOf(raw);
     }
     finally {
         raw.release();

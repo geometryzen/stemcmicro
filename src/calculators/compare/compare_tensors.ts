@@ -1,12 +1,11 @@
 import { Tensor } from "math-expression-atoms";
-import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { compare_expr_expr } from "./compare_expr_expr";
 
 /**
  * FIXME: Needs more testing. When does it make sense to reorder tensors?
  */
-export function compare_tensors(lhs: Tensor, rhs: Tensor, $: Pick<ExtensionEnv, 'toInfixString'>): Sign {
-    // console.lg("compare_term_tensors", $.toInfixString(lhs), $.toInfixString(rhs));
+export function compare_tensors(lhs: Tensor, rhs: Tensor): Sign {
     if (lhs.ndim < rhs.ndim) {
         return SIGN_LT;
     }
@@ -29,7 +28,7 @@ export function compare_tensors(lhs: Tensor, rhs: Tensor, $: Pick<ExtensionEnv, 
     const nelem = lhs.nelem;
 
     for (let i = 0; i < nelem; i++) {
-        switch (compare_expr_expr(lhs.elem(i), rhs.elem(i), $)) {
+        switch (compare_expr_expr(lhs.elem(i), rhs.elem(i))) {
             case SIGN_GT: {
                 return SIGN_GT;
             }

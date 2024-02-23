@@ -119,7 +119,7 @@ function gen(stack: U[], h: number, k: number, _: Pick<ExprContext, 'valueOf'>):
     const expo = nativeInt(EXPO);
     if (!isNaN(expo)) {
         for (let i = 0; i <= Math.abs(expo); i++) {
-            stack.push(multiply(_, ACCUM, power(BASE, create_int(signum(expo) * i), _)));
+            stack.push(multiply(_, ACCUM, power(_, BASE, create_int(signum(expo) * i))));
             gen(stack, h + 2, k, _);
         }
     }

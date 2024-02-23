@@ -12,11 +12,7 @@ export function complex_conjugate(expr: U, _: Pick<ExprContext, 'handlerFor' | '
         return retval;
     };
 
-    // console.lg(`i => ${$.toInfixString(i)}`);
-    const minus_i = negate(imu, _);
-    // console.lg(`minus_i => ${$.toInfixString(minus_i)}`);
-    // console.lg(`z => ${$.toInfixString(expr)}`);
+    const minus_i = negate(_, imu);
     const z_star = subst(expr, imu, minus_i, _);
-    // console.lg(`z_star => ${$.toInfixString(z_star)}`);
     return hook(_.valueOf(z_star), "");
 }

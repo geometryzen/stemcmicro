@@ -87,7 +87,7 @@ export class MulComparator implements ExprComparator {
         }
 
         if (is_tensor(lhs) && is_tensor(rhs)) {
-            return compare_tensors(lhs, rhs, $);
+            return compare_tensors(lhs, rhs);
         }
 
         if (is_tensor(lhs)) {
@@ -99,7 +99,7 @@ export class MulComparator implements ExprComparator {
         }
 
         while (is_cons(lhs) && is_cons(rhs)) {
-            const n = compare_expr_expr(car(lhs), car(rhs), $);
+            const n = compare_expr_expr(car(lhs), car(rhs));
             if (n !== SIGN_EQ) {
                 return n;
             }

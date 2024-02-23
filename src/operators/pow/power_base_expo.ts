@@ -392,7 +392,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
         return hook(result, "V");
     }
 
-    if (is_complex_number(base, $)) {
+    if (is_complex_number(base)) {
         // integer power?
         // n will be negative here, positive n already handled
         if (is_rat_and_integer(expo)) {

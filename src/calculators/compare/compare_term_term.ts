@@ -135,7 +135,7 @@ export function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
 
     // I'd still like to compare as terms, but that would be recursive if we don't have a termination condition.
     if (lhsPart.equals(lhs) && rhsPart.equals(rhs)) {
-        return compare_expr_expr(lhsPart, rhsPart, $);
+        return compare_expr_expr(lhsPart, rhsPart);
     }
     else {
         return compare_term_term(lhsPart, rhsPart, $);

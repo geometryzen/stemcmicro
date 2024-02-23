@@ -42,10 +42,10 @@ export function quotient(p: U, q: U, X: U, _: Pick<ExprContext, 'handlerFor' | '
         const Q = divide(dividendCs[m], divisorCs[n], _);
 
         for (let i = 0; i <= n; i++) {
-            dividendCs[x + i] = subtract(dividendCs[x + i], multiply(_, divisorCs[i], Q), _);
+            dividendCs[x + i] = subtract(_, dividendCs[x + i], multiply(_, divisorCs[i], Q));
         }
 
-        retval = add(_, retval, multiply(_, Q, power(X, create_int(x), _)));
+        retval = add(_, retval, multiply(_, Q, power(_, X, create_int(x))));
 
         m--;
         x--;

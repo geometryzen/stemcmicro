@@ -81,7 +81,7 @@ import { MATH_VECTOR_CROSS_PRODUCT } from '../operators/cross/MATH_VECTOR_CROSS_
 import { def_sym_builder } from '../operators/def/def_sym';
 import { def_sym_doc_init_builder } from '../operators/def/def_sym_doc_init';
 import { def_sym_init_builder } from '../operators/def/def_sym_init';
-import { defint_builder } from '../operators/defint/defint';
+import { eval_defint } from '../operators/defint/eval_defint';
 import { defn_builder } from '../operators/defn/eval_defn';
 import { eval_deg } from '../operators/degree/degree';
 import { eval_denominator } from '../operators/denominator/eval_denominator';
@@ -471,7 +471,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(def_sym_builder);
     $.defineExtension(def_sym_init_builder);
     $.defineExtension(def_sym_doc_init_builder);
-    $.defineExtension(defint_builder);
+    $.defineEvalFunction(native_sym(Native.defint), eval_defint);
 
     $.defineEvalFunction(native_sym(Native.denominator), eval_denominator);
 

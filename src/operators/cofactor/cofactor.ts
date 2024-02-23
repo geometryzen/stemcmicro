@@ -63,7 +63,7 @@ export function cofactor<T extends U>(m: Tensor<T>, row: number, col: number, $:
 
     const det = determinant_symbolic(elements, n - 1, $);
     if ((row + col) % 2) {
-        return hook(negate(det, $));
+        return hook(negate($, det));
     }
     else {
         return hook(det);

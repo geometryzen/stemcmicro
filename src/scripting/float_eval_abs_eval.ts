@@ -1,7 +1,8 @@
-import { ExtensionEnv } from "../env/ExtensionEnv";
+import { ExprContext } from "math-expression-context";
+import { U } from "math-expression-tree";
+import { abs } from "../helpers/abs";
 import { zzfloat } from "../operators/float/float";
-import { U } from "../tree/tree";
 
-export function float_eval_abs_eval(p1: U, $: ExtensionEnv): U {
-    return zzfloat($.valueOf($.abs($.valueOf(p1))), $);
+export function float_eval_abs_eval(p1: U, $: ExprContext): U {
+    return zzfloat($.valueOf(abs($.valueOf(p1), $)), $);
 }

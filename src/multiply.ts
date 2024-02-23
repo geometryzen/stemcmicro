@@ -4,6 +4,7 @@ import { U } from 'math-expression-tree';
 import { binop } from './calculators/binop';
 import { Directive, ExtensionEnv } from './env/ExtensionEnv';
 import { multiply } from './helpers/multiply';
+import { negate } from './helpers/negate';
 import { noexpand_binary, noexpand_unary } from './runtime/defs';
 import { MATH_MUL } from './runtime/ns_math';
 
@@ -48,7 +49,7 @@ export function multiply_items(items: U[], _: Pick<ExprContext, 'valueOf'>): U {
 }
 
 // n an integer
-export function multiply_items_factoring(items: U[], _: ExtensionEnv): U {
+export function multiply_items_factoring(items: U[], _: ExprContext): U {
     _.pushDirective(Directive.factoring, 1);
     try {
         return multiply_items(items, _);
@@ -59,9 +60,9 @@ export function multiply_items_factoring(items: U[], _: ExtensionEnv): U {
 }
 
 
-export function negate_noexpand(p1: U, _: ExtensionEnv): U {
-    const negate = function (x: U, $: ExtensionEnv): U {
-        return $.negate(x);
-    };
-    return noexpand_unary(negate, p1, _);
+export function negate_noexpand(p1: U, _: ExprContext): U {
+    function neg(expr: U, $: ExprContext) {
+        return negate($, expr);
+    }
+    return noexpand_unary(neg, p1, _);
 }

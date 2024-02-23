@@ -172,7 +172,7 @@ function print_denom(p: U, d: number, $: PrintConfig): string {
     // prepare the exponent
     // (needs to be negated)
     // before printing it out
-    EXPO = negate(EXPO, $);
+    EXPO = negate($, EXPO);
     str += print_power(BASE, EXPO, $);
     if (d === 1) {
         str += print_char(')');
@@ -1227,7 +1227,7 @@ function print_power(base: U, expo: U, $: PrintConfig) {
                     str += print_str('1/');
                 }
 
-                const newExponent = negate(expo, $);
+                const newExponent = negate($, expo);
 
                 if (is_cons(base) && defs.printMode !== PRINTMODE_LATEX) {
                     str += print_str('(');

@@ -10,12 +10,12 @@ import { multiply } from "../../helpers/multiply";
 import { power } from "../../helpers/power";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function power_blade_int(x: Blade, n: number, env: ExprContext): U {
+export function power_blade_int(x: Blade, n: number, _: ExprContext): U {
     if (n > 0) {
         const lhs = x;
-        const rhs = power_blade_int(x, n - 1, env);
+        const rhs = power_blade_int(x, n - 1, _);
         try {
-            return multiply(env, lhs, rhs);
+            return multiply(_, lhs, rhs);
         }
         finally {
             lhs.release();
@@ -24,17 +24,17 @@ export function power_blade_int(x: Blade, n: number, env: ExprContext): U {
     }
     else if (n < 0) {
         const numer = x.rev();
-        const denom = multiply(env, x, numer);
+        const denom = multiply(_, x, numer);
         try {
-            const ratio = divide(numer, denom, env);
+            const ratio = divide(numer, denom, _);
             if (contains_single_blade(ratio)) {
                 const blade = extract_single_blade(ratio);
                 const scale = remove_factors(ratio, is_blade);
                 try {
-                    const k = power(scale, create_int(-n), env);
-                    const B = power_blade_int(blade, -n, env);
+                    const k = power(_, scale, create_int(-n));
+                    const B = power_blade_int(blade, -n, _);
                     try {
-                        return multiply(env, k, B);
+                        return multiply(_, k, B);
                     }
                     finally {
                         k.release();
@@ -47,7 +47,7 @@ export function power_blade_int(x: Blade, n: number, env: ExprContext): U {
                 }
             }
             else {
-                return power(ratio, create_int(-n), env);
+                return power(_, ratio, create_int(-n));
             }
         }
         finally {

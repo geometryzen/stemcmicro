@@ -4,10 +4,10 @@ import { U } from "math-expression-tree";
 import { add } from "./add";
 import { negate } from "./negate";
 
-export function subtract(lhs: U, rhs: U, env: Pick<ExprContext, 'valueOf'>): U {
-    const negRhs = negate(rhs, env);
+export function subtract(_: Pick<ExprContext, 'valueOf'>, lhs: U, rhs: U): U {
+    const negRhs = negate(_, rhs);
     try {
-        return add(env, lhs, negRhs);
+        return add(_, lhs, negRhs);
     }
     finally {
         negRhs.release();

@@ -1,4 +1,6 @@
+import { ExprContext } from "math-expression-context";
 import { ExtensionEnv } from "../env/ExtensionEnv";
+import { equals } from "../helpers/equals";
 import { is_sym } from "../operators/sym/is_sym";
 import { is_tensor } from '../operators/tensor/is_tensor';
 import { Sym } from "../tree/sym/Sym";
@@ -22,12 +24,12 @@ export function count(p: U): number {
 // more general than just counting symbols, it can
 // probably count instances of anything you pass as
 // first argument but didn't try it.
-export function countOccurrencesOfSymbol(needle: Sym, p: U, $: ExtensionEnv) {
+export function countOccurrencesOfSymbol(needle: Sym, p: U, $: ExprContext) {
     let n = 0;
     if (is_cons(p)) {
         n = sum([...p].map((el) => countOccurrencesOfSymbol(needle, el, $)));
     }
-    else if ($.equals(needle, p)) {
+    else if (equals(needle, p,$)) {
         n = 1;
     }
 

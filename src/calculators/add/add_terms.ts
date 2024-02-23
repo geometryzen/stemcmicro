@@ -1,4 +1,6 @@
+import { ExprContext } from "math-expression-context";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
+import { iszero } from "../../helpers/iszero";
 import { is_add } from "../../runtime/helpers";
 import { is_cons, U } from "../../tree/tree";
 import { to_list_add_sort } from "./to_list_add_sort";
@@ -14,7 +16,7 @@ import { to_list_add_sort } from "./to_list_add_sort";
  * @param term The term to be appended.
  * @param $ The extension environment.
  */
-export function append_terms(terms: U[], term: U, $: Pick<ExtensionEnv, 'getDirective' | 'iszero'>): void {
+export function append_terms(terms: U[], term: U, $: Pick<ExprContext, 'getDirective'|'valueOf'>): void {
     if (is_cons(term) && is_add(term)) {
         // Go recursive here, don't just "spread" them in.
         // That way we entirely flatten nested add(s) and respect zero value processing.
@@ -23,7 +25,7 @@ export function append_terms(terms: U[], term: U, $: Pick<ExtensionEnv, 'getDire
             append_terms(terms, kid, $);
         });
     }
-    else if ($.iszero(term)) {
+    else if (iszero(term,$)) {
         if ($.getDirective(Directive.keepZeroTermsInSums)) {
             terms.push(term);
         }
@@ -33,7 +35,7 @@ export function append_terms(terms: U[], term: U, $: Pick<ExtensionEnv, 'getDire
     }
 }
 
-export function flatten_terms(terms: U[], $: Pick<ExtensionEnv, 'getDirective' | 'iszero'>): U[] {
+export function flatten_terms(terms: U[], $: Pick<ExtensionEnv, 'getDirective' | 'valueOf'>): U[] {
     const retval: U[] = [];
     terms.forEach(function (term) {
         append_terms(retval, term, $);
@@ -50,7 +52,7 @@ export function add_legacy(p1: U, p2: U, $: ExtensionEnv): U {
 }
 */
 
-export function add_terms(terms: U[], $: ExtensionEnv): U {
+export function add_terms(terms: U[], $: ExprContext): U {
     const flattened: U[] = [];
     for (const t of terms) {
         append_terms(flattened, t, $);

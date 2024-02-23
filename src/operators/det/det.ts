@@ -177,7 +177,7 @@ function lu_decomp(elements: U[], n: number, $: ExprContext): U {
             }
 
             // negate det
-            p1 = negate(p1, $);
+            p1 = negate($, p1);
         }
 
         // update det
@@ -185,7 +185,7 @@ function lu_decomp(elements: U[], n: number, $: ExprContext): U {
 
         // update lower diagonal matrix
         for (let i = d + 1; i < n; i++) {
-            const p2 = negate(divide(getM(elements, n, i, d), getM(elements, n, d, d), $), $);
+            const p2 = negate($, divide(getM(elements, n, i, d), getM(elements, n, d, d), $));
 
             // update one row
             setM(elements, n, i, d, zero); // clear column below pivot d

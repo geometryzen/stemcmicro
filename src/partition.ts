@@ -1,6 +1,7 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { one } from './tree/rat/Rat';
-import { cdr, is_cons, U } from './tree/tree';
+import { one } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
+import { cdr, is_cons, U } from 'math-expression-tree';
+import { multiply } from './helpers/multiply';
 
 /*
  Partition a term
@@ -13,21 +14,29 @@ import { cdr, is_cons, U } from './tree/tree';
     constant expression
     variable expression
 */
-export function partition(p1: U, p2: U, $: ExtensionEnv): [U, U] {
-    let p3: U = one;
-    let p4: U = p3;
-
-    p1 = cdr(p1);
-    if (!is_cons(p1)) {
-        return [p3, p4];
-    }
-    for (const p of p1) {
-        if (p.contains(p2)) {
-            p4 = $.multiply(p4, p);
+/**
+ * Partition a term into constant and variable expressions. 
+ * @param term the term (factor or product of factors)
+ * @param X the free variable
+ * @param $ 
+ * @returns 
+ */
+export function partition(term: U, X: U, $: Pick<ExprContext, 'valueOf'>): [k: U, v: U] {
+    const p1 = cdr(term);
+    if (is_cons(p1)) {
+        let k: U = one;
+        let v: U = k;
+        for (const p of p1) {
+            if (p.contains(X)) {
+                v = multiply($, v, p);
+            }
+            else {
+                k = multiply($, k, p);
+            }
         }
-        else {
-            p3 = $.multiply(p3, p);
-        }
+        return [k, v];
     }
-    return [p3, p4];
+    else {
+        return [one, one];
+    }
 }

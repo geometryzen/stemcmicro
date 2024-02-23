@@ -41,7 +41,7 @@ export function quickfactor(BASE: Rat, EXPO: Rat, $: ExprContext): U {
 // BASE is a prime number so power is simpler
 export function quickpower(BASE: Rat, EXPO: Rat, $: ExprContext): [U] | [U, U] {
     const p3 = bignum_truncate(EXPO);
-    const p4 = subtract(EXPO, p3, $);
+    const p4 = subtract($, EXPO, p3);
 
     let fractionalPart: U | undefined;
     // fractional part of EXPO

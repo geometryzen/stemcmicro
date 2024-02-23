@@ -1,6 +1,12 @@
 import { negOne } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { U } from 'math-expression-tree';
-import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
+import { Directive } from '../../env/ExtensionEnv';
+import { abs } from '../../helpers/abs';
+import { arg } from '../../helpers/arg';
+import { divide } from '../../helpers/divide';
+import { multiply } from '../../helpers/multiply';
+import { power } from '../../helpers/power';
 import { DynamicConstants } from '../../runtime/defs';
 
 /*
@@ -30,7 +36,7 @@ import { DynamicConstants } from '../../runtime/defs';
  * @param $ 
  * @returns 
  */
-export function clock(z: U, $: ExtensionEnv): U {
+export function clock(z: U, $: ExprContext): U {
     $.pushDirective(Directive.complexAsClock, 1);
     try {
         // console.lg();
@@ -39,15 +45,15 @@ export function clock(z: U, $: ExtensionEnv): U {
         // that we can't use "power", as "power" evaluates
         // clock forms into rectangular form (see "-1 ^ rational"
         // section in power)
-        const arg_z = $.arg(z);
+        const arg_z = arg(z, $);
         // console.lg(`arg_z=${print_expr(arg_z, $)}`);
         const pi = DynamicConstants.PI($);
         // console.lg(`pi=${print_expr(pi, $)}`);
-        const direction = $.power(negOne, $.divide(arg_z, pi));
+        const direction = power($, negOne, divide(arg_z, pi, $));
         // console.lg(`direction=${print_expr(direction, $)}`);
-        const magnitude = $.abs(z);
+        const magnitude = abs(z, $);
         // console.lg(`magnitude=${print_expr(magnitude, $)}`);
-        const clock_z = $.multiply(magnitude, direction);
+        const clock_z = multiply($, magnitude, direction);
         // console.lg(`clock_z  =${print_expr(clock_z, $)}`);
         return clock_z;
     }

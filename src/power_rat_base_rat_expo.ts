@@ -193,14 +193,14 @@ function normalize_angle(A: Rat, $: ExprContext): U {
 
     // remainder (always positive)
     // TODO: Need a sub on Rat
-    const R = subtract(A, Q, $);
+    const R = subtract($, A, Q);
 
     // remainder becomes new angle
     let result: U = items_to_cons(POWER, negOne, R);
 
     // negate if quotient is odd
     if (Q.a.isOdd()) {
-        result = negate(result, $);
+        result = negate($, result);
     }
     return result;
 }

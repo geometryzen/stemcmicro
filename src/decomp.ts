@@ -1,7 +1,9 @@
+import { ExprContext } from 'math-expression-context';
 import { assert_cons_or_nil } from 'math-expression-tree';
 import { add_terms } from './calculators/add/add_terms';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { guess } from './guess';
+import { negate } from './helpers/negate';
 import { items_to_cons } from './makeList';
 import { multiply_items } from './multiply';
 import { is_add, is_multiply } from './runtime/helpers';
@@ -39,7 +41,7 @@ function pushTryNotToDuplicateLocal(localStack: U[], item: U) {
 }
 
 // returns constant expressions on the stack
-export function decomp(generalTransform: boolean, p1: U, p2: U, $: ExtensionEnv): U[] {
+export function decomp(generalTransform: boolean, p1: U, p2: U, $: ExprContext): U[] {
     // is the entire expression constant?
     if (generalTransform) {
         if (!is_cons(p1)) {
@@ -81,7 +83,7 @@ export function decomp(generalTransform: boolean, p1: U, p2: U, $: ExtensionEnv)
     return stack;
 }
 
-function decomp_sum(generalTransform: boolean, p1: U, p2: U, $: ExtensionEnv): U[] {
+function decomp_sum(generalTransform: boolean, p1: U, p2: U, $: ExprContext): U[] {
     // decomp terms involving x
     let temp: U = cdr(p1);
     const stack = [];
@@ -98,12 +100,12 @@ function decomp_sum(generalTransform: boolean, p1: U, p2: U, $: ExtensionEnv): U
     if (constantTerms.length) {
         const p3 = add_terms(constantTerms, $);
         pushTryNotToDuplicateLocal(stack, p3);
-        stack.push($.negate(p3)); // need both +a, -a for some integrals
+        stack.push(negate($, p3)); // need both +a, -a for some integrals
     }
     return stack;
 }
 
-function decomp_product(generalTransform: boolean, p1: U, p2: U, $: ExtensionEnv): U[] {
+function decomp_product(generalTransform: boolean, p1: U, p2: U, $: ExprContext): U[] {
     // decomp factors involving x
     let p3: U = cdr(p1);
     const stack = [];

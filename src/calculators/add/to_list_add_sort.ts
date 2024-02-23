@@ -1,17 +1,16 @@
-import { assert_cons_or_nil, car, cdr, cons, is_cons, nil, U } from "math-expression-tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { items_to_cons } from "../../makeList";
-import { is_num } from "../../operators/num/is_num";
-import { is_tensor } from "../../operators/tensor/is_tensor";
+import { is_num, is_tensor, Num, one, zero } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
+import { assert_cons_or_nil, car, cdr, cons, is_cons, items_to_cons, nil, U } from "math-expression-tree";
+import { add } from "../../helpers/add";
+import { iszero } from "../../helpers/iszero";
+import { multiply } from "../../helpers/multiply";
 import { is_multiply } from "../../runtime/helpers";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
-import { Num } from "../../tree/num/Num";
-import { one, zero } from "../../tree/rat/Rat";
 import { sort_terms } from "../compare/sort_terms";
 import { multiply_num_num } from "../mul/multiply_num_num";
 import { add_num_num } from "./add_num_num";
 
-export function to_list_add_sort(terms: U[], $: ExtensionEnv): U {
+export function to_list_add_sort(terms: U[], $: ExprContext): U {
     const sorted = sort_terms(terms, $);
     return to_list_add(sorted, $);
 }
@@ -20,7 +19,7 @@ export function to_list_add_sort(terms: U[], $: ExtensionEnv): U {
  * Compare adjacent terms in terms[] and combine if possible.
  * @param terms The terms to be combined and the output location.
  */
-function to_list_add(terms: U[], $: ExtensionEnv): U {
+function to_list_add(terms: U[], $: ExprContext): U {
     // console.lg(`to_list_add ${items_to_infix(terms, $)}`);
     let i = 0;
     let typedZero: Num = zero;
@@ -33,7 +32,7 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
 
         // TODO: Generalize here after understanding the issues for Tensor and Num
         if (is_tensor(a) && is_tensor(b)) {
-            const sum = $.add(a, b);
+            const sum = add($, a, b);
             // TODO: Why don't we handle zero like we do for Num below?
             if (nil !== sum) {
                 // console.lg(`A. splice(${sum34})`);
@@ -54,7 +53,7 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
 
         if (is_num(a) && is_num(b)) {
             const sum = add_num_num(a, b);
-            if ($.iszero(sum)) {
+            if (iszero(sum, $)) {
                 // Ensure correct runtime type of the result by propagating the type correctly.
                 typedZero = multiply_num_num(typedZero, sum);
                 terms.splice(i, 2);
@@ -83,7 +82,7 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
         const lhs_b = decomp_b.lhs;
         const rhs_b = decomp_b.rhs;
 
-        if (!$.equals(rhs_a, rhs_b)) {
+        if (!rhs_a.equals(rhs_b)) {
             // No common factor on right.
             i++;
             continue;
@@ -94,7 +93,7 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
         const k = add_num_num(lhs_a, lhs_b);
 
         // If k is zero then (a + b) is zero.
-        if ($.iszero(k)) {
+        if (iszero(k, $)) {
             terms.splice(i, 2);
             i--;
 
@@ -110,7 +109,7 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
          */
         const ambiguous_s = rhs_a;
         const s = is_list_s ? cons(MATH_MUL, assert_cons_or_nil(ambiguous_s)) : ambiguous_s;
-        const sum_a_b = $.multiply(k, s);
+        const sum_a_b = multiply($, k, s);
         // console.lg(`E. splice(${sum12xArg2})`);
         terms.splice(i, 2, sum_a_b);
         i--;

@@ -52,7 +52,7 @@ function tangent(x: U, $: ExprContext): U {
 
     // tan function is antisymmetric, tan(-x) = -tan(x)
     if (is_negative(x)) {
-        return negate(tangent(negate(x, $), $), $);
+        return negate($, tangent(negate($, x), $));
     }
 
     // multiply by 180/pi to go from radians to degrees.
@@ -79,10 +79,10 @@ function tangent(x: U, $: ExprContext): U {
             return zero;
         case 30:
         case 210:
-            return multiply($, third, power(three, half, $));
+            return multiply($, third, power($, three, half));
         case 150:
         case 330:
-            return multiply($, rational(-1, 3), power(three, half, $));
+            return multiply($, rational(-1, 3), power($, three, half));
         case 45:
         case 225:
             return one;
@@ -91,10 +91,10 @@ function tangent(x: U, $: ExprContext): U {
             return negOne;
         case 60:
         case 240:
-            return power(three, half, $);
+            return power($, three, half);
         case 120:
         case 300:
-            return negate(power(three, half, $), $);
+            return negate($, power($, three, half));
         default:
             return items_to_cons(TAN, x);
     }

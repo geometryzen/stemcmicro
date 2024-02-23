@@ -1,6 +1,10 @@
+import { ExprContext } from 'math-expression-context';
 import { ScanOptions, scan_meta } from '../../algebrite/scan';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { guess } from '../../guess';
+import { add } from '../../helpers/add';
+import { exp } from '../../helpers/exp';
+import { multiply } from '../../helpers/multiply';
 import { is_num_and_equalq, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one } from '../../is';
 import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
@@ -510,7 +514,7 @@ export function eval_integral(expr: Cons, $: ExtensionEnv): U {
     return retval;
 }
 
-export function integral(F: U, X: U, $: ExtensionEnv): U {
+export function integral(F: U, X: U, $: ExprContext): U {
     // console.lg("integral", $.toSExprString(F), $.toInfixString(X));
     let integ: U;
     if (is_add(F)) {
@@ -529,42 +533,41 @@ export function integral(F: U, X: U, $: ExtensionEnv): U {
     return $.valueOf(simplify(integ, $));
 }
 
-function integral_of_sum(F: U, X: U, $: ExtensionEnv): U {
+function integral_of_sum(F: U, X: U, $: ExprContext): U {
     F = cdr(F);
     let result = integral(car(F), X, $);
     if (is_cons(F)) {
         result = F.tail().reduce(
-            (acc: U, b: U) => $.add(acc, integral(b, X, $)),
+            (acc: U, b: U) => add($, acc, integral(b, X, $)),
             result
         );
     }
     return result;
 }
 
-function integral_of_product(F: U, X: U, $: ExtensionEnv): U {
+function integral_of_product(F: U, X: U, $: ExprContext): U {
     const [constantExpr, variableExpr] = partition(F, X, $);
-    return $.multiply(constantExpr, integral_of_form(variableExpr, X, $)); // multiply constant part
+    return multiply($, constantExpr, integral_of_form(variableExpr, X, $)); // multiply constant part
 }
 
-function integral_of_form(F: U, X: U, $: ExtensionEnv): U {
-    // console.lg("integral_of_form", $.toInfixString(F), $.toInfixString(X));
+function integral_of_form(F: U, X: U, $: ExprContext): U {
     const hc = italu_hashcode(F, X, $).toFixed(6);
     // console.lg(`hc=${hc}`);
     const tab = hashed_itab[hc];
     // console.lg(`tab=${JSON.stringify(tab)}`);
-    if (!tab) {
-        // breakpoint
-        italu_hashcode(F, X, $);
+    if (Array.isArray(tab)) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [retval, flag] = transform(F, X, tab, false, $);
+        // console.lg("retval", $.toInfixString(retval));
+        // console.lg("flag", JSON.stringify(flag));
+        if (is_nil(retval)) {
+            return items_to_cons(INTEGRAL, F, X);
+        }
+        return retval;
+    }
+    else {
         return items_to_cons(INTEGRAL, F, X);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [retval, flag] = transform(F, X, tab, false, $);
-    // console.lg("retval", $.toInfixString(retval));
-    // console.lg("flag", JSON.stringify(flag));
-    if (is_nil(retval)) {
-        return items_to_cons(INTEGRAL, F, X);
-    }
-    return retval;
 }
 
 // Implementation of hash codes based on ITALU (An Integral Table Look-Up)
@@ -605,7 +608,7 @@ const hashcode_values: { [name: string]: number } = {
  * @param $ 
  * @returns 
  */
-function italu_hashcode(F: U, x: U, $: ExtensionEnv): number {
+function italu_hashcode(F: U, x: U, $: ExprContext): number {
     // console.lg("italu_hashcode", $.toInfixString(F));
     if (is_sym(F)) {
         if (is_sym(x) && F.equals(x)) {
@@ -617,20 +620,22 @@ function italu_hashcode(F: U, x: U, $: ExtensionEnv): number {
     }
     else if (is_cons(F)) {
         const opr = F.car;
-        if (opr.equals(ADD)) {
-            return hash_addition(F.argList, x, $);
-        }
-        if (opr.equals(MULTIPLY)) {
-            return hash_multiplication(F.argList, x, $);
-        }
-        if (opr.equals(POWER)) {
-            return hash_power(F.base, F.expo, x, $);
-        }
-        if (opr.equals(EXP)) {
-            return hash_power($.exp(one), F.argList.head, x, $);
-        }
-        if (opr.equals(SQRT)) {
-            return hash_power(F.argList.head, create_flt(0.5), x, $);
+        if (is_sym(opr)) {
+            if (opr.equals(ADD)) {
+                return hash_addition(F.argList, x, $);
+            }
+            if (opr.equals(MULTIPLY)) {
+                return hash_multiplication(F.argList, x, $);
+            }
+            if (opr.equals(POWER)) {
+                return hash_power(F.base, F.expo, x, $);
+            }
+            if (opr.equals(EXP)) {
+                return hash_power(exp(one, $), F.argList.head, x, $);
+            }
+            if (opr.equals(SQRT)) {
+                return hash_power(F.argList.head, create_flt(0.5), x, $);
+            }
         }
         return hash_function(F, x, $);
     }
@@ -638,7 +643,7 @@ function italu_hashcode(F: U, x: U, $: ExtensionEnv): number {
     return hashcode_values.constant;
 }
 
-function hash_function(u: Cons, x: U, $: ExtensionEnv): number {
+function hash_function(u: Cons, x: U, $: ExprContext): number {
     if (!cadr(u).contains(x)) {
         return hashcode_values.constant;
     }
@@ -657,7 +662,7 @@ function hash_function(u: Cons, x: U, $: ExtensionEnv): number {
     }
 }
 
-function hash_addition(terms: U, x: U, $: ExtensionEnv): number {
+function hash_addition(terms: U, x: U, $: ExprContext): number {
     const term_set: { [key: string]: boolean } = {};
     while (is_cons(terms)) {
         const term = car(terms);
@@ -682,7 +687,7 @@ function hash_addition(terms: U, x: U, $: ExtensionEnv): number {
     return sum;
 }
 
-function hash_multiplication(factors: U, x: U, $: ExtensionEnv): number {
+function hash_multiplication(factors: U, x: U, $: ExprContext): number {
     let product = 1;
     if (is_cons(factors)) {
         [...factors].forEach((factor) => {
@@ -694,7 +699,7 @@ function hash_multiplication(factors: U, x: U, $: ExtensionEnv): number {
     return product;
 }
 
-function hash_power(base: U, expo: U, x: U, $: ExtensionEnv): number {
+function hash_power(base: U, expo: U, x: U, $: ExprContext): number {
     let base_hash = hashcode_values.constant;
     let exp_hash = hashcode_values.constexp;
     if (base.contains(x)) {

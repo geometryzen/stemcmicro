@@ -1,8 +1,10 @@
 import { is_flt, is_num, is_rat, Num, Rat } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { is_cons, nil, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
+import { isone } from './helpers/isone';
 import { is_rat_and_integer } from './is_rat_and_integer';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
 import { is_num_and_negative } from './predicates/is_negative_number';
@@ -61,8 +63,8 @@ export function is_num_and_eq_minus_one(p: U): p is Num & { __ts_sign: -1; __ts_
 /**
  *
  */
-export function is_plus_or_minus_one(x: U, $: ExtensionEnv): boolean {
-    return $.isone(x) || is_num_and_eq_minus_one(x);
+export function is_plus_or_minus_one(x: U, $: ExprContext): boolean {
+    return isone(x, $) || is_num_and_eq_minus_one(x);
 }
 
 export function is_num_and_integer(p: U): p is Num & { __ts_integer: true } {
@@ -241,13 +243,8 @@ export function iscomplexnumberdouble(p: U, $: ExtensionEnv): boolean {
  * Determines whether expr is of the form (+ Num (something times i))
  * For this to work it is crucial that the complex number terms be arranged with
  * the real part on the left hand side. e.g. 1.0 + 2.0*i.
- * Notice that 
- * @param expr 
- * @param $ 
- * @returns 
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function is_complex_number(expr: U, $: ExtensionEnv): boolean {
+export function is_complex_number(expr: U): boolean {
     // console.lg(`is_complex_number ${render_as_sexpr(expr, $)}`);
     if (is_add(expr)) {
         // console.lg(`${$.toInfixString(expr)} is an add expression`);

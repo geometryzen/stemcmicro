@@ -1,6 +1,11 @@
+import { ExprContext } from 'math-expression-context';
 import { add_terms } from './calculators/add/add_terms';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { add } from './helpers/add';
+import { equals } from './helpers/equals';
 import { inverse } from './helpers/inverse';
+import { isone } from './helpers/isone';
+import { subtract } from './helpers/subtract';
 import { equaln, is_num_and_eq_minus_one } from './is';
 import { multiply_items_factoring } from './multiply';
 import { factorial } from './operators/factorial/factorial';
@@ -44,7 +49,7 @@ export function eval_simfac(p1: U, $: ExtensionEnv): void {
     stack_push(result);
 }
 
-export function simfac(p1: U, $: ExtensionEnv): U {
+export function simfac(p1: U, $: ExprContext): U {
     if (is_add(p1)) {
         const terms = p1.tail().map(
             function (x) {
@@ -56,7 +61,7 @@ export function simfac(p1: U, $: ExtensionEnv): U {
     return simfac_term(p1, $);
 }
 
-function simfac_term(p1: U, $: ExtensionEnv): U {
+function simfac_term(p1: U, _: ExprContext): U {
     // if not a product of factors then done
     if (!is_multiply(p1)) {
         return p1;
@@ -66,15 +71,15 @@ function simfac_term(p1: U, $: ExtensionEnv): U {
     const factors = p1.tail();
 
     // keep trying until no more to do
-    while (yysimfac(factors, $)) {
+    while (yysimfac(factors, _)) {
         // do nothing
     }
 
-    return multiply_items_factoring(factors, $);
+    return multiply_items_factoring(factors, _);
 }
 
 // try all pairs of factors
-function yysimfac(stack: U[], $: ExtensionEnv): boolean {
+function yysimfac(stack: U[], _: ExprContext): boolean {
     for (let i = 0; i < stack.length; i++) {
         const p1 = stack[i];
         for (let j = 0; j < stack.length; j++) {
@@ -84,23 +89,23 @@ function yysimfac(stack: U[], $: ExtensionEnv): boolean {
             const p2 = stack[j];
 
             //  n! / n    ->  (n - 1)!
-            if (is_factorial(p1) && is_power(p2) && is_num_and_eq_minus_one(caddr(p2)) && $.equals(cadr(p1), cadr(p2))) {
-                stack[i] = factorial($.subtract(cadr(p1), one));
+            if (is_factorial(p1) && is_power(p2) && is_num_and_eq_minus_one(caddr(p2)) && equals(cadr(p1), cadr(p2), _)) {
+                stack[i] = factorial(subtract(_, cadr(p1), one));
                 stack[j] = one;
                 return true;
             }
 
             //  n / n!    ->  1 / (n - 1)!
-            if (is_power(p2) && is_num_and_eq_minus_one(caddr(p2)) && caadr(p2).equals(FACTORIAL) && $.equals(p1, cadadr(p2))) {
-                stack[i] = inverse(factorial($.add(p1, negOne)), $);
+            if (is_power(p2) && is_num_and_eq_minus_one(caddr(p2)) && caadr(p2).equals(FACTORIAL) && equals(p1, cadadr(p2), _)) {
+                stack[i] = inverse(factorial(add(_, p1, negOne)), _);
                 stack[j] = one;
                 return true;
             }
 
             //  (n + 1) n!  ->  (n + 1)!
             if (is_factorial(p2)) {
-                const p3 = $.subtract(p1, cadr(p2));
-                if ($.isone(p3)) {
+                const p3 = subtract(_, p1, cadr(p2));
+                if (isone(p3, _)) {
                     stack[i] = factorial(p1);
                     stack[j] = one;
                     return true;
@@ -115,9 +120,9 @@ function yysimfac(stack: U[], $: ExtensionEnv): boolean {
                 is_num_and_eq_minus_one(caddr(p2)) &&
                 caadr(p2).equals(FACTORIAL)
             ) {
-                const p3 = $.subtract(cadr(p1), cadr(cadr(p2)));
-                if ($.isone(p3)) {
-                    stack[i] = inverse(factorial(cadr(p1)), $);
+                const p3 = subtract(_, cadr(p1), cadr(cadr(p2)));
+                if (isone(p3, _)) {
+                    stack[i] = inverse(factorial(cadr(p1)), _);
                     stack[j] = one;
                     return true;
                 }
@@ -132,25 +137,25 @@ function yysimfac(stack: U[], $: ExtensionEnv): boolean {
                 is_num_and_eq_minus_one(caddr(p2)) &&
                 caadr(p2).equals(FACTORIAL)
             ) {
-                const p3 = $.subtract(cadr(p1), cadr(cadr(p2)));
-                if ($.isone(p3)) {
+                const p3 = subtract(_, cadr(p1), cadr(cadr(p2)));
+                if (isone(p3, _)) {
                     stack[i] = cadr(p1);
                     stack[j] = one;
                     return true;
                 }
                 if (is_num_and_eq_minus_one(p3)) {
-                    stack[i] = inverse(cadr(cadr(p2)), $);
+                    stack[i] = inverse(cadr(cadr(p2)), _);
                     stack[j] = one;
                     return true;
                 }
                 if (equaln(p3, 2)) {
                     stack[i] = cadr(p1);
-                    stack[j] = $.add(cadr(p1), negOne);
+                    stack[j] = add(_, cadr(p1), negOne);
                     return true;
                 }
                 if (equaln(p3, -2)) {
-                    stack[i] = inverse(cadr(cadr(p2)), $);
-                    stack[j] = inverse($.add(cadr(cadr(p2)), negOne), $);
+                    stack[i] = inverse(cadr(cadr(p2)), _);
+                    stack[j] = inverse(add(_, cadr(cadr(p2)), negOne), _);
                     return true;
                 }
             }

@@ -44,6 +44,7 @@
         "example-bessely": "mocha 'examples/bessely.spec.ts'",
         "example-blades": "mocha 'examples/blades.spec.ts'",
         "example-deg": "mocha 'examples/deg.spec.ts'",
+        "example-defint": "mocha 'examples/defint.spec.ts'",
         "example-differential": "mocha 'examples/differential.spec.ts'",
         "example-E": "mocha 'examples/E.spec.ts'",
         "example-error": "mocha 'examples/error.spec.ts'",
@@ -205,10 +206,10 @@
         "typhon-lang": "^1.0.13"
     },
     "peerDependencies": {
-        "math-expression-atoms": "0.9.37",
-        "math-expression-context": "0.9.26",
-        "math-expression-native": "0.9.18",
-        "math-expression-tree": "0.9.26"
+        "math-expression-atoms": "^0.9.38",
+        "math-expression-context": "^0.9.26",
+        "math-expression-native": "^0.9.20",
+        "math-expression-tree": "^0.9.26"
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
@@ -218,7 +219,7 @@
         "@rollup/plugin-typescript": "^11.1.6",
         "@types/chai": "^4.3.11",
         "@types/mocha": "^10.0.6",
-        "@types/node": "^20.11.19",
+        "@types/node": "^20.11.20",
         "@types/rollup-plugin-peer-deps-external": "^2.2.4",
         "@typescript-eslint/eslint-plugin": "^7.0.2",
         "@typescript-eslint/parser": "^7.0.2",

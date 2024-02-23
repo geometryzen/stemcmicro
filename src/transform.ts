@@ -1,9 +1,12 @@
 import { is_num, one } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { assert_cons, car, cdr, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { ScanOptions, scan_meta } from './algebrite/scan';
 import { polyform } from './bake';
 import { decomp } from './decomp';
-import { Directive, ExtensionEnv } from './env/ExtensionEnv';
+import { Directive } from './env/ExtensionEnv';
+import { iszero } from './helpers/iszero';
+import { subtract } from './helpers/subtract';
 import { subst } from './operators/subst/subst';
 import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from './runtime/constants';
 import { noexpand_unary } from './runtime/defs';
@@ -46,7 +49,7 @@ true is successful, false if not.
 //define B p6
 //define C p7
 
-export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean, $: ExtensionEnv): [retval: U, retvalFlag: boolean] {
+export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean, $: ExprContext): [retval: U, retvalFlag: boolean] {
     // console.lg("transform:", $.toInfixString(F), $.toInfixString(X), JSON.stringify(s), generalTransform);
 
     const state = saveMetaBindings($);
@@ -221,7 +224,7 @@ interface TransformState {
 /**
  * Returns a structure containing the values of METAA, METAB, and METAX.
  */
-function saveMetaBindings($: ExtensionEnv): TransformState {
+function saveMetaBindings($: ExprContext): TransformState {
     return {
         METAA: $.getBinding(METAA, nil),
         METAB: $.getBinding(METAB, nil),
@@ -229,7 +232,7 @@ function saveMetaBindings($: ExtensionEnv): TransformState {
     };
 }
 
-function restoreMetaBindings(state: TransformState, $: ExtensionEnv) {
+function restoreMetaBindings(state: TransformState, $: ExprContext) {
     $.setBinding(METAX, state.METAX);
     $.setBinding(METAB, state.METAB);
     $.setBinding(METAA, state.METAA);
@@ -246,7 +249,7 @@ function restoreMetaBindings(state: TransformState, $: ExtensionEnv) {
  * @param $ 
  * @returns 
  */
-function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: ExtensionEnv): boolean {
+function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: ExprContext): boolean {
     // console.lg("f_equals_a", $.toInfixString(F), $.toInfixString(A), "generalTransform", JSON.stringify(generalTransform));
     for (const fea_i of stack) {
         $.setBinding(METAA, fea_i);
@@ -258,7 +261,7 @@ function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: 
             while (is_cons(cList)) {
                 const cFlag = $.valueOf(cList.head);
                 // TODO: We're checking for zero, presumambly boolean false is more general?
-                if ($.iszero(cFlag)) {
+                if (iszero(cFlag, $)) {
                     break;
                 }
                 cList = cList.cdr;
@@ -280,11 +283,11 @@ function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: 
 
             $.pushDirective(Directive.expandPowSum, 1);
             try {
-                const diff = $.subtract(F, arg2);
+                const diff = subtract($, F, arg2);
 
                 // console.lg("diff", $.toInfixString(diff));
 
-                if ($.iszero(diff)) {
+                if (iszero(diff, $)) {
                     return true;
                 }
             }

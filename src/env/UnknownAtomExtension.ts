@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Sym } from "math-expression-atoms";
+import { create_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Atom, Cons, nil, U } from "math-expression-tree";
+import { diagnostic, Diagnostics } from "../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, FEATURE, TFLAG_NONE } from "./ExtensionEnv";
 
 export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
@@ -61,8 +62,8 @@ export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
         // We'll not participate in operator overloading.
         return nil;
     }
-    dispatch(expr: A, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("dispatch Method not implemented.");
+    dispatch(target: A, opr: Sym, argList: Cons, env: ExprContext): U {
+        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     subst(expr: A, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U {
         throw new Error("subst method not implemented.");

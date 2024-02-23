@@ -179,7 +179,7 @@ import { iszero_tensor_builder } from '../operators/iszero/iszero_tensor';
 import { jsobject_extension_builder } from '../operators/jsobject/JsObjectExtension';
 import { keyword_extension_builder } from '../operators/keyword/KeywordExtension';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
-import { lambda_extension_builder } from '../operators/lambda/is_lambda';
+import { lambda_extension_builder } from '../operators/lambda/LambdaExtension';
 import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
 import { lco_2_blade_blade } from '../operators/lco/lco_2_blade_blade';

@@ -1,9 +1,9 @@
 import { create_int, create_sym, is_hyp, is_tensor, is_uom, QQ, Sym, Uom } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
+import { Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
-import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
 import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
@@ -68,7 +68,7 @@ class UomExtension implements Extension<Uom> {
         return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    binR(atom: Uom, opr: Sym, lhs: U, expr: ExprContext): U {
+    binR(rhs: Uom, opr: Sym, lhs: U, expr: ExprContext): U {
         return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -96,9 +96,8 @@ class UomExtension implements Extension<Uom> {
     get dependencies(): FEATURE[] {
         return ['Uom'];
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    valueOf(expr: Uom, $: ExtensionEnv): U {
-        throw new Error('Method not implemented.');
+    valueOf(uom: Uom): U {
+        return uom;
     }
     isKind(arg: U): arg is Uom {
         return is_uom(arg);
@@ -131,19 +130,18 @@ class UomExtension implements Extension<Uom> {
     toString(): string {
         return this.name;
     }
-    evaluate(expr: U, argList: Cons): [TFLAGS, U] {
-        return this.transform(cons(expr, argList));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    evaluate(uom: Uom, argList: Cons): [TFLAGS, U] {
+        // TODO; We probably need a proper diagnostic should this construction happen.
+        throw new ProgrammingError();
     }
-    transform(expr: U): [TFLAGS, U] {
-        if (is_uom(expr)) {
-            if (expr.isOne()) {
-                return [TFLAG_DIFF, create_int(1)];
-            }
-            else {
-                return [TFLAG_HALT, expr];
-            }
+    transform(uom: Uom): [TFLAGS, U] {
+        if (uom.isOne()) {
+            return [TFLAG_DIFF, create_int(1)];
         }
-        return [TFLAG_NONE, expr];
+        else {
+            return [TFLAG_HALT, uom];
+        }
     }
 }
 

@@ -491,6 +491,10 @@ export interface Extension<T extends U> extends ExprHandler<T> {
     toInfixString(expr: T, $: ExprContext): string;
     toLatexString(expr: T, $: ExprContext): string;
     toListString(expr: T, $: ExprContext): string;
+    /**
+     * This method assumes that the opr is in the operator slot of a combination.
+     * Except for Sym, that's an experimental proposition.
+     */
     evaluate(opr: T, argList: Cons, $: ExtensionEnv): [TFLAGS, U];
     transform(expr: T, $: ExtensionEnv): [TFLAGS, U];
     valueOf(expr: T, $: ExtensionEnv): U;

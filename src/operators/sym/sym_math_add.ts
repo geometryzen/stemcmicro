@@ -1,6 +1,6 @@
 import { create_sym, is_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
-import { cons, Cons, U } from "math-expression-tree";
+import { cons, Cons, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
@@ -17,12 +17,16 @@ class SymMathAdd implements Extension<Sym> {
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    binL(expr: Sym, opr: Sym, rhs: U, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+    binL(lhs: Sym, opr: Sym, rhs: U, env: ExprContext): U {
+        // eslint-disable-next-line no-console
+        console.log(`${this.name}.binL ${lhs} ${opr} ${rhs}`);
+        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    binR(expr: Sym, opr: Sym, lhs: U, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+    binR(rhs: Sym, opr: Sym, lhs: U, env: ExprContext): U {
+        // eslint-disable-next-line no-console
+        console.log(`${this.name}.binR ${rhs} ${opr} ${lhs}`);
+        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Sym, opr: Sym, argList: Cons, env: ExprContext): U {

@@ -3,7 +3,8 @@ import { create_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Atom, Cons, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../diagnostics/diagnostics";
-import { Extension, ExtensionEnv, FEATURE, TFLAG_NONE } from "./ExtensionEnv";
+import { wrap_as_transform } from "../operators/wrap_as_transform";
+import { Extension, ExtensionEnv, FEATURE } from "./ExtensionEnv";
 
 export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
     constructor(atom: A) {
@@ -42,13 +43,11 @@ export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
         throw new Error("evaluate method not implemented.");
     }
     transform(atom: A, $: ExtensionEnv): [number, U] {
-        // eslint-disable-next-line no-console
-        console.log(`UnknownAtomExtension.transform ${atom}`);
-        // We'll assume that the atom has no internal structure.
-        return [TFLAG_NONE, atom];
+        const newExpr = this.valueOf(atom, $);
+        return wrap_as_transform(newExpr, atom);
     }
-    valueOf(expr: A, $: ExtensionEnv): U {
-        throw new Error("valueOf method not implemented.");
+    valueOf(atom: A, $: ExtensionEnv): U {
+        return atom;
     }
     binL(lhs: A, opr: Sym, rhs: U, env: ExprContext): U {
         // eslint-disable-next-line no-console

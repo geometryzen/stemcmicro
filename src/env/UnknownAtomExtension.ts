@@ -47,6 +47,8 @@ export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
         return wrap_as_transform(newExpr, atom);
     }
     valueOf(atom: A, $: ExtensionEnv): U {
+        // eslint-disable-next-line no-console
+        console.warn(`Unknown atom of type ${atom.type} requiring evaluation. Consider registering an extension for this type.`);
         return atom;
     }
     binL(lhs: A, opr: Sym, rhs: U, env: ExprContext): U {

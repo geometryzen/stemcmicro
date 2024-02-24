@@ -17,7 +17,7 @@ describe("error", function () {
         check('error("a") + true', 'a');
     });
     it("Boo + Err", function () {
-        check('true + error("a")', `"Operator '+' cannot be applied to types 'boolean' and 'error'."`); // FIXME
+        check('true + error("a")', `Operator '+' cannot be applied to types 'boolean' and 'error'.`); // FIXME
     });
     it("Err + Blade", function () {
         check('error("a") + ex', 'a');
@@ -50,9 +50,9 @@ describe("error", function () {
         check('sqrt(-1) + error("a")', 'a');
     });
     it("Operator cannot be applied ...", function () {
-        check('true * 23', `"Operator '*' cannot be applied to types 'boolean' and 'rational'."`);
+        check('true * 23', `Operator '*' cannot be applied to types 'boolean' and 'rational'.`);
     });
     it("Property 0 does not exist on type 1.", function () {
-        check('foobar(23)', `"Property 'foobar' does not exist on type 'rational'."`);
+        check('foobar(23)', `Property 'foobar' does not exist on type 'rational'.`);
     });
 });

@@ -3,6 +3,7 @@ import { ExprContext, ExprHandler } from "math-expression-context";
 import { is_native, Native, native_sym } from "math-expression-native";
 import { assert_cons_or_nil, Atom, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { StackU } from "../env/StackU";
+import { nativeStr } from "../nativeInt";
 import { is_imu } from "../operators/imu/is_imu";
 import { str_extension } from "../operators/str/str_extension";
 import { cadddr, caddr, cadr, cddddr, cddr } from "../tree/helpers";
@@ -367,7 +368,7 @@ class SvgProgramStack implements ProgramStack {
     }
 }
 
-export interface SvgRenderEnv {
+export interface SvgRenderEnv extends ExprContext {
     handlerFor<T extends U>(expr: T): ExprHandler<T>;
 }
 
@@ -1191,8 +1192,7 @@ function emit_blade(blade: Blade, $: ProgramStack): void {
 
 function emit_atom(atom: Atom, env: SvgRenderEnv, $: ProgramStack): void {
     const handler = env.handlerFor(atom);
-    // TODO: This will probably have much in common with the Ascii rendering.
-    const str = handler.toInfixString(atom, env as unknown as ExprContext);
+    const str = nativeStr(handler.dispatch(atom, native_sym(Native.infix), nil, env));
     emit_roman_string(str, $);
 }
 

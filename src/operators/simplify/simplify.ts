@@ -1,4 +1,4 @@
-import { create_int, is_num, is_rat, one, Sym, zero } from 'math-expression-atoms';
+import { create_int, is_imu, is_num, is_rat, one, Sym, zero } from 'math-expression-atoms';
 import { ExprContext } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
 import { car, cdr, Cons2, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
@@ -7,6 +7,7 @@ import { add_terms } from '../../calculators/add/add_terms';
 import { condense, yycondense } from '../../condense';
 import { complexity } from '../../eigenmath/eigenmath';
 import { Directive, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
+import { ShareableStack } from '../../env/Stack';
 import { add } from '../../helpers/add';
 import { clock } from '../../helpers/clock';
 import { divide } from '../../helpers/divide';
@@ -36,7 +37,6 @@ import { denominator } from "../denominator/denominator";
 import { factor } from "../factor/factor";
 import { evaluate_as_float } from '../float/float';
 import { areunivarpolysfactoredorexpandedform, gcd } from "../gcd/gcd";
-import { is_imu } from '../imu/is_imu';
 import { numerator } from "../numerator/numerator";
 import { is_pow_2_any_any } from '../pow/is_pow_2_any_any';
 import { rationalize_factoring } from '../rationalize/rationalize';
@@ -55,73 +55,106 @@ function simplify_if_contains_factorial(expr: U, $: ExprContext): U {
     }
 }
 
-export function simplify(x: U, $: ExprContext): U {
-    // console.lg("simplify", $.toInfixString(x));
-    const hook = function (retval: U): U {
-        return retval;
-    };
-
-    // The following illustrates how we should be handling all atoms.
-    // Of course, the extension should be looked up from the context.
-    if (is_atom(x)) {
-        const handler = $.handlerFor(x);
-        return hook(handler.dispatch(x, native_sym(Native.simplify), nil, $));
+function ensure_simplify_state(env: ExprContext): ShareableStack<U> {
+    if (env.hasState('simplify')) {
+        return env.getState('simplify') as ShareableStack<U>;
     }
+    else {
+        // This makes it clear that we want the entries in the state to extend a Shareable interface
+        // so that we can clean them up.
+        const stack = new ShareableStack<U>();
+        env.setState('simplify', stack);
+        return stack;
+    }
+}
 
-    const A = simplify_if_contains_factorial(x, $);
-    // console.lg("A => ", $.toInfixString(A));
+export function simplify(x: U, env: ExprContext): U {
+    // console.lg("simplify", `${x}`);
+    const stack = ensure_simplify_state(env);
+    try {
+        const hook = function (retval: U): U {
+            return retval;
+        };
 
-    const B = simplify_by_i_dunno_what(A, $);
-    // console.lg("B => ", $.toInfixString(B));
-
-    const C = simplify_by_rationalizing(B, $);
-    // console.lg("C => ", $.toInfixString(C));
-
-    const D = simplify_by_condensing(C, $);
-    // console.lg("D => ", $.toInfixString(D));
-
-    const E = simplify_a_minus_b_divided_by_b_minus_a(D, $);
-    // console.lg("E => ", $.toInfixString(E));
-
-    const F = simplify_by_expanding_denominators(E, $);
-    // console.lg("F => ", $.toInfixString(F));
-
-    const G = simplify_trig(F, $);
-    // console.lg("G => ", $.toInfixString(G));
-
-    const H = simplify_terms(G, $);
-    // console.lg("H => ", $.toInfixString(H));
-
-    const I = simplify_polarRect(H, $);
-    // console.lg("I => ", $.toInfixString(I));
-
-    if (do_simplify_nested_radicals) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [flags, R] = simplify_nested_radicals(I, $);
-        // console.lg(`I ${$.toInfixString(p1)}`);
-        // if there is some de-nesting then
-        // re-run a simplification because
-        // the shape of the expression might
-        // have changed significantly.
-        // e.g. simplify(14^(1/2) - (16 - 4*7^(1/2))^(1/2))
-        // needs some more simplification after the de-nesting.
-        if (R.equals(I)) {
-            // No progress was made, so we fall through.
-            // console.lg("R => ", $.toInfixString(R));
+        // Bail if it would cause an infinite loop.
+        if (stack.some(value => value.equals(x))) {
+            // console.lg("bailing", `${x}`);
+            return hook(x);
         }
-        else {
-            // Progress was made so we try to simplify again.
-            return hook(simplify(R, $));
+
+        stack.push(x);
+        try {
+
+            // The following illustrates how we should be handling all atoms.
+            // Of course, the extension should be looked up from the context.
+            if (is_atom(x)) {
+                const handler = env.handlerFor(x);
+                return hook(handler.dispatch(x, native_sym(Native.simplify), nil, env));
+            }
+
+            const A = simplify_if_contains_factorial(x, env);
+            // console.lg("A => ", $.toInfixString(A));
+
+            const B = simplify_by_i_dunno_what(A, env);
+            // console.lg("B => ", $.toInfixString(B));
+
+            const C = simplify_by_rationalizing(B, env);
+            // console.lg("C => ", $.toInfixString(C));
+
+            const D = simplify_by_condensing(C, env);
+            // console.lg("D => ", $.toInfixString(D));
+
+            const E = simplify_a_minus_b_divided_by_b_minus_a(D, env);
+            // console.lg("E => ", $.toInfixString(E));
+
+            const F = simplify_by_expanding_denominators(E, env);
+            // console.lg("F => ", $.toInfixString(F));
+
+            const G = simplify_trig(F, env);
+            // console.lg("G => ", $.toInfixString(G));
+
+            const H = simplify_terms(G, env);
+            // console.lg("H => ", $.toInfixString(H));
+
+            const I = simplify_polarRect(H, env);
+            // console.lg("I => ", $.toInfixString(I));
+
+            if (do_simplify_nested_radicals) {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                const [flags, R] = simplify_nested_radicals(I, env);
+                // console.lg(`I ${$.toInfixString(p1)}`);
+                // if there is some de-nesting then
+                // re-run a simplification because
+                // the shape of the expression might
+                // have changed significantly.
+                // e.g. simplify(14^(1/2) - (16 - 4*7^(1/2))^(1/2))
+                // needs some more simplification after the de-nesting.
+                if (R.equals(I)) {
+                    // No progress was made, so we fall through.
+                    // console.lg("R => ", $.toInfixString(R));
+                }
+                else {
+                    // Progress was made so we try to simplify again.
+                    return hook(simplify(R, env));
+                }
+            }
+
+            const J = simplify_rect_to_clock(I, env);
+            // console.lg("J => ", $.toInfixString(J));
+
+            const K = simplify_rational_expressions(J, env);
+            // console.lg("K => ", $.toInfixString(K));
+
+            return hook(K);
+        }
+        finally {
+            stack.pop().release();
         }
     }
-
-    const J = simplify_rect_to_clock(I, $);
-    // console.lg("J => ", $.toInfixString(J));
-
-    const K = simplify_rational_expressions(J, $);
-    // console.lg("K => ", $.toInfixString(K));
-
-    return hook(K);
+    finally {
+        // This will beak things unless it is clear that state is shareable.
+        // stack.release();
+    }
 }
 
 // try rationalizing
@@ -190,20 +223,21 @@ function simplify_by_i_dunno_what(p1: U, $: ExprContext): U {
 }
 
 // try expanding denominators
-function simplify_by_expanding_denominators(expr: U, $: ExprContext): U {
-    if (iszero(expr, $)) {
-        return expr;
+function simplify_by_expanding_denominators(x: U, $: ExprContext): U {
+    // console.lg("simplify_by_expanding_denominators", `${x}`);
+    if (iszero(x, $)) {
+        return x;
     }
-    const A = rationalize_factoring(expr, $);
-    const B = inverse(A, $);
-    const C = rationalize_factoring(B, $);
-    const D = inverse(C, $);
-    const E = rationalize_factoring(D, $);
-    if (count(E) < count(expr)) {
+    const A = rationalize_factoring(x, $);      //  A = x
+    const B = inverse(A, $);                    //  B = 1/x
+    const C = rationalize_factoring(B, $);      //  C = 1/x
+    const D = inverse(C, $);                    //  D = x
+    const E = rationalize_factoring(D, $);      //  E = x
+    if (count(E) < count(x)) {
         return E;
     }
     else {
-        return expr;
+        return x;
     }
 }
 

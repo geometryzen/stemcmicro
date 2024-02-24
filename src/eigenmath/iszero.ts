@@ -5,8 +5,17 @@ import { Cons, is_atom, U } from "math-expression-tree";
 import { ProgramEnv } from "./ProgramEnv";
 
 class IsZeroExprContext implements ExprContext {
-    constructor(readonly env: ProgramEnv) {
+    constructor(readonly env: Pick<ProgramEnv, 'hasState' | 'getState' | 'setState' | 'handlerFor'>) {
 
+    }
+    hasState(key: string): boolean {
+        return this.env.hasState(key);
+    }
+    getState(key: string): unknown {
+        return this.env.getState(key);
+    }
+    setState(key: string, value: unknown): void {
+        this.env.setState(key, value);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getSymbolPrintName(sym: Sym): string {
@@ -75,7 +84,7 @@ class IsZeroExprContext implements ExprContext {
 /**
  * Works for expr being Rat, Flt, or Tensor.
  */
-export function iszero(atom: U, env: ProgramEnv): boolean {
+export function iszero(atom: U, env: Pick<ProgramEnv, 'getState' | 'handlerFor' | 'hasState' | 'setState'>): boolean {
     if (is_atom(atom)) {
         const handler = env.handlerFor(atom);
         return handler.test(atom, native_sym(Native.iszero), new IsZeroExprContext(env));

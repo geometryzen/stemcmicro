@@ -1,4 +1,4 @@
-import { create_sym, epsilon, Hyp, is_hyp, is_tensor, is_uom, Sym } from "math-expression-atoms";
+import { create_str, create_sym, epsilon, Hyp, is_hyp, is_tensor, is_uom, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, nil, U } from "math-expression-tree";
@@ -9,7 +9,6 @@ import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 
 const MUL = native_sym(Native.multiply);
-const SIMPLIFY = native_sym(Native.simplify);
 
 function verify_hyp(hyp: Hyp): Hyp | never {
     if (is_hyp(hyp)) {
@@ -49,8 +48,13 @@ class HypExtension implements Extension<Hyp> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Hyp, opr: Sym, argList: Cons, env: ExprContext): U {
-        if (opr.equalsSym(SIMPLIFY)) {
-            return target;
+        switch (opr.id) {
+            case Native.infix: {
+                return create_str(this.toInfixString(target));
+            }
+            case Native.simplify: {
+                return target;
+            }
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
@@ -87,20 +91,16 @@ class HypExtension implements Extension<Hyp> {
         }
         return expr;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toHumanString(hyp: Hyp, $: ExprContext): string {
+    toHumanString(hyp: Hyp): string {
         return hyp.printname;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(hyp: Hyp, $: ExprContext): string {
+    toInfixString(hyp: Hyp): string {
         return hyp.printname;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toLatexString(hyp: Hyp, $: ExprContext): string {
+    toLatexString(hyp: Hyp): string {
         return hyp.printname;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(hyp: Hyp, $: ExprContext): string {
+    toListString(hyp: Hyp): string {
         return hyp.printname;
     }
 }

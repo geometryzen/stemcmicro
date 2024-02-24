@@ -9520,8 +9520,9 @@ export function stack_zero(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
 
     // dim info
 
-    for (let i = 0; i < n; i++)
+    for (let i = 0; i < n; i++) {
         T.dims[n - i - 1] = pop_integer($);
+    }
 
     push(T, $);
 }

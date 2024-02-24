@@ -9,14 +9,12 @@ import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { power_blade_rat } from "../pow/power_blade_int";
+import { create_str } from "../str/create_str";
 import { is_sym } from "../sym/is_sym";
 
-const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
-const GRADE = native_sym(Native.grade);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
-const SIMPLIFY = native_sym(Native.simplify);
 const SQRT = native_sym(Native.sqrt);
 
 /**
@@ -124,28 +122,34 @@ class BladeExtension implements Extension<Blade> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Blade, opr: Sym, argList: Cons, env: ExprContext): U {
-        if (opr.equalsSym(ABS)) {
-            const expr = items_to_cons(SQRT, target.scp(target));
-            try {
-                return env.valueOf(expr);
-            }
-            finally {
-                expr.release();
-            }
-        }
-        else if (opr.equalsSym(GRADE)) {
-            const head = argList.head;
-            try {
-                if (is_rat(head) && head.isInteger()) {
-                    return target.extractGrade(head.toNumber());
+        switch (opr.id) {
+            case Native.abs: {
+                const expr = items_to_cons(SQRT, target.scp(target));
+                try {
+                    return env.valueOf(expr);
+                }
+                finally {
+                    expr.release();
                 }
             }
-            finally {
-                head.release();
+            case Native.grade: {
+                const head = argList.head;
+                try {
+                    if (is_rat(head) && head.isInteger()) {
+                        return target.extractGrade(head.toNumber());
+                    }
+                }
+                finally {
+                    head.release();
+                }
+                break;
             }
-        }
-        else if (opr.equalsSym(SIMPLIFY)) {
-            return target;
+            case Native.infix: {
+                return create_str(this.toInfixString(target));
+            }
+            case Native.simplify: {
+                return target;
+            }
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }

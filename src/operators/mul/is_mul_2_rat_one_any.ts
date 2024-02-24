@@ -1,5 +1,5 @@
+import { is_rat } from "math-expression-atoms";
 import { Cons } from "../../tree/tree";
-import { is_rat } from "../rat/rat_extension";
 import { is_mul_2_any_any } from "./is_mul_2_any_any";
 
 export function is_mul_2_rat_one_any(expr: Cons): boolean {

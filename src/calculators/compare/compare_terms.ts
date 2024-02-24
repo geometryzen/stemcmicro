@@ -1,5 +1,6 @@
-import { is_blade } from "math-expression-atoms";
+import { is_blade, is_rat, is_sym, one, zero } from "math-expression-atoms";
 import { is_native, Native } from "math-expression-native";
+import { is_cons, U } from "math-expression-tree";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
@@ -13,10 +14,6 @@ import { is_mul_2_sym_sym } from "../../operators/mul/is_mul_2_sym_sym";
 import { is_num } from "../../operators/num/is_num";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_pow_2_sym_rat } from "../../operators/pow/is_pow_2_sym_rat";
-import { is_rat } from "../../operators/rat/rat_extension";
-import { is_sym } from "../../operators/sym/is_sym";
-import { one, zero } from "../../tree/rat/Rat";
-import { is_cons, U } from "../../tree/tree";
 import { canonical_factor_lhs, canonical_factor_rhs } from "../factorize/canonical_factor";
 import { canonical_factor_blade_rhs } from "../factorize/canonical_factor_blade";
 import { canonical_factor_imu_rhs } from "../factorize/canonical_factor_imu";

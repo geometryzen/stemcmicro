@@ -1,7 +1,8 @@
-import { is_flt, is_rat, Num } from "math-expression-atoms";
+import { is_flt, is_rat, is_str, Num } from "math-expression-atoms";
 import { U } from "math-expression-tree";
 import { in_safe_integer_range } from "./in_safe_integer_range";
 import { is_rat_and_integer } from "./is_rat_and_integer";
+import { ProgrammingError } from "./programming/ProgrammingError";
 
 /**
  * If the expr is not a Rat or Flt then the result is NaN.
@@ -27,6 +28,16 @@ export function nativeInt(expr: U): number {
     }
     else {
         return NaN;
+    }
+}
+
+export function nativeStr(expr: U): string {
+    if (is_str(expr)) {
+        return expr.str;
+    }
+    else {
+        // The problem here is that expr is Err, it i not propagated.
+        throw new ProgrammingError(`${expr}`);
     }
 }
 

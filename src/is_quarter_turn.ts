@@ -6,16 +6,15 @@
 //  2  -1
 //  3  i
 
+import { imu, is_num } from "math-expression-atoms";
+import { U } from "math-expression-tree";
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { imu } from "./env/imu";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
 import { nativeInt } from "./nativeInt";
-import { is_num } from "./operators/num/is_num";
 import { is_pi } from './operators/pi/is_pi';
 import { is_multiply } from "./runtime/helpers";
 import { cadddr, caddr, cadr } from "./tree/helpers";
 import { two } from "./tree/rat/Rat";
-import { U } from "./tree/tree";
 
 //  4  -i
 export function is_quarter_turn(p: U, $: ExtensionEnv): 0 | 1 | 2 | 3 | 4 {

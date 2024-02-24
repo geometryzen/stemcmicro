@@ -1,4 +1,4 @@
-import { create_sym, is_tensor, is_uom, Sym, Tensor } from "math-expression-atoms";
+import { create_str, create_sym, is_tensor, is_uom, Sym, Tensor } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
@@ -23,6 +23,7 @@ import { subst } from "../subst/subst";
 const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
 const ADJ = native_sym(Native.adj);
+const INFIX = native_sym(Native.infix);
 const ISONE = native_sym(Native.isone);
 const MUL = native_sym(Native.multiply);
 const SIMPLIFY = native_sym(Native.simplify);
@@ -200,6 +201,9 @@ class TensorExtension implements Extension<Tensor> {
         }
         else if (opr.equalsSym(ADJ)) {
             return adj(target, env);
+        }
+        else if (opr.equalsSym(INFIX)) {
+            return create_str(this.toInfixString(target, env));
         }
         else if (opr.equalsSym(SIMPLIFY)) {
             return target.map(x => simplify(x, env));

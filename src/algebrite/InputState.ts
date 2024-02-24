@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { create_keyword_ns, Keyword } from "math-expression-atoms";
+import { code_from_native_sym } from "math-expression-native";
 import { split_qualified_name } from "../edn";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
@@ -190,6 +191,8 @@ export class InputState {
         // Maybe we use two different symbol parsers?
         // TODO: We should be picking up user symbols
         const key = this.#token.txt;
+        const pos = this.#token.pos + this.offset;
+        const end = this.#token.end + this.offset;
         if (this.meta_mode && typeof this.#token.txt == 'string') {
             const metaKey = scanConfig.meta[key];
             if (metaKey) {
@@ -197,12 +200,18 @@ export class InputState {
             }
         }
         if (scanConfig.lexicon[key]) {
-            return scanConfig.lexicon[key].clone(this.#token.pos + this.offset, this.#token.end + this.offset);
+            return scanConfig.lexicon[key].clone(pos, end);
         }
         else {
-            // TODO: Namespaces?
-            const atom = create_sym(key, this.#token.pos + this.offset, this.#token.end + this.offset);
-            return atom;
+            const sym: Sym = create_sym(key, pos, end);
+            // Fix up the id of the symbol, if possible.
+            const id = code_from_native_sym(sym);
+            if (id !== -1) {
+                return native_sym(id).clone(pos, end);
+            }
+            else {
+                return sym;
+            }
         }
     }
     tokenToKeyword(): Keyword {

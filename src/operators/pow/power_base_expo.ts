@@ -7,6 +7,8 @@ import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { divide } from "../../helpers/divide";
+import { isone } from "../../helpers/isone";
+import { iszero } from "../../helpers/iszero";
 import { iscomplexnumberdouble, is_complex_number, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_gt_zero, is_plus_or_minus_one, is_rat_and_even_integer } from "../../is";
 import { is_rat_and_integer } from "../../is_rat_and_integer";
 import { multiply_binary } from "../../multiply";
@@ -47,10 +49,16 @@ function multiply_terms(lhs: U[], rhs: U[], $: ExtensionEnv) {
 export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
     // console.lg("power_base_expo", `${base}`, `${expo}`);
     if (typeof base === 'undefined' || base === null) {
-        throw new Error("base must be defined.");
+        throw new ProgrammingError("base must be defined.");
     }
     if (typeof expo === 'undefined' || expo === null) {
-        throw new Error("expo must be defined.");
+        throw new ProgrammingError("expo must be defined.");
+    }
+    if (is_nil(base)) {
+        throw new ProgrammingError("base MUST be something.");
+    }
+    if (is_nil(expo)) {
+        throw new ProgrammingError("expo MUST be something.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
@@ -84,7 +92,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
 
     //  1 ^ a    ->  1
     //  a ^ 0    ->  1
-    if ($.equals(base, one) || $.iszero(expo)) {
+    if (isone(base, $) || iszero(expo, $)) {
         const dynOne = $.getDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one;
         return hook(dynOne, "A");
     }
@@ -324,7 +332,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
             }
             else if (expo.isPositive()) {
                 const terms = args_to_items(base);
-                if (terms.every($.isreal)) {
+                if (terms.every(term => $.isreal(term))) {
                     const n = nativeInt(expo);
                     const result = power_sum(n, base, $);
                     return hook(result, "T");

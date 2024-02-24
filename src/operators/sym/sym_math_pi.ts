@@ -1,4 +1,4 @@
-import { create_sym, is_blade, is_err, is_flt, is_imu, is_sym, is_tensor, is_uom, one, Sym } from "math-expression-atoms";
+import { assert_sym, create_flt, create_str, create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
@@ -8,16 +8,11 @@ import { HASH_SYM } from "../../hashing/hash_info";
 import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { MATH_PI } from "../../runtime/ns_math";
-import { create_flt } from "../../tree/flt/Flt";
-import { is_hyp } from "../hyp/is_hyp";
 import { is_pi } from "../pi/is_pi";
-import { is_rat } from "../rat/rat_extension";
-import { assert_sym } from "./assert_sym";
 
 const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
-const SIMPLIFY = native_sym(Native.simplify);
 
 /**
  * 
@@ -92,10 +87,26 @@ class SymMathPi implements Extension<Sym> {
         }
         return nil;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
-        if (opr.equalsSym(SIMPLIFY)) {
-            return target;
+        switch (opr.id) {
+            case Native.ascii: {
+                return create_str(this.toAsciiString(target, env));
+            }
+            case Native.human: {
+                return create_str(this.toHumanString(target, env));
+            }
+            case Native.infix: {
+                return create_str(this.toInfixString(target, env));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString());
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target, env));
+            }
+            case Native.simplify: {
+                return target;
+            }
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
@@ -134,21 +145,20 @@ class SymMathPi implements Extension<Sym> {
             return expr;
         }
     }
-    toHumanString(expr: Sym, $: ExprContext): string {
-        return $.getSymbolPrintName(MATH_PI);
+    toAsciiString(expr: Sym, env: ExprContext): string {
+        return env.getSymbolPrintName(MATH_PI);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(expr: Sym, $: ExprContext): string {
-        return $.getSymbolPrintName(MATH_PI);
+    toHumanString(expr: Sym, env: ExprContext): string {
+        return env.getSymbolPrintName(MATH_PI);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toLatexString(expr: Sym): string {
-        // console.lg(`SymMathPi.toLatexString ${expr}`);
+    toInfixString(expr: Sym, env: ExprContext): string {
+        return env.getSymbolPrintName(MATH_PI);
+    }
+    toLatexString(): string {
         return '\\pi';
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(expr: Sym, $: ExprContext): string {
-        return $.getSymbolPrintName(MATH_PI);
+    toListString(expr: Sym, env: ExprContext): string {
+        return env.getSymbolPrintName(MATH_PI);
     }
     valueOf(expr: Sym): Sym {
         return assert_sym(this.transform(expr)[1]);

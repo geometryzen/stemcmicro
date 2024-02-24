@@ -1,15 +1,11 @@
+import { is_rat, Rat, Sym } from "math-expression-atoms";
+import { Cons, Cons2, is_cons, items_to_cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_RAT } from "../../hashing/hash_info";
-import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { Rat } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-import { is_rat } from "../rat/rat_extension";
 import { is_mul_2_rat_any } from "./is_mul_2_rat_any";
 
 /**

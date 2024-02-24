@@ -1,5 +1,6 @@
 import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_imu, is_num, is_tensor, Sym } from "math-expression-atoms";
 import { assert_cons, Cons, nil, U } from "math-expression-tree";
+import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
 import { StackFunction } from "../adapters/StackFunction";
 import { Directive } from "../env/ExtensionEnv";
 import { broadcast, evaluate_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
@@ -90,6 +91,7 @@ export function make_stack_draw(io: Pick<ProgramIO, 'listeners'>): StackFunction
             // Do nothing
         }
         else {
+            const exprContext = new ExprContextFromProgram(env, ctrl, $);
             ctrl.pushDirective(Directive.drawing, 1);
             try {
                 const [F, varName, n, pass2] = draw_args(expr.argList, env, ctrl, $);
@@ -131,7 +133,7 @@ export function make_stack_draw(io: Pick<ProgramIO, 'listeners'>): StackFunction
                         useImaginaryI: is_imu(get_binding(I_LOWER, nil, env)),
                         useImaginaryJ: is_imu(get_binding(J_LOWER, nil, env))
                     };
-                    emit_graph(points, env, $, dc, ec, outbuf);
+                    emit_graph(points, exprContext, $, dc, ec, outbuf);
 
                     const output = outbuf.join('');
 

@@ -41,6 +41,15 @@ export class DerivedEnv implements ExtensionEnv {
         this.#baseEnv = baseEnv;
         this.#config = config;
     }
+    hasState(key: string): boolean {
+        return this.#baseEnv.hasState(key);
+    }
+    getState(key: string): unknown {
+        return this.#baseEnv.getState(key);
+    }
+    setState(key: string, value: unknown): void {
+        this.#baseEnv.setState(key, value);
+    }
     addAtomListener(subscriber: AtomListener): void {
         this.#baseEnv.addAtomListener(subscriber);
     }

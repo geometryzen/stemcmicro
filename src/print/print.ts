@@ -9,11 +9,13 @@ import { Directive } from '../env/ExtensionEnv';
 import { isone } from '../helpers/isone';
 import { negate } from '../helpers/negate';
 import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from '../is';
+import { nativeStr } from '../nativeInt';
 import { denominator } from '../operators/denominator/denominator';
 import { is_hyp } from '../operators/hyp/is_hyp';
 import { is_imu } from '../operators/imu/is_imu';
 import { numerator } from '../operators/numerator/numerator';
 import { is_pi } from '../operators/pi/is_pi';
+import { is_str } from '../operators/str/is_str';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../predicates/is_negative';
 import { is_num_and_negative } from '../predicates/is_negative_number';
@@ -1437,20 +1439,31 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
     }
     if (is_atom(expr)) {
         // TODO: Fix the casting.
+        // _.getDirective(Directive.printMode);
         const handler = _.handlerFor(expr);
         switch (defs.printMode) {
+            // Consider replacing printMode with Native.xxx and put in a Directive
             case PRINTMODE_HUMAN: {
                 // FIXME
-                return handler.toHumanString(expr, _ as unknown as ExprContext);
+                return nativeStr(handler.dispatch(expr, native_sym(Native.human), nil, _ as unknown as ExprContext));
             }
             case PRINTMODE_INFIX: {
-                return handler.toInfixString(expr, _ as unknown as ExprContext);
+                const response = handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext);
+                if (is_str(response)) {
+                    return nativeStr(response);
+                }
+                else if (is_err(response)) {
+                    throw new ProgrammingError(`${response.cause}`);
+                }
+                else {
+                    throw new ProgrammingError();
+                }
             }
             case PRINTMODE_LATEX: {
-                return handler.toLatexString(expr, _ as unknown as ExprContext);
+                return nativeStr(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
             }
             case PRINTMODE_SEXPR: {
-                return handler.toListString(expr, _ as unknown as ExprContext);
+                return nativeStr(handler.dispatch(expr, native_sym(Native.sexpr), nil, _ as unknown as ExprContext));
             }
             default: {
                 throw new Error(`${defs.printMode}`);
@@ -2021,11 +2034,11 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
             const handler = _.handlerFor(expr);
             if (defs.printMode === PRINTMODE_INFIX) {
                 // FIXME: casting
-                return handler.toInfixString(expr, _ as unknown as ExprContext);
+                return nativeStr(handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext));
             }
             if (defs.printMode === PRINTMODE_LATEX) {
                 // FIXME: casting
-                return handler.toLatexString(expr, _ as unknown as ExprContext);
+                return nativeStr(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
             }
             return expr.key();
         }
@@ -2036,11 +2049,11 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
             const handler = _.handlerFor(expr);
             if (defs.printMode === PRINTMODE_INFIX) {
                 // FIXME: casting
-                return handler.toInfixString(expr, _ as unknown as ExprContext);
+                return nativeStr(handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext));
             }
             if (defs.printMode === PRINTMODE_LATEX) {
                 // FIXME: casting
-                return handler.toLatexString(expr, _ as unknown as ExprContext);
+                return nativeStr(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
             }
             return expr.key();
         }

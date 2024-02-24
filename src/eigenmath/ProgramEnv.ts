@@ -18,4 +18,7 @@ export interface ProgramEnv {
      * If a stack is provided, the computed value is pushed onto the stack and nil is returned. 
      */
     valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U;
+    hasState(key: string): boolean;
+    getState(key: string): unknown;
+    setState(key: string, value: unknown): void;
 }

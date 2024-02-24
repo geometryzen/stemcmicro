@@ -1,3 +1,4 @@
+import { is_rat } from "math-expression-atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
@@ -11,7 +12,6 @@ import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_opr_2_lhs_rhs } from "../helpers/is_opr_2_lhs_rhs";
 import { is_mul_2_rat_sym } from "../mul/is_mul_2_rat_sym";
-import { is_rat } from "../rat/rat_extension";
 
 type LL = Sym;
 type LR = Cons2<Sym, Rat, Sym>;

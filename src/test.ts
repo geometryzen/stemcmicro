@@ -1,3 +1,4 @@
+import { booU } from 'math-expression-atoms';
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from './env/ExtensionEnv';
 import { predicate_return_value } from './helpers/predicate_return_value';
 import { Native } from './native/Native';
@@ -71,6 +72,7 @@ export function eval_testne(expr: Cons, $: ExtensionEnv): U {
 // If we get something else, then we don't know and we return the
 // unaveluated test, which is the same as saying "maybe".
 export function eval_testeq(expr: Cons, $: ExtensionEnv): U {
+    console.log("eval_testeq", `${expr}`);
     // first try without simplifyng both sides
     const orig = expr;
     const lhs = $.valueOf(orig.lhs);
@@ -106,10 +108,8 @@ export function eval_testeq(expr: Cons, $: ExtensionEnv): U {
         return predicate_return_value(true, $);
     }
 
-    // if we didn't get to a number then we
-    // don't know whether the quantities are
-    // different so do nothing
-    return orig;
+    // We return the fuzzy boolean value which gives downstream processing a chance to interpret the result.
+    return booU;
 }
 
 // Relational operators expect a numeric result for operand difference.

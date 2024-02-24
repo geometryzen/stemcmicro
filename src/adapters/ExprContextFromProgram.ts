@@ -10,6 +10,15 @@ export class ExprContextFromProgram implements ExprContext {
     constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly $: ProgramStack) {
         // Nothing to see here.
     }
+    hasState(key: string): boolean {
+        return this.env.hasState(key);
+    }
+    getState(key: string): unknown {
+        return this.env.getState(key);
+    }
+    setState(key: string, value: unknown): void {
+        this.env.setState(key, value);
+    }
     clearBindings(): void {
         this.env.clearBindings();
     }

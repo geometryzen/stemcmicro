@@ -12,16 +12,15 @@ import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { piAsFlt } from "../../tree/flt/Flt";
 import { is_pi } from "../pi/is_pi";
+import { create_str } from "../str/create_str";
 import { get_binding } from "./get_binding";
 
 const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
-const GRADE = native_sym(Native.grade);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
 const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
-const SIMPLIFY = native_sym(Native.simplify);
 
 function verify_sym(x: Sym): Sym | never {
     if (is_sym(x)) {
@@ -148,26 +147,31 @@ class SymExtension implements Extension<Sym> {
         return nil;
     }
     dispatch(target: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
-        if (opr.equalsSym(ABS)) {
-            // See abs_sym.ts for an implementaion that looks at symbol predicates.
-            return items_to_cons(ABS, target);
-        }
-        else if (opr.equalsSym(GRADE)) {
-            const head = argList.head;
-            try {
-                if (iszero(head, env)) {
-                    return target;
+        switch (opr.id) {
+            case Native.abs: {
+                // See abs_sym.ts for an implementaion that looks at symbol predicates.
+                return items_to_cons(ABS, target);
+            }
+            case Native.grade: {
+                const head = argList.head;
+                try {
+                    if (iszero(head, env)) {
+                        return target;
+                    }
+                    else {
+                        return zero;
+                    }
                 }
-                else {
-                    return zero;
+                finally {
+                    head.release();
                 }
             }
-            finally {
-                head.release();
+            case Native.infix: {
+                return create_str(this.toInfixString(target, env));
             }
-        }
-        else if (opr.equalsSym(SIMPLIFY)) {
-            return target;
+            case Native.simplify: {
+                return target;
+            }
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }

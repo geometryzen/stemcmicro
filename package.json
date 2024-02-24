@@ -57,7 +57,7 @@
         "example-hyp": "mocha 'examples/hyp.spec.ts'",
         "example-imu": "mocha 'examples/imu.spec.ts'",
         "example-isone": "mocha 'examples/isone.spec.ts'",
-        "example-infixform": "mocha 'examples/infixform.spec.ts'",
+        "example-infix": "mocha 'examples/infix.spec.ts'",
         "example-log": "mocha 'examples/log.spec.ts'",
         "example-mag": "mocha 'examples/mag.spec.ts'",
         "example-misc": "mocha 'examples/misc.spec.ts'",
@@ -207,9 +207,9 @@
     },
     "peerDependencies": {
         "math-expression-atoms": "^0.9.39",
-        "math-expression-context": "^0.9.26",
-        "math-expression-native": "^0.9.20",
-        "math-expression-tree": "^0.9.26"
+        "math-expression-context": "^0.9.28",
+        "math-expression-native": "^0.9.22",
+        "math-expression-tree": "^0.9.27"
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
@@ -224,7 +224,7 @@
         "@typescript-eslint/eslint-plugin": "^7.0.2",
         "@typescript-eslint/parser": "^7.0.2",
         "chai": "^4.3.10",
-        "eslint": "^8.56.0",
+        "eslint": "^8.57.0",
         "gh-pages": "^6.1.1",
         "jest": "^29.7.0",
         "mocha": "^10.3.0",

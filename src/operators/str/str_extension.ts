@@ -8,7 +8,6 @@ import { HASH_STR } from "../../hashing/hash_info";
 
 const ADD = native_sym(Native.add);
 
-
 export function strcmp(str1: string, str2: string): Sign {
     if (str1 === str2) {
         return 0;
@@ -50,6 +49,23 @@ class StrExtension implements Extension<Str> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Str, opr: Sym, argList: Cons, env: ExprContext): U {
+        switch (opr.id) {
+            case Native.ascii: {
+                return create_str(this.toAsciiString(target));
+            }
+            case Native.human: {
+                return create_str(this.toHumanString(target));
+            }
+            case Native.infix: {
+                return create_str(this.toInfixString(target));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString(target));
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target));
+            }
+        }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
@@ -79,13 +95,12 @@ class StrExtension implements Extension<Str> {
         }
         return expr;
     }
-    toInfixString(str: Str): string {
-        return JSON.stringify(str.str);
-    }
     toAsciiString(str: Str): string {
         return JSON.stringify(str.str);
     }
     toHumanString(str: Str): string {
+        return JSON.stringify(str.str);
+        /*
         const s = str.str;
         switch (s) {
             // Experimenting here. Better to look for use of units and "smart" render to put the number in a reasonable range.
@@ -106,8 +121,12 @@ class StrExtension implements Extension<Str> {
             case "tera": return 'T';
             case "peta": return 'P';
             case "exa": return 'E';
-            default: return JSON.stringify(str.str);
+            default: return str.str;
         }
+        */
+    }
+    toInfixString(str: Str): string {
+        return JSON.stringify(str.str);
     }
     toLatexString(str: Str): string {
         return JSON.stringify(str.str);

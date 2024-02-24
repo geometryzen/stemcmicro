@@ -47,7 +47,7 @@ import {
     stack_transpose,
     stack_unit
 } from '../eigenmath/eigenmath';
-import { stack_infixform } from '../eigenmath/stack_infixform';
+import { stack_infix } from '../eigenmath/stack_infix';
 import { eval_filter } from '../filter';
 import { eval_leading } from '../leading';
 import { eval_lookup } from '../lookup';
@@ -147,7 +147,7 @@ import { isinfinitesimal_hyp } from '../operators/isinfinitesimal/isinfinitesima
 import { isinfinitesimal_mul } from '../operators/isinfinitesimal/isinfinitesimal_mul';
 import { isinfinitesimal_rat } from '../operators/isinfinitesimal/isinfinitesimal_rat';
 import { isinfinitesimal_sym } from '../operators/isinfinitesimal/isinfinitesimal_sym';
-import { eval_isone } from '../operators/isone/isone';
+import { eval_isone } from '../operators/isone/eval_isone';
 import { ispositive_any } from '../operators/ispositive/ispositive_any';
 import { ispositive_exp } from '../operators/ispositive/ispositive_exp';
 import { ispositive_flt } from '../operators/ispositive/ispositive_flt';
@@ -342,7 +342,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineExtension(hermite_varargs);
 
-    $.defineStackFunction(create_sym("infixform"), stack_infixform);
+    $.defineStackFunction(native_sym(Native.infix), stack_infix);
 
     // Inner Product (|)
     $.defineExtension(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));

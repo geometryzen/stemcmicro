@@ -1,7 +1,7 @@
-import { Hyp } from "math-expression-atoms";
+import { Hyp, is_sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
-import { Cons, is_atom, nil, U } from "math-expression-tree";
-import { is_sym } from "../sym/is_sym";
+import { Cons, is_atom, U } from "math-expression-tree";
+import { ProgrammingError } from "../../programming/ProgrammingError";
 
 export function eval_differential(expr: Cons, env: ExprContext): U {
     const argList = expr.argList;
@@ -33,7 +33,5 @@ export function differential(F: U, env: ExprContext): U {
             return new Hyp(`d${F.key()}`, F.pos, F.end);
         }
     }
-    console.log("differential", `${F}`);
-    new Hyp("foo");
-    return nil;
+    throw new ProgrammingError("TODO: differential");
 }

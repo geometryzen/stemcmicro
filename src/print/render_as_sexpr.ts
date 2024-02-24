@@ -1,5 +1,7 @@
 import { ExprContext } from "math-expression-context";
+import { Native, native_sym } from "math-expression-native";
 import { car, cdr, is_atom, is_cons, nil, U } from "math-expression-tree";
+import { nativeStr } from "../nativeInt";
 import { PrintConfig } from "./print";
 
 /**
@@ -28,12 +30,12 @@ export function render_as_sexpr(expr: U, $: PrintConfig): string {
     else if (is_atom(expr)) {
         const handler = $.handlerFor(expr);
         // FIXME: casting
-        return handler.toListString(expr, $ as unknown as ExprContext);
+        return nativeStr(handler.dispatch(expr, native_sym(Native.sexpr), nil, $ as unknown as ExprContext));
     }
     else if (expr.isnil) {
         const handler = $.handlerFor(expr);
         // FIXME: casting
-        return handler.toListString(expr, $ as unknown as ExprContext);
+        return nativeStr(handler.dispatch(expr, native_sym(Native.sexpr), nil, $ as unknown as ExprContext));
     }
     else {
         throw new Error();

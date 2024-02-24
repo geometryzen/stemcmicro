@@ -1,5 +1,10 @@
 import { ProgrammingError } from "../programming/ProgrammingError";
 
+export interface Shareable {
+    addRef(): void;
+    release(): void;
+}
+
 export class Stack<T> {
     tos = 0;
     readonly #elements: T[] = [];
@@ -94,6 +99,9 @@ export class Stack<T> {
         const elements = this.#elements.slice();
         return new Stack<T>(elements);
     }
+    some(predicate: (value: T, index: number, array: T[]) => boolean): boolean {
+        return this.#elements.some(predicate);
+    }
     splice(start: number, deleteCount?: number): T[] {
         if (typeof deleteCount === 'number') {
             return this.#elements.splice(start, deleteCount);
@@ -110,5 +118,40 @@ export class Stack<T> {
         const q = this.pop();
         this.push(p);
         this.push(q);
+    }
+}
+
+export class ShareableStack<T extends Shareable> implements Shareable {
+    #data: Stack<T> = new Stack();
+    #refCount = 1;
+    constructor() {
+        // Nothing to see here yet.
+    }
+    addRef(): void {
+        this.#refCount++;
+    }
+    release(): void {
+        this.#refCount--;
+        if (this.#refCount == 0) {
+            while (this.#data.length > 0) {
+                this.#data.pop().release();
+            }
+        }
+    }
+    /**
+     * The reference count of the element will be increased by one.
+     */
+    push(element: T): void {
+        element.addRef();
+        this.#data.push(element);
+    }
+    /**
+     * The returned element will have a reference count one greater than when it was pushed.
+     */
+    pop(): T {
+        return this.#data.pop();
+    }
+    some(predicate: (value: T, index: number, array: T[]) => boolean): boolean {
+        return this.#data.some(predicate);
     }
 }

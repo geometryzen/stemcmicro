@@ -1,4 +1,4 @@
-import { create_int, create_sym, is_hyp, is_tensor, is_uom, QQ, Sym, Uom } from "math-expression-atoms";
+import { create_int, create_str, create_sym, is_hyp, is_rat, is_tensor, is_uom, QQ, Sym, Uom } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
@@ -9,13 +9,10 @@ import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { two } from "../../tree/rat/Rat";
-import { is_rat } from "../rat/rat_extension";
 
-const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
-const SIMPLIFY = native_sym(Native.simplify);
 
 class UomExtension implements Extension<Uom> {
     constructor() {
@@ -73,11 +70,28 @@ class UomExtension implements Extension<Uom> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Uom, opr: Sym, argList: Cons, env: ExprContext): U {
-        if (opr.equalsSym(ABS)) {
-            return target;
-        }
-        else if (opr.equalsSym(SIMPLIFY)) {
-            return target;
+        switch (opr.id) {
+            case Native.abs: {
+                return target;
+            }
+            case Native.ascii: {
+                return create_str(this.toAsciiString(target));
+            }
+            case Native.human: {
+                return create_str(this.toHumanString(target));
+            }
+            case Native.infix: {
+                return create_str(this.toInfixString(target));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString(target));
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target));
+            }
+            case Native.simplify: {
+                return target;
+            }
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
@@ -109,6 +123,9 @@ class UomExtension implements Extension<Uom> {
             }
         }
         return uom;
+    }
+    toAsciiString(uom: Uom): string {
+        return uom.toInfixString();
     }
     toHumanString(uom: Uom): string {
         return uom.toInfixString();

@@ -90,7 +90,7 @@ export interface ExprHandlerBuilder<T extends U> {
     create(): ExprHandler<T>;
 }
 
-export interface ExprEngine extends ProgramEnv {
+export interface ExprEngine extends Pick<ProgramEnv, 'clearBindings'> {
     clearBindings(): void;
     executeProlog(prolog: string[]): void;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };

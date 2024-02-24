@@ -1,4 +1,4 @@
-import { assert_sym, create_sym, is_sym, Sym } from "math-expression-atoms";
+import { assert_sym, create_str, create_sym, is_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, cons, nil, U } from "math-expression-tree";
@@ -28,6 +28,23 @@ class SymMathPow implements Extension<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
+        switch (opr.id) {
+            case Native.ascii: {
+                return create_str(this.toAsciiString(target, env));
+            }
+            case Native.human: {
+                return create_str(this.toHumanString(target, env));
+            }
+            case Native.infix: {
+                return create_str(this.toInfixString(target, env));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString(target, env));
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target, env));
+            }
+        }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -61,6 +78,14 @@ class SymMathPow implements Extension<Sym> {
         }
         else {
             return expr;
+        }
+    }
+    toAsciiString(expr: Sym, $: ExprContext): string {
+        if ($.getDirective(Directive.useCaretForExponentiation)) {
+            return '^';
+        }
+        else {
+            return '**';
         }
     }
     toHumanString(expr: Sym, $: ExprContext): string {

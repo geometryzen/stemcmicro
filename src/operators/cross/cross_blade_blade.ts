@@ -1,4 +1,4 @@
-import { Blade, is_blade } from "math-expression-atoms";
+import { Blade, is_blade, is_rat } from "math-expression-atoms";
 import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -9,7 +9,6 @@ import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_blade_rat } from "../mul/is_mul_2_blade_rat";
 import { is_mul_2_rat_blade } from "../mul/is_mul_2_rat_blade";
-import { is_rat } from "../rat/rat_extension";
 import { MATH_VECTOR_CROSS_PRODUCT } from "./MATH_VECTOR_CROSS_PRODUCT";
 
 class Builder implements ExtensionBuilder<U> {

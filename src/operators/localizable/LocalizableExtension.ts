@@ -1,30 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { create_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
+import { Native, native_sym } from "math-expression-native";
 import { Cons, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics, is_localizable, Localizable } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, mkbuilder } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
+import { nativeStr } from "../../nativeInt";
 import { ProgrammingError } from "../../programming/ProgrammingError";
+import { create_str } from "../str/create_str";
 
 const greeting = new Localizable(Diagnostics.Hello_World, nil);
 
-export function formatStringFromArgs(text: string, argList: Cons, _: ExprContext): string {
+export function formatStringFromArgs(text: string, argList: Cons, env: ExprContext): string {
     return text.replace(/{(\d+)}/g, (_match, index: string) => {
-        // TODO
         const arg = argList.item(parseInt(index));
         try {
-            const handler = _.handlerFor(arg);
-            return handler.toInfixString(arg, _);
+            const handler = env.handlerFor(arg);
+            return nativeStr(handler.dispatch(arg, native_sym(Native.infix), nil, env));
         }
         finally {
             arg.release();
         }
-
-        // 
-        return text;
-    }
-    );
+    });
 }
 
 export class LocalizableExtension implements Extension<Localizable> {
@@ -89,8 +87,12 @@ export class LocalizableExtension implements Extension<Localizable> {
     binR(rhs: Localizable, opr: Sym, lhs: U, env: ExprContext): U {
         throw new Error("Method not implemented.");
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Localizable, opr: Sym, argList: Cons, env: ExprContext): U {
+        switch (opr.id) {
+            case Native.infix: {
+                return create_str(this.toInfixString(target, env));
+            }
+        }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     subst(expr: Localizable, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U {

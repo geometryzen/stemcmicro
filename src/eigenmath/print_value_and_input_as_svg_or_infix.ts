@@ -1,8 +1,10 @@
 import { is_sym, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { is_nil, items_to_cons, U } from "math-expression-tree";
+import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
 import { ExprEngineListener } from "../api/api";
-import { infix_config_from_options } from "./infixform";
+import { StackU } from "../env/StackU";
+import { infix_config_from_options } from "./format_infix";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
 import { render_as_html_infix } from "./render_as_html_infix";
@@ -50,8 +52,10 @@ export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boole
     }
 
     if (svg) {
+        const stack = new StackU();
+        const $ = new ExprContextFromProgram(env, ctrl, stack);
         for (const listener of listeners) {
-            listener.output(render_svg(value, env, options));
+            listener.output(render_svg(value, $, options));
         }
     }
     else {

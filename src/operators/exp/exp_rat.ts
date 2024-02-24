@@ -1,3 +1,4 @@
+import { is_rat } from "math-expression-atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
@@ -6,7 +7,6 @@ import { one, Rat } from "../../tree/rat/Rat";
 import { create_sym, Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { is_rat } from "../rat/rat_extension";
 
 class ExpRat extends Function1<Rat> {
     readonly #hash: string;

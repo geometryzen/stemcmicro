@@ -1,4 +1,4 @@
-import { assert_rat, create_flt, create_sym, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_sym, is_tensor, is_uom, one, Rat, Sym, zero } from "math-expression-atoms";
+import { assert_rat, create_flt, create_str, create_sym, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Rat, Sym, zero } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, is_cons, is_singleton, items_to_cons, nil, U } from "math-expression-tree";
@@ -11,18 +11,11 @@ import { order_binary } from "../../helpers/order_binary";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
-const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
-const GRADE = native_sym(Native.grade);
 const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
-const SIMPLIFY = native_sym(Native.simplify);
-
-export function is_rat(p: unknown): p is Rat {
-    return p instanceof Rat;
-}
 
 export class RatExtension implements Extension<Rat> {
     readonly #hash = hash_for_atom(assert_rat(one));
@@ -131,25 +124,42 @@ export class RatExtension implements Extension<Rat> {
         return nil;
     }
     dispatch(target: Rat, opr: Sym, argList: Cons, env: ExprContext): U {
-        if (opr.equalsSym(ABS)) {
-            return target.abs();
-        }
-        else if (opr.equalsSym(GRADE)) {
-            const head = argList.head;
-            try {
-                if (iszero(head, env)) {
-                    return target;
+        switch (opr.id) {
+            case Native.abs: {
+                return target.abs();
+            }
+            case Native.grade: {
+                const head = argList.head;
+                try {
+                    if (iszero(head, env)) {
+                        return target;
+                    }
+                    else {
+                        return zero;
+                    }
                 }
-                else {
-                    return zero;
+                finally {
+                    head.release();
                 }
             }
-            finally {
-                head.release();
+            case Native.ascii: {
+                return create_str(this.toAsciiString(target));
             }
-        }
-        else if (opr.equalsSym(SIMPLIFY)) {
-            return target;
+            case Native.human: {
+                return create_str(this.toHumanString(target));
+            }
+            case Native.infix: {
+                return create_str(this.toInfixString(target));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString(target));
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target));
+            }
+            case Native.simplify: {
+                return target;
+            }
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
@@ -181,6 +191,9 @@ export class RatExtension implements Extension<Rat> {
             }
         }
         return expr;
+    }
+    toAsciiString(rat: Rat): string {
+        return rat.toInfixString();
     }
     toHumanString(rat: Rat): string {
         return rat.toInfixString();

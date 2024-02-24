@@ -12,7 +12,7 @@ function stripWhitespace(s: string): string {
     return s.replace(/\s/g, '');
 }
 
-const parseConfig: ParseConfig = {
+const parseConfig: Partial<ParseConfig> = {
     useCaretForExponentiation: false,
     useParenForTensors: false
 };
@@ -1494,10 +1494,10 @@ describe("edge", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-3"));
         engine.release();
     });
-    xit("infixform(x)", function () {
+    xit("infix(x)", function () {
         const lines: string[] = [
             `p=(x+1)^2`,
-            `iinfixform(p)`
+            `infix(p)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineOptions);

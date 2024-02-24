@@ -1,13 +1,15 @@
+import { is_sym, is_tensor, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
+import { is_atom, is_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from "../env/ExtensionEnv";
-import { equals } from "../helpers/equals";
-import { is_sym } from "../operators/sym/is_sym";
-import { is_tensor } from '../operators/tensor/is_tensor';
-import { Sym } from "../tree/sym/Sym";
-import { is_cons, U } from '../tree/tree';
 
 const sum = (arr: number[]): number => arr.reduce((a: number, b: number) => a + b, 0);
 
+/**
+ * What exactly are we counting here?
+ * Compare with the complexity frunction in Eigenmath which is counting atoms.
+ * Noe that nil is being counted with a 1 (like an atom).
+ */
 export function count(p: U): number {
     let n: number;
     if (is_cons(p)) {
@@ -24,16 +26,34 @@ export function count(p: U): number {
 // more general than just counting symbols, it can
 // probably count instances of anything you pass as
 // first argument but didn't try it.
-export function countOccurrencesOfSymbol(needle: Sym, p: U, $: ExprContext) {
-    let n = 0;
-    if (is_cons(p)) {
-        n = sum([...p].map((el) => countOccurrencesOfSymbol(needle, el, $)));
+export function countOccurrencesOfSymbol(needle: Sym, x: U, $: ExprContext): number {
+    if (is_cons(x)) {
+        const head = x.head;
+        const rest = x.rest;
+        try {
+            return countOccurrencesOfSymbol(needle, head, $) + countOccurrencesOfSymbol(needle, rest, $);
+        }
+        finally {
+            head.release();
+            rest.release();
+        }
     }
-    else if (equals(needle, p,$)) {
-        n = 1;
+    else if (is_atom(x)) {
+        $.handlerFor(x);
+        // We could step into the atom if we want to using the handler, but I'm not sure that is the point.
+        // This function is only called in simplify_nested_radicals as a measure of complexity so we 
+        // probably don't need to walk into tensors... except if the tensor is the top level!
+        if (is_sym(x)) {
+            return needle.equalsSym(x) ? 1 : 0;
+        }
+        else {
+            return 0;
+        }
     }
-
-    return n;
+    else {
+        // x must be nil...
+        return 0;
+    }
 }
 
 /**

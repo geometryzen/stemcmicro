@@ -1,5 +1,5 @@
 
-import { create_sym, imu, Imu, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, negOne, one, Sym } from "math-expression-atoms";
+import { create_str, create_sym, imu, Imu, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, negOne, one, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
@@ -16,7 +16,6 @@ const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
 const negImu = items_to_cons(MUL, negOne, imu);
-const SIMPLIFY = native_sym(Native.simplify);
 
 function divide(numer: U, denom: U, env: ExprContext): U {
     const rhs = items_to_cons(POW, denom, negOne);
@@ -120,8 +119,13 @@ class ImuExtension implements Extension<Imu> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Imu, opr: Sym, argList: Cons, env: ExprContext): U {
-        if (opr.equalsSym(SIMPLIFY)) {
-            return target;
+        switch (opr.id) {
+            case Native.infix: {
+                return create_str(this.toInfixString(target));
+            }
+            case Native.simplify: {
+                return target;
+            }
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }

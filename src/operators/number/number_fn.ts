@@ -1,13 +1,11 @@
-import { is_flt } from "math-expression-atoms";
+import { is_flt, is_rat, one, Rat, zero } from "math-expression-atoms";
+import { Cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { NUMBER } from "../../runtime/constants";
 import { cadr } from "../../tree/helpers";
-import { one, Rat, zero } from "../../tree/rat/Rat";
-import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { is_rat } from "../rat/rat_extension";
 
 /**
  * Evaluates (number ...) expressions.

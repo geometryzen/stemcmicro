@@ -1,11 +1,8 @@
+import { is_rat, Rat, Sym } from "math-expression-atoms";
+import { Cons1, U } from "math-expression-tree";
 import { Extension, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { Rat } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
-import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
-import { is_rat } from "../rat/rat_extension";
 import { MATH_STANDARD_PART } from "./MATH_STANDARD_PART";
 
 type ARG = Rat;

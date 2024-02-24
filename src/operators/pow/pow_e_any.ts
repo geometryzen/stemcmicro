@@ -1,3 +1,5 @@
+import { is_imu, is_rat, is_sym, negOne, one, Sym } from "math-expression-atoms";
+import { is_cons, items_to_cons, U } from "math-expression-tree";
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
@@ -9,21 +11,15 @@ import { divide_by_imu } from "../../optimize/divide_by_imu";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { MATH_ADD, MATH_MUL, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
-import { negOne, one } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { MATH_EXP } from "../exp/MATH_EXP";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
 import { is_opr_2_lhs_any } from "../helpers/is_opr_2_lhs_any";
-import { is_imu } from "../imu/is_imu";
 import { is_cons_opr_eq_mul } from "../mul/is_cons_opr_eq_mul";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 import { is_pi } from "../pi/is_pi";
-import { is_rat } from "../rat/rat_extension";
-import { is_sym } from "../sym/is_sym";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function cross(lhs: Sym, rhs: U): boolean {

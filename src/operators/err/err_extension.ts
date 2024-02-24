@@ -1,15 +1,12 @@
-import { create_sym, Err, is_err, Sym } from "math-expression-atoms";
+import { create_str, create_sym, Err, is_err, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
-import { is_native, Native, native_sym } from "math-expression-native";
+import { is_native, Native } from "math-expression-native";
 import { cons, Cons, nil, U } from 'math-expression-tree';
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
-import { infixform } from "../../helpers/infixform";
+import { infix } from "../../helpers/infix";
 import { ProgrammingError } from "../../programming/ProgrammingError";
-
-const GRADE = native_sym(Native.grade);
-const SIMPLIFY = native_sym(Native.simplify);
 
 export class ErrExtension implements Extension<Err> {
     readonly #hash = hash_for_atom(new Err(nil));
@@ -40,11 +37,28 @@ export class ErrExtension implements Extension<Err> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Err, opr: Sym, argList: Cons, env: ExprContext): U {
-        if (opr.equalsSym(GRADE)) {
-            return target;
-        }
-        else if (opr.equalsSym(SIMPLIFY)) {
-            return target;
+        switch (opr.id) {
+            case Native.grade: {
+                return target;
+            }
+            case Native.ascii: {
+                return create_str(this.toAsciiString(target, env));
+            }
+            case Native.human: {
+                return create_str(this.toHumanString(target, env));
+            }
+            case Native.infix: {
+                return create_str(this.toInfixString(target, env));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString(target, env));
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target, env));
+            }
+            case Native.simplify: {
+                return target;
+            }
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
@@ -75,10 +89,19 @@ export class ErrExtension implements Extension<Err> {
         }
         return expr;
     }
+    toAsciiString(err: Err, $: ExprContext): string {
+        const cause = err.cause;
+        try {
+            return infix(cause, $);
+        }
+        finally {
+            cause.release();
+        }
+    }
     toHumanString(err: Err, $: ExprContext): string {
         const cause = err.cause;
         try {
-            return infixform(cause, $);
+            return infix(cause, $);
         }
         finally {
             cause.release();
@@ -87,7 +110,7 @@ export class ErrExtension implements Extension<Err> {
     toInfixString(err: Err, $: ExprContext): string {
         const cause = err.cause;
         try {
-            return infixform(cause, $);
+            return infix(cause, $);
         }
         finally {
             cause.release();
@@ -96,7 +119,7 @@ export class ErrExtension implements Extension<Err> {
     toLatexString(err: Err, $: ExprContext): string {
         const cause = err.cause;
         try {
-            return infixform(cause, $);
+            return infix(cause, $);
         }
         finally {
             cause.release();
@@ -105,7 +128,7 @@ export class ErrExtension implements Extension<Err> {
     toListString(err: Err, $: ExprContext): string {
         const cause = err.cause;
         try {
-            return infixform(cause, $);
+            return infix(cause, $);
         }
         finally {
             cause.release();

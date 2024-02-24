@@ -1,3 +1,4 @@
+import { is_rat } from "math-expression-atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { MATH_POW } from "../../runtime/ns_math";
@@ -8,7 +9,6 @@ import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_rat_rat } from "../mul/is_mul_2_rat_rat";
-import { is_rat } from "../rat/rat_extension";
 
 class Op extends Function2<Rat, Cons2<Sym, Rat, Rat>> {
     constructor(readonly config: Readonly<EnvConfig>) {

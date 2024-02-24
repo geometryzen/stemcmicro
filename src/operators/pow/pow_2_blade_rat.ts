@@ -1,13 +1,12 @@
-import { Blade, is_blade } from "math-expression-atoms";
+import { Blade, is_blade, is_rat } from "math-expression-atoms";
+import { items_to_cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { items_to_cons, U } from "../../tree/tree";
 import { Function2 } from "../helpers/Function2";
-import { is_rat } from "../rat/rat_extension";
 
 class Op extends Function2<Blade, Rat> {
     readonly #hash: string;

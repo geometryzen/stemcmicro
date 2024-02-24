@@ -1,4 +1,4 @@
-import { is_flt } from "math-expression-atoms";
+import { is_flt, is_rat } from "math-expression-atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_RAT } from "../../hashing/hash_info";
@@ -8,7 +8,6 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function2 } from "../helpers/Function2";
-import { is_rat } from "../rat/rat_extension";
 
 class Op extends Function2<Flt, Rat> {
     readonly #hash: string;

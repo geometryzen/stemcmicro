@@ -1,11 +1,13 @@
 import { assert_sym, create_sym, is_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
+import { Native } from "math-expression-native";
 import { cons, Cons, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
+import { create_str } from "../str/create_str";
 
 /**
  * 
@@ -14,8 +16,6 @@ class SymMathMul implements Extension<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(readonly config: Readonly<EnvConfig>) {
     }
-    phases?: number | undefined;
-    dependencies?: FEATURE[] | undefined;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binL(lhs: Sym, opr: Sym, rhs: U, env: ExprContext): U {
         // eslint-disable-next-line no-console
@@ -30,6 +30,23 @@ class SymMathMul implements Extension<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Sym, opr: Sym, argList: Cons, env: ExprContext): U {
+        switch (opr.id) {
+            case Native.ascii: {
+                return create_str(this.toAsciiString(target, env));
+            }
+            case Native.human: {
+                return create_str(this.toHumanString(target, env));
+            }
+            case Native.infix: {
+                return create_str(this.toInfixString(target, env));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString(target, env));
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target, env));
+            }
+        }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -64,6 +81,9 @@ class SymMathMul implements Extension<Sym> {
         else {
             return opr;
         }
+    }
+    toAsciiString(opr: Sym, $: ExprContext): string {
+        return $.getSymbolPrintName(MATH_MUL);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toHumanString(opr: Sym, $: ExprContext): string {

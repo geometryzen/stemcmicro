@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { create_sym, is_boo, Sym } from "math-expression-atoms";
 import { ExprContext, ExprHandler } from "math-expression-context";
-import { Atom, Cons, is_atom, nil, U } from "math-expression-tree";
+import { Atom, Cons, is_atom, is_nil, nil, U } from "math-expression-tree";
 import { ExprHandlerBuilder } from "../api/api";
+import { diagnostic, Diagnostics } from "../diagnostics/diagnostics";
 import { EnvConfig } from "../env/EnvConfig";
 import { Extension, ExtensionBuilder, ExtensionEnv } from "../env/ExtensionEnv";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
@@ -68,8 +69,14 @@ class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
     binR(rhs: T, opr: Sym, lhs: U, env: ExprContext): U {
         throw new Error("binR method not implemented.");
     }
-    dispatch(expr: T, opr: Sym, argList: Cons, env: ExprContext): U {
-        return this.handler.dispatch(expr, opr, argList, env);
+    dispatch(target: T, opr: Sym, argList: Cons, env: ExprContext): U {
+        const response = this.handler.dispatch(target, opr, argList, env);
+        if (is_nil(response)) {
+            return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
+        }
+        else {
+            return response;
+        }
     }
     subst(expr: T, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U {
         throw new Error("subst method not implemented.");

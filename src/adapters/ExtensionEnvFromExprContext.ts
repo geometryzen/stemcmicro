@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CellHost, create_int, is_boo, Sym, Tensor } from "math-expression-atoms";
+import { CellHost, create_int, is_boo, is_rat, Sym, Tensor } from "math-expression-atoms";
 import { ExprContext, ExprHandler, LambdaExpr } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
@@ -7,7 +7,6 @@ import { AtomListener, ExprEngineListener } from "../api/api";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { CompareFn, Directive, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
 import { ExtensionFromExprHandler } from "../env/ExtensionFromExprHandler";
-import { is_rat } from "../operators/rat/rat_extension";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import { StackFunction } from "./StackFunction";
 
@@ -48,6 +47,15 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         else {
             throw new ProgrammingError("ctxt MUST be defined.");
         }
+    }
+    hasState(key: string): boolean {
+        return this.ctxt.hasState(key);
+    }
+    getState(key: string): unknown {
+        return this.ctxt.getState(key);
+    }
+    setState(key: string, value: unknown): void {
+        this.ctxt.setState(key, value);
     }
     handlerFor<T extends U>(expr: T): ExprHandler<T> {
         return this.ctxt.handlerFor(expr);
@@ -402,13 +410,26 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     isone(expr: U): boolean {
         throw new Error("Method not implemented.");
     }
-    ispositive(expr: U): boolean {
-        throw new Error("Method not implemented.");
+    ispositive(arg: U): boolean {
+
+        const expr = items_to_cons(native_sym(Native.ispositive), arg);
+        try {
+            const retval = this.ctxt.valueOf(expr);
+            try {
+                return predicate_to_boolean(retval);
+            }
+            finally {
+                retval.release();
+            }
+        }
+        finally {
+            expr.release();
+        }
     }
     isreal(arg: U): boolean {
         const expr = items_to_cons(native_sym(Native.isreal), arg);
         try {
-            const retval = this.ctxt.valueOf(expr);
+            const retval = checkThis(this).valueOf(expr);
             try {
                 return predicate_to_boolean(retval);
             }

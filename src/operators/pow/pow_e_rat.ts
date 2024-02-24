@@ -1,3 +1,4 @@
+import { is_rat, is_sym } from "math-expression-atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
@@ -8,8 +9,6 @@ import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
-import { is_rat } from "../rat/rat_extension";
-import { is_sym } from "../sym/is_sym";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function cross(lhs: Sym, rhs: U): boolean {

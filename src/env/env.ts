@@ -362,6 +362,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const cellHost = new ReactiveHost();
     const subscribers: ExprEngineListener[] = [];
+    const stateMap: Map<string, unknown> = new Map();
 
     /**
      * The environment return value and environment for callbacks.
@@ -369,6 +370,15 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     const $: ExtensionEnv = {
         get listeners(): ExprEngineListener[] {
             return subscribers;
+        },
+        hasState(key: string): boolean {
+            return stateMap.has(key);
+        },
+        getState(key: string): unknown {
+            return stateMap.get(key);
+        },
+        setState(key: string, value: unknown): void {
+            stateMap.set(key, value);
         },
         addAtomListener(subscriber: AtomListener): void {
             cellHost.addAtomListener(subscriber);

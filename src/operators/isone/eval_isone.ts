@@ -11,12 +11,12 @@ export function eval_isone(expr: Cons, $: ExtensionEnv): U {
     try {
         const head = argList.head;
         try {
-            const arg = $.valueOf(head);
+            const x = $.valueOf(head);
             try {
-                return isone(arg, $);
+                return isone(x, $);
             }
             finally {
-                arg.release();
+                x.release();
             }
         }
         finally {
@@ -31,6 +31,7 @@ export function eval_isone(expr: Cons, $: ExtensionEnv): U {
 function isone(x: U, $: ExprContext): Boo {
     if (is_atom(x)) {
         const handler = $.handlerFor(x);
+        // It would be better here to dispatch and accept a fuzzy answer.
         const retval = handler.test(x, ISONE, $);
         return create_boo(retval);
     }

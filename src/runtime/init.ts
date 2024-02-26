@@ -1,6 +1,5 @@
 import { scan } from '../algebrite/scan';
 import { Directive, ExtensionEnv, flag_from_directive } from "../env/ExtensionEnv";
-import { defs } from './defs';
 
 /**
  * #deprecated
@@ -35,55 +34,38 @@ export const stemc_prolog = [
 ];
 
 export function execute_definitions(definitions: readonly string[], $: ExtensionEnv): void {
-    const originalCodeGen = defs.codeGen;
-    defs.codeGen = false;
-    try {
-        for (let i = 0; i < definitions.length; i++) {
-            const line = definitions[i];
-            execute_definition(line, $);
-        }
-    }
-    finally {
-        // restore the symbol dependencies as they were before.
-        defs.codeGen = originalCodeGen;
+    for (let i = 0; i < definitions.length; i++) {
+        const line = definitions[i];
+        execute_definition(line, $);
     }
 }
 
 export function execute_definition(sourceText: string, $: ExtensionEnv): void {
-    // console.lg(`execute_definition ${JSON.stringify(sourceText)}`);
-    const originalCodeGen = defs.codeGen;
-    defs.codeGen = false;
+    const [scanned, tree] = scan(sourceText, 0, {
+        useCaretForExponentiation: flag_from_directive($.getDirective(Directive.useCaretForExponentiation)),
+        useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
+        explicitAssocAdd: false,
+        explicitAssocMul: false,
+        explicitAssocExt: false
+    });
     try {
-        const [scanned, tree] = scan(sourceText, 0, {
-            useCaretForExponentiation: flag_from_directive($.getDirective(Directive.useCaretForExponentiation)),
-            useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
-            explicitAssocAdd: false,
-            explicitAssocMul: false,
-            explicitAssocExt: false
-        });
-        try {
-            if (scanned > 0) {
-                // Evaluating the tree for the side-effect which is to establish a binding.
-                $.pushDirective(Directive.expanding, 1);
-                try {
-                    $.valueOf(tree);
-                }
-                finally {
-                    $.popDirective();
-                }
+        if (scanned > 0) {
+            // Evaluating the tree for the side-effect which is to establish a binding.
+            $.pushDirective(Directive.expanding, 1);
+            try {
+                $.valueOf(tree);
             }
-        }
-        catch (e) {
-            if (e instanceof Error) {
-                throw new Error(`Unable to compute the value of definition ${JSON.stringify(sourceText)}. Cause: ${e.message}. Stack: ${e.stack}`);
-            }
-            else {
-                throw new Error(`Unable to compute the value of definition ${JSON.stringify(sourceText)}. Cause: ${e}`);
+            finally {
+                $.popDirective();
             }
         }
     }
-    finally {
-        // restore the symbol dependencies as they were before.
-        defs.codeGen = originalCodeGen;
+    catch (e) {
+        if (e instanceof Error) {
+            throw new Error(`Unable to compute the value of definition ${JSON.stringify(sourceText)}. Cause: ${e.message}. Stack: ${e.stack}`);
+        }
+        else {
+            throw new Error(`Unable to compute the value of definition ${JSON.stringify(sourceText)}. Cause: ${e}`);
+        }
     }
 }

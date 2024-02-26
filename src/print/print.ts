@@ -58,7 +58,7 @@ import {
     TESTLT,
     UNIT
 } from '../runtime/constants';
-import { defs, PrintMode } from '../runtime/defs';
+import { PrintMode } from '../runtime/defs';
 import { is_abs, is_add, is_factorial, is_inner_or_dot, is_lco, is_multiply, is_opr_eq_inv, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
 import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from '../tree/helpers';
@@ -95,7 +95,7 @@ export function get_last_print_mode_symbol(printMode: PrintMode): Sym {
         case PrintMode.LaTeX: return LAST_LATEX_PRINT;
         case PrintMode.Infix: return LAST_INFIX_PRINT;
         case PrintMode.SExpr: return LAST_SEXPR_PRINT;
-        default: throw new Error(printMode);
+        default: throw new ProgrammingError();
     }
 }
 
@@ -521,7 +521,7 @@ function print_outer_operator(_: PrintConfig): string {
         return ' \\wedge ';
     }
 
-    if (_.getDirective(Directive.printMode) === PrintMode.Human && !defs.codeGen) {
+    if (_.getDirective(Directive.printMode) === PrintMode.Human) {
         return print_str(' ^ ');
     }
     else {
@@ -588,7 +588,7 @@ function print_inner_operator(_: PrintConfig): string {
         return ' \\mid ';
     }
 
-    if (_.getDirective(Directive.printMode) === PrintMode.Human && !defs.codeGen) {
+    if (_.getDirective(Directive.printMode) === PrintMode.Human) {
         return print_str(' | ');
     }
     else {
@@ -601,7 +601,7 @@ function print_lco_operator(_: PrintConfig): string {
         return ' \\ll ';
     }
 
-    if (_.getDirective(Directive.printMode) === PrintMode.Human && !defs.codeGen) {
+    if (_.getDirective(Directive.printMode) === PrintMode.Human) {
         return print_str(' << ');
     }
     else {
@@ -614,7 +614,7 @@ function print_rco_operator(_: PrintConfig): string {
         return ' \\gg ';
     }
 
-    if (_.getDirective(Directive.printMode) === PrintMode.Human && !defs.codeGen) {
+    if (_.getDirective(Directive.printMode) === PrintMode.Human) {
         return print_str(' >> ');
     }
     else {
@@ -1131,7 +1131,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
     // quick check this is actually a square root.
     if (is_num_and_equal_one_half(expo)) {
         if (equaln(base, 2)) {
-            if (defs.codeGen) {
+            if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
                 str += print_str('Math.SQRT2');
                 return str;
             }
@@ -1143,7 +1143,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
                 str += print_str('}');
                 return str;
             }
-            else if (defs.codeGen) {
+            else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
                 str += print_str('Math.sqrt(');
                 str += render_using_non_sexpr_print_mode(base, _);
                 str += print_str(')');
@@ -1153,7 +1153,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
     }
 
     if (equaln(_.getBinding(PRINT_LEAVE_E_ALONE, nil), 1) && is_base_of_natural_logarithm(base)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             str += print_str('Math.exp(');
             str += print_expo_of_denom(expo, _);
             str += print_str(')');
@@ -1173,7 +1173,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
         return str;
     }
 
-    if (defs.codeGen) {
+    if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
         str += print_str('Math.pow(');
         str += print_base_of_denom(base, _);
         str += print_str(', ');
@@ -1589,7 +1589,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                 let str = '';
                 const body = argList.item(1);
                 try {
-                    if (!defs.codeGen) {
+                    if (_.getDirective(Directive.printMode) !== PrintMode.JavaScript) {
                         const paramList = argList.item(0);
                         try {
                             str += print_str('fn ');
@@ -1612,7 +1612,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                 let str = '';
                 const body = argList.item(0);
                 try {
-                    if (!defs.codeGen) {
+                    if (_.getDirective(Directive.printMode) !== PrintMode.JavaScript) {
                         const paramList = argList.item(1);
                         try {
                             str += print_str('function ');
@@ -1664,7 +1664,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
     }
 
     // TODO: The generalization here would be that we look up the operator then ask for the right format
-    // based upon _.getDirective(Directive.printMode), defs.codeGen
+    // based upon _.getDirective(Directive.printMode), _.getDirective(Directive.printMode)===PrintMode.JavaScript
     if (is_cons(expr) && is_factorial(expr)) {
         return print_factorial_function(expr, _);
     }
@@ -1696,14 +1696,14 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_TRANSPOSE_latex(expr, _);
             return str;
         }
-        else if (defs.codeGen) {
+        else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_TRANSPOSE_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(UNIT)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_UNIT_codegen(expr, _);
             return str;
@@ -1715,7 +1715,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_INV_latex(expr, _);
             return str;
         }
-        else if (defs.codeGen) {
+        else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_INV_codegen(expr, _);
             return str;
@@ -1737,49 +1737,49 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_DOT_latex(expr, _);
             return str;
         }
-        else if (defs.codeGen) {
+        else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_DOT_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(SIN)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_SIN_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(COS)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_COS_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(TAN)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_TAN_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(ARCSIN)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_ARCSIN_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(ARCCOS)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_ARCCOS_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(ARCTAN)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_ARCTAN_codegen(expr, _);
             return str;
@@ -1791,7 +1791,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_SUM_latex(expr, _);
             return str;
         }
-        else if (defs.codeGen) {
+        else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_SUM_codegen(expr, _);
             return str;
@@ -1807,28 +1807,28 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_PRODUCT_latex(expr, _);
             return str;
         }
-        else if (defs.codeGen) {
+        else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_PRODUCT_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(FOR)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_FOR_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(DO)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_DO_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(TEST)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_TEST_codegen(expr, _);
             return str;
@@ -1840,7 +1840,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(TESTLT)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str +=
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') < (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
@@ -1853,7 +1853,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(TESTLE)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str +=
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') <= (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
@@ -1866,7 +1866,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(TESTGT)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str +=
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') > (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
@@ -1879,7 +1879,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(TESTGE)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str +=
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') >= (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
@@ -1892,7 +1892,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (is_cons(expr) && expr.opr.equals(TESTEQ)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str +=
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') === (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
@@ -1905,7 +1905,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(FLOOR)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += 'Math.floor(' + render_using_non_sexpr_print_mode(cadr(expr), _) + '),$';
             return str;
@@ -1917,7 +1917,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(CEILING)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += 'Math.ceiling(' + render_using_non_sexpr_print_mode(cadr(expr), _) + '),$';
             return str;
@@ -1929,14 +1929,14 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(ROUND)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += 'Math.round(' + render_using_non_sexpr_print_mode(cadr(expr), _) + '),$';
             return str;
         }
     }
     else if (car(expr).equals(ASSIGN)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             let str = '';
             str += print_SETQ_codegen(expr, _);
             return str;
@@ -2009,7 +2009,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
         return print_char('d');
     }
     else if (is_base_of_natural_logarithm(expr)) {
-        if (defs.codeGen) {
+        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
             return print_str('Math.E');
         }
         else {
@@ -2099,7 +2099,7 @@ function print_multiply_sign(_: PrintConfig): string {
         return '';
     }
 
-    if (_.getDirective(Directive.printMode) === PrintMode.Human && !defs.codeGen) {
+    if (_.getDirective(Directive.printMode) === PrintMode.Human) {
         return print_str(' ');
     }
     else {

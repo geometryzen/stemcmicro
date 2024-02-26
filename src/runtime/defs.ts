@@ -29,17 +29,14 @@ export enum PrintMode {
     /**
      * Symbolic Expression is LISP-like.
      */
-    SExpr = 4
+    SExpr = 4,
+    JavaScript = 5
 }
-
-export const PRINTOUTRESULT = false;
 
 export class Defs {
     constructor() {
         // Nothing to see here yet.
     }
-
-    public recursionLevelNestedRadicalsRemoval = 0;
 
     /**
      * top of stack
@@ -53,11 +50,6 @@ export class Defs {
      * Encapsulation with assertion may help. 
      */
     public stack: (U | undefined | null)[] = [];
-
-    /**
-     * Causes the print output to render JavaScript.
-     */
-    public codeGen = false;
 }
 
 /**

@@ -27,7 +27,7 @@ import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { roots } from '../../roots';
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from '../../runtime/constants';
 import { count, countOccurrencesOfSymbol } from '../../runtime/count';
-import { defs, noexpand_unary } from '../../runtime/defs';
+import { noexpand_unary } from '../../runtime/defs';
 import { is_add, is_inner_or_dot, is_multiply, is_power } from '../../runtime/helpers';
 import { stack_pop } from '../../runtime/stack';
 import { simfac } from '../../simfac';
@@ -453,10 +453,6 @@ function simplify_nested_radicals(x: U, $: ExprContext): [TFLAGS, U] {
 
     // console.lg("simplify_nested_radicals", `${$.toInfixString(x)}`);
 
-    if (defs.recursionLevelNestedRadicalsRemoval > 0) {
-        return [TFLAG_NONE, x];
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [red, red_flags] = take_care_of_nested_radicals(x, $);
 
@@ -495,9 +491,6 @@ function simplify_nested_radicals(x: U, $: ExprContext): [TFLAGS, U] {
 }
 
 function take_care_of_nested_radicals(x: U, $: ExprContext): [U, TFLAGS] {
-    if (defs.recursionLevelNestedRadicalsRemoval > 0) {
-        return [x, TFLAG_NONE];
-    }
 
     if (is_cons(x)) {
         if (is_pow_2_any_any(x)) {
@@ -599,9 +592,7 @@ function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExprContext): [U, TFLAGS] {
         );
     }
 
-    defs.recursionLevelNestedRadicalsRemoval++;
     const r = roots(temp, SECRETX, $);
-    defs.recursionLevelNestedRadicalsRemoval--;
     if (r.ndim === 0) {
         return [p1, TFLAG_NONE];
     }

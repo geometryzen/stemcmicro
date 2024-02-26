@@ -19,7 +19,7 @@ import { coefficients } from './operators/coeff/coeff';
 import { factorize } from './operators/factor/factor';
 import { simplify } from './operators/simplify/simplify';
 import { ASSIGN, SECRETX } from './runtime/constants';
-import { defs, halt } from './runtime/defs';
+import { halt } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
 import { float_eval_abs_eval } from './scripting/float_eval_abs_eval';
 import { caddr, cadr } from './tree/helpers';
@@ -105,17 +105,6 @@ function normalized_coeff(poly: U, x: U, $: Pick<ExprContext, 'handlerFor' | 'va
  * @returns 
  */
 export function roots(p: U, x: U, $: ExprContext): Tensor {
-    // console.lg("roots", $.toInfixString(p), $.toInfixString(x));
-    // the simplification of nested radicals uses "roots", which in turn uses
-    // simplification of nested radicals. Usually there is no problem, one level
-    // of recursion does the job. Beyond that, we probably got stuck in a
-    // strange case of infinite recursion, so bail out and return NIL.
-    if (defs.recursionLevelNestedRadicalsRemoval > 1) {
-        // console.lg(`recursionLevelNestedRadicalsRemoval => ${defs.recursionLevelNestedRadicalsRemoval}`)
-        return new Tensor([], []);
-    }
-
-    // log.dbg(`checking if ${top()} is a case of simple roots`);
 
     const ks: U[] = normalized_coeff(p, x, $);
     // console.lg("coefficients (normalized)", $.toSExprString(items_to_cons(...ks)));

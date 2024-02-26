@@ -2,8 +2,8 @@ import assert from 'assert';
 import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 
-xdescribe("nroots", function () {
-    it("nroots(x)", function () {
+describe("nroots", function () {
+    xit("nroots(x)", function () {
         const lines: string[] = [
             `nroots(x)`
         ];
@@ -12,10 +12,10 @@ xdescribe("nroots", function () {
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(sourceText);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "0.0");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
         engine.release();
     });
-    it("nroots(x-1)", function () {
+    xit("nroots(x-1)", function () {
         const lines: string[] = [
             `nroots(x-1)`
         ];
@@ -27,7 +27,7 @@ xdescribe("nroots", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "1.0");
         engine.release();
     });
-    it("nroots(x+1)", function () {
+    xit("nroots(x+1)", function () {
         const lines: string[] = [
             `nroots(x+1)`
         ];
@@ -39,19 +39,41 @@ xdescribe("nroots", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "-1.0");
         engine.release();
     });
-    it("nroots((1+i)*x^2+1)", function () {
+    xit("nroots(x**2-1)", function () {
         const lines: string[] = [
-            `nroots((1+i)*x^2+1)`
+            `nroots(x**2-1)`
         ];
         const engine = create_script_context({
-            prolog: stemc_prolog,
-            useCaretForExponentiation: true
+            prolog: stemc_prolog
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "[-0.171780...-0.727673...*i,0.171780...+0.727673...*i]");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "[-1.000000...,1.000000...]");
         engine.release();
     });
-    it("nroots(sqrt(2)*exp(i*pi/4)*x^2+1)", function () {
+    xit("nroots(x**2+1)", function () {
+        const lines: string[] = [
+            `nroots(x**2+1)`
+        ];
+        const engine = create_script_context({
+            prolog: stemc_prolog
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "[-1.000000...*i,1.000000...*i]");
+        engine.release();
+    });
+    it("nroots((1+i)*x**2+1)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `nroots((1+i)*x**2+1)`
+        ];
+        const engine = create_script_context({
+            prolog: stemc_prolog
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "[-0.321797...-0.776887...*i,0.321797...+0.776887...*i]");
+        engine.release();
+    });
+    xit("nroots(sqrt(2)*exp(i*pi/4)*x^2+1)", function () {
         const lines: string[] = [
             `nroots(sqrt(2)*exp(i*pi/4)*x^2+1)`
         ];
@@ -75,7 +97,7 @@ xdescribe("nroots", function () {
         engine.release();
     });
     // The sort of the resuting roots is not stable.
-    xit("nroots(x^4+1)", function () {
+    it("nroots(x^4+1)", function () {
         const lines: string[] = [
             `nroots(x^4+1)`
         ];

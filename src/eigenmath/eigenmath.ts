@@ -1,4 +1,4 @@
-import { Adapter, assert_num, assert_sym, assert_tensor, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Flt, imu, is_blade, is_boo, is_flt, is_imu, is_lambda, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
+import { Adapter, assert_num, assert_sym, assert_tensor, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, imu, is_blade, is_boo, is_err, is_flt, is_imu, is_lambda, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
@@ -8,6 +8,7 @@ import { ExprEngineListener } from '../api/api';
 import { diagnostic, Diagnostics } from '../diagnostics/diagnostics';
 import { Directive } from '../env/ExtensionEnv';
 import { StackU } from '../env/StackU';
+import { guess } from '../guess';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { predicate_return_value } from '../helpers/predicate_return_value';
 import { hook_create_err } from '../hooks/hook_create_err';
@@ -493,27 +494,28 @@ function coeffs(P: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
 
     for (; ;) {
 
-        push(P, $);
-        push(X, $);
-        push_integer(0, $);
-        subst($);
+        push(P, $);                         //  [..., P(x)]
+        push(X, $);                         //  [..., P(x), X]
+        push_integer(0, $);                 //  [..., P(x), X, 0]
+        subst($);                           //  [..., P(0)]
         value_of(env, ctrl, $);
-        const C = pop($);
+        const C = pop($);                   //  [...]
 
-        push(C, $);
+        push(C, $);                         //  [..., P(0)]
 
-        push(P, $);
-        push(C, $);
-        subtract(env, ctrl, $);
-        P = pop($);
+        push(P, $);                         //  [..., P(0), P(x)]
+        push(C, $);                         //  [..., P(0), P(x), P(0)]
+        subtract(env, ctrl, $);             //  [..., P(0), P(x)-P(0)]
+        P = pop($);                         //  [..., P(0)]
 
-        if (iszero(P, env))
+        if (iszero(P, env)) {
             break;
+        }
 
-        push(P, $);
-        push(X, $);
-        divide(env, ctrl, $);
-        P = pop($);
+        push(P, $);                         //  [..., P(0), P(x)-P(0)]
+        push(X, $);                         //  [..., P(0), P(x)-P(0), x]
+        divide(env, ctrl, $);               //  [..., P(0), (P(x)-P(0))/x]
+        P = pop($);                         //  [..., P(0)]
     }
 }
 
@@ -578,17 +580,30 @@ function combine_factors_nib(i: number, j: number, env: ProgramEnv, ctrl: Progra
     return 1;
 }
 
-function combine_numerical_factors(start: number, coeff: Num, $: ProgramStack): Num {
+function combine_numerical_factors(start: number, coeff: Num | Err, $: ProgramStack): Num | Err {
 
     let end = $.length;
 
     for (let i = start; i < end; i++) {
 
-        const p1 = $.getAt(i);
+        const x = $.getAt(i);
 
-        if (is_num(p1)) {
-            multiply_numbers(coeff, p1, $);
-            coeff = pop($) as Num;
+        if (is_num(x)) {
+            if (is_num(coeff)) {
+                multiply_numbers(coeff, x, $);          //  [..., a, b, c, coeff * x], assume i points to a
+                coeff = pop($) as Num;                  //  [..., a, b, c]
+                $.splice(i, 1); // remove factor        //  [..., b, c]
+                i--;                                    //  [..., b, c],                i points to element before b
+                end--;
+            }
+            else {
+                $.splice(i, 1); // remove factor
+                i--;
+                end--;
+            }
+        }
+        else if (is_err(x)) {
+            coeff = x;
             $.splice(i, 1); // remove factor
             i--;
             end--;
@@ -6640,129 +6655,162 @@ export function stack_not(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 const DELTA = 1e-6;
 const EPSILON = 1e-9;
 
-export function stack_nroots(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
+export function stack_nroots(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    $.push(expr);                       //  [..., expr]
+    $.rest();                           //  [..., argList]
+    $.dupl();                           //  [..., argList, argList]
+    $.head();                           //  [..., argList, argList.head]
+    value_of(env, ctrl, $);             //  [..., argList, p]
 
-    p1 = cddr(p1);
+    $.swap();                           //  [..., p, argList]
+    $.rest();                           //  [..., p, argList.argList]
+    $.head();                           //  [..., p, argList.argList.head];
+    value_of(env, ctrl, $);             //  [..., p, x] or [..., p, nil]
 
-    if (is_cons(p1)) {
-        push(car(p1), $);
-        value_of(env, ctrl, $);
+    if ($.isatom) {
+        // We'll assume it's a symbol. We should check.
     }
-    else
-        push(X_LOWER, $);
+    else if ($.iscons) {
+        // TODO: diagnostic that the variable parameter must be a symbol.
+        throw new ProgrammingError();
+    }
+    else {
+        // It's nil
+        $.pop().release();              //  [..., p]
+        const p = $.pop();              //  [...]
+        const x = guess(p);
+        try {
+            $.push(p);                  //  [..., p]      
+            $.push(x);                  //  [..., p , x]
+        }
+        finally {
+            p.release();
+            x.release();
+        }
+    }
 
     nroots(env, ctrl, $);
 }
 
+/**
+ * [..., p , x]
+ */
 function nroots(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const cr: number[] = [];
-    const ci: number[] = [];
-    const tr: number[] = [];
-    const ti: number[] = [];
 
     const X = pop($);
     const P = pop($);
 
-    const h = $.length;
+    try {
+        const cr: number[] = [];
+        const ci: number[] = [];
+        const tr: number[] = [];
+        const ti: number[] = [];
 
-    coeffs(P, X, env, ctrl, $); // put coeffs on stack
+        const h = $.length;
 
-    let n = $.length - h; // number of coeffs on stack
+        coeffs(P, X, env, ctrl, $); // put coeffs on stack
 
-    // convert coeffs to floating point
+        let n = $.length - h; // number of coeffs on stack
 
-    for (let i = 0; i < n; i++) {
+        // convert coeffs to floating point
 
-        push($.getAt(h + i), $);
-        real(env, ctrl, $);
-        floatfunc(env, ctrl, $);
-        const RE = pop($);
+        for (let i = 0; i < n; i++) {
 
-        push($.getAt(h + i), $);
-        imag(env, ctrl, $);
-        floatfunc(env, ctrl, $);
-        const IM = pop($);
+            push($.getAt(h + i), $);
+            real(env, ctrl, $);
+            floatfunc(env, ctrl, $);
+            const RE = pop($);
 
-        if (!is_flt(RE) || !is_flt(IM))
-            stopf("nroots: coeffs");
+            push($.getAt(h + i), $);
+            imag(env, ctrl, $);
+            floatfunc(env, ctrl, $);
+            const IM = pop($);
 
-        cr[i] = RE.d;
-        ci[i] = IM.d;
+            if (!is_flt(RE) || !is_flt(IM))
+                stopf("nroots: coeffs");
+
+            cr[i] = RE.d;
+            ci[i] = IM.d;
+        }
+
+        $.splice(h); // pop all
+
+        // divide p(x) by leading coeff
+
+        const xr = cr[n - 1];
+        const xi = ci[n - 1];
+
+        const d = xr * xr + xi * xi;
+
+        for (let i = 0; i < n - 1; i++) {
+            const yr = (cr[i] * xr + ci[i] * xi) / d;
+            const yi = (ci[i] * xr - cr[i] * xi) / d;
+            cr[i] = yr;
+            ci[i] = yi;
+        }
+
+        cr[n - 1] = 1.0;
+        ci[n - 1] = 0.0;
+
+        // find roots
+
+        while (n > 1) {
+
+            nfindroot(cr, ci, n, tr, ti);
+
+            let ar = tr[0];
+            let ai = ti[0];
+
+            if (Math.abs(ar) < DELTA * Math.abs(ai))
+                ar = 0;
+
+            if (Math.abs(ai) < DELTA * Math.abs(ar))
+                ai = 0;
+
+            // push root
+
+            push_double(ar, $);
+            push_double(ai, $);
+            push(imu, $);
+            multiply(env, ctrl, $);
+            add(env, ctrl, $);
+
+            // divide p(x) by x - a
+
+            nreduce(cr, ci, n, ar, ai);
+
+            // note: leading coeff of p(x) is still 1
+
+            n--;
+        }
+
+        n = $.length - h; // number of roots on stack
+
+        if (n === 0) {
+            push(nil, $); // no roots
+            return;
+        }
+
+        if (n === 1) {
+            return; // one root
+        }
+
+        sort(n, $);
+
+        const A = alloc_vector(n);
+
+        for (let i = 0; i < n; i++) {
+            A.elems[i] = $.getAt(h + i);
+        }
+
+        $.splice(h); // pop all
+
+        push(A, $);
     }
-
-    $.splice(h); // pop all
-
-    // divide p(x) by leading coeff
-
-    const xr = cr[n - 1];
-    const xi = ci[n - 1];
-
-    const d = xr * xr + xi * xi;
-
-    for (let i = 0; i < n - 1; i++) {
-        const yr = (cr[i] * xr + ci[i] * xi) / d;
-        const yi = (ci[i] * xr - cr[i] * xi) / d;
-        cr[i] = yr;
-        ci[i] = yi;
+    finally {
+        X.release();
+        P.release();
     }
-
-    cr[n - 1] = 1.0;
-    ci[n - 1] = 0.0;
-
-    // find roots
-
-    while (n > 1) {
-
-        nfindroot(cr, ci, n, tr, ti);
-
-        let ar = tr[0];
-        let ai = ti[0];
-
-        if (Math.abs(ar) < DELTA * Math.abs(ai))
-            ar = 0;
-
-        if (Math.abs(ai) < DELTA * Math.abs(ar))
-            ai = 0;
-
-        // push root
-
-        push_double(ar, $);
-        push_double(ai, $);
-        push(imu, $);
-        multiply(env, ctrl, $);
-        add(env, ctrl, $);
-
-        // divide p(x) by x - a
-
-        nreduce(cr, ci, n, ar, ai);
-
-        // note: leading coeff of p(x) is still 1
-
-        n--;
-    }
-
-    n = $.length - h; // number of roots on stack
-
-    if (n === 0) {
-        push(nil, $); // no roots
-        return;
-    }
-
-    if (n === 1)
-        return; // one root
-
-    sort(n, $);
-
-    const A = alloc_vector(n);
-
-    for (let i = 0; i < n; i++)
-        A.elems[i] = $.getAt(h + i);
-
-    $.splice(h); // pop all
-
-    push(A, $);
 }
 
 function nfindroot(cr: number[], ci: number[], n: number, par: number[], pai: number[]): void {
@@ -7698,16 +7746,19 @@ function roots(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // check coeffs
 
-    for (let i = 0; i < n; i++)
-        if (!is_rat($.getAt(h + i)))
+    for (let i = 0; i < n; i++) {
+        if (!is_rat($.getAt(h + i))) {
             stopf("roots: coeffs");
+        }
+    }
 
     // find roots
 
     while (n > 1) {
 
-        if (findroot(h, n, env, ctrl, $) === 0)
+        if (findroot(h, n, env, ctrl, $) === 0) {
             break; // no root found
+        }
 
         // A is the root
 
@@ -7923,7 +7974,7 @@ function divisors_nib(h: number, k: number, env: ProgramEnv, ctrl: ProgramContro
 function reduce(h: number, n: number, A: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     for (let i = n - 1; i > 0; i--) {
-        push(A, $);
+        push(A, $);                         //  [..., A]
         push($.getAt(h + i), $);
         multiply(env, ctrl, $);
         push($.getAt(h + i - 1), $);
@@ -7936,8 +7987,9 @@ function reduce(h: number, n: number, A: U, env: ProgramEnv, ctrl: ProgramContro
 
     // move
 
-    for (let i = 0; i < n - 1; i++)
+    for (let i = 0; i < n - 1; i++) {
         $.setAt(h + i, $.getAt(h + i + 1));
+    }
 }
 
 export function stack_assign(x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -8727,18 +8779,18 @@ export function stack_subst(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 }
 
 /**
- * [..., F, x, a]
+ * [..., F(x), x, a] => [..., F(a)]
  */
 function subst(_: Pick<ProgramStack, 'length' | 'pop' | 'push'>): void {
 
-    const a = pop(_); // new expr
-    const x = pop(_); // old expr
+    const a = pop(_); // new expr           [..., F, x]
+    const x = pop(_); // old expr           [..., F]
 
     if (x.isnil || a.isnil) {
-        return;
+        return;                         //  [..., F]
     }
 
-    let F = pop(_); // expr
+    let F = pop(_); // expr             //  [...]
 
     if (is_tensor(F)) {
         const T = copy_tensor(F);
@@ -8755,7 +8807,7 @@ function subst(_: Pick<ProgramStack, 'length' | 'pop' | 'push'>): void {
     }
 
     if (equal(F, x)) {
-        push(a, _);
+        push(a, _);                     //  [..., a]        because F is the same as X
         return;
     }
 
@@ -10884,30 +10936,23 @@ function multiply_noexpand(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStac
 }
 
 /**
- * ( -- Num)
- * @param p1 
- * @param p2 
- * @param $ 
- * @returns 
+ * [...] => [..., lhs * rhs]
  */
-function multiply_numbers(p1: Num, p2: Num, $: ProgramStack): void {
+function multiply_numbers(lhs: Num, rhs: Num, $: ProgramStack): void {
 
-    if (is_rat(p1) && is_rat(p2)) {
-        multiply_rationals(p1, p2, $);
+    if (is_rat(lhs) && is_rat(rhs)) {
+        multiply_rationals(lhs, rhs, $);
         return;
     }
 
-    const a = p1.toNumber();
-    const b = p2.toNumber();
+    const a = lhs.toNumber();
+    const b = rhs.toNumber();
 
     push_double(a * b, $);
 }
 
 /**
- * ( -- Rat)
- * @param lhs 
- * @param rhs 
- * @param $ 
+ * [...] => [..., lhs * rhs]
  */
 function multiply_rationals(lhs: Rat, rhs: Rat, $: ProgramStack): void {
     const x: Rat = lhs.mul(rhs);
@@ -10926,6 +10971,12 @@ function multiply_scalar_factors(start: number, env: ProgramEnv, ctrl: ProgramCo
 
     const k0 = combine_numerical_factors(start, one, $);
 
+    if (is_err(k0)) {
+        $.splice(start); // pop all
+        push(k0, $);
+        return;
+    }
+
     if (iszero(k0, env) || start === $.length) {
         $.splice(start); // pop all
         push(k0, $);
@@ -10942,6 +10993,12 @@ function multiply_scalar_factors(start: number, env: ProgramEnv, ctrl: ProgramCo
     normalize_power_factors(start, env, ctrl, $);
 
     const k1 = combine_numerical_factors(start, k0, $);
+
+    if (is_err(k1)) {
+        $.splice(start); // pop all
+        push(k1, $);
+        return;
+    }
 
     if (iszero(k1, env) || start === $.length) {
         $.splice(start); // pop all
@@ -13305,9 +13362,20 @@ export function set_user_function(name: Sym, userfunc: U, env: ProgramEnv): void
     env.setUserFunction(name, userfunc);
 }
 
+/**
+ * 
+ * @param n 
+ * @param $ 
+ */
 function sort(n: number, $: ProgramStack): void {
+    // console.lg("sort", n);
     const compareFn = (lhs: U, rhs: U) => cmp(lhs, rhs);
     const sorted = $.splice($.length - n).sort(compareFn);
+    /*
+    for (let i = 0; i < sorted.length; i++) {
+        console.lg(`${sorted[i]}`);
+    }
+    */
     $.concat(sorted);
 }
 

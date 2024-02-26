@@ -1,8 +1,9 @@
-import { Err, Sym } from "math-expression-atoms";
+import { Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, items_to_cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { is_negative } from "../../predicates/is_negative";
 import { DynamicConstants } from "../../runtime/defs";
 import { half } from "../../tree/rat/Rat";
@@ -16,8 +17,7 @@ function arg_of_sum(z: Cons, $: ExtensionEnv): U {
     const x = $.re(z);
     if ($.iszero(x)) {
         if ($.iszero(y)) {
-            // Undefined
-            return new Err(items_to_cons(ARG, $.add(x, y)));
+            return hook_create_err(items_to_cons(ARG, $.add(x, y)));
         }
         else {
             const k = is_negative(y) ? half.neg() : half;

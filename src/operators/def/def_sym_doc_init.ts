@@ -1,6 +1,7 @@
-import { assert_str, create_sym, Err, is_str, is_sym, Str, Sym } from "math-expression-atoms";
+import { assert_str, create_sym, is_str, is_sym, Str, Sym } from "math-expression-atoms";
 import { Cons3, nil, U } from "math-expression-tree";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { Function3 } from "../helpers/Function3";
 import { is_any } from "../helpers/is_any";
 import { extract_def_args } from "./extract_def_args";
@@ -51,7 +52,7 @@ function def_sym_doc_init(sym: Sym, doc: Str, init: U, $: ExtensionEnv): U {
         return nil;
     }
     else {
-        return new Err(new Str("First argument to def must be a symbol."));
+        return hook_create_err(new Str("First argument to def must be a symbol."));
     }
 }
 

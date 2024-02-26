@@ -114,7 +114,7 @@ export function transform_script(fileName: string, sourceText: string, transform
  * @returns The return values (zero or one), print outputs, and errors.
  */
 export function transform_tree(tree: U, options: ExprTransformOptions, $: ExtensionEnv): { value: U, prints: string[], errors: Error[] } {
-    // console.lg("transform_tree", JSON.stringify(options));
+    // console.lg("transform_tree", "tree", `${tree}`, JSON.stringify(options));
     /**
      * The outputs from print satements for each pass of the scanner.
      */

@@ -255,12 +255,12 @@ import { store_text_in_binding } from '../print/store_text_in_binding';
 import { eval_quotient } from '../quotient';
 import { eval_roots } from '../roots';
 import { AND, APPROXRATIO, CHECK, CHOOSE, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, QUOTE, RANK, UOM } from '../runtime/constants';
-import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
+import { PrintMode } from '../runtime/defs';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
 import { eval_conjugate } from '../scripting/eval_conjugate';
 import { eval_power } from '../scripting/eval_power';
 import { eval_and, eval_not, eval_test, eval_testeq, eval_testle, eval_testne } from '../test';
-import { ExtensionEnv } from "./ExtensionEnv";
+import { Directive, ExtensionEnv } from "./ExtensionEnv";
 
 export interface DefineStandardOperatorsConfig {
     /**
@@ -327,11 +327,11 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
         const factored = $.factor(last);
         $.setBinding(RESERVED_KEYWORD_LAST, factored);
 
-        const str = render_using_print_mode(factored, defs.printMode, $);
+        const str = render_using_print_mode(factored, $.getDirective(Directive.printMode), $);
         const printHandler = $.getPrintHandler();
         printHandler.print(str);
 
-        store_text_in_binding(str, get_last_print_mode_symbol(defs.printMode), $);
+        store_text_in_binding(str, get_last_print_mode_symbol($.getDirective(Directive.printMode)), $);
     });
 
     $.defineEvalFunction(FILTER, eval_filter);
@@ -609,19 +609,19 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineStackFunction(native_sym(Native.polar), stack_polar);
 
-    $.defineExtension(make_printmode_operator('print', () => defs.printMode));
-    $.defineExtension(make_printmode_operator('printascii', () => PRINTMODE_ASCII));
-    $.defineExtension(make_printmode_operator('printhuman', () => PRINTMODE_HUMAN));
-    $.defineExtension(make_printmode_operator('printinfix', () => PRINTMODE_INFIX));
-    $.defineExtension(make_printmode_operator('printlatex', () => PRINTMODE_LATEX));
-    $.defineExtension(make_printmode_operator('printsexpr', () => PRINTMODE_SEXPR));
+    $.defineExtension(make_printmode_operator('print', () => $.getDirective(Directive.printMode)));
+    $.defineExtension(make_printmode_operator('printascii', () => PrintMode.Ascii));
+    $.defineExtension(make_printmode_operator('printhuman', () => PrintMode.Human));
+    $.defineExtension(make_printmode_operator('printinfix', () => PrintMode.Infix));
+    $.defineExtension(make_printmode_operator('printlatex', () => PrintMode.LaTeX));
+    $.defineExtension(make_printmode_operator('printsexpr', () => PrintMode.SExpr));
 
-    $.defineExtension(make_printmode_function('print', () => defs.printMode));
-    $.defineExtension(make_printmode_function('printascii', () => PRINTMODE_ASCII));
-    $.defineExtension(make_printmode_function('printhuman', () => PRINTMODE_HUMAN));
-    $.defineExtension(make_printmode_function('printinfix', () => PRINTMODE_INFIX));
-    $.defineExtension(make_printmode_function('printlatex', () => PRINTMODE_LATEX));
-    $.defineExtension(make_printmode_function('printsexpr', () => PRINTMODE_SEXPR));
+    $.defineExtension(make_printmode_function('print', () => $.getDirective(Directive.printMode)));
+    $.defineExtension(make_printmode_function('printascii', () => PrintMode.Ascii));
+    $.defineExtension(make_printmode_function('printhuman', () => PrintMode.Human));
+    $.defineExtension(make_printmode_function('printinfix', () => PrintMode.Infix));
+    $.defineExtension(make_printmode_function('printlatex', () => PrintMode.LaTeX));
+    $.defineExtension(make_printmode_function('printsexpr', () => PrintMode.SExpr));
 
     $.defineExtension(product_varargs);
 

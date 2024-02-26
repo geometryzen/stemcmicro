@@ -1,6 +1,6 @@
-import { Err } from "math-expression-atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { zero } from "../../tree/rat/Rat";
@@ -32,7 +32,7 @@ class Op extends CompositeOperator {
         if (is_rat(x)) {
             if (x.isZero()) {
                 // Minus infinity in the limit but undefined at zero.
-                return [TFLAG_DIFF, new Err(innerExpr)];
+                return [TFLAG_DIFF, hook_create_err(innerExpr)];
             }
             else if (x.isNegative()) {
                 // Complex

@@ -320,10 +320,6 @@ run_test([
   '(-a*x-b)*(-c*x-d)-(b+a*x)*(d+c*x)',
   '0',
 
-  // this used to cause divide by zero
-
-  // fixed by calling ispolyexpandedform before calling coeff
-
   //  "factor(1/x+1)",
   //  "(1+x)/x",
 

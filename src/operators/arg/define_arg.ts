@@ -1,10 +1,11 @@
-import { Err, is_flt, is_sym } from 'math-expression-atoms';
+import { is_flt, is_sym } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { subtract } from '../../calculators/sub/subtract';
 import { stack_arg } from '../../eigenmath/eigenmath';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { StackU } from '../../env/StackU';
+import { hook_create_err } from '../../hooks/hook_create_err';
 import { equaln, is_num_and_equal_one_half, is_num_and_gt_zero } from '../../is';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_cons_opr_eq_sym } from '../../predicates/is_cons_opr_eq_sym';
@@ -54,7 +55,7 @@ function arg(z: U, $: ExtensionEnv): U {
     if ($.iszero(x)) {
         if ($.iszero(y)) {
             // Undefined
-            return new Err(items_to_cons(ARG, $.add(x, y)));
+            return hook_create_err(items_to_cons(ARG, $.add(x, y)));
         }
         else {
             const k = is_negative(y) ? half.neg() : half;

@@ -1,14 +1,16 @@
-import { Adapter, assert_num, assert_sym, assert_tensor, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, imu, is_blade, is_boo, is_flt, is_imu, is_lambda, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
+import { Adapter, assert_num, assert_sym, assert_tensor, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Flt, imu, is_blade, is_boo, is_flt, is_imu, is_lambda, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprContextFromProgram } from '../adapters/ExprContextFromProgram';
 import { StackFunction } from '../adapters/StackFunction';
 import { ExprEngineListener } from '../api/api';
+import { diagnostic, Diagnostics } from '../diagnostics/diagnostics';
 import { Directive } from '../env/ExtensionEnv';
 import { StackU } from '../env/StackU';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { predicate_return_value } from '../helpers/predicate_return_value';
+import { hook_create_err } from '../hooks/hook_create_err';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { hadamard } from '../operators/hadamard/stack_hadamard';
 import { mag } from '../operators/mag/stack_mag';
@@ -2359,7 +2361,7 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (is_rat(z)) {
         if (z.isZero()) {
-            $.push(new Err(new Str("arg of zero (0) is undefined")));
+            $.push(hook_create_err(new Str("arg of zero (0) is undefined")));
         }
         else if (isnegativenumber(z)) {
             push(MATH_PI, $);
@@ -2373,7 +2375,7 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (is_flt(z)) {
         if (z.isZero()) {
-            $.push(new Err(new Str("arg of zero (0.0) is undefined")));
+            $.push(hook_create_err(new Str("arg of zero (0.0) is undefined")));
         }
         else if (isnegativenumber(z)) {
             push_double(-Math.PI, $);
@@ -12024,10 +12026,14 @@ function power_numbers(base: Num, expo: Num, env: ProgramEnv, ctrl: ProgramContr
 
     if (iszero(base, env)) {
         if (isnegativenumber(expo)) {
-            // divide by zero
-            $.push(new Err(items_to_cons(native_sym(Native.pow), base, expo)));
-            // stopf("divide by zero");
-            return;
+            const err = diagnostic(Diagnostics.Division_by_zero);
+            try {
+                $.push(err);
+                return;
+            }
+            finally {
+                err.release();
+            }
         }
         else {
             push_integer(0, $);
@@ -13353,8 +13359,6 @@ function static_negate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
 function static_reciprocate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const p2 = pop($);
     const p1 = pop($);
-
-    // save divide by zero error for runtime
 
     if (iszero(p2, env)) {
         if (!(is_rat(p1) && isinteger1(p1))) {

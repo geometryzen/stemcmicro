@@ -1,7 +1,10 @@
+import { Err } from 'math-expression-atoms';
+import { diagnostic, Diagnostics } from './diagnostics/diagnostics';
 import { mdiv, mmul } from './mmul';
 import { mpow } from './mpow';
 import { is_flt } from './operators/flt/is_flt';
 import { is_rat } from './operators/rat/is_rat';
+import { ProgrammingError } from './programming/ProgrammingError';
 import { create_flt, Flt } from './tree/flt/Flt';
 import { Num } from './tree/num/Num';
 import { bigInt, BigInteger } from './tree/rat/big-integer';
@@ -52,13 +55,13 @@ export function setSignTo(a: BigInteger, b: 1 | -1 | 0): BigInteger {
 /**
  * TODO: Move to the NumExtension
  */
-export function divide_numbers(lhs: Num, rhs: Num): Num {
+export function divide_numbers(lhs: Num, rhs: Num): Num | Err {
     if (is_rat(lhs) && is_rat(rhs)) {
         return lhs.div(rhs);
     }
 
     if (rhs.isZero()) {
-        throw new Error('divide by zero');
+        return diagnostic(Diagnostics.Division_by_zero);
     }
 
     const a = is_flt(lhs) ? lhs.d : lhs.toNumber();
@@ -70,21 +73,20 @@ export function divide_numbers(lhs: Num, rhs: Num): Num {
 /**
  * Move to NumExtension
  */
-export function invert_number(p1: Num): Num {
-    if (p1.isZero()) {
-        // TODO: This error could/should be part of the inv() methods?
-        throw new Error('divide by zero');
+export function invert_number(x: Num): Num | Err {
+    if (x.isZero()) {
+        return diagnostic(Diagnostics.Division_by_zero);
     }
 
-    if (is_flt(p1)) {
-        return p1.inv();
+    if (is_flt(x)) {
+        return x.inv();
     }
 
-    if (is_rat(p1)) {
-        return p1.inv();
+    if (is_rat(x)) {
+        return x.inv();
     }
 
-    throw new Error();
+    throw new ProgrammingError();
 }
 
 export function bignum_truncate(p1: Rat): Rat {

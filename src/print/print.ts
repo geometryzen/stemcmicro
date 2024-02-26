@@ -58,7 +58,7 @@ import {
     TESTLT,
     UNIT
 } from '../runtime/constants';
-import { defs, PrintMode, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
+import { defs, PrintMode } from '../runtime/defs';
 import { is_abs, is_add, is_factorial, is_inner_or_dot, is_lco, is_multiply, is_opr_eq_inv, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
 import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from '../tree/helpers';
@@ -90,11 +90,11 @@ export function get_script_last($: PrintConfig): U {
 
 export function get_last_print_mode_symbol(printMode: PrintMode): Sym {
     switch (printMode) {
-        case PRINTMODE_ASCII: return LAST_ASCII_PRINT;
-        case PRINTMODE_HUMAN: return LAST_HUMAN_PRINT;
-        case PRINTMODE_LATEX: return LAST_LATEX_PRINT;
-        case PRINTMODE_INFIX: return LAST_INFIX_PRINT;
-        case PRINTMODE_SEXPR: return LAST_SEXPR_PRINT;
+        case PrintMode.Ascii: return LAST_ASCII_PRINT;
+        case PrintMode.Human: return LAST_HUMAN_PRINT;
+        case PrintMode.LaTeX: return LAST_LATEX_PRINT;
+        case PrintMode.Infix: return LAST_INFIX_PRINT;
+        case PrintMode.SExpr: return LAST_SEXPR_PRINT;
         default: throw new Error(printMode);
     }
 }
@@ -182,7 +182,7 @@ function print_denom(p: U, d: number, $: PrintConfig): string {
     return str;
 }
 
-function print_a_over_b(p: Cons, $: PrintConfig): string {
+function print_a_over_b(p: Cons, _: PrintConfig): string {
     // console.lg(`print_a_over_b p => ${$.toListString(p)}`);
     let A: U, B: U;
     let str = '';
@@ -198,10 +198,10 @@ function print_a_over_b(p: Cons, $: PrintConfig): string {
     if (is_rat(p2)) {
         A = mp_numerator(p2).abs();
         B = mp_denominator(p2);
-        if (!isone(A, $)) {
+        if (!isone(A, _)) {
             n++;
         }
-        if (!isone(B, $)) {
+        if (!isone(B, _)) {
             d++;
         }
         p1 = cdr(p1);
@@ -223,7 +223,7 @@ function print_a_over_b(p: Cons, $: PrintConfig): string {
     }
 
     //breakpoint
-    if (defs.printMode === PRINTMODE_LATEX) {
+    if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
         str += print_str('\\frac{');
     }
 
@@ -236,34 +236,34 @@ function print_a_over_b(p: Cons, $: PrintConfig): string {
         if (is_rat(car(p1))) {
             p1 = cdr(p1);
         }
-        if (!isone(A, $)) {
-            str += print_factor(A, false, false, $);
+        if (!isone(A, _)) {
+            str += print_factor(A, false, false, _);
             flag = 1;
         }
         while (is_cons(p1)) {
             p2 = car(p1);
             if (!is_denominator(p2)) {
                 if (flag) {
-                    str += print_multiply_sign();
+                    str += print_multiply_sign(_);
                 }
-                str += print_factor(p2, false, false, $);
+                str += print_factor(p2, false, false, _);
                 flag = 1;
             }
             p1 = cdr(p1);
         }
     }
 
-    if (defs.printMode === PRINTMODE_LATEX) {
+    if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
         str += print_str('}{');
     }
-    else if (defs.printMode === PRINTMODE_HUMAN) {
+    else if (_.getDirective(Directive.printMode) === PrintMode.Human) {
         str += print_str(' / ');
     }
     else {
         str += print_str('/');
     }
 
-    if (d > 1 && defs.printMode !== PRINTMODE_LATEX) {
+    if (d > 1 && _.getDirective(Directive.printMode) !== PrintMode.LaTeX) {
         str += print_char('(');
     }
 
@@ -274,8 +274,8 @@ function print_a_over_b(p: Cons, $: PrintConfig): string {
         p1 = cdr(p1);
     }
 
-    if (!isone(B, $)) {
-        str += print_factor(B, false, false, $);
+    if (!isone(B, _)) {
+        str += print_factor(B, false, false, _);
         flag = 1;
     }
 
@@ -283,19 +283,19 @@ function print_a_over_b(p: Cons, $: PrintConfig): string {
         p2 = car(p1);
         if (is_denominator(p2)) {
             if (flag) {
-                str += print_multiply_sign();
+                str += print_multiply_sign(_);
             }
-            str += print_denom(p2, d, $);
+            str += print_denom(p2, d, _);
             flag = 1;
         }
         p1 = cdr(p1);
     }
 
-    if (d > 1 && defs.printMode !== PRINTMODE_LATEX) {
+    if (d > 1 && _.getDirective(Directive.printMode) !== PrintMode.LaTeX) {
         str += print_char(')');
     }
 
-    if (defs.printMode === PRINTMODE_LATEX) {
+    if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
         str += print_str('}');
     }
 
@@ -313,18 +313,18 @@ export function render_using_non_sexpr_print_mode(expr: U, $: PrintConfig): stri
     return print_additive_expr(expr, $);
 }
 
-export function print_additive_expr(p: U, $: PrintConfig): string {
+export function print_additive_expr(p: U, _: PrintConfig): string {
     let str = '';
     if (is_add(p)) {
         p = cdr(p);
         if (sign_of_term(car(p)) === '-') {
             str += print_str('-');
         }
-        str += print_multiplicative_expr(car(p), $);
+        str += print_multiplicative_expr(car(p), _);
         p = cdr(p);
         while (is_cons(p)) {
             if (sign_of_term(car(p)) === '+') {
-                if (defs.printMode === PRINTMODE_HUMAN) {
+                if (_.getDirective(Directive.printMode) === PrintMode.Human) {
                     str += print_str(' + ');
                 }
                 else {
@@ -332,14 +332,14 @@ export function print_additive_expr(p: U, $: PrintConfig): string {
                 }
             }
             else {
-                if (defs.printMode === PRINTMODE_HUMAN) {
+                if (_.getDirective(Directive.printMode) === PrintMode.Human) {
                     str += print_str(' - ');
                 }
                 else {
                     str += print_str('-');
                 }
             }
-            str += print_multiplicative_expr(car(p), $);
+            str += print_multiplicative_expr(car(p), _);
             p = cdr(p);
         }
     }
@@ -348,7 +348,7 @@ export function print_additive_expr(p: U, $: PrintConfig): string {
             // console.lg(`${p} is negative`);
             str += print_str('-');
         }
-        str += print_multiplicative_expr(p, $);
+        str += print_multiplicative_expr(p, _);
     }
     return str;
 }
@@ -384,7 +384,7 @@ export function sign_of_term(term: U): '+' | '-' {
  * In other words, it skips over the first argument when it is Rat(-1) or Flt(-1).
  * This means that we don't retain the floating aspect when Flt(-1)
  */
-function print_multiply_when_no_denominators(expr: Cons, $: PrintConfig): string {
+function print_multiply_when_no_denominators(expr: Cons, _: PrintConfig): string {
     // console.lg(`print_multiply_when_no_denominators: ${expr}`);
     let denom = '';
     let origAccumulator = '';
@@ -418,7 +418,7 @@ function print_multiply_when_no_denominators(expr: Cons, $: PrintConfig): string
     // come to it if it's an issue.
     let numberOneOverSomething = false;
     if (
-        defs.printMode === PRINTMODE_LATEX &&
+        _.getDirective(Directive.printMode) === PrintMode.LaTeX &&
         is_cons(cdr(p)) &&
         isNumberOneOverSomething(car(p))
     ) {
@@ -432,7 +432,7 @@ function print_multiply_when_no_denominators(expr: Cons, $: PrintConfig): string
         str = '';
     }
     else {
-        str += print_outer_expr(car(p), false, false, $);
+        str += print_outer_expr(car(p), false, false, _);
     }
 
     p = cdr(p);
@@ -443,7 +443,7 @@ function print_multiply_when_no_denominators(expr: Cons, $: PrintConfig): string
         // are next to each other. In those cases, latex needs
         // to insert a \cdot otherwise they end up
         // right next to each other and read like one big number
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             if (previousFactorWasANumber) {
                 // if what comes next is a power and the base
                 // is a number, then we are in the case
@@ -461,8 +461,8 @@ function print_multiply_when_no_denominators(expr: Cons, $: PrintConfig): string
                 }
             }
         }
-        str += print_multiply_sign();
-        str += print_outer_expr(car(p), false, true, $);
+        str += print_multiply_sign(_);
+        str += print_outer_expr(car(p), false, true, _);
 
         previousFactorWasANumber = false;
         if (is_num(car(p))) {
@@ -493,15 +493,15 @@ export function print_multiplicative_expr(expr: U, $: PrintConfig): string {
     }
 }
 
-export function print_outer_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, $: PrintConfig): string {
+export function print_outer_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, _: PrintConfig): string {
     if (is_cons(expr) && is_outer(expr)) {
         let argList = expr.argList;
         if (is_cons(argList)) {
-            let str = print_inner_expr(argList.car, false, false, $);
+            let str = print_inner_expr(argList.car, false, false, _);
             argList = argList.cdr;
             while (is_cons(argList)) {
-                str += print_outer_operator();
-                str += print_inner_expr(car(argList), false, true, $);
+                str += print_outer_operator(_);
+                str += print_inner_expr(car(argList), false, true, _);
                 argList = argList.cdr;
             }
             return str;
@@ -511,17 +511,17 @@ export function print_outer_expr(expr: U, omitParens: boolean, pastFirstFactor: 
         }
     }
     else {
-        return print_inner_expr(expr, omitParens, pastFirstFactor, $);
+        return print_inner_expr(expr, omitParens, pastFirstFactor, _);
     }
 }
 
-function print_outer_operator(): string {
+function print_outer_operator(_: PrintConfig): string {
     // console.lg(`print_outer_operator`);
-    if (defs.printMode === PRINTMODE_LATEX) {
+    if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
         return ' \\wedge ';
     }
 
-    if (defs.printMode === PRINTMODE_HUMAN && !defs.codeGen) {
+    if (_.getDirective(Directive.printMode) === PrintMode.Human && !defs.codeGen) {
         return print_str(' ^ ');
     }
     else {
@@ -529,15 +529,15 @@ function print_outer_operator(): string {
     }
 }
 
-export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, $: PrintConfig): string {
+export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, _: PrintConfig): string {
     if (is_cons(expr) && is_inner_or_dot(expr)) {
         let argList = expr.argList;
         if (is_cons(argList)) {
-            let str = print_factor(argList.car, false, false, $);
+            let str = print_factor(argList.car, false, false, _);
             argList = argList.cdr;
             while (is_cons(argList)) {
-                str += print_inner_operator();
-                str += print_factor(car(argList), false, true, $);
+                str += print_inner_operator(_);
+                str += print_factor(car(argList), false, true, _);
                 argList = argList.cdr;
             }
             return str;
@@ -549,11 +549,11 @@ export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: 
     else if (is_cons(expr) && is_lco(expr)) {
         let argList = expr.argList;
         if (is_cons(argList)) {
-            let str = print_factor(argList.car, false, false, $);
+            let str = print_factor(argList.car, false, false, _);
             argList = argList.cdr;
             while (is_cons(argList)) {
-                str += print_lco_operator();
-                str += print_factor(car(argList), false, true, $);
+                str += print_lco_operator(_);
+                str += print_factor(car(argList), false, true, _);
                 argList = argList.cdr;
             }
             return str;
@@ -565,11 +565,11 @@ export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: 
     else if (is_cons(expr) && is_rco(expr)) {
         let argList = expr.argList;
         if (is_cons(argList)) {
-            let str = print_factor(argList.car, false, false, $);
+            let str = print_factor(argList.car, false, false, _);
             argList = argList.cdr;
             while (is_cons(argList)) {
-                str += print_rco_operator();
-                str += print_factor(car(argList), false, true, $);
+                str += print_rco_operator(_);
+                str += print_factor(car(argList), false, true, _);
                 argList = argList.cdr;
             }
             return str;
@@ -579,16 +579,16 @@ export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: 
         }
     }
     else {
-        return print_factor(expr, omitParens, pastFirstFactor, $);
+        return print_factor(expr, omitParens, pastFirstFactor, _);
     }
 }
 
-function print_inner_operator(): string {
-    if (defs.printMode === PRINTMODE_LATEX) {
+function print_inner_operator(_: PrintConfig): string {
+    if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
         return ' \\mid ';
     }
 
-    if (defs.printMode === PRINTMODE_HUMAN && !defs.codeGen) {
+    if (_.getDirective(Directive.printMode) === PrintMode.Human && !defs.codeGen) {
         return print_str(' | ');
     }
     else {
@@ -596,12 +596,12 @@ function print_inner_operator(): string {
     }
 }
 
-function print_lco_operator(): string {
-    if (defs.printMode === PRINTMODE_LATEX) {
+function print_lco_operator(_: PrintConfig): string {
+    if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
         return ' \\ll ';
     }
 
-    if (defs.printMode === PRINTMODE_HUMAN && !defs.codeGen) {
+    if (_.getDirective(Directive.printMode) === PrintMode.Human && !defs.codeGen) {
         return print_str(' << ');
     }
     else {
@@ -609,12 +609,12 @@ function print_lco_operator(): string {
     }
 }
 
-function print_rco_operator(): string {
-    if (defs.printMode === PRINTMODE_LATEX) {
+function print_rco_operator(_: PrintConfig): string {
+    if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
         return ' \\gg ';
     }
 
-    if (defs.printMode === PRINTMODE_HUMAN && !defs.codeGen) {
+    if (_.getDirective(Directive.printMode) === PrintMode.Human && !defs.codeGen) {
         return print_str(' >> ');
     }
     else {
@@ -1124,7 +1124,7 @@ function should_tweak_exponent_syntax(base: U, $: PrintConfig): boolean {
     }
 }
 
-function print_power(base: U, expo: U, $: PrintConfig) {
+function print_power(base: U, expo: U, _: PrintConfig) {
 
     let str = '';
 
@@ -1137,37 +1137,37 @@ function print_power(base: U, expo: U, $: PrintConfig) {
             }
         }
         else {
-            if (defs.printMode === PRINTMODE_LATEX) {
+            if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                 str += print_str('\\sqrt{');
-                str += render_using_non_sexpr_print_mode(base, $);
+                str += render_using_non_sexpr_print_mode(base, _);
                 str += print_str('}');
                 return str;
             }
             else if (defs.codeGen) {
                 str += print_str('Math.sqrt(');
-                str += render_using_non_sexpr_print_mode(base, $);
+                str += render_using_non_sexpr_print_mode(base, _);
                 str += print_str(')');
                 return str;
             }
         }
     }
 
-    if (equaln($.getBinding(PRINT_LEAVE_E_ALONE, nil), 1) && is_base_of_natural_logarithm(base)) {
+    if (equaln(_.getBinding(PRINT_LEAVE_E_ALONE, nil), 1) && is_base_of_natural_logarithm(base)) {
         if (defs.codeGen) {
             str += print_str('Math.exp(');
-            str += print_expo_of_denom(expo, $);
+            str += print_expo_of_denom(expo, _);
             str += print_str(')');
             return str;
         }
 
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             str += print_str('e^{');
-            str += render_using_non_sexpr_print_mode(expo, $);
+            str += render_using_non_sexpr_print_mode(expo, _);
             str += print_str('}');
         }
         else {
             str += print_str('exp(');
-            str += render_using_non_sexpr_print_mode(expo, $);
+            str += render_using_non_sexpr_print_mode(expo, _);
             str += print_str(')');
         }
         return str;
@@ -1175,14 +1175,14 @@ function print_power(base: U, expo: U, $: PrintConfig) {
 
     if (defs.codeGen) {
         str += print_str('Math.pow(');
-        str += print_base_of_denom(base, $);
+        str += print_base_of_denom(base, _);
         str += print_str(', ');
-        str += print_expo_of_denom(expo, $);
+        str += print_expo_of_denom(expo, _);
         str += print_str(')');
         return str;
     }
 
-    if (should_tweak_exponent_syntax(base, $)) {
+    if (should_tweak_exponent_syntax(base, _)) {
         // if the exponent is negative then
         // we invert the base BUT we don't do
         // that if the base is "e", because for
@@ -1192,26 +1192,26 @@ function print_power(base: U, expo: U, $: PrintConfig) {
         // keep "e" as the base and the negative exponent
         if (!is_base_of_natural_logarithm(base)) {
             if (is_num(expo) && expo.isMinusOne()) {
-                if (defs.printMode === PRINTMODE_LATEX) {
+                if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                     str += print_str('\\frac{1}{');
                 }
-                else if (defs.printMode === PRINTMODE_HUMAN) {
+                else if (_.getDirective(Directive.printMode) === PrintMode.Human) {
                     str += print_str('1 / ');
                 }
                 else {
                     str += print_str('1/');
                 }
 
-                if (is_cons(base) && defs.printMode !== PRINTMODE_LATEX) {
+                if (is_cons(base) && _.getDirective(Directive.printMode) !== PrintMode.LaTeX) {
                     str += print_str('(');
-                    str += render_using_non_sexpr_print_mode(base, $);
+                    str += render_using_non_sexpr_print_mode(base, _);
                     str += print_str(')');
                 }
                 else {
-                    str += render_using_non_sexpr_print_mode(base, $);
+                    str += render_using_non_sexpr_print_mode(base, _);
                 }
 
-                if (defs.printMode === PRINTMODE_LATEX) {
+                if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                     str += print_str('}');
                 }
 
@@ -1219,28 +1219,28 @@ function print_power(base: U, expo: U, $: PrintConfig) {
             }
 
             if (is_negative(expo)) {
-                if (defs.printMode === PRINTMODE_LATEX) {
+                if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                     str += print_str('\\frac{1}{');
                 }
-                else if (defs.printMode === PRINTMODE_HUMAN) {
+                else if (_.getDirective(Directive.printMode) === PrintMode.Human) {
                     str += print_str('1 / ');
                 }
                 else {
                     str += print_str('1/');
                 }
 
-                const newExponent = negate($, expo);
+                const newExponent = negate(_, expo);
 
-                if (is_cons(base) && defs.printMode !== PRINTMODE_LATEX) {
+                if (is_cons(base) && _.getDirective(Directive.printMode) !== PrintMode.LaTeX) {
                     str += print_str('(');
-                    str += print_power(base, newExponent, $);
+                    str += print_power(base, newExponent, _);
                     str += print_str(')');
                 }
                 else {
-                    str += print_power(base, newExponent, $);
+                    str += print_power(base, newExponent, _);
                 }
 
-                if (defs.printMode === PRINTMODE_LATEX) {
+                if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                     str += print_str('}');
                 }
 
@@ -1248,31 +1248,31 @@ function print_power(base: U, expo: U, $: PrintConfig) {
             }
         }
 
-        if (is_rat_and_fraction(expo) && defs.printMode === PRINTMODE_LATEX) {
+        if (is_rat_and_fraction(expo) && _.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             str += print_str('\\sqrt');
-            const denomExponent = denominator(expo, $);
+            const denomExponent = denominator(expo, _);
             // we omit the "2" on the radical
             if (!is_num_and_eq_two(denomExponent)) {
                 str += print_str('[');
-                str += render_using_non_sexpr_print_mode(denomExponent, $);
+                str += render_using_non_sexpr_print_mode(denomExponent, _);
                 str += print_str(']');
             }
             str += print_str('{');
-            expo = numerator(expo, $);
-            str += print_power(base, expo, $);
+            expo = numerator(expo, _);
+            str += print_power(base, expo, _);
             str += print_str('}');
             return str;
         }
     }
 
-    if (defs.printMode === PRINTMODE_LATEX && isone(expo, $)) {
+    if (_.getDirective(Directive.printMode) === PrintMode.LaTeX && isone(expo, _)) {
         // if we are in latex mode we turn many
         // radicals into a radix sign with a power
         // underneath, and the power is often one
         // (e.g. square root turns into a radical
         // with a power one underneath) so handle
         // this case simply here, just print the base
-        str += render_using_non_sexpr_print_mode(base, $);
+        str += render_using_non_sexpr_print_mode(base, _);
     }
     else {
         // print the base,
@@ -1281,13 +1281,13 @@ function print_power(base: U, expo: U, $: PrintConfig) {
         if (is_power(base)) {
             // power is right associative so without parens it would be interpreted wrong.
             // Not sure why we have the LaTeX shananigans.
-            if (defs.printMode !== PRINTMODE_LATEX) {
+            if (_.getDirective(Directive.printMode) !== PrintMode.LaTeX) {
                 str += print_str('(');
-                str += print_factor(base, true, false, $);
+                str += print_factor(base, true, false, _);
                 str += print_str(')');
             }
             else {
-                str += print_factor(base, true, false, $);
+                str += print_factor(base, true, false, _);
             }
         }
         else if (is_num_and_negative(base)) {
@@ -1295,63 +1295,63 @@ function print_power(base: U, expo: U, $: PrintConfig) {
             // As an example, in JavaScript unary minus technically has higher precedence than exponentiation,
             // but compilers sometimes require parentheses to avoid errors.
             str += print_str('(');
-            str += render_using_non_sexpr_print_mode(base, $);
+            str += render_using_non_sexpr_print_mode(base, _);
             str += print_str(')');
         }
         else if (is_add(base)) {
             // Addition has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += render_using_non_sexpr_print_mode(base, $);
+            str += render_using_non_sexpr_print_mode(base, _);
             str += print_str(')');
         }
         else if (is_multiply(base)) {
             // Multiplicationn has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             // Not sure why we have the LaTeX shananigans.
-            if (defs.printMode !== PRINTMODE_LATEX) {
+            if (_.getDirective(Directive.printMode) !== PrintMode.LaTeX) {
                 str += print_str('(');
-                str += print_factor(base, true, false, $);
+                str += print_factor(base, true, false, _);
                 str += print_str(')');
             }
             else {
-                str += print_factor(base, true, false, $);
+                str += print_factor(base, true, false, _);
             }
         }
         else if (is_outer(base)) {
             // Outer product has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += render_using_non_sexpr_print_mode(base, $);
+            str += render_using_non_sexpr_print_mode(base, _);
             str += print_str(')');
         }
         else if (is_inner_or_dot(base)) {
             // Inner product has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += render_using_non_sexpr_print_mode(base, $);
+            str += render_using_non_sexpr_print_mode(base, _);
             str += print_str(')');
         }
         else if (is_num(base) && (lt_num_num(base, zero) || is_rat_and_fraction(base))) {
             str += print_str('(');
-            str += print_factor(base, false, false, $);
+            str += print_factor(base, false, false, _);
             str += print_str(')');
         }
         else {
-            str += print_factor(base, false, false, $);
+            str += print_factor(base, false, false, _);
         }
 
         // print the power symbol
-        if (defs.printMode === PRINTMODE_HUMAN) {
-            if ($.getDirective(Directive.useCaretForExponentiation)) {
+        if (_.getDirective(Directive.printMode) === PrintMode.Human) {
+            if (_.getDirective(Directive.useCaretForExponentiation)) {
                 str += print_str('^');
             }
             else {
                 str += print_str('**');
             }
         }
-        else if (defs.printMode === PRINTMODE_LATEX) {
+        else if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             // No choice in LaTeX, it's a caret.
             str += print_str('^');
         }
         else {
-            if ($.getDirective(Directive.useCaretForExponentiation)) {
+            if (_.getDirective(Directive.useCaretForExponentiation)) {
                 str += print_str('^');
             }
             else {
@@ -1360,26 +1360,26 @@ function print_power(base: U, expo: U, $: PrintConfig) {
         }
 
         // print the exponent
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             // in latex mode, one can omit the curly braces
             // wrapping the exponent if the exponent is only
             // one character long
-            if (render_using_non_sexpr_print_mode(expo, $).length > 1) {
+            if (render_using_non_sexpr_print_mode(expo, _).length > 1) {
                 str += print_str('{');
-                str += render_using_non_sexpr_print_mode(expo, $);
+                str += render_using_non_sexpr_print_mode(expo, _);
                 str += print_str('}');
             }
             else {
-                str += render_using_non_sexpr_print_mode(expo, $);
+                str += render_using_non_sexpr_print_mode(expo, _);
             }
         }
         else if (is_cons(expo) || is_rat_and_fraction(expo) || (is_num(expo) && lt_num_num(expo, zero))) {
             str += print_str('(');
-            str += render_using_non_sexpr_print_mode(expo, $);
+            str += render_using_non_sexpr_print_mode(expo, _);
             str += print_str(')');
         }
         else {
-            str += print_factor(expo, false, false, $);
+            str += print_factor(expo, false, false, _);
         }
     }
     return str;
@@ -1441,13 +1441,13 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         // TODO: Fix the casting.
         // _.getDirective(Directive.printMode);
         const handler = _.handlerFor(expr);
-        switch (defs.printMode) {
+        switch (_.getDirective(Directive.printMode)) {
             // Consider replacing printMode with Native.xxx and put in a Directive
-            case PRINTMODE_HUMAN: {
+            case PrintMode.Human: {
                 // FIXME
                 return nativeStr(handler.dispatch(expr, native_sym(Native.human), nil, _ as unknown as ExprContext));
             }
-            case PRINTMODE_INFIX: {
+            case PrintMode.Infix: {
                 const response = handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext);
                 if (is_str(response)) {
                     return nativeStr(response);
@@ -1459,14 +1459,14 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                     throw new ProgrammingError();
                 }
             }
-            case PRINTMODE_LATEX: {
+            case PrintMode.LaTeX: {
                 return nativeStr(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
             }
-            case PRINTMODE_SEXPR: {
+            case PrintMode.SExpr: {
                 return nativeStr(handler.dispatch(expr, native_sym(Native.sexpr), nil, _ as unknown as ExprContext));
             }
             default: {
-                throw new Error(`${defs.printMode}`);
+                throw new Error(`${_.getDirective(Directive.printMode)}`);
             }
         }
         /*
@@ -1476,28 +1476,28 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     
         if (is_str(expr)) {
-            switch (defs.printMode) {
-                case PRINTMODE_HUMAN: {
+            switch (_.getDirective(Directive.printMode)) {
+                case PrintMode.Human: {
                     return str_extension.toHumanString(expr);
                 }
-                case PRINTMODE_INFIX: {
+                case PrintMode.Infix: {
                     return str_extension.toInfixString(expr);
                 }
-                case PRINTMODE_LATEX: {
+                case PrintMode.LaTeX: {
                     return str_extension.toLatexString(expr);
                 }
-                case PRINTMODE_SEXPR: {
+                case PrintMode.SExpr: {
                     return str_extension.toListString(expr);
                 }
                 default: {
-                    throw new Error(`${defs.printMode}`);
+                    throw new Error(`${_.getDirective(Directive.printMode)}`);
                 }
             }
         }
     
         if (is_tensor(expr)) {
             let str = '';
-            if (defs.printMode === PRINTMODE_LATEX) {
+            if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                 str += print_tensor_latex(expr, _);
             }
             else {
@@ -1508,7 +1508,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
     
         if (is_blade(expr)) {
             let str = '';
-            if (defs.printMode === PRINTMODE_LATEX) {
+            if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                 str += expr.toLatexString();
             }
             else {
@@ -1522,8 +1522,8 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
     if (is_cons(expr) && is_multiply(expr)) {
         let str = '';
         if (!omtPrns) {
-            if (sign_of_term(expr) === '-' || defs.printMode !== PRINTMODE_LATEX) {
-                if (defs.printMode === PRINTMODE_LATEX) {
+            if (sign_of_term(expr) === '-' || _.getDirective(Directive.printMode) !== PrintMode.LaTeX) {
+                if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                     str += print_str(' \\left (');
                 }
                 else {
@@ -1533,8 +1533,8 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
         str += render_using_non_sexpr_print_mode(expr, _);
         if (!omtPrns) {
-            if (sign_of_term(expr) === '-' || defs.printMode !== PRINTMODE_LATEX) {
-                if (defs.printMode === PRINTMODE_LATEX) {
+            if (sign_of_term(expr) === '-' || _.getDirective(Directive.printMode) !== PrintMode.LaTeX) {
+                if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                     str += print_str(' \\right ) ');
                 }
                 else {
@@ -1641,11 +1641,11 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
     if (car(expr).equals(PATTERN)) {
         let str = '';
         str += render_using_non_sexpr_print_mode(caadr(expr), _);
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             str += print_str(' \\rightarrow ');
         }
         else {
-            if (defs.printMode === PRINTMODE_HUMAN) {
+            if (_.getDirective(Directive.printMode) === PrintMode.Human) {
                 str += print_str(' -> ');
             }
             else {
@@ -1664,34 +1664,34 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
     }
 
     // TODO: The generalization here would be that we look up the operator then ask for the right format
-    // based upon defs.printMode, defs.codeGen
+    // based upon _.getDirective(Directive.printMode), defs.codeGen
     if (is_cons(expr) && is_factorial(expr)) {
         return print_factorial_function(expr, _);
     }
     else if (is_cons(expr) && is_abs(expr)) {
-        // console.lg(`print_factor ${expr} omitParens => ${omitParens} pastFirstFactor => ${false} printMode: ${defs.printMode}`);
-        switch (defs.printMode) {
-            case PRINTMODE_HUMAN:
-            case PRINTMODE_INFIX: {
+        // console.lg(`print_factor ${expr} omitParens => ${omitParens} pastFirstFactor => ${false} printMode: ${_.getDirective(Directive.printMode)}`);
+        switch (_.getDirective(Directive.printMode)) {
+            case PrintMode.Human:
+            case PrintMode.Infix: {
                 return print_abs_infix(expr, _);
             }
-            case PRINTMODE_LATEX: {
+            case PrintMode.LaTeX: {
                 return print_abs_latex(expr, _);
             }
             default: {
-                // PRINTMODE_ASCII and PRINTMODE_SEXPR is the other mode but that doesn't use this function.
-                throw new Error(defs.printMode);
+                // PrintMode.Ascii and PrintMode.SExpr is the other mode but that doesn't use this function.
+                throw new ProgrammingError();
             }
         }
     }
-    else if (car(expr).equals(SQRT) && defs.printMode === PRINTMODE_LATEX) {
+    else if (car(expr).equals(SQRT) && _.getDirective(Directive.printMode) === PrintMode.LaTeX) {
         let str = '';
         str += print_SQRT_latex(expr, _);
         return str;
         // eslint-disable-next-line no-dupe-else-if
     }
     else if (is_transpose(expr)) {
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += print_TRANSPOSE_latex(expr, _);
             return str;
@@ -1710,7 +1710,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (is_cons(expr) && is_opr_eq_inv(expr)) {
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += print_INV_latex(expr, _);
             return str;
@@ -1721,18 +1721,18 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             return str;
         }
     }
-    else if (car(expr).equals(BINOMIAL) && defs.printMode === PRINTMODE_LATEX) {
+    else if (car(expr).equals(BINOMIAL) && _.getDirective(Directive.printMode) === PrintMode.LaTeX) {
         let str = '';
         str += print_BINOMIAL_latex(expr, _);
         return str;
     }
-    else if (car(expr).equals(DEFINT) && defs.printMode === PRINTMODE_LATEX) {
+    else if (car(expr).equals(DEFINT) && _.getDirective(Directive.printMode) === PrintMode.LaTeX) {
         let str = '';
         str += print_DEFINT_latex(expr, _);
         return str;
     }
     else if (is_inner_or_dot(expr)) {
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += print_DOT_latex(expr, _);
             return str;
@@ -1786,7 +1786,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(SUM)) {
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += print_SUM_latex(expr, _);
             return str;
@@ -1797,12 +1797,12 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             return str;
         }
         //else if car(p) == symbol(QUOTE)
-        //  if printMode == PRINTMODE_LATEX
+        //  if printMode == PrintMode.LaTeX
         //    print_expr(cadr(p),$)
         //    return accumulator
     }
     else if (car(expr).equals(PRODUCT)) {
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += print_PRODUCT_latex(expr, _);
             return str;
@@ -1833,7 +1833,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_TEST_codegen(expr, _);
             return str;
         }
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += print_TEST_latex(expr, _);
             return str;
@@ -1846,7 +1846,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') < (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
             return str;
         }
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += print_TESTLT_latex(expr, _);
             return str;
@@ -1859,7 +1859,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') <= (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
             return str;
         }
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += print_TESTLE_latex(expr, _);
             return str;
@@ -1872,7 +1872,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') > (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
             return str;
         }
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += print_TESTGT_latex(expr, _);
             return str;
@@ -1885,7 +1885,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') >= (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
             return str;
         }
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += print_TESTGE_latex(expr, _);
             return str;
@@ -1898,7 +1898,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') === (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
             return str;
         }
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += print_testeq_latex(expr, _);
             return str;
@@ -1910,7 +1910,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += 'Math.floor(' + render_using_non_sexpr_print_mode(cadr(expr), _) + '),$';
             return str;
         }
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += ' \\lfloor {' + render_using_non_sexpr_print_mode(cadr(expr), _) + '} \\rfloor ,$';
             return str;
@@ -1922,7 +1922,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += 'Math.ceiling(' + render_using_non_sexpr_print_mode(cadr(expr), _) + '),$';
             return str;
         }
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = '';
             str += ' \\lceil {' + render_using_non_sexpr_print_mode(cadr(expr), _) + '} \\rceil ,$';
             return str;
@@ -2013,7 +2013,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
             return print_str('Math.E');
         }
         else {
-            if (defs.printMode === PRINTMODE_LATEX) {
+            if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                 return print_str('e');
             }
             else {
@@ -2022,7 +2022,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
         }
     }
     else if (is_pi(expr)) {
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             return print_str('\\pi');
         }
         else {
@@ -2032,11 +2032,11 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
     else {
         if (is_sym(expr)) {
             const handler = _.handlerFor(expr);
-            if (defs.printMode === PRINTMODE_INFIX) {
+            if (_.getDirective(Directive.printMode) === PrintMode.Infix) {
                 // FIXME: casting
                 return nativeStr(handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext));
             }
-            if (defs.printMode === PRINTMODE_LATEX) {
+            if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                 // FIXME: casting
                 return nativeStr(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
             }
@@ -2047,11 +2047,11 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
         }
         if (is_keyword(expr)) {
             const handler = _.handlerFor(expr);
-            if (defs.printMode === PRINTMODE_INFIX) {
+            if (_.getDirective(Directive.printMode) === PrintMode.Infix) {
                 // FIXME: casting
                 return nativeStr(handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext));
             }
-            if (defs.printMode === PRINTMODE_LATEX) {
+            if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                 // FIXME: casting
                 return nativeStr(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
             }
@@ -2067,7 +2067,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
             }
         }
         if (is_imu(expr)) {
-            if (defs.printMode === PRINTMODE_LATEX) {
+            if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                 return print_str('i');
             }
             else {
@@ -2076,12 +2076,12 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
         }
         if (is_atom(expr)) {
             // A user-defined atom
-            switch (defs.printMode) {
-                case 'PRINTMODE_ASCII':
-                case 'PRINTMODE_HUMAN':
-                case 'PRINTMODE_INFIX':
-                case 'PRINTMODE_LATEX':
-                case 'PRINTMODE_SEXPR':
+            switch (_.getDirective(Directive.printMode)) {
+                case PrintMode.Ascii:
+                case PrintMode.Human:
+                case PrintMode.Infix:
+                case PrintMode.LaTeX:
+                case PrintMode.SExpr:
                 default: {
                     throw new ProgrammingError(`${expr}: ${expr.type}`);
                 }
@@ -2094,12 +2094,12 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
     }
 }
 
-function print_multiply_sign(): string {
-    if (defs.printMode === PRINTMODE_LATEX) {
+function print_multiply_sign(_: PrintConfig): string {
+    if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
         return '';
     }
 
-    if (defs.printMode === PRINTMODE_HUMAN && !defs.codeGen) {
+    if (_.getDirective(Directive.printMode) === PrintMode.Human && !defs.codeGen) {
         return print_str(' ');
     }
     else {

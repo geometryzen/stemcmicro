@@ -1,5 +1,6 @@
-import { booT, Cell, CellHost, create_flt, create_int, create_str, create_sym, create_tensor, epsilon, Err, et, imu, is_keyword, is_rat, is_str, is_sym, Lambda, Map, Sym } from "math-expression-atoms";
+import { booT, Cell, CellHost, create_flt, create_int, create_str, create_sym, create_tensor, epsilon, et, imu, is_keyword, is_rat, is_str, is_sym, Lambda, Map, Sym } from "math-expression-atoms";
 import { Atom, Cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { hook_create_err } from "../hooks/hook_create_err";
 import { create_uom } from "../operators/uom/uom";
 
 const KIND_NIL = 0;
@@ -52,7 +53,7 @@ export const HASH_BLADE = hash_for_atom(et);
 export const HASH_BOO = hash_for_atom(booT);
 export const HASH_CELL = hash_for_atom(darkCell);
 export const HASH_DICTIONARY = hash_for_atom(new Map([]));
-export const HASH_ERR = hash_for_atom(new Err(nil));
+export const HASH_ERR = hash_for_atom(hook_create_err(nil));
 export const HASH_FLT = hash_for_atom(create_flt(1));
 export const HASH_HYP = hash_for_atom(epsilon);
 export const HASH_IMU = hash_for_atom(imu);

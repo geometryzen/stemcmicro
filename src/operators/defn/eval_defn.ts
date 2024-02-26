@@ -1,9 +1,10 @@
-import { assert_map, assert_sym, assert_tensor, Err, is_err, is_map, is_str, is_tensor, Map, Str, Sym, Tensor } from "math-expression-atoms";
+import { assert_map, assert_sym, assert_tensor, is_err, is_map, is_str, is_tensor, Map, Str, Sym, Tensor } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, items_to_cons, nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
 function split_defn_args(expr: Cons): [name: Sym, doc: Str | U, attrMap: Map | U, params: Tensor<U>, prepost: U, body: U] {
@@ -26,7 +27,7 @@ function split_defn_args(expr: Cons): [name: Sym, doc: Str | U, attrMap: Map | U
                     return [name, nil, assert_map(item1), assert_tensor(item2), nil, item3];
                 }
                 else {
-                    throw new Err(new Str(`Unexpected item 1 for defn`));
+                    throw hook_create_err(new Str(`Unexpected item 1 for defn`));
                 }
             }
             case 5: {
@@ -45,7 +46,7 @@ function split_defn_args(expr: Cons): [name: Sym, doc: Str | U, attrMap: Map | U
                     return [name, nil, item1, assert_tensor(item2), item3, item4];
                 }
                 else {
-                    throw new Err(new Str(`Unexpected item 1 ${item1} for defn`));
+                    throw hook_create_err(new Str(`Unexpected item 1 ${item1} for defn`));
                 }
             }
             case 6: {
@@ -56,11 +57,11 @@ function split_defn_args(expr: Cons): [name: Sym, doc: Str | U, attrMap: Map | U
                     return [name, item1, item2, assert_tensor(item3), item4, item5];
                 }
                 else {
-                    throw new Err(new Str(`Unexpected item 1 ${item1} for defn`));
+                    throw hook_create_err(new Str(`Unexpected item 1 ${item1} for defn`));
                 }
             }
             default: {
-                throw new Err(new Str(`Unexpected number of arguments (${n}) for defn`));
+                throw hook_create_err(new Str(`Unexpected number of arguments (${n}) for defn`));
             }
         }
     }

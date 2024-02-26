@@ -1,8 +1,9 @@
-import { bigInt, BigInteger, Err, imu, negOne, one, Rat, Sym, zero } from 'math-expression-atoms';
+import { bigInt, BigInteger, imu, negOne, one, Rat, Sym, zero } from 'math-expression-atoms';
 import { ExprContext } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, U } from 'math-expression-tree';
 import { bignum_truncate, makePositive, makeSignSameAs } from './bignum';
+import { diagnostic, Diagnostics } from './diagnostics/diagnostics';
 import { Directive } from './env/ExtensionEnv';
 import { exp } from './helpers/exp';
 import { multiply } from './helpers/multiply';
@@ -59,8 +60,13 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExprContext): C
     // if base is zero then return 0
     if (base.isZero()) {
         if (is_num_and_negative(expo)) {
-            // throw new Error(`divide by zero for base => ${base} and exponent => ${expo}`);
-            return hook(new Err(items_to_cons(POWER, base, expo)), 'D0');
+            const err = diagnostic(Diagnostics.Division_by_zero);
+            try {
+                return hook(err, 'D0');
+            }
+            finally {
+                err.release();
+            }
         }
         return hook(zero, "D");
     }

@@ -14,7 +14,7 @@ import { simplify } from "../../helpers/simplify";
 import { PrintConfig, print_str, render_using_non_sexpr_print_mode } from "../../print/print";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { MAXDIM } from "../../runtime/constants";
-import { defs, PrintMode, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_SEXPR } from "../../runtime/defs";
+import { PrintMode } from "../../runtime/defs";
 import { assert_square_matrix_tensor, is_line_matrix, is_square_matrix } from "../../tensor";
 import { cofactor } from "../cofactor/cofactor";
 import { is_hyp } from "../hyp/is_hyp";
@@ -249,36 +249,33 @@ class TensorExtension implements Extension<Tensor> {
         }
     }
     toHumanString(matrix: Tensor, $: ExprContext): string {
-        const printMode: PrintMode = defs.printMode;
-        defs.setPrintMode(PRINTMODE_HUMAN);
+        $.pushDirective(Directive.printMode, PrintMode.Human);
         try {
             return print_tensor(matrix, $);
         }
         finally {
-            defs.setPrintMode(printMode);
+            $.popDirective();
         }
     }
     toInfixString(matrix: Tensor, $: ExprContext): string {
-        const printMode: PrintMode = defs.printMode;
-        defs.setPrintMode(PRINTMODE_INFIX);
+        $.pushDirective(Directive.printMode, PrintMode.Infix);
         try {
             return print_tensor(matrix, $);
         }
         finally {
-            defs.setPrintMode(printMode);
+            $.popDirective();
         }
     }
     toLatexString(matrix: Tensor, $: ExprContext): string {
         return print_tensor_latex(matrix, $);
     }
     toListString(matrix: Tensor, $: ExprContext): string {
-        const printMode: PrintMode = defs.printMode;
-        defs.setPrintMode(PRINTMODE_SEXPR);
+        $.pushDirective(Directive.printMode, PrintMode.SExpr);
         try {
             return print_tensor(matrix, $);
         }
         finally {
-            defs.setPrintMode(printMode);
+            $.popDirective();
         }
     }
     evaluate(matrix: Tensor, argList: Cons, $: ExtensionEnv): [TFLAGS, U] {
@@ -366,7 +363,7 @@ function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: PrintConfig):
             // add separator between elements dimensions
             // "above" the inner-most dimension
             if (i !== p.dim(j) - 1) {
-                if (defs.printMode === PRINTMODE_SEXPR) {
+                if ($.getDirective(Directive.printMode) === PrintMode.SExpr) {
                     accumulator += print_str(' ');
                 }
                 else {
@@ -383,7 +380,7 @@ function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: PrintConfig):
             // add separator between elements in the
             // inner-most dimension
             if (i !== p.dim(j) - 1) {
-                if (defs.printMode === PRINTMODE_SEXPR) {
+                if ($.getDirective(Directive.printMode) === PrintMode.SExpr) {
                     accumulator += print_str(' ');
                 }
                 else {

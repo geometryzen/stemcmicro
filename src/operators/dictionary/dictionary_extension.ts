@@ -2,11 +2,11 @@ import { create_sym, is_map, Map, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { cons, Cons, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
-import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { listform } from "../../helpers/listform";
 import { print_str } from "../../print/print";
-import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
+import { PrintMode } from "../../runtime/defs";
 
 function verify_map(x: Map): Map | never {
     if (is_map(x)) {
@@ -87,16 +87,13 @@ class DictionaryExtension implements Extension<Map> {
     toLatexString(dictionary: Map, $: ExprContext): string {
         return print_dictionary_latex(dictionary, $);
     }
-    toListString(dictionary: Map, $: ExprContext): string {
-        // While the following implementation requires refactoring due to some technical weaknesses,
-        // the basic idea is good. The function to print the dictionary should be owned by this extension.
-        const printMode: PrintMode = defs.printMode;
-        defs.setPrintMode(PRINTMODE_SEXPR);
+    toListString(dictionary: Map, env: ExprContext): string {
+        env.pushDirective(Directive.printMode, PrintMode.SExpr);
         try {
-            return print_dictionary(dictionary, $);
+            return print_dictionary(dictionary, env);
         }
         finally {
-            defs.setPrintMode(printMode);
+            env.popDirective();
         }
     }
 }

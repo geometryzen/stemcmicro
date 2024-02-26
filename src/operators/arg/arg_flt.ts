@@ -1,7 +1,7 @@
-import { Err } from "math-expression-atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Flt, piAsFlt, zeroAsFlt } from "../../tree/flt/Flt";
@@ -28,7 +28,7 @@ class Op extends Function1<ARG> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         if (arg.isZero()) {
-            return [TFLAG_DIFF, new Err(expr)];
+            return [TFLAG_DIFF, hook_create_err(expr)];
         }
         else if (arg.isNegative()) {
             return [TFLAG_DIFF, piAsFlt];

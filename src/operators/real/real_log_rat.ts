@@ -1,8 +1,9 @@
-import { Err, is_rat, Sym } from "math-expression-atoms";
+import { is_rat, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, Cons1, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const real = native_sym(Native.real);
@@ -27,7 +28,7 @@ class Op extends CompositeOperator {
         if (is_rat(x)) {
             if (x.isZero()) {
                 // Minus infinity in the limit but undefined at zero.
-                return [TFLAG_DIFF, new Err(logExpr)];
+                return [TFLAG_DIFF, hook_create_err(logExpr)];
             }
             else if (x.isNegative()) {
                 // Complex

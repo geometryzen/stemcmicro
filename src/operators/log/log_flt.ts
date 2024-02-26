@@ -1,7 +1,7 @@
-import { Err } from "math-expression-atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { create_flt, Flt, piAsFlt, zeroAsFlt } from "../../tree/flt/Flt";
@@ -29,7 +29,7 @@ class Op extends Function1<Flt> {
             return [TFLAG_DIFF, zeroAsFlt];
         }
         else if (x.isZero()) {
-            return [TFLAG_DIFF, new Err(expr)];
+            return [TFLAG_DIFF, hook_create_err(expr)];
         }
         else if (x.isNegative()) {
             if (x.isMinusOne()) {

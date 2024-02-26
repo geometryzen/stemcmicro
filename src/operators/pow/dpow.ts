@@ -1,16 +1,16 @@
-import { create_flt, Err } from 'math-expression-atoms';
-import { Native, native_sym } from 'math-expression-native';
-import { items_to_cons, U } from 'math-expression-tree';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { imu } from '../../env/imu';
+import { create_flt, imu } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
+import { U } from 'math-expression-tree';
+import { diagnostic, Diagnostics } from '../../diagnostics/diagnostics';
+import { add } from '../../helpers/add';
+import { multiply } from '../../helpers/multiply';
 
 // power function for double precision floating point
-export function dpow(base: number, expo: number, $: ExtensionEnv): U {
+
+export function dpow(base: number, expo: number, $: Pick<ExprContext, 'valueOf'>): U {
 
     if (base === 0.0 && expo < 0.0) {
-        // console.lg(new Error().stack);
-        // return new Err(new Str('divide by zero'));
-        return new Err(items_to_cons(native_sym(Native.pow), create_flt(base), create_flt(expo)));
+        return diagnostic(Diagnostics.Division_by_zero);
     }
 
     // nonnegative base or integer power?
@@ -34,5 +34,5 @@ export function dpow(base: number, expo: number, $: ExtensionEnv): U {
         b = Math.sin(theta);
     }
 
-    return $.add(create_flt(a * result), $.multiply(create_flt(b * result), imu));
+    return add($, create_flt(a * result), multiply($, create_flt(b * result), imu));
 }

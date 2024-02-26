@@ -295,7 +295,6 @@ function sample(funcExpr: U, varName: Sym, t: number, points: { t: number; x: nu
         value_of(env, ctrl, $);
         const temp = $.pop();
         if (is_err(temp)) {
-            // For example, divide by zero is undefined so we don't get a point.
             return;
         }
         else {

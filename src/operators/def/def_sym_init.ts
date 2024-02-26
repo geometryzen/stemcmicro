@@ -1,8 +1,9 @@
-import { Err, is_sym, Str, Sym } from "math-expression-atoms";
+import { is_sym, Str, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons2, nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { extract_def_args } from "./extract_def_args";
@@ -47,7 +48,7 @@ function def_sym_init(sym: Sym, init: U, $: ExtensionEnv): U {
         return nil;
     }
     else {
-        return new Err(new Str("First argument to def must be a symbol."));
+        return hook_create_err(new Str("First argument to def must be a symbol."));
     }
 }
 

@@ -5,7 +5,8 @@
 // prints the inverse of the base powered to the unsigned
 
 import { is_flt, is_rat, Num } from "math-expression-atoms";
-import { defs, PRINTMODE_LATEX } from "../runtime/defs";
+import { Directive } from "../env/ExtensionEnv";
+import { PrintMode } from "../runtime/defs";
 import { number_to_floating_point_string } from "../runtime/number_to_floating_point_string";
 import { PrintConfig } from './print';
 
@@ -19,18 +20,18 @@ export function print_number(x: Num, signed: boolean, $: PrintConfig): string {
             }
         }
 
-        if (defs.printMode === PRINTMODE_LATEX && x.isFraction()) {
+        if ($.getDirective(Directive.printMode) === PrintMode.LaTeX && x.isFraction()) {
             numerStr = '\\frac{' + numerStr + '}{';
         }
 
         str += numerStr;
 
         if (x.isFraction()) {
-            if (defs.printMode !== PRINTMODE_LATEX) {
+            if ($.getDirective(Directive.printMode) !== PrintMode.LaTeX) {
                 str += '/';
             }
             let denomStr = x.b.toString();
-            if (defs.printMode === PRINTMODE_LATEX) {
+            if ($.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                 denomStr += '}';
             }
             str += denomStr;

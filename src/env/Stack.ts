@@ -138,6 +138,17 @@ export class ShareableStack<T extends Shareable> implements Shareable {
             }
         }
     }
+    get length(): number {
+        return this.#data.length;
+    }
+    /**
+     * The reference count of the element will be increased by one.
+     */
+    peek(index: number): T {
+        const element = this.#data.peek(index);
+        element.addRef();
+        return element;
+    }
     /**
      * The reference count of the element will be increased by one.
      */

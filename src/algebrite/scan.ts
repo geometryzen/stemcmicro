@@ -2,6 +2,7 @@
 import { assert_sym, Boo, create_keyword_ns, create_tensor, is_num, is_rat, Map, negOne, one, Tensor } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { items_to_cons, nil, pos_end_items_to_cons, U } from 'math-expression-tree';
+import { ShareableStack } from '../env/Stack';
 import {
     QUOTE,
     TRANSPOSE,
@@ -478,78 +479,127 @@ export function scan_multiplicative_expr_implicit(state: InputState, options: Re
     let end: number = Number.MIN_SAFE_INTEGER;
 
     const lhs = scan_outer_expr(state, options);
-    pos = Math.min(assert_pos(lhs.pos), pos);
-    end = Math.max(assert_end(lhs.end), end);
-    const results = [lhs];
-    /*
-    if (parse_time_simplifications) {
-        simplify_1_in_products(results);
-    }
-    */
+    try {
+        pos = Math.min(assert_pos(lhs.pos), pos);
+        end = Math.max(assert_end(lhs.end), end);
+        const stack = new ShareableStack<U>();
+        try {
+            stack.push(lhs);
+            /*
+            if (parse_time_simplifications) {
+                simplify_1_in_products(results);
+            }
+            */
 
-    while (is_multiplicative_operator_or_factor_pending(state.code)) {
-        if (state.code === T_ASTRX) {
-            state.get_token_skip_newlines();
-            const outer = scan_outer_expr(state, options);
-            pos = Math.min(assert_pos(outer.pos), pos);
-            end = Math.max(assert_end(outer.end), end);
-            results.push(outer);
-        }
-        else if (state.code === T_FWDSLASH) {
-            // in case of 1/... then
-            // we scanned the 1, we get rid
-            // of it because otherwise it becomes
-            // an extra factor that wasn't there and
-            // things like
-            // 1/(2*a) become 1*(1/(2*a))
-            simplify_1_in_products(results);
-            state.get_token_skip_newlines();
-            const outer = scan_outer_expr(state, options);
-            pos = Math.min(assert_pos(outer.pos), pos);
-            end = Math.max(assert_end(outer.end), end);
-            results.push(one_divided_by(outer));
-        }
-        /*
-        else if (tokenCharCode() === dotprod_unicode) {
-            state.advance();
-            results.push(items_to_cons(symbol(INNER), results.pop(), scan_factor()));
-        }
-        */
-        else {
-            // This will be dead code unless perhaps if we allow juxtaposition.
-            // console.lg(`state.code.code=${state.code.code}, state.code.text=${state.code.text}`);
-            const outer = scan_outer_expr(state, options);
-            pos = Math.min(assert_pos(outer.pos), pos);
-            end = Math.max(assert_end(outer.end), end);
-            results.push(outer);
-        }
-        /*
-        if (parse_time_simplifications) {
-            multiply_consecutive_constants(results);
-            simplify_1_in_products(results);
-        }
-        */
-    }
+            while (is_multiplicative_operator_or_factor_pending(state.code)) {
+                if (state.code === T_ASTRX) {
+                    state.get_token_skip_newlines();
+                    const outer = scan_outer_expr(state, options);
+                    try {
+                        pos = Math.min(assert_pos(outer.pos), pos);
+                        end = Math.max(assert_end(outer.end), end);
+                        stack.push(outer);
+                    }
+                    finally {
+                        outer.release();
+                    }
+                }
+                else if (state.code === T_FWDSLASH) {
+                    // in case of 1/... then
+                    // we scanned the 1, we get rid
+                    // of it because otherwise it becomes
+                    // an extra factor that wasn't there and
+                    // things like
+                    // 1/(2*a) become 1*(1/(2*a))
+                    // W
+                    simplify_1_in_products(stack);
+                    state.get_token_skip_newlines();
+                    const outer = scan_outer_expr(state, options);
+                    try {
+                        pos = Math.min(assert_pos(outer.pos), pos);
+                        end = Math.max(assert_end(outer.end), end);
+                        const x = one_divided_by(outer);
+                        stack.push(x);
+                        x.release();
+                    }
+                    finally {
+                        outer.release();
+                    }
+                }
+                /*
+                else if (tokenCharCode() === dotprod_unicode) {
+                    state.advance();
+                    results.push(items_to_cons(symbol(INNER), results.pop(), scan_factor()));
+                }
+                */
+                else {
+                    // This will be dead code unless perhaps if we allow juxtaposition.
+                    // console.lg(`state.code.code=${state.code.code}, state.code.text=${state.code.text}`);
+                    const outer = scan_outer_expr(state, options);
+                    try {
+                        pos = Math.min(assert_pos(outer.pos), pos);
+                        end = Math.max(assert_end(outer.end), end);
+                        stack.push(outer);
+                    }
+                    finally {
+                        outer.release();
+                    }
+                }
+                /*
+                if (parse_time_simplifications) {
+                    multiply_consecutive_constants(results);
+                    simplify_1_in_products(results);
+                }
+                */
+            }
 
-    if (results.length === 0) {
-        return one;
+            if (stack.length === 0) {
+                return one;
+            }
+            else if (stack.length == 1) {
+                const x = stack.pop();
+                x.pos = assert_pos(pos);
+                x.end = assert_end(end);
+                return x;
+            }
+            else {
+                const results: U[] = [];
+                try {
+                    while (stack.length > 0) {
+                        const x = stack.pop();
+                        results.push(x);
+                    }
+                    results.reverse();
+                    return pos_end_items_to_cons(pos, end, MATH_MUL, ...results);
+                }
+                finally {
+                    // release all the elements in results.
+                    for (let i = 0; i < results.length; i++) {
+                        results[i].release();
+                    }
+                    results.length = 0;
+                }
+            }
+        }
+        finally {
+            stack.release();
+        }
     }
-    else if (results.length == 1) {
-        const x = results[0];
-        x.pos = assert_pos(pos);
-        x.end = assert_end(end);
-        return x;
-    }
-    else {
-        return pos_end_items_to_cons(pos, end, MATH_MUL, ...results);
+    finally {
+        lhs.release();
     }
 }
 
-function simplify_1_in_products(factors: U[]): void {
+function simplify_1_in_products(factors: ShareableStack<U>): void {
     if (factors.length > 0) {
-        const factor = factors[factors.length - 1];
-        if (is_rat(factor) && factor.isOne()) {
-            factors.pop();
+        const factor = factors.peek(factors.length - 1);
+        try {
+            if (is_rat(factor) && factor.isOne()) {
+                factors.pop().release();
+            }
+        }
+        finally {
+            factor.release();
         }
     }
 }
@@ -581,12 +631,26 @@ export function scan_multiplicative_expr_explicit(state: InputState, options: Re
                 // console.lg("result", JSON.stringify(result));
                 if (is_rat(result) && result.isOne()) {
                     state.get_token();
-                    result = one_divided_by(scan_outer_expr(state, options));
+                    const outer = scan_outer_expr(state, options);
+                    try {
+                        result = one_divided_by(outer);
+                    }
+                    finally {
+                        outer.release();
+                    }
                 }
                 else {
                     const mulOp = clone_symbol_using_info(MATH_MUL, state.tokenToSym());
                     state.get_token();
-                    result = items_to_cons(mulOp, result, one_divided_by(scan_outer_expr(state, options)));
+                    const outer = scan_outer_expr(state, options);
+                    try {
+                        const x = one_divided_by(outer);
+                        result = items_to_cons(mulOp, result, x);
+                        x.release();
+                    }
+                    finally {
+                        outer.release();
+                    }
                 }
                 break;
             }

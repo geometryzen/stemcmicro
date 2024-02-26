@@ -1,6 +1,7 @@
-import { Err, Sym, zero } from "math-expression-atoms";
+import { Sym, zero } from "math-expression-atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Cons, U } from "../../tree/tree";
@@ -31,7 +32,7 @@ class Op extends CompositeOperator {
         const props = $.getSymbolPredicates(x);
         if (props.zero) {
             // Minus infinity in the limit but undefined at zero.
-            return [TFLAG_DIFF, new Err(innerExpr)];
+            return [TFLAG_DIFF, hook_create_err(innerExpr)];
         }
         else if (props.negative) {
             // Complex

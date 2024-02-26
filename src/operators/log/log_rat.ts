@@ -1,10 +1,11 @@
-import { Err, is_rat, Rat, Sym, zero } from "math-expression-atoms";
+import { is_rat, Rat, Sym, zero } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { Function1 } from "../helpers/Function1";
 
 const LOG = native_sym(Native.log);
@@ -25,7 +26,7 @@ class Op extends Function1<Rat> {
             return [TFLAG_DIFF, zero];
         }
         else if (x.isZero()) {
-            return [TFLAG_DIFF, new Err(expr)];
+            return [TFLAG_DIFF, hook_create_err(expr)];
         }
         else if (x.isMinusOne()) {
             return [TFLAG_DIFF, $.multiply(imu, PI)];

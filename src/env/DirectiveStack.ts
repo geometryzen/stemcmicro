@@ -1,3 +1,4 @@
+import { PrintMode } from "../runtime/defs";
 import { Directive } from "./ExtensionEnv";
 import { Stack } from "./Stack";
 
@@ -137,7 +138,6 @@ function initial_directives(): Directives {
     update_directives(directives, Directive.expandSinSum, 0);
     update_directives(directives, Directive.factoring, 0);
     update_directives(directives, Directive.keepZeroTermsInSums, 0);
-    // TODO: These two don't seem like Directive(s).
     update_directives(directives, Directive.renderFloatAsEcmaScript, 0);
     update_directives(directives, Directive.useCaretForExponentiation, 0);
     update_directives(directives, Directive.useParenForTensors, 0);
@@ -146,5 +146,7 @@ function initial_directives(): Directives {
     update_directives(directives, Directive.nonstop, 0);
     update_directives(directives, Directive.forceFixedPrintout, 1);
     update_directives(directives, Directive.maxFixedPrintoutDigits, 6);
+    update_directives(directives, Directive.printMode, PrintMode.Human);
+    update_directives(directives, Directive.codeGen, 0);
     return Object.freeze(directives);
 }

@@ -176,7 +176,9 @@ export enum Directive {
     drawing,
     nonstop,
     forceFixedPrintout,
-    maxFixedPrintoutDigits
+    maxFixedPrintoutDigits,
+    printMode,
+    codeGen
 }
 
 export function flag_from_directive(value: number): boolean {

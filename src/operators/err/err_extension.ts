@@ -6,10 +6,11 @@ import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { infix } from "../../helpers/infix";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
 export class ErrExtension implements Extension<Err> {
-    readonly #hash = hash_for_atom(new Err(nil));
+    readonly #hash = hash_for_atom(hook_create_err(nil));
     constructor() {
         // Nothing to see here.
     }

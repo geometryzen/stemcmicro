@@ -1,5 +1,6 @@
 import { Err } from "math-expression-atoms";
 import { Atom, Cons, items_to_cons, U } from "math-expression-tree";
+import { hook_create_err } from "../hooks/hook_create_err";
 
 export class Localizable implements Atom {
     readonly name = 'Localizable';
@@ -63,17 +64,18 @@ export type DiagnosticArguments = U[];
 export interface DiagnosticMessage {
     key: string;
     code: number;
-    message: string;
+    text: string;
 }
 
-function diag(code: number, key: string, message: string): DiagnosticMessage {
-    return { code, key, message };
+function diag(code: number, key: string, text: string): DiagnosticMessage {
+    return { code, key, text };
 }
 
 export const Diagnostics = {
     Hello_World: diag(0, "", ""),
     Operator_0_cannot_be_applied_to_types_1_and_2: diag(1000, "Operator_0_cannot_be_applied_to_types_1_and_2_1000", "Operator '{0}' cannot be applied to types '{1}' and '{2}'."),
-    Poperty_0_does_not_exist_on_type_1: diag(1001, "Property_0_does_not_exist_on_type_1_1001", "Property '{0}' does not exist on type '{1}'.")
+    Poperty_0_does_not_exist_on_type_1: diag(1001, "Property_0_does_not_exist_on_type_1_1001", "Property '{0}' does not exist on type '{1}'."),
+    Division_by_zero: diag(1002, "Division_by_zero_1002", "Division by zero.")
 };
 
 export function diagnostic(message: DiagnosticMessage, ...args: DiagnosticArguments): Err {
@@ -81,7 +83,7 @@ export function diagnostic(message: DiagnosticMessage, ...args: DiagnosticArgume
     try {
         const cause = new Localizable(message, argList);
         try {
-            return new Err(cause);
+            return hook_create_err(cause);
         }
         finally {
             cause.release();

@@ -1,4 +1,6 @@
+import { Err } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
+import { diagnostic, Diagnostics } from "../diagnostics/diagnostics";
 import { is_flt } from "../operators/flt/is_flt";
 import { is_num } from "../operators/num/is_num";
 import { is_rat } from "../operators/rat/is_rat";
@@ -28,10 +30,9 @@ export function inverse(arg: U, $: Pick<ExprContext, 'valueOf'>): U {
 /**
  *
  */
-export function invert_number(num: Num): Num {
+export function invert_number(num: Num): Num | Err {
     if (num.isZero()) {
-        // TODO: This error could/should be part of the inv() methods?
-        throw new Error('divide by zero');
+        return diagnostic(Diagnostics.Division_by_zero);
     }
 
     if (is_flt(num)) {

@@ -1,12 +1,12 @@
 import { create_sym, is_sym, Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { get_last_print_mode_symbol } from "../../print/print";
 import { render_using_print_mode } from "../../print/render_using_print_mode";
 import { store_text_in_binding } from "../../print/store_text_in_binding";
-import { defs, PrintMode } from "../../runtime/defs";
+import { PrintMode } from "../../runtime/defs";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
 import { AbstractKeywordExtension } from "../helpers/KeywordSymbol";
 
@@ -27,8 +27,7 @@ export class PrintKeyword extends AbstractKeywordExtension {
         // Because of our hash, we are being matched with any symbol.
         if (is_sym(expr) && expr.equalsSym(this.keyword())) {
             const printMode: PrintMode = this.printMode();
-            const origPrintMode = defs.printMode;
-            defs.setPrintMode(printMode);
+            $.pushDirective(Directive.printMode, this.printMode());
             try {
                 const last = $.getBinding(RESERVED_KEYWORD_LAST, nil);
                 const str = render_using_print_mode(last, printMode, $);
@@ -41,7 +40,7 @@ export class PrintKeyword extends AbstractKeywordExtension {
                 return [TFLAG_DIFF, nil];
             }
             finally {
-                defs.setPrintMode(origPrintMode);
+                $.popDirective();
             }
         }
         return [TFLAG_NONE, expr];

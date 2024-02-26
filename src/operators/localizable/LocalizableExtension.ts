@@ -46,7 +46,7 @@ export class LocalizableExtension implements Extension<Localizable> {
     }
     toHumanString(expr: Localizable, $: ExprContext): string {
         const diagmsg = expr.message;
-        const text = diagmsg.message;
+        const text = diagmsg.text;
         const argList = expr.argList;
         try {
             return formatStringFromArgs(text, argList, $);
@@ -57,7 +57,7 @@ export class LocalizableExtension implements Extension<Localizable> {
     }
     toInfixString(expr: Localizable, $: ExprContext): string {
         const diagmsg = expr.message;
-        const text = diagmsg.message;
+        const text = diagmsg.text;
         const argList = expr.argList;
         try {
             return formatStringFromArgs(text, argList, $);

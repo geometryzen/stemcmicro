@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { assert_sym, Boo, Cell, CellHost, create_sym, Err, Flt, is_boo, is_cell, is_flt, is_lambda, is_rat, is_sym, Keyword, Lambda, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
+import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_lambda, is_rat, is_sym, Keyword, Lambda, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { ExprContext, ExprHandler, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
@@ -12,6 +12,7 @@ import { ProgramStack } from '../eigenmath/ProgramStack';
 import { eval_function } from "../eval_function";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_for_atom, hash_info, hash_nonop_cons, hash_target } from "../hashing/hash_info";
+import { hook_create_err } from '../hooks/hook_create_err';
 import { is_poly_expanded_form } from "../is";
 import { algebra } from "../operators/algebra/algebra";
 import { eval_lambda_in_fn_syntax } from '../operators/fn/eval_fn';
@@ -429,7 +430,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 // console.lg(`config.allowUndeclaredVars => ${config.allowUndeclaredVars}`);
                 switch (config.allowUndeclaredVars) {
                     case UndeclaredVars.Err: {
-                        return new Err(new Str(`Use of undeclared Var ${name.key()}.`));
+                        return hook_create_err(new Str(`Use of undeclared Var ${name.key()}.`));
                     }
                     case UndeclaredVars.Nil: {
                         return name;

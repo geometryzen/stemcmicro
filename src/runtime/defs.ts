@@ -9,41 +9,32 @@ import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { negOneAsFlt, piAsFlt } from "../tree/flt/Flt";
 import { MATH_PI } from "./ns_math";
 
+export enum PrintMode {
+    /**
+     * Two-dimensional rendering.
+     */
+    Ascii = 0,
+    /**
+     * Like infix but with extra whitespace and may have multiplication operators removed.
+     */
+    Human = 1,
+    /**
+     * Infix is how we normally write math but whitespace is removed and may be parsed by a computer.
+     */
+    Infix = 2,
+    /**
+     * MathJax compatible.
+     */
+    LaTeX = 3,
+    /**
+     * Symbolic Expression is LISP-like.
+     */
+    SExpr = 4
+}
+
 export const PRINTOUTRESULT = false;
 
-/**
- * LATEX is MathJax compatible.
- */
-export const PRINTMODE_LATEX = 'PRINTMODE_LATEX';
-/**
- * ASCII is a two-dimensional rendering.
- */
-export const PRINTMODE_ASCII = 'PRINTMODE_ASCII';
-/**
- * INFIX is how we normally write math but whitespace is removed.
- */
-export const PRINTMODE_INFIX = 'PRINTMODE_INFIX';
-/**
- * HUMAN is like INFIX but with extra whitespace.
- */
-export const PRINTMODE_HUMAN = 'PRINTMODE_HUMAN';
-/**
- * SEXPR or Symbolic Expression is LISP-like.
- */
-export const PRINTMODE_SEXPR = 'PRINTMODE_SEXPR';
-
-export type PrintMode =
-    | typeof PRINTMODE_LATEX
-    | typeof PRINTMODE_ASCII
-    | typeof PRINTMODE_INFIX
-    | typeof PRINTMODE_HUMAN
-    | typeof PRINTMODE_SEXPR;
-
 export class Defs {
-    /**
-     * The (default) PrintMode when using the (print ...) expression or print keyword.
-     */
-    private $printMode: PrintMode = PRINTMODE_INFIX;
     constructor() {
         // Nothing to see here yet.
     }
@@ -67,13 +58,6 @@ export class Defs {
      * Causes the print output to render JavaScript.
      */
     public codeGen = false;
-
-    get printMode(): PrintMode {
-        return this.$printMode;
-    }
-    setPrintMode(printMode: PrintMode) {
-        this.$printMode = printMode;
-    }
 }
 
 /**
@@ -152,10 +136,10 @@ export function doexpand_binary<T extends keyof ExprContext>(func: (lhs: U, rhs:
  *
  */
 export class DynamicConstants {
-    public static NegOne($: ExprContext): Flt | Rat {
+    public static NegOne($: Pick<ExprContext, 'getDirective'>): Flt | Rat {
         return $.getDirective(Directive.evaluatingAsFloat) ? negOneAsFlt : negOne;
     }
-    public static PI($: ExprContext): Sym | Flt {
+    public static PI($: Pick<ExprContext, 'getDirective'>): Sym | Flt {
         return $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : MATH_PI;
     }
 }

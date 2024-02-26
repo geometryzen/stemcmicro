@@ -1,6 +1,6 @@
 import { Directive } from "../env/ExtensionEnv";
 import { PrintConfig } from "../print/print";
-import { defs, PRINTMODE_LATEX } from "./defs";
+import { defs, PrintMode } from "./defs";
 
 export function number_to_floating_point_string(d: number, $: Pick<PrintConfig, 'getDirective'>): string {
     // console.lg(`number_to_floating_point_string d=${d}`);
@@ -18,7 +18,7 @@ export function number_to_floating_point_string(d: number, $: Pick<PrintConfig, 
         // by ourselves (something like 1.23e-123 wouldn't cut it because
         // that would be parsed as 1.23*e - 123)
 
-        if (defs.printMode === PRINTMODE_LATEX) {
+        if ($.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             // 1.0\mathrm{e}{-10} looks much better than the plain 1.0e-10
             if (/\d*\.\d*e.*/gm.test(str)) {
                 str = str.replace(

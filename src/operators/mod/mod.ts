@@ -1,6 +1,7 @@
 import { create_int, is_flt, is_num, Rat } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, U } from 'math-expression-tree';
+import { diagnostic, Diagnostics } from '../../diagnostics/diagnostics';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_rat_and_integer } from '../../is_rat_and_integer';
 import { mmod } from '../../mmul';
@@ -19,7 +20,7 @@ export function eval_mod(p1: Cons, $: ExtensionEnv): U {
 
 function mod(a: U, b: U, $: ExtensionEnv): U {
     if ($.iszero(b)) {
-        halt('mod function: divide by zero');
+        return diagnostic(Diagnostics.Division_by_zero);
     }
 
     if (!is_num(a) || !is_num(b)) {

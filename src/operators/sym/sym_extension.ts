@@ -166,8 +166,20 @@ class SymExtension implements Extension<Sym> {
                     head.release();
                 }
             }
+            case Native.ascii: {
+                return create_str(this.toAsciiString(target, env));
+            }
+            case Native.human: {
+                return create_str(this.toHumanString(target, env));
+            }
             case Native.infix: {
                 return create_str(this.toInfixString(target, env));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString(target, env));
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target, env));
             }
             case Native.simplify: {
                 return target;
@@ -217,6 +229,9 @@ class SymExtension implements Extension<Sym> {
             }
         }
         return expr;
+    }
+    toAsciiString(sym: Sym, env: ExprContext): string {
+        return env.getSymbolPrintName(sym);
     }
     toHumanString(sym: Sym, env: ExprContext): string {
         return env.getSymbolPrintName(sym);

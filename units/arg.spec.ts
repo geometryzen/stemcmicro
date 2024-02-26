@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -17,7 +17,7 @@ xdescribe("arg", function () {
         const context = create_script_context({});
 
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "undefined");
         context.release();
@@ -31,7 +31,7 @@ xdescribe("arg", function () {
         const context = create_script_context({});
 
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "undefined");
         context.release();
@@ -46,7 +46,7 @@ xdescribe("arg", function () {
         const context = create_script_context({});
 
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "0");
         context.release();
@@ -61,7 +61,7 @@ xdescribe("arg", function () {
         const context = create_script_context({});
 
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* 1/2 pi)");
         context.release();
@@ -76,7 +76,7 @@ xdescribe("arg", function () {
         const context = create_script_context({});
 
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "3.041924...");
         context.release();
@@ -91,7 +91,7 @@ xdescribe("arg", function () {
         const context = create_script_context({});
 
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* -1/2 pi)");
         context.release();
@@ -106,7 +106,7 @@ xdescribe("arg", function () {
         const context = create_script_context({});
 
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* 1/4 pi)");
         context.release();
@@ -121,7 +121,7 @@ xdescribe("arg", function () {
         const context = create_script_context({});
 
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* 3/4 pi)");
         context.release();
@@ -136,7 +136,7 @@ xdescribe("arg", function () {
         const context = create_script_context({});
 
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* -1/4 pi)");
         context.release();
@@ -151,7 +151,7 @@ xdescribe("arg", function () {
         const context = create_script_context({});
 
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* -3/4 pi)");
         context.release();
@@ -321,9 +321,9 @@ xdescribe("arg", function () {
         const context = create_script_context({ useCaretForExponentiation: true });
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
+        assert.strictEqual(Array.isArray(errors), true);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "1/3*pi");
         context.release();

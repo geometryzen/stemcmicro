@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { Directive } from "../src/env/ExtensionEnv";
 import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";

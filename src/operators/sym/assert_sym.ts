@@ -1,7 +1,6 @@
-import { SystemError } from "../../runtime/SystemError";
-import { U } from "../../tree/tree";
-import { Sym } from "../../tree/sym/Sym";
-import { is_sym } from "./is_sym";
+import { is_sym, Sym } from "math-expression-atoms";
+import { U } from "math-expression-tree";
+import { ProgrammingError } from "../../programming/ProgrammingError";
 
 export function assert_sym(expr: U): Sym {
     if (is_sym(expr)) {
@@ -9,6 +8,6 @@ export function assert_sym(expr: U): Sym {
     }
     else {
         // Don't need anything fancy here because this is an assertion for dev eyes only.
-        throw new SystemError(`expr => ${expr}`);
+        throw new ProgrammingError(`Ex`);
     }
 }

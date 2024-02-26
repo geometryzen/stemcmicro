@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { Directive } from "../src/env/ExtensionEnv";
 import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
@@ -287,9 +287,9 @@ describe("abs", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
+        assert.strictEqual(Array.isArray(errors), true);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "1");
         context.release();
@@ -304,9 +304,9 @@ describe("abs", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
+        assert.strictEqual(Array.isArray(errors), true);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(context.simplify(values[0])), "exp(a)");
         context.release();

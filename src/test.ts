@@ -72,7 +72,7 @@ export function eval_testne(expr: Cons, $: ExtensionEnv): U {
 // If we get something else, then we don't know and we return the
 // unaveluated test, which is the same as saying "maybe".
 export function eval_testeq(expr: Cons, $: ExtensionEnv): U {
-    console.log("eval_testeq", `${expr}`);
+    // console.lg("eval_testeq", `${expr}`);
     // first try without simplifyng both sides
     const orig = expr;
     const lhs = $.valueOf(orig.lhs);

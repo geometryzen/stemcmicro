@@ -1,5 +1,5 @@
 
-import { assert } from "chai";
+import assert from 'assert';
 import { JsAtom } from "math-expression-atoms";
 import { StackU } from "../src/env/StackU";
 

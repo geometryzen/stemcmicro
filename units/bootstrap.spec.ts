@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -39,7 +39,8 @@ describe("C bootstrap", function () {
     it("createSymEngine and release", function () {
         const engine = create_script_context();
         try {
-            assert.isDefined(engine);
+            engine.addRef();
+            engine.release();
         }
         finally {
             engine.release();

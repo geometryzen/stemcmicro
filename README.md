@@ -6,7 +6,7 @@ STEMCmicro is a Javascript (Typescript) library for symbolic mathematics.
 
 ```typescript
 
-import { assert } from "chai";
+import assert from 'assert';
 import { is_rat } from "math-expression-atoms";
 import { create_engine, ExprEngine } from "../src/api/index";
 import { State, Stepper } from '../src/clojurescript/runtime/Interpreter';

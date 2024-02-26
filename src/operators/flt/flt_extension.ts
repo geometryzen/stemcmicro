@@ -10,14 +10,11 @@ import { order_binary } from "../../helpers/order_binary";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
 import { create_flt, oneAsFlt, zeroAsFlt } from "../../tree/flt/Flt";
 
-const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
-const GRADE = native_sym(Native.grade);
 const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
-const SIMPLIFY = native_sym(Native.simplify);
 
 export function compare_flts(lhs: Flt, rhs: Flt): Sign {
     if (lhs.d < rhs.d) {
@@ -183,25 +180,42 @@ export class FltExtension implements Extension<Flt> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Flt, opr: Sym, argList: Cons, env: ExprContext): U {
-        if (opr.equalsSym(ABS)) {
-            return target.abs();
-        }
-        else if (opr.equalsSym(GRADE)) {
-            const head = argList.head;
-            try {
-                if (iszero(head, env)) {
-                    return target;
+        switch (opr.id) {
+            case Native.abs: {
+                return target.abs();
+            }
+            case Native.grade: {
+                const head = argList.head;
+                try {
+                    if (iszero(head, env)) {
+                        return target;
+                    }
+                    else {
+                        return zeroAsFlt;
+                    }
                 }
-                else {
-                    return zeroAsFlt;
+                finally {
+                    head.release();
                 }
             }
-            finally {
-                head.release();
+            case Native.ascii: {
+                return create_sym(this.toAsciiString(target, env));
             }
-        }
-        else if (opr.equalsSym(SIMPLIFY)) {
-            return target;
+            case Native.human: {
+                return create_sym(this.toHumanString(target, env));
+            }
+            case Native.infix: {
+                return create_sym(this.toInfixString(target, env));
+            }
+            case Native.latex: {
+                return create_sym(this.toLatexString(target, env));
+            }
+            case Native.sexpr: {
+                return create_sym(this.toListString(target, env));
+            }
+            case Native.simplify: {
+                return target;
+            }
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
@@ -230,6 +244,9 @@ export class FltExtension implements Extension<Flt> {
             }
         }
         return expr;
+    }
+    toAsciiString(atom: Flt, $: ExprContext): string {
+        return number_to_floating_point_string(atom.d, $);
     }
     toHumanString(atom: Flt, $: ExprContext): string {
         return number_to_floating_point_string(atom.d, $);

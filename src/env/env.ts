@@ -1142,7 +1142,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     }
                     catch (e) {
                         // eslint-disable-next-line no-console
-                        console.log("expr => ", `${expr}`);
+                        console.log("Exception caught.", "expr", `${expr}`, "e => ", `${e}`);
                         throw e;
                     }
                 }

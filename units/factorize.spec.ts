@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { factorizeL } from "../src/calculators/factorizeL";
 import { Directive } from "../src/env/ExtensionEnv";
 import { imu } from "../src/env/imu";
@@ -115,21 +115,21 @@ describe("factorizeL", function () {
 
 describe("is_rat_times", function () {
     it("a", function () {
-        assert.isFalse(is_rat_times_any(a));
+        assert.strictEqual(is_rat_times_any(a), false);
     });
     it("2*a", function () {
-        assert.isTrue(is_rat_times_any(items_to_cons(MATH_MUL, two, a)));
+        assert.strictEqual(is_rat_times_any(items_to_cons(MATH_MUL, two, a)), true);
     });
     it("i*x*y", function () {
         const expr = items_to_cons(MATH_MUL, items_to_cons(MATH_MUL, imu, x), y);
-        assert.isFalse(is_rat_times_any(expr));
+        assert.strictEqual(is_rat_times_any(expr), false);
     });
     it("-i*x*y", function () {
         const A = items_to_cons(MATH_MUL, negOne, imu);
         const B = items_to_cons(MATH_MUL, A, x);
         const C = items_to_cons(MATH_MUL, B, y);
         const expr = C;
-        assert.isTrue(is_rat_times_any(expr));
+        assert.strictEqual(is_rat_times_any(expr), true);
     });
 });
 

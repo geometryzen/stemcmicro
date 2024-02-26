@@ -144,8 +144,20 @@ class BladeExtension implements Extension<Blade> {
                 }
                 break;
             }
+            case Native.ascii: {
+                return create_str(this.toAsciiString(target));
+            }
+            case Native.human: {
+                return create_str(this.toHumanString(target));
+            }
             case Native.infix: {
                 return create_str(this.toInfixString(target));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString(target));
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target));
             }
             case Native.simplify: {
                 return target;
@@ -179,6 +191,9 @@ class BladeExtension implements Extension<Blade> {
             }
         }
         return expr;
+    }
+    toAsciiString(blade: Blade): string {
+        return blade.toInfixString();
     }
     toHumanString(blade: Blade): string {
         return blade.toInfixString();

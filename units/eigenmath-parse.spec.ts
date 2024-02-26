@@ -1,5 +1,5 @@
 
-import { assert } from "chai";
+import assert from 'assert';
 import { stemcmicro_parse } from "../src/algebrite/stemc_parse";
 import { create_script_context } from "../src/runtime/script_engine";
 
@@ -12,10 +12,9 @@ describe("eigenmath-parse", function () {
         const engine = create_script_context({});
 
         const { trees } = stemcmicro_parse(lines.join('\n'));
-        assert.isArray(trees);
+        assert.strictEqual(Array.isArray(trees), true);
         assert.strictEqual(trees.length, 1);
         const tree = trees[0];
-        assert.isDefined(tree);
         assert.strictEqual(engine.renderAsSExpr(tree), "(= (f x) x)");
         engine.release();
     });

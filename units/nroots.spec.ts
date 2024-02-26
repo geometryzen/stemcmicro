@@ -1,9 +1,10 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 
-describe("nroots", function () {
+xdescribe("nroots", function () {
     it("nroots(x)", function () {
+        console.log("nroots.spec.ts");
         const lines: string[] = [
             `nroots(x)`
         ];

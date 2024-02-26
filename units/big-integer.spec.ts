@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { bigInt, BigInteger } from '../src/tree/rat/big-integer';
 
 /**
@@ -20,7 +20,7 @@ class ActualWrapper {
         else if (typeof expected === 'string') {
             if (this.negate) {
                 if (typeof this.actual === 'string') {
-                    assert.isTrue(this.actual !== expected);
+                    assert.strictEqual(this.actual !== expected, true);
                 }
                 else {
                     assert.fail(typeof this.actual);
@@ -39,7 +39,7 @@ class ActualWrapper {
     }
     toBeLessThan(value: number): void {
         if (typeof this.actual === 'number') {
-            assert.isTrue(this.actual < value);
+            assert.strictEqual(this.actual < value, true);
         }
         else {
             assert.fail(typeof this.actual);
@@ -64,17 +64,17 @@ class ActualWrapper {
     toEqualBigInt(expected: number | BigInteger | string) {
         if (typeof expected === 'number') {
             if (bigInt.isInstance(this.actual)) {
-                assert.isTrue(this.actual.equals(expected));
+                assert.strictEqual(this.actual.equals(expected), true);
             }
             else if (typeof this.actual === 'string') {
-                assert.isTrue(bigInt(this.actual).equals(expected));
+                assert.strictEqual(bigInt(this.actual).equals(expected), true);
             }
             else if (typeof this.actual === 'number') {
                 if (this.negate) {
-                    assert.isFalse(bigInt(this.actual).equals(expected));
+                    assert.strictEqual(bigInt(this.actual).equals(expected), false);
                 }
                 else {
-                    assert.isTrue(bigInt(this.actual).equals(expected), `${this.actual}, ${expected}`);
+                    assert.strictEqual(bigInt(this.actual).equals(expected), true);
                 }
             }
             else {
@@ -85,17 +85,17 @@ class ActualWrapper {
         else if (typeof expected === 'string') {
             if (typeof this.actual === 'string') {
                 if (this.negate) {
-                    assert.isFalse(bigInt(this.actual).equals(expected));
+                    assert.strictEqual(bigInt(this.actual).equals(expected), false);
                 }
                 else {
-                    assert.isTrue(bigInt(this.actual).equals(expected));
+                    assert.strictEqual(bigInt(this.actual).equals(expected), true);
                 }
             }
             else if (typeof this.actual === 'number') {
-                assert.isTrue(bigInt(this.actual).equals(expected));
+                assert.strictEqual(bigInt(this.actual).equals(expected), true);
             }
             else if (bigInt.isInstance(this.actual)) {
-                assert.isTrue(this.actual.equals(expected));
+                assert.strictEqual(this.actual.equals(expected), true);
             }
             else {
                 assert.fail(typeof this.actual);
@@ -104,7 +104,7 @@ class ActualWrapper {
         else if (typeof expected === 'object') {
             if (bigInt.isInstance(expected)) {
                 if (bigInt.isInstance(this.actual)) {
-                    assert.isTrue(this.actual.equals(expected));
+                    assert.strictEqual(this.actual.equals(expected), true);
                 }
                 else {
                     assert.fail(typeof this.actual);

@@ -17,7 +17,7 @@ describe("error", function () {
         check('error("a") + true', 'a');
     });
     it("Boo + Err", function () {
-        check('true + error("a")', `Operator '+' cannot be applied to types 'boolean' and 'error'.`); // FIXME
+        check('true + error("a")', `Operator '+' cannot be applied to types 'boolean' and 'error'.`);
     });
     it("Err + Blade", function () {
         check('error("a") + ex', 'a');

@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -13,9 +13,9 @@ describe("isreal", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
+        assert.strictEqual(Array.isArray(errors), true);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "true");
         assert.strictEqual(context.renderAsInfix(values[0]), "true");
@@ -31,9 +31,9 @@ describe("isreal", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
+        assert.strictEqual(Array.isArray(errors), true);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "false");
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
@@ -49,9 +49,9 @@ describe("isreal", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
+        assert.strictEqual(Array.isArray(errors), true);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "false");
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
@@ -66,9 +66,9 @@ describe("isreal", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
+        assert.strictEqual(Array.isArray(errors), true);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "false");
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
@@ -261,9 +261,9 @@ describe("isreal", function () {
         const context = create_script_context({ useCaretForExponentiation: true });
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
+        assert.strictEqual(Array.isArray(errors), true);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "true");
         context.release();
@@ -280,9 +280,9 @@ describe("isreal", function () {
         const context = create_script_context({ useCaretForExponentiation: true });
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
+        assert.strictEqual(Array.isArray(errors), true);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "true");
         context.release();

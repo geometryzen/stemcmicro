@@ -1,5 +1,5 @@
 
-import { assert } from "chai";
+import assert from 'assert';
 import { is_blade, is_boo, is_flt, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor } from "math-expression-atoms";
 import { is_cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/api";

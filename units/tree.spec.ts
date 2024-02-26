@@ -1,4 +1,4 @@
-import { assert } from 'chai';
+import assert from 'assert';
 import { JsAtom } from 'math-expression-atoms';
 import { car, cdr, Cons, is_cons, is_singleton, items_to_cons, nil, U } from 'math-expression-tree';
 
@@ -34,9 +34,6 @@ const six = new Int(6);
 
 describe('tree', function () {
     describe('NIL', function () {
-        it('should be defined', function () {
-            assert.isDefined(nil);
-        });
         it('toString()', function () {
             assert.strictEqual(nil.toString(), '()');
         });
@@ -78,15 +75,15 @@ describe('tree', function () {
     });
     describe('is_nil', function () {
         it('(NIL) should be true', function () {
-            assert.isTrue(nil.isnil);
+            assert.strictEqual(nil.isnil, true);
         });
     });
     describe('is_cons', function () {
         it('(NIL) should be false', function () {
-            assert.isFalse(is_cons(nil));
+            assert.strictEqual(is_cons(nil), false);
         });
         it('(make_list(2,6)) should be true', function () {
-            assert.isTrue(is_cons(items_to_cons(two, six)));
+            assert.strictEqual(is_cons(items_to_cons(two, six)), true);
         });
     });
     describe('make_list', function () {
@@ -100,7 +97,7 @@ describe('tree', function () {
             assert.strictEqual(elements.length, 2);
             assert.strictEqual(elements[0], two);
             assert.strictEqual(elements[1], six);
-            assert.isFalse(is_singleton(x));
+            assert.strictEqual(is_singleton(x), false);
         });
         it('(2)', function () {
             const x = items_to_cons(two);
@@ -110,7 +107,7 @@ describe('tree', function () {
             const elements = [...x];
             assert.strictEqual(elements.length, 1);
             assert.strictEqual(elements[0], two);
-            assert.isTrue(is_singleton(x));
+            assert.strictEqual(is_singleton(x), true);
         });
         it('()', function () {
             const x = items_to_cons();
@@ -119,7 +116,7 @@ describe('tree', function () {
             assert.strictEqual(x.toString(), '()');
             const elements = [...x];
             assert.strictEqual(elements.length, 0);
-            assert.isFalse(is_singleton(x));
+            assert.strictEqual(is_singleton(x), false);
             assert.strictEqual(x, nil);
         });
     });

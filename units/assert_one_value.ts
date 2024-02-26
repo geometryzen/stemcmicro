@@ -1,5 +1,5 @@
-import { assert } from 'chai';
-import { U } from '../src/tree/tree';
+import assert from 'assert';
+import { U } from 'math-expression-tree';
 /**
  * A useful function for diagnosing problems.
  * Use in conjunction with the execute function.

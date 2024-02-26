@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -36,7 +36,7 @@ describe("add", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
-        assert.isTrue(Array.isArray(values));
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ a b)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "a+b");
@@ -49,7 +49,7 @@ describe("add", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
-        assert.isTrue(Array.isArray(values));
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ a b)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "a+b");
@@ -62,7 +62,7 @@ describe("add", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
-        assert.isTrue(Array.isArray(values));
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ a b c)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "a+b+c");
@@ -75,7 +75,7 @@ describe("add", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
-        assert.isTrue(Array.isArray(values));
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ a b c)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "a+b+c");
@@ -88,7 +88,7 @@ describe("add", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
-        assert.isTrue(Array.isArray(values));
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (* 2 a) (* 2 b))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "2*a+2*b");
@@ -101,7 +101,7 @@ describe("add", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
-        assert.isTrue(Array.isArray(values));
+        assert.strictEqual(Array.isArray(values), true);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (* 2 a) (* 2 b) (* 2 c))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "2*a+2*b+2*c");

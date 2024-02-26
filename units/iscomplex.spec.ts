@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("iscomplex", function () {
@@ -11,9 +11,7 @@ describe("iscomplex", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText);
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "true");
         assert.strictEqual(context.renderAsInfix(values[0]), "true");

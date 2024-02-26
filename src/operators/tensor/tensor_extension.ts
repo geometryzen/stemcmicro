@@ -22,11 +22,8 @@ import { subst } from "../subst/subst";
 
 const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
-const ADJ = native_sym(Native.adj);
-const INFIX = native_sym(Native.infix);
 const ISONE = native_sym(Native.isone);
 const MUL = native_sym(Native.multiply);
-const SIMPLIFY = native_sym(Native.simplify);
 
 function equal_elements(as: U[], bs: U[], $: ExtensionEnv): boolean {
     const length = as.length;
@@ -182,31 +179,42 @@ class TensorExtension implements Extension<Tensor> {
         return nil;
     }
     dispatch(target: Tensor, opr: Sym, argList: Cons, env: ExprContext): U {
-        if (opr.equalsSym(ABS)) {
-            // Using the Eigenmath implementation right now as it is a bit simpler than abs_of_tensor.
-            const _ = new StackU();
-            if (target.ndim > 1) {
-                _.push(ABS);
-                _.push(target);
-                _.list(2);
+        switch (opr.id) {
+            case Native.abs: {
+                // Using the Eigenmath implementation right now as it is a bit simpler than abs_of_tensor.
+                const _ = new StackU();
+                if (target.ndim > 1) {
+                    _.push(ABS);
+                    _.push(target);
+                    _.list(2);
+                    return _.pop();
+                }
+                _.push(target);                  //  [x]
+                _.push(target);                  //  [x, x]
+                conjfunc(env, env, _);      //  [x, conj(x)]
+                inner(env, env, _);         //  [x | conj(x)]
+                push_rational(1, 2, _);     //  [x | conj(x), 1/2]
+                power(env, env, _);         //  [sqrt(x | conj(x))]
                 return _.pop();
             }
-            _.push(target);                  //  [x]
-            _.push(target);                  //  [x, x]
-            conjfunc(env, env, _);      //  [x, conj(x)]
-            inner(env, env, _);         //  [x | conj(x)]
-            push_rational(1, 2, _);     //  [x | conj(x), 1/2]
-            power(env, env, _);         //  [sqrt(x | conj(x))]
-            return _.pop();
-        }
-        else if (opr.equalsSym(ADJ)) {
-            return adj(target, env);
-        }
-        else if (opr.equalsSym(INFIX)) {
-            return create_str(this.toInfixString(target, env));
-        }
-        else if (opr.equalsSym(SIMPLIFY)) {
-            return target.map(x => simplify(x, env));
+            case Native.adj: {
+                return adj(target, env);
+            }
+            case Native.human: {
+                return create_str(this.toHumanString(target, env));
+            }
+            case Native.infix: {
+                return create_str(this.toInfixString(target, env));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString(target, env));
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target, env));
+            }
+            case Native.simplify: {
+                return target.map(x => simplify(x, env));
+            }
         }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }

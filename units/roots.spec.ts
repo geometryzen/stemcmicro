@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { is_tensor } from "math-expression-atoms";
 import { U } from "math-expression-tree";
 import { create_engine } from "../src/api/api";

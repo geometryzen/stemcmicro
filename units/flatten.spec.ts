@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_int, create_sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { items_to_cons } from "math-expression-tree";
@@ -110,7 +110,7 @@ describe("flatten_items", function () {
         stack.push(abcde);
         assert.strictEqual(stack.length, 2);
         flatten_items(1, ADD, stack);
-        // console.log("stack[] => ", `${stack.getAt(0)}`);
+        // console.lg("stack[] => ", `${stack.getAt(0)}`);
         assert.strictEqual(stack.length, 6);
         assert.strictEqual(stack.getAt(0).equals(x), true);
         assert.strictEqual(stack.getAt(1).equals(a), true);
@@ -130,7 +130,7 @@ describe("flatten_items", function () {
         stack.push(y);
         assert.strictEqual(stack.length, 3);
         flatten_items(1, ADD, stack);
-        // console.log("stack[] => ", `${stack.getAt(0)}`);
+        // console.lg("stack[] => ", `${stack.getAt(0)}`);
         assert.strictEqual(stack.length, 7);
         assert.strictEqual(stack.getAt(0).equals(x), true);
         assert.strictEqual(stack.getAt(1).equals(a), true);

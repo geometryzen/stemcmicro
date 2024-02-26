@@ -1,5 +1,5 @@
 
-import { assert } from "chai";
+import assert from 'assert';
 import { is_rat } from "math-expression-atoms";
 import { create_engine, ExprEngine } from "../src/api/api";
 import { State, Stepper } from '../src/clojurescript/runtime/Stepper';

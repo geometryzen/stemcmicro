@@ -1,8 +1,9 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("outer", function () {
     it("A", function () {
+        console.log("outer.spec.ts");
         const lines: string[] = [
             `A=[a,b,c]`,
             `B=[x,y,z]`,

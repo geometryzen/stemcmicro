@@ -1,5 +1,5 @@
 
-import { assert } from "chai";
+import assert from 'assert';
 import { is_sym } from "math-expression-atoms";
 import { is_cons, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/api";

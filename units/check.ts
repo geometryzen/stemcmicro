@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { infix } from "./infix";
 import { munge } from "./munge";
 

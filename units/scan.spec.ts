@@ -1,4 +1,4 @@
-import { assert } from 'chai';
+import assert from 'assert';
 import { rational } from '../src/bignum';
 import { cadnr } from '../src/calculators/cadnr';
 import { Native } from '../src/native/Native';
@@ -9,7 +9,7 @@ import { is_rat } from '../src/operators/rat/is_rat';
 import { is_str } from '../src/operators/str/is_str';
 import { is_sym } from '../src/operators/sym/is_sym';
 import { is_tensor } from '../src/operators/tensor/is_tensor';
-import { ParseOptions, delegate_parse_script } from '../src/parser/parser';
+import { delegate_parse_script, ParseOptions } from '../src/parser/parser';
 import { ASSIGN, QUOTE } from '../src/runtime/constants';
 import { MATH_ADD, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../src/runtime/ns_math';
 import { Boo } from '../src/tree/boo/Boo';
@@ -491,7 +491,7 @@ function expect_cons(expr: U, message?: string | undefined): Cons {
 
 function expect_sym(expr: U, name: Sym, text: string, pos: number, end: number, message?: string | undefined): Sym {
     if (is_sym(expr)) {
-        assert.isTrue(expr.equals(name), `expr=${expr.key()} name=${name.key()}`);
+        assert.strictEqual(expr.equals(name), true);
         // We can't assert the positions of symbols if they are being interned.
         // assert.strictEqual(expr.pos, pos);
         // assert.strictEqual(expr.end, end);
@@ -504,7 +504,7 @@ function expect_sym(expr: U, name: Sym, text: string, pos: number, end: number, 
 
 function expect_flt(actual: U, expect: Flt, pos: number, end: number, message?: string | undefined): Flt {
     if (is_flt(actual)) {
-        assert.isTrue(actual.equalsFlt(expect));
+        assert.strictEqual(actual.equalsFlt(expect), true);
         assert.strictEqual(actual.pos, pos);
         assert.strictEqual(actual.end, end);
         return actual;
@@ -516,7 +516,7 @@ function expect_flt(actual: U, expect: Flt, pos: number, end: number, message?: 
 
 function expect_rat(actual: U, expect: Rat, pos: number, end: number, message?: string | undefined): Rat {
     if (is_rat(actual)) {
-        assert.isTrue(actual.equalsRat(expect));
+        assert.strictEqual(actual.equalsRat(expect), true);
         assert.strictEqual(actual.pos, pos);
         assert.strictEqual(actual.end, end);
         return actual;
@@ -549,7 +549,7 @@ function expect_str(expr: U, text: string, pos: number, end: number, message?: s
 
 function expect_sym_no_info(actual: U, expect: Sym, message?: string | undefined): Sym {
     if (is_sym(actual)) {
-        assert.isTrue(actual.equals(expect), `${actual} ${expect}`);
+        assert.strictEqual(actual.equals(expect), true);
         return actual;
     }
     else {

@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -160,7 +160,6 @@ describe("real", function () {
             useCaretForExponentiation: true
         });
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "1/2");
         context.release();

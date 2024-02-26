@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_env } from "../src/env/env";
 import { create_script_context } from "../src/runtime/script_engine";
 
@@ -6,7 +6,7 @@ describe("env", function () {
     describe("constructor", function () {
         it("should be defined", function () {
             const $ = create_env();
-            assert.isDefined($);
+            $.isExpanding();
         });
     });
     describe("tokens", function () {

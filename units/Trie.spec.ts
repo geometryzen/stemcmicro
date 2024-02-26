@@ -1,4 +1,4 @@
-import { assert } from 'chai';
+import assert from 'assert';
 import { Trie } from '../src/trie/Trie';
 
 describe("Trie", function () {
@@ -8,8 +8,8 @@ describe("Trie", function () {
         trie.insert("hello");
         trie.insert("helium");
 
-        assert.isTrue(trie.contains("helium"));
-        assert.isFalse(trie.contains("kickass"));
+        assert.strictEqual(trie.contains("helium"), true);
+        assert.strictEqual(trie.contains("kickass"), false);
 
         const words = trie.findWordsWithPrefix("hel");
         assert.strictEqual(words.length, 2);
@@ -25,9 +25,9 @@ describe("Trie", function () {
         trie.insert("odd", 3);
         trie.insert("odd", 5);
 
-        assert.isTrue(trie.contains("even"));
-        assert.isTrue(trie.contains("odd"));
-        assert.isFalse(trie.contains("other"));
+        assert.strictEqual(trie.contains("even"), true);
+        assert.strictEqual(trie.contains("odd"), true);
+        assert.strictEqual(trie.contains("other"), false);
 
         const evens = trie.lookup("even");
         assert.strictEqual(evens.length, 2);

@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_int, create_tensor, Str } from "math-expression-atoms";
 import { ExtensionEnv } from "../src/env/ExtensionEnv";
 import { create_uom } from "../src/operators/uom/uom";

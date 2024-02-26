@@ -1,4 +1,5 @@
-import { assert } from "chai";
+// import { assert, expect } from "chai";
+import assert from 'assert';
 import { is_atom } from "math-expression-tree";
 import { RenderConfig, UndeclaredVars } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";

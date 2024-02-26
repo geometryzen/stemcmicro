@@ -1,4 +1,4 @@
-import { assert } from 'chai';
+import assert from 'assert';
 import { create_sym, negOne } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { items_to_cons } from 'math-expression-tree';

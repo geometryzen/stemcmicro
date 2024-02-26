@@ -1,8 +1,9 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("lcm", function () {
     it("lcm(4,6)", function () {
+        console.log("lcm.spec.ts");
         const lines: string[] = [
             `lcm(4,6)`
         ];

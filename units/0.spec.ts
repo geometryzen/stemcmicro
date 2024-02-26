@@ -1,8 +1,9 @@
-import { assert } from 'chai';
+import assert from 'assert';
 import { create_script_context } from '../src/runtime/script_engine';
 
 describe("0", function () {
     it("B", function () {
+        console.log("0.spec.ts");
         const lines: string[] = [
             `2 + 3`
         ];

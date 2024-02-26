@@ -100,7 +100,6 @@ class ConsExtension implements Extension<Cons> {
     valueOf(expr: Cons, $: ExtensionEnv): U {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const hook = function (retval: U, description: string): U {
-            // console.lg(`ConsExtension.valueOf expr => ${expr} @ ${description}`);
             return retval;
         };
         /**
@@ -141,11 +140,9 @@ function eval_binding(expr: Cons, $: ExtensionEnv) {
             stack_push($.getSymbolValue(sym));
         }
         else {
-            // stack_push(new Error(`expr.argList.car MUST be a Sym. binding(expr => ${$.toInfixString(expr)})`));
         }
     }
     else {
-        // stack_push(new Error(`expr.argList MUST be a Cons. binding(expr => ${$.toInfixString(expr)})`));
     }
 }
 */

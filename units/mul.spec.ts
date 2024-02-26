@@ -1,9 +1,10 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("mul", function () {
     it("(x*x)/x", function () {
+        console.log("mul.spec.ts");
         const lines: string[] = [
             `(x*x)/x`
         ];
@@ -21,7 +22,6 @@ describe("mul", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
-        assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(* a b c)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "a*b*c");
@@ -34,7 +34,6 @@ describe("mul", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
-        assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsInfix(values[0]), "0.0");
         engine.release();
@@ -46,7 +45,6 @@ describe("mul", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
-        assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsInfix(values[0]), "0.0");
         engine.release();

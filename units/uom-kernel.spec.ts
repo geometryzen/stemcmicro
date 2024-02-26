@@ -1,4 +1,4 @@
-import { assert } from 'chai';
+import assert from 'assert';
 import { Dimensions, QQ, Uom } from 'math-expression-atoms';
 
 const Rat0 = QQ.valueOf(0, 1);
@@ -33,7 +33,7 @@ describe("Unit", function () {
 
     it("Construction", function () {
         const meter = new Uom(new Dimensions(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
-        assert.isDefined(meter);
+        assert.strictEqual(meter.toString(void 0, true), "m");
     });
 
     describe("toString", function () {

@@ -1,5 +1,5 @@
 
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("ispositive", function () {
@@ -16,9 +16,7 @@ describe("ispositive", function () {
         });
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "true");
         context.release();
@@ -36,9 +34,7 @@ describe("ispositive", function () {
         });
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
         context.release();
@@ -52,9 +48,7 @@ describe("ispositive", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "true");
         context.release();
@@ -68,9 +62,7 @@ describe("ispositive", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
         context.release();
@@ -84,9 +76,7 @@ describe("ispositive", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
         context.release();
@@ -100,9 +90,7 @@ describe("ispositive", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "true");
         context.release();
@@ -116,9 +104,7 @@ describe("ispositive", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
         context.release();
@@ -132,9 +118,7 @@ describe("ispositive", function () {
         const context = create_script_context({});
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
         context.release();

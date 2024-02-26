@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { Boo, booF, booT, booU, create_flt, create_rat, create_sym, create_tensor, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { visit } from '../src/visitor/visit';

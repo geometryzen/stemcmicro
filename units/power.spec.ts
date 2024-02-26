@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 import { Directive } from "../src/env/ExtensionEnv";
@@ -153,11 +153,9 @@ describe("Exponentiation", function () {
             useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(engine.renderAsInfix(values[0]), "b^2/(a^2)");
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(* (pow a -2) (pow b 2))");
-        assert.isArray(prints);
         assert.strictEqual(prints.length, 0, "prints.length");
         engine.release();
     });

@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { U } from "math-expression-tree";
 import { create_engine } from "../src/api/api";
 import { is_multiply } from "../src/runtime/helpers";
@@ -30,9 +30,7 @@ describe("factor", function () {
         });
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "2^97*3^48*5^24*7^16*11^9*13^7*17^5*19^5*23^4*29^3*31^3*37^2*41^2*43^2*47^2*53*59*61*67*71*73*79*83*89*97");
         context.release();

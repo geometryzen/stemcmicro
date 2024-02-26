@@ -1,4 +1,4 @@
-import { assert } from 'chai';
+import assert from 'assert';
 import { is_blade, is_tensor } from 'math-expression-atoms';
 import { create_script_context } from '../src/runtime/script_engine';
 import { assert_one_value_execute } from './assert_one_value_execute';
@@ -35,16 +35,16 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const G30 = assert_one_value_execute(lines.join('\n'), engine);
-            assert.isTrue(is_tensor(G30));
+            assert.strictEqual(is_tensor(G30), true);
             if (is_tensor(G30)) {
                 assert.strictEqual(G30.ndim, 1);
                 assert.strictEqual(G30.dim(0), 3);
                 const e1 = G30.elem(0);
                 const e2 = G30.elem(1);
                 const e3 = G30.elem(2);
-                assert.isTrue(is_blade(e1), "e1");
-                assert.isTrue(is_blade(e2), "e2");
-                assert.isTrue(is_blade(e3), "e3");
+                assert.strictEqual(is_blade(e1), true);
+                assert.strictEqual(is_blade(e2), true);
+                assert.strictEqual(is_blade(e3), true);
                 if (is_blade(e1)) {
                     assert.strictEqual(e1.toString(), "L1");
                 }

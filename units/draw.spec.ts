@@ -1,5 +1,5 @@
 
-import { assert } from "chai";
+import assert from 'assert';
 import { U } from "math-expression-tree";
 import { create_engine, ExprEngineListener } from "../src/api/api";
 
@@ -47,7 +47,7 @@ describe("draw", function () {
         const { trees, errors } = engine.parse(sourceText);
         if (errors.length > 0) {
             // eslint-disable-next-line no-console
-            console.log(errors[0]);
+            // console.lg(errors[0]);
         }
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];

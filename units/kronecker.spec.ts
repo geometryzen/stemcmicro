@@ -1,5 +1,5 @@
 
-import { assert } from "chai";
+import assert from 'assert';
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
@@ -16,7 +16,7 @@ describe("Eigenmath", function () {
         const { trees, errors } = engine.parse(sourceText, { useParenForTensors: false });
         if (errors.length > 0) {
             // eslint-disable-next-line no-console
-            console.log(errors[0]);
+            // console.lg(errors[0]);
         }
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];

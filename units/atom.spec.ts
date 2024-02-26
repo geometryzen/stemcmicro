@@ -1,15 +1,44 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { assert } from "chai";
-import { create_sym, JsAtom } from "math-expression-atoms";
-import { ExprContext, LambdaExpr } from "math-expression-context";
+import assert from 'assert';
+import { create_sym, JsAtom, Sym } from "math-expression-atoms";
+import { ExprContext, ExprHandler, LambdaExpr } from "math-expression-context";
 import { Cons, is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine } from "../src/api/api";
+import { create_engine, ExprEngine, ExprHandlerBuilder } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 
 class TestAtom extends JsAtom {
     readonly type = 'testatom';
     constructor() {
         super('TestAtom');
+    }
+}
+
+function is_testatom(expr: U): expr is TestAtom {
+    return expr instanceof TestAtom;
+}
+
+class TestAtomExprHandlerBuilder implements ExprHandlerBuilder<TestAtom> {
+    create(): ExprHandler<TestAtom> {
+        throw new Error('Method not implemented.');
+    }
+}
+
+class TestAtomExprHandler implements ExprHandler<TestAtom> {
+    binL(lhs: TestAtom, opr: Sym, rhs: U, env: ExprContext): U {
+        throw new Error('Method not implemented.');
+    }
+    binR(rhs: TestAtom, opr: Sym, lhs: U, env: ExprContext): U {
+        throw new Error('Method not implemented.');
+    }
+    dispatch(expr: TestAtom, opr: Sym, argList: Cons, env: ExprContext): U {
+        throw new Error('Method not implemented.');
+    }
+    subst(expr: TestAtom, oldExpr: U, newExpr: U, env: Pick<ExprContext, 'handlerFor'>): U {
+        throw new Error('Method not implemented.');
+    }
+    test(expr: TestAtom, opr: Sym, env: ExprContext): boolean {
+        throw new Error('Method not implemented.');
     }
 }
 
@@ -28,6 +57,8 @@ describe("atom", function () {
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine();
         engine.defineFunction(create_sym("atom"), create_atom);
+        const builder = new TestAtomExprHandlerBuilder();
+        engine.defineAtomHandler(builder, 'testatom', is_testatom);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -46,6 +77,8 @@ describe("atom", function () {
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
         engine.defineFunction(create_sym("atom"), create_atom);
+        const builder = new TestAtomExprHandlerBuilder();
+        engine.defineAtomHandler(builder, 'testatom', is_testatom);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {

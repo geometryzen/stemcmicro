@@ -1,4 +1,4 @@
-import { assert } from 'chai';
+import assert from 'assert';
 import { create_script_context } from '../src/runtime/script_engine';
 
 describe("scripts", function () {
@@ -10,7 +10,7 @@ describe("scripts", function () {
             const sourceText = lines.join('\n');
             const context = create_script_context({});
             const { values } = context.executeScript(sourceText);
-            assert.isArray(values);
+            assert.strictEqual(Array.isArray(values), true);
             assert.strictEqual(values.length, 1, "values.length");
             assert.strictEqual(context.renderAsAscii(values[0]), `x + y`);
             assert.strictEqual(context.renderAsHuman(values[0]), `x + y`);
@@ -28,7 +28,7 @@ describe("scripts", function () {
             const sourceText = lines.join('\n');
             const context = create_script_context({});
             const { values } = context.executeScript(sourceText);
-            assert.isArray(values);
+            assert.strictEqual(Array.isArray(values), true);
             assert.strictEqual(values.length, 1, "values.length");
             assert.strictEqual(context.renderAsAscii(values[0]), `x y`);
             assert.strictEqual(context.renderAsHuman(values[0]), `x y`);
@@ -49,7 +49,7 @@ describe("scripts", function () {
                 useCaretForExponentiation: true
             });
             const { values } = context.executeScript(sourceText);
-            assert.isArray(values);
+            assert.strictEqual(Array.isArray(values), true);
             assert.strictEqual(values.length, 2, "values.length");
             assert.strictEqual(context.renderAsAscii(values[0]), `exp(x,y)`);
             assert.strictEqual(context.renderAsHuman(values[0]), `exp(x,y)`);
@@ -70,7 +70,7 @@ describe("scripts", function () {
                 useCaretForExponentiation: true
             });
             const { values } = context.executeScript(sourceText);
-            assert.isArray(values);
+            assert.strictEqual(Array.isArray(values), true);
             assert.strictEqual(values.length, 1, "values.length");
             assert.strictEqual(context.renderAsAscii(values[0]), ` y\nx`);
             assert.strictEqual(context.renderAsHuman(values[0]), `x^y`);

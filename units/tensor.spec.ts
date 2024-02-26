@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 import { create_sym } from "../src/tree/sym/Sym";
 import { Tensor } from "../src/tree/tensor/Tensor";

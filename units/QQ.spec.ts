@@ -1,4 +1,4 @@
-import { assert } from 'chai';
+import assert from 'assert';
 import { QQ } from 'math-expression-atoms';
 
 describe("QQ", function () {

@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { InputState } from "../src/algebrite/InputState";
 import { is_digit } from "../src/algebrite/is_digit";
 
@@ -193,7 +193,7 @@ function binary(lhs: Combinator, op: Combinator, rhs: Combinator): Combinator {
 describe("combinators", function () {
     it("hello world", function () {
         const source = new InputState("hello world", 0, 0);
-        assert.isFalse(source.done);
+        assert.strictEqual(source.done, false);
         const hello = str("hello");
         const world = str("world");
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -217,8 +217,8 @@ describe("combinators", function () {
         assert.strictEqual(sB?.end, 6);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [tC, c, sC] = digit()(source.read(2));
-        assert.isUndefined(c);
-        assert.isUndefined(sC);
+        assert.strictEqual(typeof c === 'undefined', true);
+        assert.strictEqual(typeof sC === 'undefined', true);
     });
     it("Language 101", function () {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

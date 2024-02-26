@@ -1,5 +1,5 @@
 
-import { assert } from "chai";
+import assert from 'assert';
 import { create_rat, create_sym, is_sym, Sym } from "math-expression-atoms";
 import { Cons, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { zip } from "../src/functional/zip";

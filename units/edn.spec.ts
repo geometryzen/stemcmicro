@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { bigInt, BigInteger, Boo, Char, create_rat, create_sym_ns, create_tensor, Flt, is_boo, is_char, is_flt, is_keyword, is_map, is_rat, is_set, is_str, is_sym, is_tag, is_tensor, is_timestamp, is_uuid, Keyword, Map, Rat, Set, Str, Tag, Timestamp, Uuid } from 'math-expression-atoms';
 import { is_cons, is_nil, pos_end_items_to_cons, U } from "math-expression-tree";
 import { EDNListParser, ParseConfig } from '../src/edn';
@@ -81,24 +81,24 @@ describe("edn", function () {
             `#uuid "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"`
         ];
         const items: U[] = parser.next(lines.join('\n'));
-        assert.isTrue(parser.isDone());
+        assert.strictEqual(parser.isDone(), true);
 
-        assert.isArray(items);
+        assert.strictEqual(Array.isArray(items), true);
 
         assert.strictEqual(items.length, 24);
 
         // Rat(123)
         const I0 = items[0];
-        assert.isTrue(is_rat(I0));
+        assert.strictEqual(is_rat(I0), true);
         if (is_rat(I0)) {
-            assert.isTrue(I0.equalsRat(create_rat(123, 1)));
+            assert.strictEqual(I0.equalsRat(create_rat(123, 1)), true);
             assert.strictEqual(I0.pos, 0);
             assert.strictEqual(I0.end, 3);
         }
 
         // Str("Hello, World!")
         const I1 = items[1];
-        assert.isTrue(is_str(I1));
+        assert.strictEqual(is_str(I1), true);
         if (is_str(I1)) {
             assert.strictEqual(I1.str, "Hello, World!");
             assert.strictEqual(I1.pos, 4);
@@ -107,7 +107,7 @@ describe("edn", function () {
 
         // Flt(2.718)
         const I2 = items[2];
-        assert.isTrue(is_flt(I2));
+        assert.strictEqual(is_flt(I2), true);
         if (is_flt(I2)) {
             assert.strictEqual(I2.toNumber(), 2.718);
             assert.strictEqual(I2.pos, 20);
@@ -116,32 +116,32 @@ describe("edn", function () {
 
         // Boo(true)
         const I3 = items[3];
-        assert.isTrue(is_boo(I3));
+        assert.strictEqual(is_boo(I3), true);
         if (is_boo(I3)) {
-            assert.isTrue(I3.isTrue());
-            assert.isFalse(I3.isFalse());
+            assert.strictEqual(I3.isTrue(), true);
+            assert.strictEqual(I3.isFalse(), false);
             assert.strictEqual(I3.pos, 26);
             assert.strictEqual(I3.end, 30);
         }
 
         // Boo(false)
         const I4 = items[4];
-        assert.isTrue(is_boo(I4));
+        assert.strictEqual(is_boo(I4), true);
         if (is_boo(I4)) {
-            assert.isFalse(I4.isTrue());
-            assert.isTrue(I4.isFalse());
+            assert.strictEqual(I4.isTrue(), false);
+            assert.strictEqual(I4.isFalse(), true);
             assert.strictEqual(I4.pos, 31);
             assert.strictEqual(I4.end, 36);
         }
 
         // (sin x)
         const I5 = items[5];
-        assert.isTrue(is_cons(I5));
+        assert.strictEqual(is_cons(I5), true);
         if (is_cons(I5)) {
             const opr = I5.opr;
             const arg = I5.arg;
-            assert.isTrue(is_sym(opr));
-            assert.isTrue(is_sym(arg));
+            assert.strictEqual(is_sym(opr), true);
+            assert.strictEqual(is_sym(arg), true);
             assert.strictEqual(I5.pos, 37);
             assert.strictEqual(I5.end, 44);
         }
@@ -176,7 +176,7 @@ describe("edn", function () {
             assert.strictEqual(I8.pos, 79);
             assert.strictEqual(I8.end, 86);
             const x = elems[0];
-            assert.isTrue(is_sym(x));
+            assert.strictEqual(is_sym(x), true);
             if (is_sym(x)) {
                 assert.strictEqual(x.localName, 'x');
                 assert.strictEqual(x.namespace, '');
@@ -184,7 +184,7 @@ describe("edn", function () {
                 assert.strictEqual(x.end, 81);
             }
             const y = elems[1];
-            assert.isTrue(is_sym(y));
+            assert.strictEqual(is_sym(y), true);
             if (is_sym(y)) {
                 assert.strictEqual(y.localName, 'y');
                 assert.strictEqual(y.namespace, '');
@@ -192,7 +192,7 @@ describe("edn", function () {
                 assert.strictEqual(y.end, 83);
             }
             const z = elems[2];
-            assert.isTrue(is_sym(z));
+            assert.strictEqual(is_sym(z), true);
             if (is_sym(z)) {
                 assert.strictEqual(z.localName, 'z');
                 assert.strictEqual(z.namespace, '');
@@ -203,13 +203,13 @@ describe("edn", function () {
 
         // nil
         const I9 = items[9];
-        assert.isTrue(is_nil(I9));
+        assert.strictEqual(is_nil(I9), true);
         assert.strictEqual(I9.pos, 87);
         assert.strictEqual(I9.end, 90);
 
         // :ns/bar
         const I10 = items[10];
-        assert.isTrue(is_keyword(I10));
+        assert.strictEqual(is_keyword(I10), true);
         if (is_keyword(I10)) {
             assert.strictEqual(I10.localName, 'bar');
             assert.strictEqual(I10.namespace, 'ns');
@@ -217,7 +217,7 @@ describe("edn", function () {
 
         // :foo
         const I11 = items[11];
-        assert.isTrue(is_keyword(I11));
+        assert.strictEqual(is_keyword(I11), true);
         if (is_keyword(I11)) {
             assert.strictEqual(I11.localName, 'foo');
             assert.strictEqual(I11.namespace, '');
@@ -225,9 +225,9 @@ describe("edn", function () {
 
         // Rat(456N)
         const I12 = items[12];
-        assert.isTrue(is_rat(I12));
+        assert.strictEqual(is_rat(I12), true);
         if (is_rat(I12)) {
-            assert.isTrue(I12.equalsRat(create_rat(456, 1)));
+            assert.strictEqual(I12.equalsRat(create_rat(456, 1)), true);
         }
 
         // #{a b}

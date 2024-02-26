@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("sandbox", function () {
@@ -8,9 +8,7 @@ describe("sandbox", function () {
         ].join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values, errors } = engine.executeScript(sourceText);
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0, "errors.length");
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(engine.renderAsInfix(values[0]), "2*pi");
         engine.release();
@@ -21,9 +19,7 @@ describe("sandbox", function () {
         ].join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values, errors } = engine.executeScript(sourceText);
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0, "errors.length");
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(engine.renderAsInfix(values[0]), "6.283185...");
         engine.release();
@@ -34,9 +30,7 @@ describe("sandbox", function () {
         ].join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values, errors } = engine.executeScript(sourceText);
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0, "errors.length");
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(engine.renderAsInfix(values[0]), "3.141593...");
         engine.release();
@@ -48,9 +42,7 @@ describe("sandbox", function () {
         ].join('\n');
         const engine = create_script_context({ useCaretForExponentiation: true });
         const { values, errors } = engine.executeScript(sourceText);
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0, "errors.length");
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(engine.renderAsInfix(values[0]), "3.1415926536...");
         engine.release();

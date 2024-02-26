@@ -1,5 +1,6 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_sym } from 'math-expression-atoms';
+import { nil } from 'math-expression-tree';
 import { UndeclaredVars } from "../src/api/api";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -13,7 +14,7 @@ describe("assumptions", function () {
             allowUndeclaredVars: UndeclaredVars.Nil
         });
 
-        const aValue = context.getBinding(create_sym('a'));
+        const aValue = context.getBinding(create_sym('a'), nil);
         assert.strictEqual(aValue.toString(), `a`);
 
         const aProps = context.getSymbolProps(create_sym('a'));

@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 
@@ -12,7 +12,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsInfix(values[0]), "137");
         context.release();
@@ -26,7 +25,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsInfix(values[0]), "137.0");
         context.release();
@@ -40,7 +38,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsInfix(values[0]), "12345678901234567890");
         context.release();
@@ -54,7 +51,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsInfix(values[0]), "x");
         context.release();
@@ -68,7 +64,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsInfix(values[0]), `"hello"`);
         context.release();
@@ -83,7 +78,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsInfix(values[0]), `23`);
         context.release();
@@ -97,7 +91,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(foo)`);
         assert.strictEqual(context.renderAsInfix(values[0]), `foo`);
@@ -112,7 +105,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(foo x)`);
         assert.strictEqual(context.renderAsInfix(values[0]), `foo(x)`);
@@ -127,7 +119,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(foo x y)`);
         assert.strictEqual(context.renderAsInfix(values[0]), `foo(x,y)`);
@@ -142,7 +133,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(+ a b)`);
         assert.strictEqual(context.renderAsInfix(values[0]), `a+b`);
@@ -157,7 +147,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(+ a b c)`);
         assert.strictEqual(context.renderAsInfix(values[0]), `a+b+c`);
@@ -172,7 +161,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(- a b)`);
         // TODO: We need a transformer to normalize.
@@ -188,7 +176,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(* a b)`);
         assert.strictEqual(context.renderAsInfix(values[0]), `a*b`);
@@ -203,7 +190,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(/ a b)`);
         // TODO
@@ -219,7 +205,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(pow a b)`);
         // TODO
@@ -235,7 +220,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(^ a b)`);
         // TODO
@@ -251,7 +235,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(<< a b)`);
         assert.strictEqual(context.renderAsInfix(values[0]), `a<<b`);
@@ -266,7 +249,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(>> a b)`);
         assert.strictEqual(context.renderAsInfix(values[0]), `a>>b`);
@@ -281,7 +263,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `[a b c]`);
         assert.strictEqual(context.renderAsInfix(values[0]), `[a,b,c]`);
@@ -297,7 +278,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(component a 5)`);
         assert.strictEqual(context.renderAsInfix(values[0]), `a[5]`);
@@ -310,7 +290,6 @@ xdescribe("typhon", function () {
         const sourceText = lines.join('\n');
         const context = create_script_context({});
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `(component a 6)`);
         assert.strictEqual(context.renderAsInfix(values[0]), `a[6]`);
@@ -326,7 +305,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `[i j k]`);
         assert.strictEqual(context.renderAsInfix(values[0]), `[i,j,k]`);
@@ -347,7 +325,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 3, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `i`);
         assert.strictEqual(context.renderAsInfix(values[0]), `i`);
@@ -367,7 +344,6 @@ xdescribe("typhon", function () {
             syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsInfix(values[0]), `-1`);
         context.release();

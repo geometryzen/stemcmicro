@@ -1,6 +1,6 @@
-import { assert } from 'chai';
+import assert from 'assert';
+import { U } from "math-expression-tree";
 import { ScriptContext, ScriptExecuteOptions } from "../src/runtime/script_engine";
-import { U } from "../src/tree/tree";
 import { assert_one_value } from "./assert_one_value";
 
 /**

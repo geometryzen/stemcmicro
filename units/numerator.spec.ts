@@ -1,9 +1,10 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("numerator", function () {
     it("numerator(2/3)", function () {
+        console.log("numerator.spec.ts");
         const lines: string[] = [
             `numerator(2/3)`
         ];

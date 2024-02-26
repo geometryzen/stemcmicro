@@ -1,5 +1,5 @@
 
-import { assert } from "chai";
+import assert from 'assert';
 import { is_sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";

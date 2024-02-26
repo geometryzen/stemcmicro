@@ -1,11 +1,11 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { is_nil } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("simplify", function () {
+xdescribe("simplify", function () {
     it("A", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,

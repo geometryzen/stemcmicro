@@ -1,4 +1,4 @@
-import { assert } from 'chai';
+import assert from 'assert';
 import { Dimensions, QQ } from 'math-expression-atoms';
 
 const R0 = QQ.valueOf(0, 1);

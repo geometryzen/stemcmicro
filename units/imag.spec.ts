@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -90,7 +90,6 @@ describe("imag", function () {
             useCaretForExponentiation: true
         });
         const { values } = context.executeScript(sourceText, {});
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "1/2*3^(1/2)");
         context.release();
@@ -107,9 +106,7 @@ describe("imag", function () {
         const context = create_script_context({ useCaretForExponentiation: true });
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "1/2");
         context.release();
@@ -126,9 +123,7 @@ describe("imag", function () {
         const context = create_script_context({ useCaretForExponentiation: true });
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "1/2*3^(1/2)");
         context.release();
@@ -143,9 +138,7 @@ describe("imag", function () {
         const context = create_script_context({ useCaretForExponentiation: true });
 
         const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsInfix(values[0]), "-b/(a^2+b^2)");
         context.release();

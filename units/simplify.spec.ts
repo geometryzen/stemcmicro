@@ -5,8 +5,33 @@ import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-xdescribe("simplify", function () {
-    it("A", function () {
+describe("simplify", function () {
+    it("A0", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `pi=tau(1)/2`,
+            `simplify(1/4*i*pi)`
+        ];
+        const engine = create_script_context({ useCaretForExponentiation: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "1/4*i*pi");
+
+        engine.release();
+    });
+    it("A1", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `pi=tau(1)/2`,
+            `simplify(exp(1/4*i*pi))`
+        ];
+        const engine = create_script_context({});
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "e**(1/4*i*pi)");
+        // assert.strictEqual(engine.renderAsInfix(actual), "-1/2*2^(1/2)*(1+i)");
+
+        engine.release();
+    });
+    it("A2", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `pi=tau(1)/2`,
@@ -14,7 +39,7 @@ xdescribe("simplify", function () {
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "-1/2*2^(1/2)*(1+i)");
+        assert.strictEqual(engine.renderAsInfix(actual), "-e^(1/4*i*pi)");
 
         engine.release();
     });
@@ -77,7 +102,71 @@ xdescribe("simplify", function () {
         }
         engine.release();
     });
-    it("F", function () {
+    it("F0", function () {
+        const lines: string[] = [
+            `simplify(-M)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine();
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "-M");
+            }
+        }
+        engine.release();
+    });
+    it("F1", function () {
+        const lines: string[] = [
+            `simplify(-sin(x))`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine();
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "-sin(x)");
+            }
+        }
+        engine.release();
+    });
+    it("F2", function () {
+        const lines: string[] = [
+            `simplify(-cos(x))`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine();
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "-cos(x)");
+            }
+        }
+        engine.release();
+    });
+    it("F3", function () {
+        const lines: string[] = [
+            `simplify(-M*cos(x))`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine();
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "-M*cos(x)");
+            }
+        }
+        engine.release();
+    });
+    it("F4", function () {
         const lines: string[] = [
             `simplify(-M*cos(x)+S*cos(x)**2+S*sin(x)**2)`
         ];
@@ -178,7 +267,7 @@ xdescribe("simplify", function () {
         engine.release();
     });
     // Eigenmath does not perform the simplification.
-    xit("L using Eigenmath", function () {
+    it("L using Eigenmath", function () {
         const lines: string[] = [
             `simplify(-9.81*M*cos(x)+S*cos(x)**2+S*sin(x)**2)`
         ];
@@ -189,7 +278,7 @@ xdescribe("simplify", function () {
         for (const tree of trees) {
             const value = engine.valueOf(tree);
             if (!is_nil(value)) {
-                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "-9.81 M cos(x) + S cos(x)**2 + S sin(x)**2");
+                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-9.81*M*cos(x)");
             }
         }
         engine.release();
@@ -277,7 +366,7 @@ xdescribe("simplify", function () {
         }
         engine.release();
     });
-    xit("R", function () {
+    it("R", function () {
         const lines: string[] = [
             `kg=uom("kilogram")`,
             `G20=algebra([1,1],["e1","e2"])`,
@@ -291,7 +380,7 @@ xdescribe("simplify", function () {
         for (const tree of trees) {
             const value = engine.valueOf(tree);
             if (!is_nil(value)) {
-                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-9.81*M*cos(x)*kg");
+                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-9.81*M*cos(x)*e1*kg");
             }
         }
         engine.release();

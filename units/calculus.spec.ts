@@ -2,8 +2,8 @@
 import assert from 'assert';
 import { create_script_context } from "../src/runtime/script_engine";
 
-xdescribe("calculus", function () {
-    describe("undefined", function () {
+describe("calculus", function () {
+    xdescribe("undefined", function () {
         it("2/0 is undefined", function () {
             const lines: string[] = [
                 `2/0`,
@@ -89,7 +89,7 @@ xdescribe("calculus", function () {
             context.release();
         });
     });
-    describe("roots", function () {
+    xdescribe("roots", function () {
         it("sqrt(c)", function () {
             const lines: string[] = [
                 `sqrt(c)`,
@@ -103,7 +103,7 @@ xdescribe("calculus", function () {
             context.release();
         });
     });
-    describe("abs", function () {
+    xdescribe("abs", function () {
         xit("abs(x)", function () {
             const lines: string[] = [
                 `abs(x)`,
@@ -157,7 +157,7 @@ xdescribe("calculus", function () {
             context.release();
         });
     });
-    describe("infinitesimal", function () {
+    xdescribe("infinitesimal", function () {
         it("isreal(x)", function () {
             const lines: string[] = [
                 `isreal(x)`,

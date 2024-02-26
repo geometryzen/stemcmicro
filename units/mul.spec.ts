@@ -4,7 +4,6 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("mul", function () {
     it("(x*x)/x", function () {
-        console.log("mul.spec.ts");
         const lines: string[] = [
             `(x*x)/x`
         ];

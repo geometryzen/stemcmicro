@@ -93,31 +93,31 @@ export function simplify(x: U, env: ExprContext): U {
             }
 
             const A = simplify_if_contains_factorial(x, env);
-            // console.lg("A => ", $.toInfixString(A));
+            // console.lg("A => ", `${A}`);
 
             const B = simplify_by_i_dunno_what(A, env);
-            // console.lg("B => ", $.toInfixString(B));
+            // console.lg("B => ", `${B}`);
 
             const C = simplify_by_rationalizing(B, env);
-            // console.lg("C => ", $.toInfixString(C));
+            // console.lg("C => ", `${C}`);
 
             const D = simplify_by_condensing(C, env);
-            // console.lg("D => ", $.toInfixString(D));
+            // console.lg("D => ", `${D}`);
 
             const E = simplify_a_minus_b_divided_by_b_minus_a(D, env);
-            // console.lg("E => ", $.toInfixString(E));
+            // console.lg("E => ", `${E}`);
 
             const F = simplify_by_expanding_denominators(E, env);
-            // console.lg("F => ", $.toInfixString(F));
+            // console.lg("F => ", `${F}`);
 
             const G = simplify_trig(F, env);
-            // console.lg("G => ", $.toInfixString(G));
+            // console.lg("G => ", `${G}`);
 
             const H = simplify_terms(G, env);
-            // console.lg("H => ", $.toInfixString(H));
+            // console.lg("H => ", `${H}`);
 
             const I = simplify_polarRect(H, env);
-            // console.lg("I => ", $.toInfixString(I));
+            // console.lg("I => ", `${I}`);
 
             if (do_simplify_nested_radicals) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -140,10 +140,10 @@ export function simplify(x: U, env: ExprContext): U {
             }
 
             const J = simplify_rect_to_clock(I, env);
-            // console.lg("J => ", $.toInfixString(J));
+            // console.lg("J => ", `${J}`);
 
             const K = simplify_rational_expressions(J, env);
-            // console.lg("K => ", $.toInfixString(K));
+            // console.lg("K => ", `${K}`);
 
             return hook(K);
         }
@@ -184,12 +184,17 @@ function simplify_by_condensing(p1: U, $: ExprContext): U {
 }
 
 // this simplifies forms like (A-B) / (B-A)
-function simplify_a_minus_b_divided_by_b_minus_a(p1: U, $: ExprContext): U {
-    const p2 = rationalize_factoring(negate($, rationalize_factoring(negate($, rationalize_factoring(p1, $)), $)), $);
-    if (count(p2) < count(p1)) {
-        p1 = p2;
+function simplify_a_minus_b_divided_by_b_minus_a(x: U, $: ExprContext): U {
+    // console.lg("simplify_a_minus_b_divided_by_b_minus_a", `${x}`);
+    const candidate = rationalize_factoring(negate($, rationalize_factoring(negate($, rationalize_factoring(x, $)), $)), $);
+    if (count(candidate) < count(x)) {
+        return candidate;
     }
-    return p1;
+    else {
+        x.addRef();
+        candidate.release();
+        return x;
+    }
 }
 
 function simplify_by_i_dunno_what(p1: U, $: ExprContext): U {
@@ -373,24 +378,31 @@ function simplify_rational_expressions(p1: U, $: ExprContext): U {
 // things like 6*(cos(2/9*pi)+i*sin(2/9*pi)) = 6*exp(2/9*i*pi)
 // where we have sin and cos, those might start to
 // look better in clock form i.e.  6*(-1)^(2/9)
-function simplify_rect_to_clock(expr: U, $: ExprContext): U {
-    const oldExpr = expr;
-    // console.lg(`simplify_rect_to_clock ${print_expr(oldExpr, $)}`);
-    //breakpoint
+function simplify_rect_to_clock(x: U, $: ExprContext): U {
+    // console.lg("simplify_rect_to_clock", `${x}`);
 
-    if (!oldExpr.contains(SIN) && !oldExpr.contains(COS)) {
-        return oldExpr;
+    if (!x.contains(SIN) && !x.contains(COS)) {
+        return x;
     }
 
-    const newExpr = clock($.valueOf(oldExpr), $);
+    const arg = $.valueOf(x);
+    // console.lg("simplify_rect_to_clock", "arg", `${arg}`);
+    try {
+        const candidate = clock(arg, $);
 
-    // console.lg(`before simplification clockform: ${oldExpr} after: ${newExpr}`);
+        // console.lg("simplify_rect_to_clock", "candidate", `${candidate}`);
 
-    if (count(newExpr) < count(oldExpr)) {
-        return newExpr;
+        if (count(candidate) < count(x)) {
+            return candidate;
+        }
+        else {
+            x.addRef();
+            candidate.release();
+            return x;
+        }
     }
-    else {
-        return oldExpr;
+    finally {
+        arg.release();
     }
 }
 

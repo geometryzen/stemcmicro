@@ -4,7 +4,6 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("scalars", function () {
     it("", function () {
-        console.log("scalars.spec.ts");
         const lines: string[] = [
             `a*b`,
         ];

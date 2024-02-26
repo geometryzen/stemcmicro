@@ -2632,40 +2632,48 @@ export function stack_clear(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $
     push(nil, $); // result
 }
 
-export function stack_clock(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-    clockfunc(env, ctrl, $);
+export function stack_clock(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    $.push(expr);               //  [..., expr]
+    $.rest();                   //  [..., expr.rest]
+    $.head();                   //  [..., expr.rest.head]
+    value_of(env, ctrl, $);     //  [..., z]
+    clockfunc(env, ctrl, $);    //  [..., clock(z)]
 }
 
+/**
+ * [..., z] => [..., clock(z)]
+ * 
+ * clock(z) = mag(z) * (-1)**(arg(z)/pi)
+ */
 function clockfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
 
-    if (is_tensor(p1)) {
-        const T = copy_tensor(p1);
-        const n = T.nelem;
-        for (let i = 0; i < n; i++) {
-            push(T.elems[i], $);
-            clockfunc(env, ctrl, $);
-            T.elems[i] = pop($);
+    const z = pop($);                       //  [...]
+    try {
+        if (is_tensor(z)) {
+            const T = copy_tensor(z);
+            const n = T.nelem;
+            for (let i = 0; i < n; i++) {
+                push(T.elems[i], $);
+                clockfunc(env, ctrl, $);
+                T.elems[i] = pop($);
+            }
+            push(T, $);
+            return;
         }
-        push(T, $);
-        return;
+
+        push(z, $);                         //  [..., z]
+        mag(env, ctrl, $);                  //  [..., mag(z)]
+        push_integer(-1, $);                //  [..., mag(z), -1]
+        push(z, $);                         //  [..., mag(z), -1, z]
+        arg(env, ctrl, $);                  //  [..., mag(z), -1, arg(z)]
+        push(MATH_PI, $);                   //  [..., mag(z), -1, arg(z), pi]
+        divide(env, ctrl, $);               //  [..., mag(z), -1, arg(z)/pi]
+        power(env, ctrl, $);                //  [..., mag(z), (-1)**(arg(z)/pi)]
+        multiply(env, ctrl, $);             //  [..., mag(z) * (-1)**arg(z)/pi)]
     }
-
-    push(p1, $);
-    mag(env, ctrl, $);
-
-    push_integer(-1, $); // base
-
-    push(p1, $);
-    arg(env, ctrl, $);
-    push(MATH_PI, $);
-    divide(env, ctrl, $);
-
-    power(env, ctrl, $);
-
-    multiply(env, ctrl, $);
+    finally {
+        z.release();
+    }
 }
 
 export function stack_cofactor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -3216,7 +3224,9 @@ export function denominator(env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     const arg = pop($);
 
     if (is_rat(arg)) {
-        push_bignum(1, arg.b, bignum_int(1), $);
+        const denom = arg.denom();
+        $.push(denom);
+        denom.release();
         return;
     }
 
@@ -6926,13 +6936,16 @@ export function stack_numerator(p1: Cons, env: ProgramEnv, ctrl: ProgramControl,
 }
 
 export function numerator(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    let p1 = pop($);
+    const x = pop($);
 
-    if (is_rat(p1)) {
-        push_bignum(p1.sign, p1.a, bignum_int(1), $);
+    if (is_rat(x)) {
+        const a = x.numer();
+        $.push(a);
+        a.release();
         return;
     }
 
+    let p1 = x;
     while (find_divisor(p1, env, ctrl, $)) {
         push(p1, $);
         cancel_factor(env, ctrl, $);
@@ -7155,7 +7168,7 @@ function power_args($: ProgramStack): [base: U, expo: U] {
 export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const [base, expo] = power_args($);
-    // console.lg("power", "base", `${ base }`, "expo", `${ expo }`);
+    // console.lg("power", "base", `${base}`, "expo", `${expo}`);
     try {
         if (is_atom(base)) {
             if (is_uom(base)) {
@@ -7544,90 +7557,112 @@ export function real(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
     }
 }
 
-export function stack_rect(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-    rect(env, ctrl, $);
+/**
+ * (rect z)
+ */
+export function stack_rect(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    $.push(expr);                           //  [..., expr]
+    $.rest();                               //  [..., expr.rest]
+    $.head();                               //  [..., expr.rest.head]
+    value_of(env, ctrl, $);                 //  [..., z]
+    rect(env, ctrl, $);                     //  [..., rect(z)]
 }
 
+/**
+ * Returns complex z in rectangular form.
+ * 
+ * rect(exp(i x)) => cos(x) + i sin(x)
+ * 
+ * [..., z] => [..., rect(z)]
+ * 
+ * 
+ */
 export function rect(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    let p1 = pop($);
+    const z = pop($);
+    try {
 
-    if (is_tensor(p1)) {
-        push(elementwise(p1, rect, env, ctrl, $), $);
-        return;
-    }
-
-    if (car(p1).equals(ADD)) {
-        p1 = cdr(p1);
-        const h = $.length;
-        while (is_cons(p1)) {
-            push(car(p1), $);
-            rect(env, ctrl, $);
-            p1 = cdr(p1);
+        if (is_tensor(z)) {
+            push(elementwise(z, rect, env, ctrl, $), $);
+            return;
         }
-        sum_terms($.length - h, env, ctrl, $);
-        return;
-    }
 
-    if (car(p1).equals(MULTIPLY)) {
-        p1 = cdr(p1);
-        const h = $.length;
-        while (is_cons(p1)) {
-            push(car(p1), $);
-            rect(env, ctrl, $);
-            p1 = cdr(p1);
+        if (car(z).equals(ADD)) {
+            let p1 = cdr(z);
+            const h = $.length;
+            while (is_cons(p1)) {
+                push(car(p1), $);
+                rect(env, ctrl, $);
+                p1 = cdr(p1);
+            }
+            sum_terms($.length - h, env, ctrl, $);
+            return;
         }
-        multiply_factors($.length - h, env, ctrl, $);
-        return;
-    }
 
-    if (!car(p1).equals(POWER)) {
-        push(p1, $);
-        return;
-    }
-
-    const BASE = cadr(p1);
-    const EXPO = caddr(p1);
-
-    // handle sum in exponent
-
-    if (car(EXPO).equals(ADD)) {
-        p1 = cdr(EXPO);
-        const h = $.length;
-        while (is_cons(p1)) {
-            push(POWER, $);
-            push(BASE, $);
-            push(car(p1), $);
-            list(3, $);
-            rect(env, ctrl, $);
-            p1 = cdr(p1);
+        if (car(z).equals(MULTIPLY)) {
+            let p1 = cdr(z);
+            const h = $.length;
+            while (is_cons(p1)) {
+                push(car(p1), $);
+                rect(env, ctrl, $);
+                p1 = cdr(p1);
+            }
+            multiply_factors($.length - h, env, ctrl, $);
+            return;
         }
-        multiply_factors($.length - h, env, ctrl, $);
-        return;
+
+        if (is_cons(z) && car(z).equals(POWER)) {
+            const base = z.base;
+            const expo = z.expo;
+
+            // handle sum in exponent
+
+            if (car(expo).equals(ADD)) {
+                let p1 = cdr(expo);
+                const h = $.length;
+                while (is_cons(p1)) {
+                    push(POWER, $);
+                    push(base, $);
+                    push(car(p1), $);
+                    list(3, $);
+                    rect(env, ctrl, $);
+                    p1 = cdr(p1);
+                }
+                multiply_factors($.length - h, env, ctrl, $);
+                return;
+            }
+
+            // return mag(z) * cos(arg(z)) + i sin(arg(z)))
+
+            push(z, $);
+            mag(env, ctrl, $);
+
+            push(z, $);
+            arg(env, ctrl, $);
+            const p2 = pop($);
+
+            push(p2, $);
+            cosfunc(env, ctrl, $);
+
+            push(imu, $);
+            push(p2, $);
+            sinfunc(env, ctrl, $);
+            multiply(env, ctrl, $);
+
+            add(env, ctrl, $);
+
+            multiply(env, ctrl, $);
+        }
+        else {
+            // For all other combinations and atoms we strip off the (rect ...).
+            // This is OK because we are only converting the complex number to an alternative representation.
+            push(z, $);
+            return;
+        }
     }
-
-    // return mag(p1) * cos(arg(p1)) + i sin(arg(p1)))
-
-    push(p1, $);
-    mag(env, ctrl, $);
-
-    push(p1, $);
-    arg(env, ctrl, $);
-    const p2 = pop($);
-
-    push(p2, $);
-    cosfunc(env, ctrl, $);
-
-    push(imu, $);
-    push(p2, $);
-    sinfunc(env, ctrl, $);
-    multiply(env, ctrl, $);
-
-    add(env, ctrl, $);
-
-    multiply(env, ctrl, $);
+    finally {
+        z.release();
+    }
 }
 
 export function stack_roots(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -10471,31 +10506,41 @@ function find_divisor_term(p: U, env: ProgramEnv, ctrl: ProgramControl, $: Progr
     return find_divisor_factor(p, env, ctrl, $);
 }
 
-function find_divisor_factor(p: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 0 | 1 {
-    if (is_rat(p) && isinteger(p))
+function find_divisor_factor(x: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 0 | 1 {
+    if (is_rat(x) && x.isInteger()) {
         return 0;
+    }
 
-    if (is_rat(p)) {
-        push(p, $);
+    if (is_rat(x)) {
+        push(x, $);
         denominator(env, ctrl, $);
         return 1;
     }
 
-    if (is_cons(p) && p.opr.equals(POWER) && !isminusone(cadr(p)) && isnegativeterm(caddr(p))) {
-        if (isminusone(caddr(p)))
-            push(cadr(p), $);
-        else {
-            push(POWER, $);
-            push(cadr(p), $);
-            push(caddr(p), $);
-            negate(env, ctrl, $);
-            list(3, $);
+    if (is_cons(x) && is_power(x)) {
+        const base = x.base;
+        const expo = x.expo;
+        if (isminusone(expo)) {
+            if (!isminusone(base)) {
+                push(base, $);
+                return 1;
+            }
         }
-        return 1;
+        else {
+            if (!isminusone(base) && isnegativeterm(expo)) {
+                push(POWER, $);
+                push(base, $);
+                push(expo, $);
+                negate(env, ctrl, $);
+                list(3, $);
+                return 1;
+            }
+        }
     }
 
     return 0;
 }
+
 /**
  * Determines whether q is in p.
  * @param p 
@@ -11913,8 +11958,10 @@ function normalize_clock_double(EXPO: Flt, $: ProgramStack): void {
 
 /**
  * (pow e expo)
+ * 
+ * [...] => (pow e expo)
  */
-function power_e_expo(expo: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function power_e_expo(expo: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // console.lg("power_e_expo", "expo", `${ expo } `);
 

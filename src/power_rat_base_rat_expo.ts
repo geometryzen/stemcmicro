@@ -25,7 +25,7 @@ export const POWER = native_sym(Native.pow);
 
 // Rational power function
 export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExprContext): Cons | Rat | Sym | U {
-    // console.lg("power_rat_base_rat_expo", $.toInfixString(base), $.toLatexString(expo));
+    // console.lg("power_rat_base_rat_expo", `${base}`, `${expo}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg("pow_rat_base_rat_expo", "base", $.toInfixString(base), "expo", $.toInfixString(expo), "retval", $.toInfixString(retval), description);

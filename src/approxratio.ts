@@ -865,13 +865,13 @@ export function testApprox() {
       if (i === j) {
         continue;
       } // this is just 1
-      Console.log(`testapproxRadicals testing: 1 * sqrt( ${i} ) / ${j}`);
+      // console.lg(`testapproxRadicals testing: 1 * sqrt( ${i} ) / ${j}`);
       const value = Math.sqrt(i) / j;
       const returned = approxRadicals(value);
       const returnedValue =
         (returned[2] * Math.sqrt(returned[3])) / returned[4];
       if (Math.abs(value - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail testapproxRadicals: 1 * sqrt( ${i} ) / ${j} . obtained: ${returned}`
         );
       }
@@ -883,7 +883,7 @@ export function testApprox() {
       if (i === j) {
         continue;
       } // this is just 1
-      Console.log(
+      // console.lg(
         `testapproxRadicals testing with 4 digits: 1 * sqrt( ${i} ) / ${j}`
       );
       const originalValue = Math.sqrt(i) / j;
@@ -892,7 +892,7 @@ export function testApprox() {
       const returnedValue =
         (returned[2] * Math.sqrt(returned[3])) / returned[4];
       if (Math.abs(originalValue - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail testapproxRadicals with 4 digits: 1 * sqrt( ${i} ) / ${j} . obtained: ${returned}`
         );
       }
@@ -904,7 +904,7 @@ export function testApprox() {
       if (i === j) {
         continue;
       } // this is just 1
-      Console.log(`testapproxRadicals testing: 1 * sqrt( ${i} / ${j} )`);
+      // console.lg(`testapproxRadicals testing: 1 * sqrt( ${i} / ${j} )`);
       const value = Math.sqrt(i / j);
       const returned = approxRadicals(value);
       if (returned != null) {
@@ -914,7 +914,7 @@ export function testApprox() {
           returned[1] === approx_radicalOfRatio &&
           Math.abs(value - returnedValue) > 1e-15
         ) {
-          Console.log(
+          // console.lg(
             `fail testapproxRadicals: 1 * sqrt( ${i} / ${j} ) . obtained: ${returned}`
           );
         }
@@ -927,7 +927,7 @@ export function testApprox() {
       if (i === 1 && j === 1) {
         continue;
       }
-      Console.log(
+      // console.lg(
         `testapproxRadicals testing with 4 digits:: 1 * sqrt( ${i} / ${j} )`
       );
       const originalValue = Math.sqrt(i / j);
@@ -938,7 +938,7 @@ export function testApprox() {
         returned[1] === approx_radicalOfRatio &&
         Math.abs(originalValue - returnedValue) > 1e-15
       ) {
-        Console.log(
+        // console.lg(
           `fail testapproxRadicals with 4 digits:: 1 * sqrt( ${i} / ${j} ) . obtained: ${returned}`
         );
       }
@@ -947,12 +947,12 @@ export function testApprox() {
 
   for (let i = 1; i <= 5; i++) {
     for (let j = 1; j <= 5; j++) {
-      Console.log(`testApproxAll testing: 1 * log(${i} ) / ${j}`);
+      // console.lg(`testApproxAll testing: 1 * log(${i} ) / ${j}`);
       const value = Math.log(i) / j;
       const returned = approxAll(value);
       const returnedValue = (returned[2] * Math.log(returned[3])) / returned[4];
       if (Math.abs(value - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail testApproxAll: 1 * log(${i} ) / ${j} . obtained: ${returned}`
         );
       }
@@ -961,13 +961,13 @@ export function testApprox() {
 
   for (let i = 1; i <= 5; i++) {
     for (let j = 1; j <= 5; j++) {
-      Console.log(`testApproxAll testing with 4 digits: 1 * log(${i} ) / ${j}`);
+      // console.lg(`testApproxAll testing with 4 digits: 1 * log(${i} ) / ${j}`);
       const originalValue = Math.log(i) / j;
       const value = originalValue.toFixed(4);
       const returned = approxAll(Number(value));
       const returnedValue = (returned[2] * Math.log(returned[3])) / returned[4];
       if (Math.abs(originalValue - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail testApproxAll with 4 digits: 1 * log(${i} ) / ${j} . obtained: ${returned}`
         );
       }
@@ -976,12 +976,12 @@ export function testApprox() {
 
   for (let i = 1; i <= 5; i++) {
     for (let j = 1; j <= 5; j++) {
-      Console.log(`testApproxAll testing: 1 * log(${i} / ${j} )}`);
+      // console.lg(`testApproxAll testing: 1 * log(${i} / ${j} )}`);
       const value = Math.log(i / j);
       const returned = approxAll(value);
       const returnedValue = returned[2] * Math.log(returned[3] / returned[4]);
       if (Math.abs(value - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail testApproxAll: 1 * log(${i} / ${j} ) . obtained: ${returned}`
         );
       }
@@ -990,13 +990,13 @@ export function testApprox() {
 
   for (let i = 1; i <= 5; i++) {
     for (let j = 1; j <= 5; j++) {
-      Console.log(`testApproxAll testing with 4 digits: 1 * log(${i} / ${j} )`);
+      // console.lg(`testApproxAll testing with 4 digits: 1 * log(${i} / ${j} )`);
       const originalValue = Math.log(i / j);
       const value = originalValue.toFixed(4);
       const returned = approxAll(Number(value));
       const returnedValue = returned[2] * Math.log(returned[3] / returned[4]);
       if (Math.abs(originalValue - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail testApproxAll with 4 digits: 1 * log(${i} / ${j} ) . obtained: ${returned}`
         );
       }
@@ -1005,13 +1005,13 @@ export function testApprox() {
 
   for (let i = 1; i <= 2; i++) {
     for (let j = 1; j <= 12; j++) {
-      Console.log(`testApproxAll testing: 1 * (e ^ ${i} ) / ${j}`);
+      // console.lg(`testApproxAll testing: 1 * (e ^ ${i} ) / ${j}`);
       const value = Math.pow(Math.E, i) / j;
       const returned = approxAll(value);
       const returnedValue =
         (returned[2] * Math.pow(Math.E, returned[3])) / returned[4];
       if (Math.abs(value - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail testApproxAll: 1 * (e ^ ${i} ) / ${j} . obtained: ${returned}`
         );
       }
@@ -1020,7 +1020,7 @@ export function testApprox() {
 
   for (let i = 1; i <= 2; i++) {
     for (let j = 1; j <= 12; j++) {
-      Console.log(
+      // console.lg(
         `approxRationalsOfPowersOfE testing with 4 digits: 1 * (e ^ ${i} ) / ${j}`
       );
       const originalValue = Math.pow(Math.E, i) / j;
@@ -1029,7 +1029,7 @@ export function testApprox() {
       const returnedValue =
         (returned[2] * Math.pow(Math.E, returned[3])) / returned[4];
       if (Math.abs(originalValue - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail approxRationalsOfPowersOfE with 4 digits: 1 * (e ^ ${i} ) / ${j} . obtained: ${returned}`
         );
       }
@@ -1038,13 +1038,13 @@ export function testApprox() {
 
   for (let i = 1; i <= 2; i++) {
     for (let j = 1; j <= 12; j++) {
-      Console.log(`testApproxAll testing: 1 * pi ^ ${i} / ${j}`);
+      // console.lg(`testApproxAll testing: 1 * pi ^ ${i} / ${j}`);
       const value = Math.pow(Math.PI, i) / j;
       const returned = approxAll(value);
       const returnedValue =
         (returned[2] * Math.pow(Math.PI, returned[3])) / returned[4];
       if (Math.abs(value - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail testApproxAll: 1 * pi ^ ${i} / ${j} ) . obtained: ${returned}`
         );
       }
@@ -1053,7 +1053,7 @@ export function testApprox() {
 
   for (let i = 1; i <= 2; i++) {
     for (let j = 1; j <= 12; j++) {
-      Console.log(
+      // console.lg(
         `approxRationalsOfPowersOfPI testing with 4 digits: 1 * pi ^ ${i} / ${j}`
       );
       const originalValue = Math.pow(Math.PI, i) / j;
@@ -1062,7 +1062,7 @@ export function testApprox() {
       const returnedValue =
         (returned[2] * Math.pow(Math.PI, returned[3])) / returned[4];
       if (Math.abs(originalValue - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail approxRationalsOfPowersOfPI with 4 digits: 1 * pi ^ ${i} / ${j} ) . obtained: ${returned}`
         );
       }
@@ -1071,14 +1071,14 @@ export function testApprox() {
 
   for (let i = 1; i <= 4; i++) {
     for (let j = 1; j <= 4; j++) {
-      Console.log(`testApproxAll testing: 1 * sin( ${i}/${j} )}`);
+      // console.lg(`testApproxAll testing: 1 * sin( ${i}/${j} )}`);
       const fraction = i / j;
       const value = Math.sin(fraction);
       const returned = approxAll(value);
       const returnedFraction = returned[3] / returned[4];
       const returnedValue = returned[2] * Math.sin(returnedFraction);
       if (Math.abs(value - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail testApproxAll: 1 * sin( ${i}/${j} ) . obtained: ${returned}`
         );
       }
@@ -1088,13 +1088,13 @@ export function testApprox() {
   // 5 digits create no problem
   for (let i = 1; i <= 4; i++) {
     for (let j = 1; j <= 4; j++) {
-      Console.log(`testApproxAll testing with 5 digits: 1 * sin( ${i}/${j} )`);
+      // console.lg(`testApproxAll testing with 5 digits: 1 * sin( ${i}/${j} )`);
       const fraction = i / j;
       const originalValue = Math.sin(fraction);
       const value = originalValue.toFixed(5);
       const returned = approxAll(Number(value));
       if (returned == null) {
-        Console.log(
+        // console.lg(
           `fail testApproxAll with 5 digits: 1 * sin( ${i}/${j} ) . obtained:  undefined `
         );
       }
@@ -1102,7 +1102,7 @@ export function testApprox() {
       const returnedValue = returned[2] * Math.sin(returnedFraction);
       const error = Math.abs(originalValue - returnedValue);
       if (error > 1e-14) {
-        Console.log(
+        // console.lg(
           `fail testApproxAll with 5 digits: 1 * sin( ${i}/${j} ) . obtained: ${returned} error: ${error}`
         );
       }
@@ -1112,13 +1112,13 @@ export function testApprox() {
   // 4 digits create two collisions
   for (let i = 1; i <= 4; i++) {
     for (let j = 1; j <= 4; j++) {
-      Console.log(`testApproxAll testing with 4 digits: 1 * sin( ${i}/${j} )`);
+      // console.lg(`testApproxAll testing with 4 digits: 1 * sin( ${i}/${j} )`);
       const fraction = i / j;
       const originalValue = Math.sin(fraction);
       const value = originalValue.toFixed(4);
       const returned = approxAll(Number(value));
       if (returned == null) {
-        Console.log(
+        // console.lg(
           `fail testApproxAll with 4 digits: 1 * sin( ${i}/${j} ) . obtained:  undefined `
         );
       }
@@ -1126,7 +1126,7 @@ export function testApprox() {
       const returnedValue = returned[2] * Math.sin(returnedFraction);
       const error = Math.abs(originalValue - returnedValue);
       if (error > 1e-14) {
-        Console.log(
+        // console.lg(
           `fail testApproxAll with 4 digits: 1 * sin( ${i}/${j} ) . obtained: ${returned} error: ${error}`
         );
       }
@@ -1135,67 +1135,67 @@ export function testApprox() {
 
   let value = 0;
   if (approxAll(value)[0] !== '0') {
-    Console.log('fail testApproxAll: 0');
+    // console.lg('fail testApproxAll: 0');
   }
 
   value = 0.0;
   if (approxAll(value)[0] !== '0') {
-    Console.log('fail testApproxAll: 0.0');
+    // console.lg('fail testApproxAll: 0.0');
   }
 
   value = 0.0;
   if (approxAll(value)[0] !== '0') {
-    Console.log('fail testApproxAll: 0.00');
+    // console.lg('fail testApproxAll: 0.00');
   }
 
   value = 0.0;
   if (approxAll(value)[0] !== '0') {
-    Console.log('fail testApproxAll: 0.000');
+    // console.lg('fail testApproxAll: 0.000');
   }
 
   value = 0.0;
   if (approxAll(value)[0] !== '0') {
-    Console.log('fail testApproxAll: 0.0000');
+    // console.lg('fail testApproxAll: 0.0000');
   }
 
   value = 1;
   if (approxAll(value)[0] !== '1') {
-    Console.log('fail testApproxAll: 1');
+    // console.lg('fail testApproxAll: 1');
   }
 
   value = 1.0;
   if (approxAll(value)[0] !== '1') {
-    Console.log('fail testApproxAll: 1.0');
+    // console.lg('fail testApproxAll: 1.0');
   }
 
   value = 1.0;
   if (approxAll(value)[0] !== '1') {
-    Console.log('fail testApproxAll: 1.00');
+    // console.lg('fail testApproxAll: 1.00');
   }
 
   value = 1.0;
   if (approxAll(value)[0] !== '1') {
-    Console.log('fail testApproxAll: 1.000');
+    // console.lg('fail testApproxAll: 1.000');
   }
 
   value = 1.0;
   if (approxAll(value)[0] !== '1') {
-    Console.log('fail testApproxAll: 1.0000');
+    // console.lg('fail testApproxAll: 1.0000');
   }
 
   value = 1.0;
   if (approxAll(value)[0] !== '1') {
-    Console.log('fail testApproxAll: 1.00000');
+    // console.lg('fail testApproxAll: 1.00000');
   }
 
   value = Math.sqrt(2);
   if (approxAll(value)[0] !== '1 * sqrt( 2 ) / 1') {
-    Console.log('fail testApproxAll: Math.sqrt(2)');
+    // console.lg('fail testApproxAll: Math.sqrt(2)');
   }
 
   value = 1.41;
   if (approxAll(value)[0] !== '1 * sqrt( 2 ) / 1') {
-    Console.log('fail testApproxAll: 1.41');
+    // console.lg('fail testApproxAll: 1.41');
   }
 
   // if we narrow down to a particular family then we can get
@@ -1203,139 +1203,139 @@ export function testApprox() {
 
   value = 1.4;
   if (approxRadicals(value)[0] !== '1 * sqrt( 2 ) / 1') {
-    Console.log('fail approxRadicals: 1.4');
+    // console.lg('fail approxRadicals: 1.4');
   }
 
   value = 0.6;
   if (approxLogs(value)[0] !== '1 * log( 2 ) / 1') {
-    Console.log('fail approxLogs: 0.6');
+    // console.lg('fail approxLogs: 0.6');
   }
 
   value = 0.69;
   if (approxLogs(value)[0] !== '1 * log( 2 ) / 1') {
-    Console.log('fail approxLogs: 0.69');
+    // console.lg('fail approxLogs: 0.69');
   }
 
   value = 0.7;
   if (approxLogs(value)[0] !== '1 * log( 2 ) / 1') {
-    Console.log('fail approxLogs: 0.7');
+    // console.lg('fail approxLogs: 0.7');
   }
 
   value = 1.09;
   if (approxLogs(value)[0] !== '1 * log( 3 ) / 1') {
-    Console.log('fail approxLogs: 1.09');
+    // console.lg('fail approxLogs: 1.09');
   }
 
   value = 1.09;
   if (approxAll(value)[0] !== '1 * log( 3 ) / 1') {
-    Console.log('fail approxAll: 1.09');
+    // console.lg('fail approxAll: 1.09');
   }
 
   value = 1.098;
   if (approxAll(value)[0] !== '1 * log( 3 ) / 1') {
-    Console.log('fail approxAll: 1.098');
+    // console.lg('fail approxAll: 1.098');
   }
 
   value = 1.1;
   if (approxAll(value)[0] !== '1 * log( 3 ) / 1') {
-    Console.log('fail approxAll: 1.1');
+    // console.lg('fail approxAll: 1.1');
   }
 
   value = 1.11;
   if (approxAll(value)[0] !== '1 * log( 3 ) / 1') {
-    Console.log('fail approxAll: 1.11');
+    // console.lg('fail approxAll: 1.11');
   }
 
   value = Math.sqrt(3);
   if (approxAll(value)[0] !== '1 * sqrt( 3 ) / 1') {
-    Console.log('fail testApproxAll: Math.sqrt(3)');
+    // console.lg('fail testApproxAll: Math.sqrt(3)');
   }
 
   value = 1.0;
   if (approxAll(value)[0] !== '1') {
-    Console.log('fail testApproxAll: 1.0000');
+    // console.lg('fail testApproxAll: 1.0000');
   }
 
   value = 3.141592;
   if (approxAll(value)[0] !== '1 * (pi ^ 1 ) / 1 )') {
-    Console.log('fail testApproxAll: 3.141592');
+    // console.lg('fail testApproxAll: 3.141592');
   }
 
   value = 31.41592;
   if (approxAll(value)[0] !== '10 * (pi ^ 1 ) / 1 )') {
-    Console.log('fail testApproxAll: 31.41592');
+    // console.lg('fail testApproxAll: 31.41592');
   }
 
   value = 314.1592;
   if (approxAll(value)[0] !== '100 * (pi ^ 1 ) / 1 )') {
-    Console.log('fail testApproxAll: 314.1592');
+    // console.lg('fail testApproxAll: 314.1592');
   }
 
   value = 31415926.53589793;
   if (approxAll(value)[0] !== '10000000 * (pi ^ 1 ) / 1 )') {
-    Console.log('fail testApproxAll: 31415926.53589793');
+    // console.lg('fail testApproxAll: 31415926.53589793');
   }
 
   value = Math.sqrt(2);
   if (approxTrigonometric(value)[0] !== '2 * sin( 1/4 * pi )') {
-    Console.log('fail approxTrigonometric: Math.sqrt(2)');
+    // console.lg('fail approxTrigonometric: Math.sqrt(2)');
   }
 
   value = Math.sqrt(3);
   if (approxTrigonometric(value)[0] !== '2 * sin( 1/3 * pi )') {
-    Console.log('fail approxTrigonometric: Math.sqrt(3)');
+    // console.lg('fail approxTrigonometric: Math.sqrt(3)');
   }
 
   value = (Math.sqrt(6) - Math.sqrt(2)) / 4;
   if (approxAll(value)[0] !== '1 * sin( 1/12 * pi )') {
-    Console.log('fail testApproxAll: (Math.sqrt(6) - Math.sqrt(2))/4');
+    // console.lg('fail testApproxAll: (Math.sqrt(6) - Math.sqrt(2))/4');
   }
 
   value = Math.sqrt(2 - Math.sqrt(2)) / 2;
   if (approxAll(value)[0] !== '1 * sin( 1/8 * pi )') {
-    Console.log('fail testApproxAll: Math.sqrt(2 - Math.sqrt(2))/2');
+    // console.lg('fail testApproxAll: Math.sqrt(2 - Math.sqrt(2))/2');
   }
 
   value = (Math.sqrt(6) + Math.sqrt(2)) / 4;
   if (approxAll(value)[0] !== '1 * sin( 5/12 * pi )') {
-    Console.log('fail testApproxAll: (Math.sqrt(6) + Math.sqrt(2))/4');
+    // console.lg('fail testApproxAll: (Math.sqrt(6) + Math.sqrt(2))/4');
   }
 
   value = Math.sqrt(2 + Math.sqrt(3)) / 2;
   if (approxAll(value)[0] !== '1 * sin( 5/12 * pi )') {
-    Console.log('fail testApproxAll: Math.sqrt(2 + Math.sqrt(3))/2');
+    // console.lg('fail testApproxAll: Math.sqrt(2 + Math.sqrt(3))/2');
   }
 
   value = (Math.sqrt(5) - 1) / 4;
   if (approxAll(value)[0] !== '1 * sin( 1/10 * pi )') {
-    Console.log('fail testApproxAll: (Math.sqrt(5) - 1)/4');
+    // console.lg('fail testApproxAll: (Math.sqrt(5) - 1)/4');
   }
 
   value = Math.sqrt(10 - 2 * Math.sqrt(5)) / 4;
   if (approxAll(value)[0] !== '1 * sin( 1/5 * pi )') {
-    Console.log('fail testApproxAll: Math.sqrt(10 - 2*Math.sqrt(5))/4');
+    // console.lg('fail testApproxAll: Math.sqrt(10 - 2*Math.sqrt(5))/4');
   }
 
   // this has a radical form but it's too long to write
   value = Math.sin(Math.PI / 7);
   if (approxAll(value)[0] !== '1 * sin( 1/7 * pi )') {
-    Console.log('fail testApproxAll: Math.sin(Math.PI/7)');
+    // console.lg('fail testApproxAll: Math.sin(Math.PI/7)');
   }
 
   // this has a radical form but it's too long to write
   value = Math.sin(Math.PI / 9);
   if (approxAll(value)[0] !== '1 * sin( 1/9 * pi )') {
-    Console.log('fail testApproxAll: Math.sin(Math.PI/9)');
+    // console.lg('fail testApproxAll: Math.sin(Math.PI/9)');
   }
 
   value = 1836.15267;
   if (approxRationalsOfPowersOfPI(value)[0] !== '6 * (pi ^ 5 ) / 1 )') {
-    Console.log('fail approxRationalsOfPowersOfPI: 1836.15267');
+    // console.lg('fail approxRationalsOfPowersOfPI: 1836.15267');
   }
 
   for (let i = 1; i <= 13; i++) {
     for (let j = 1; j <= 13; j++) {
-      Console.log(`approxTrigonometric testing: 1 * sin( ${i}/${j} * pi )`);
+      // console.lg(`approxTrigonometric testing: 1 * sin( ${i}/${j} * pi )`);
       const fraction = i / j;
       value = Math.sin(Math.PI * fraction);
       // we specifically search for sines of rational multiples of PI
@@ -1345,7 +1345,7 @@ export function testApprox() {
       const returnedFraction = returned[3] / returned[4];
       const returnedValue = returned[2] * Math.sin(Math.PI * returnedFraction);
       if (Math.abs(value - returnedValue) > 1e-15) {
-        Console.log(
+        // console.lg(
           `fail approxTrigonometric: 1 * sin( ${i}/${j} * pi ) . obtained: ${returned}`
         );
       }
@@ -1362,7 +1362,7 @@ export function testApprox() {
         continue;
       }
 
-      Console.log(
+      // console.lg(
         `approxTrigonometric testing with 4 digits: 1 * sin( ${i}/${j} * pi )`
       );
       const fraction = i / j;
@@ -1376,11 +1376,11 @@ export function testApprox() {
       const returnedValue = returned[2] * Math.sin(Math.PI * returnedFraction);
       const error = Math.abs(originalValue - returnedValue);
       if (error > 1e-14) {
-        Console.log(          `fail approxTrigonometric with 4 digits: 1 * sin( ${i}/${j} * pi ) . obtained: ${returned} error: ${error}`        );
+        // console.lg(          `fail approxTrigonometric with 4 digits: 1 * sin( ${i}/${j} * pi ) . obtained: ${returned} error: ${error}`        );
       }
     }
   }
 
-  return Console.log('testApprox done');
+  return // console.lg('testApprox done');
 }
 */

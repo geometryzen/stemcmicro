@@ -1,11 +1,12 @@
-import { create_sym, is_blade, is_flt, is_num, is_rat, is_tensor, is_uom, QQ } from "math-expression-atoms";
+import { create_flt, create_sym, imu, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, is_uom, negOne, one, QQ } from "math-expression-atoms";
 import { is_native, Native, native_sym } from "math-expression-native";
 import { car, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
 import { nativeDouble, rational } from "../../bignum";
 import { complex_conjugate } from "../../complex_conjugate";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { power_e_expo } from "../../eigenmath/eigenmath";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
-import { imu } from "../../env/imu";
+import { StackU } from "../../env/StackU";
 import { divide } from "../../helpers/divide";
 import { isone } from "../../helpers/isone";
 import { iszero } from "../../helpers/iszero";
@@ -23,10 +24,9 @@ import { doexpand_binary } from "../../runtime/defs";
 import { is_abs, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_PI } from "../../runtime/ns_math";
 import { power_tensor } from "../../tensor";
-import { create_flt, oneAsFlt } from "../../tree/flt/Flt";
+import { oneAsFlt } from "../../tree/flt/Flt";
 import { cadr } from "../../tree/helpers";
-import { half, negOne, one, two } from "../../tree/rat/Rat";
-import { is_sym } from "../sym/is_sym";
+import { half, two } from "../../tree/rat/Rat";
 import { dpow } from "./dpow";
 import { pow } from "./pow";
 
@@ -233,18 +233,10 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
         return hook(result, "N");
     }
 
-    // complex number in exponential form, get it to rectangular
-    // but only if we are not in the process of calculating a polar form,
-    // otherwise we'd just undo the work we want to do
-    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(MATH_PI) && !$.getDirective(Directive.complexAsPolar)) {
-        // TODO: We could simply use origExpr now that it is an argument.
-        // TODO: Given that we have exp(i*pi*something), why don't we remove the imu and use Euler's formula? 
-        const tmp = items_to_cons(POW, base, expo);
-        const retval = $.rect(tmp); // put new (hopefully simplified expr) in exponent
-        if (!retval.contains(MATH_PI)) {
-            // console.lg(`hopefullySimplified=${hopefullySimplified}`);
-            return hook(retval, "O");
-        }
+    if (is_base_of_natural_logarithm(base)) {
+        const stack = new StackU();
+        power_e_expo(expo, $, $, stack);
+        return hook(stack.pop(), "N");
     }
 
     // The following will only be true if the a's commute.

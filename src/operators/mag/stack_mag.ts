@@ -10,11 +10,11 @@ import { ADD, MULTIPLY, POWER } from "../../runtime/constants";
 import { caddr, cadr } from "../../tree/helpers";
 
 export function stack_mag(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    $.push(expr);          //  [expr]
-    $.rest();                //  [argList]
-    $.head();                //  [argList.head]
-    value_of(env, ctrl, $); //  [z]
-    mag(env, ctrl, $);      //  [mag(z)]    
+    $.push(expr);               //  [expr]
+    $.rest();                   //  [argList]
+    $.head();                   //  [argList.head]
+    value_of(env, ctrl, $);     //  [z]
+    mag(env, ctrl, $);          //  [mag(z)]
 }
 
 export function mag(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {

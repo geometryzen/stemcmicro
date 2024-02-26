@@ -3,7 +3,6 @@ import { create_script_context } from "../src/runtime/script_engine";
 
 describe("transform", function () {
     it("a", function () {
-        console.log("transform.spec.ts");
         const lines: string[] = [
             `a`
         ];

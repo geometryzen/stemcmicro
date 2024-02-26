@@ -4,7 +4,6 @@ import { create_script_context } from "../src/runtime/script_engine";
 
 xdescribe("nroots", function () {
     it("nroots(x)", function () {
-        console.log("nroots.spec.ts");
         const lines: string[] = [
             `nroots(x)`
         ];

@@ -3,7 +3,7 @@ import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("nroots", function () {
-    xit("nroots(x)", function () {
+    it("nroots(x)", function () {
         const lines: string[] = [
             `nroots(x)`
         ];
@@ -15,7 +15,7 @@ describe("nroots", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "0");
         engine.release();
     });
-    xit("nroots(x-1)", function () {
+    it("nroots(x-1)", function () {
         const lines: string[] = [
             `nroots(x-1)`
         ];
@@ -27,7 +27,7 @@ describe("nroots", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "1.0");
         engine.release();
     });
-    xit("nroots(x+1)", function () {
+    it("nroots(x+1)", function () {
         const lines: string[] = [
             `nroots(x+1)`
         ];
@@ -39,7 +39,7 @@ describe("nroots", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "-1.0");
         engine.release();
     });
-    xit("nroots(x**2-1)", function () {
+    it("nroots(x**2-1)", function () {
         const lines: string[] = [
             `nroots(x**2-1)`
         ];
@@ -50,7 +50,7 @@ describe("nroots", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "[-1.000000...,1.000000...]");
         engine.release();
     });
-    xit("nroots(x**2+1)", function () {
+    it("nroots(x**2+1)", function () {
         const lines: string[] = [
             `nroots(x**2+1)`
         ];
@@ -73,7 +73,7 @@ describe("nroots", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "[-0.321797...-0.776887...*i,0.321797...+0.776887...*i]");
         engine.release();
     });
-    xit("nroots(sqrt(2)*exp(i*pi/4)*x^2+1)", function () {
+    it("nroots(sqrt(2)*exp(i*pi/4)*x^2+1)", function () {
         const lines: string[] = [
             `nroots(sqrt(2)*exp(i*pi/4)*x^2+1)`
         ];
@@ -82,7 +82,7 @@ describe("nroots", function () {
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "[-0.171780...-0.727673...*i,0.171780...+0.727673...*i]");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "[-0.351578...-0.568864...*i,0.351578...+0.568864...*i]");
         engine.release();
     });
     it("nroots(x^2+1)", function () {

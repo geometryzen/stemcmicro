@@ -5,7 +5,7 @@ import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, i
 import { ExprContextFromProgram } from '../adapters/ExprContextFromProgram';
 import { StackFunction } from '../adapters/StackFunction';
 import { ExprEngineListener } from '../api/api';
-import { Complex, complex_comparator, complex_to_item, item_to_complex } from '../complex/Complex';
+import { complex_comparator, complex_to_item, item_to_complex } from '../complex/complex';
 import { diagnostic, Diagnostics } from '../diagnostics/diagnostics';
 import { Directive } from '../env/ExtensionEnv';
 import { StackU } from '../env/StackU';
@@ -13378,11 +13378,7 @@ function sort(n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
 
     const _ = new ExprContextFromProgram(env, ctrl, $);
 
-    // We break up each items into its real and imaginary parts, storing in a complex number.
-    // The purpose to to create an ordering over the complex numbers so that the roots appear in a stable order.
-
-    // 
-    const zs: Complex[] = candidates.map(item_to_complex(_));
+    const zs = candidates.map(item_to_complex(_));
 
     for (let i = 0; i < candidates.length; i++) {
         candidates[i].release();

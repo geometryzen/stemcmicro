@@ -1,6 +1,6 @@
 {
     "name": "stemcmicro",
-    "version": "0.0.244",
+    "version": "0.0.245",
     "description": "Computer Algebra System in TypeScript",
     "exports": {
         ".": {

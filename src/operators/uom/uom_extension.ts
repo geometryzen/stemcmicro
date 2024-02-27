@@ -10,56 +10,59 @@ import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { two } from "../../tree/rat/Rat";
 
-const ADD = native_sym(Native.add);
 const MUL = native_sym(Native.multiply);
-const POW = native_sym(Native.pow);
 
 class UomExtension implements Extension<Uom> {
     constructor() {
         // Nothing to see here.
     }
-    phases?: number | undefined;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    test(uom: Uom, opr: Sym, env: ExprContext): boolean {
+    test(): boolean {
         return false;
     }
     binL(lhs: Uom, opr: Sym, rhs: U, env: ExprContext): U {
-        if (opr.equalsSym(ADD)) {
-            if (is_atom(rhs)) {
-                if (is_uom(rhs)) {
-                    if (lhs.equals(rhs)) {
-                        const expr = items_to_cons(MUL, two, lhs);
-                        try {
-                            return env.valueOf(expr);
-                        }
-                        finally {
-                            expr.release();
+        switch (opr.id) {
+            case Native.add: {
+                if (is_atom(rhs)) {
+                    if (is_uom(rhs)) {
+                        if (lhs.equals(rhs)) {
+                            const expr = items_to_cons(MUL, two, lhs);
+                            try {
+                                return env.valueOf(expr);
+                            }
+                            finally {
+                                expr.release();
+                            }
                         }
                     }
                 }
+                break;
             }
-        }
-        else if (opr.equalsSym(MUL)) {
-            if (is_atom(rhs)) {
-                if (is_hyp(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
+            case Native.multiply: {
+                if (is_atom(rhs)) {
+                    if (is_hyp(rhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_tensor(rhs)) {
+                        return rhs.map(x => multiply(env, lhs, x));
+                    }
+                    else if (is_uom(rhs)) {
+                        // This could create a dimensionless quantity equivalent to one.
+                        // In the interest of staying DRY, the correct way is to evaluate the product.
+                        return env.valueOf(lhs.mul(rhs));
+                    }
                 }
-                else if (is_tensor(rhs)) {
-                    return rhs.map(x => multiply(env, lhs, x));
-                }
-                else if (is_uom(rhs)) {
-                    return lhs.mul(rhs);
-                }
+                break;
             }
-        }
-        else if (opr.equalsSym(POW)) {
-            if (is_atom(rhs)) {
-                if (is_rat(rhs)) {
-                    const numer = rhs.numer();
-                    const denom = rhs.denom();
-                    const expo = QQ.valueOf(numer.toNumber(), denom.toNumber());
-                    return lhs.pow(expo);
+            case Native.pow: {
+                if (is_atom(rhs)) {
+                    if (is_rat(rhs)) {
+                        const numer = rhs.numer();
+                        const denom = rhs.denom();
+                        const expo = QQ.valueOf(numer.toNumber(), denom.toNumber());
+                        return lhs.pow(expo);
+                    }
                 }
+                break;
             }
         }
         return nil;

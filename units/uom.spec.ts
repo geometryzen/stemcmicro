@@ -28,7 +28,7 @@ describe("uom", function () {
         }
         engine.release();
     });
-    xit("Handling middot", function () {
+    it("Handling middot", function () {
         const lines: string[] = [
             `k=uom("kilogram")`,
             `m=uom("meter")`,
@@ -46,12 +46,12 @@ describe("uom", function () {
                 assert.strictEqual(engine.renderAsString(value, { format: 'LaTeX' }), "kg·m/s");
                 const lines: string[] = [
                     `<svg height='41'width='89'>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>k</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='22'y='26'>g</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='34'y='26'>&middot;</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='44.65234375'y='26'>m</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='63.3203125'y='26'>/</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='69.98828125'y='26'>s</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;' x='10' y='26'>k</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;' x='22' y='26'>g</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;' x='34' y='26'>&middot;</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;' x='44.65234375' y='26'>m</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;' x='63.3203125' y='26'>/</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;' x='69.98828125' y='26'>s</text>`,
                     `</svg>`
                 ];
                 assert.strictEqual(engine.renderAsString(value, { format: 'SVG' }), lines.join(''));
@@ -386,8 +386,11 @@ describe("uom", function () {
                 catchExceptions: true,
                 dependencies: ['Flt', 'Uom']
             });
-            const { errors } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(errors[0].message, "6.0+kg");
+            const { values, prints, errors } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(values.length, 1);
+            assert.strictEqual(engine.renderAsInfix(values[0]), "Operator '+' cannot be applied to types 'number' and 'uom'.");
+            assert.strictEqual(prints.length, 0);
+            assert.strictEqual(errors.length, 0);
             engine.release();
         });
         it("+(Uom, Flt)", function () {
@@ -399,8 +402,11 @@ describe("uom", function () {
                 catchExceptions: true,
                 dependencies: ['Flt', 'Uom']
             });
-            const { errors } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(errors[0].message, "kg+5.0");
+            const { values, prints, errors } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(values.length, 1);
+            assert.strictEqual(engine.renderAsInfix(values[0]), "Operator '+' cannot be applied to types 'number' and 'uom'.");
+            assert.strictEqual(prints.length, 0);
+            assert.strictEqual(errors.length, 0);
             engine.release();
         });
         it("(Rat, Uom)", function () {
@@ -411,7 +417,11 @@ describe("uom", function () {
             const engine = create_script_context({
                 catchExceptions: true
             });
-            const { errors } = engine.executeScript(lines.join('\n'));
+            const { values, prints, errors } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(values.length, 0);
+            // assert.strictEqual(engine.renderAsInfix(values[0]), "Operator '+' cannot be applied to types 'number' and 'uom'.");
+            assert.strictEqual(prints.length, 0);
+            assert.strictEqual(errors.length, 1);
             assert.strictEqual(errors[0].message, "2+kg");
             engine.release();
         });
@@ -424,8 +434,11 @@ describe("uom", function () {
                 catchExceptions: true,
                 dependencies: ['Uom']
             });
-            const { errors } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(errors[0].message, "kg+2");
+            const { values, prints, errors } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(values.length, 1);
+            assert.strictEqual(engine.renderAsInfix(values[0]), "Operator '+' cannot be applied to types 'rational' and 'uom'.");
+            assert.strictEqual(prints.length, 0);
+            assert.strictEqual(errors.length, 0);
             engine.release();
         });
     });
@@ -611,9 +624,10 @@ describe("uom", function () {
                 }
             }
             assert.strictEqual(values.length, 1);
-            assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "1");
-            assert.strictEqual(is_rat(values[0]), true);
-            assert.strictEqual(is_uom(values[0]), false);
+            const value = values[0];
+            assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "1");
+            assert.strictEqual(is_uom(value), false);
+            assert.strictEqual(is_rat(value), true);
             engine.release();
         });
     });

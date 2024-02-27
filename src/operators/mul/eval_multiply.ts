@@ -84,9 +84,7 @@ function multiply_values(values: Cons, expr: Cons, $: ExtensionEnv): U {
  * @returns 
  */
 function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
-    // if (is_cons(lhs) && is_power(lhs) && is_exp(lhs.base) && is_cons(rhs) && is_add(rhs)) {
     // console.lg("multiply", `lhs => ${lhs} rhs => ${rhs}`);
-    // }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // if (is_cons(lhs) && is_power(lhs) && is_exp(lhs.base) && is_cons(rhs) && is_add(rhs)) {

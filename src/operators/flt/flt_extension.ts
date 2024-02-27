@@ -1,9 +1,10 @@
-import { create_str, create_sym, Flt, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, Sym } from "math-expression-atoms";
+import { assert_flt, create_str, create_sym, Flt, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { Extension, FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { hash_for_atom } from "../../hashing/hash_info";
 import { iszero } from "../../helpers/iszero";
 import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
@@ -27,11 +28,12 @@ export function compare_flts(lhs: Flt, rhs: Flt): Sign {
 }
 
 export class FltExtension implements Extension<Flt> {
+    readonly #hash = hash_for_atom(assert_flt(oneAsFlt));
     constructor() {
         // Nothing to see here.
     }
     get hash(): string {
-        return oneAsFlt.name;
+        return this.#hash;
     }
     get name(): string {
         return 'FltExtension';
@@ -43,9 +45,8 @@ export class FltExtension implements Extension<Flt> {
         else if (opr.equalsSym(ISZERO)) {
             return atom.isZero();
         }
-        throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
+        return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binL(lhs: Flt, opr: Sym, rhs: U, env: ExprContext): U {
         if (opr.equalsSym(ADD)) {
             if (is_atom(rhs)) {
@@ -178,7 +179,6 @@ export class FltExtension implements Extension<Flt> {
         }
         return nil;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Flt, opr: Sym, argList: Cons, env: ExprContext): U {
         switch (opr.id) {
             case Native.abs: {

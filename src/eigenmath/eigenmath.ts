@@ -5,6 +5,7 @@ import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, i
 import { ExprContextFromProgram } from '../adapters/ExprContextFromProgram';
 import { StackFunction } from '../adapters/StackFunction';
 import { ExprEngineListener } from '../api/api';
+import { Complex, complex_comparator, complex_to_item, item_to_complex } from '../complex/Complex';
 import { diagnostic, Diagnostics } from '../diagnostics/diagnostics';
 import { Directive } from '../env/ExtensionEnv';
 import { StackU } from '../env/StackU';
@@ -440,23 +441,25 @@ function cmp_factors_provisional(p1: U, p2: U): 0 | 1 | -1 {
     return cmp(p1, p2);
 }
 
-function cmp_numbers(p1: Num, p2: Num): 1 | 0 | -1 {
+function cmp_numbers(lhs: Num, rhs: Num): Sign {
 
-    if (is_rat(p1) && is_rat(p2)) {
-        return p1.compare(p2);
+    if (is_rat(lhs) && is_rat(rhs)) {
+        return lhs.compare(rhs);
     }
 
-    const d1 = assert_num_to_number(p1);
+    const d1 = assert_num_to_number(lhs);
 
-    const d2 = assert_num_to_number(p2);
+    const d2 = assert_num_to_number(rhs);
 
-    if (d1 < d2)
-        return -1;
+    if (d1 < d2) {
+        return SIGN_LT;
+    }
 
-    if (d1 > d2)
-        return 1;
+    if (d1 > d2) {
+        return SIGN_GT;
+    }
 
-    return 0;
+    return SIGN_EQ;
 }
 
 // this way matches strcmp (localeCompare differs from strcmp)
@@ -6795,7 +6798,7 @@ function nroots(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             return; // one root
         }
 
-        sort(n, $);
+        sort(n, env, ctrl, $);
 
         const A = alloc_vector(n);
 
@@ -7779,7 +7782,7 @@ function roots(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         return;
     }
 
-    sort(n, $); // sort roots
+    sort(n, env, ctrl, $); // sort roots
 
     // eliminate repeated roots
 
@@ -13367,16 +13370,37 @@ export function set_user_function(name: Sym, userfunc: U, env: ProgramEnv): void
  * @param n 
  * @param $ 
  */
-function sort(n: number, $: ProgramStack): void {
+function sort(n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // console.lg("sort", n);
     const compareFn = (lhs: U, rhs: U) => cmp(lhs, rhs);
-    const sorted = $.splice($.length - n).sort(compareFn);
-    /*
-    for (let i = 0; i < sorted.length; i++) {
-        console.lg(`${sorted[i]}`);
+
+    const candidates = $.splice($.length - n);
+
+    const _ = new ExprContextFromProgram(env, ctrl, $);
+
+    // We break up each items into its real and imaginary parts, storing in a complex number.
+    // The purpose to to create an ordering over the complex numbers so that the roots appear in a stable order.
+
+    // 
+    const zs: Complex[] = candidates.map(item_to_complex(_));
+
+    for (let i = 0; i < candidates.length; i++) {
+        candidates[i].release();
     }
-    */
+
+    zs.sort(complex_comparator(compareFn));
+
+    const sorted: U[] = zs.map(complex_to_item(_));
+
+    for (let i = 0; i < zs.length; i++) {
+        zs[i].release();
+    }
+
     $.concat(sorted);
+
+    for (let i = 0; i < sorted.length; i++) {
+        sorted[i].release();
+    }
 }
 
 function sort_factors(start: number, ctrl: ProgramControl, $: ProgramStack): void {

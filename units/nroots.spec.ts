@@ -105,7 +105,7 @@ describe("nroots", function () {
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "[-0.707107...-0.707107...*i,-0.707107...+0.707107...*i,0.707107...+0.707107...*i,0.707107...-0.707107...*i]");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "[-0.707107...-0.707107...*i,0.707107...-0.707107...*i,0.707107...+0.707107...*i,-0.707107...+0.707107...*i]");
         engine.release();
     });
 });

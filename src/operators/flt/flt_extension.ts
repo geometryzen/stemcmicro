@@ -1,4 +1,4 @@
-import { create_sym, Flt, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, Sym } from "math-expression-atoms";
+import { create_str, create_sym, Flt, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
@@ -199,19 +199,19 @@ export class FltExtension implements Extension<Flt> {
                 }
             }
             case Native.ascii: {
-                return create_sym(this.toAsciiString(target, env));
+                return create_str(this.toAsciiString(target, env));
             }
             case Native.human: {
-                return create_sym(this.toHumanString(target, env));
+                return create_str(this.toHumanString(target, env));
             }
             case Native.infix: {
-                return create_sym(this.toInfixString(target, env));
+                return create_str(this.toInfixString(target, env));
             }
             case Native.latex: {
-                return create_sym(this.toLatexString(target, env));
+                return create_str(this.toLatexString(target, env));
             }
             case Native.sexpr: {
-                return create_sym(this.toListString(target, env));
+                return create_str(this.toListString(target, env));
             }
             case Native.simplify: {
                 return target;

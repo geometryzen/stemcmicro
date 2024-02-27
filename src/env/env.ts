@@ -2,7 +2,7 @@
 import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_lambda, is_rat, is_sym, Keyword, Lambda, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { ExprContext, ExprHandler, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
-import { Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
+import { Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, Shareable, U } from 'math-expression-tree';
 import { ExprEngineListener } from '../..';
 import { ExtensionEnvFromExprContext } from '../adapters/ExtensionEnvFromExprContext';
 import { make_eval } from '../adapters/make_eval';
@@ -23,6 +23,7 @@ import { FN, FUNCTION } from "../runtime/constants";
 import { execute_definitions } from '../runtime/init';
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
+import { ShareableMap } from '../shareable/ShareableMap';
 import { visit } from '../visitor/visit';
 import { Visitor } from '../visitor/Visitor';
 import { DerivedEnv } from './DerivedEnv';
@@ -363,7 +364,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const cellHost = new ReactiveHost();
     const subscribers: ExprEngineListener[] = [];
-    const stateMap: Map<string, unknown> = new Map();
+    const stateMap = new ShareableMap<string, Shareable>();
+    let refCount = 1;
 
     /**
      * The environment return value and environment for callbacks.
@@ -372,13 +374,22 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         get listeners(): ExprEngineListener[] {
             return subscribers;
         },
+        addRef(): void {
+            refCount++;
+        },
+        release(): void {
+            refCount--;
+            if (refCount === 0) {
+                stateMap.release();
+            }
+        },
         hasState(key: string): boolean {
             return stateMap.has(key);
         },
-        getState(key: string): unknown {
+        getState(key: string): Shareable {
             return stateMap.get(key);
         },
-        setState(key: string, value: unknown): void {
+        setState(key: string, value: Shareable): void {
             stateMap.set(key, value);
         },
         addAtomListener(subscriber: AtomListener): void {

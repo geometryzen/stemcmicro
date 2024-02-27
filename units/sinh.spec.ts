@@ -8,6 +8,7 @@ describe("sinh", function () {
         ];
         const engine = create_script_context();
         const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsAscii(values[0]), "sinh(x)");
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(sinh x)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "sinh(x)");
         engine.release();

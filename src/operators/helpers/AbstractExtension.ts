@@ -2,6 +2,8 @@ import { is_sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { is_cons, items_to_cons, U } from "math-expression-tree";
 import { ExtensionEnv, Sign } from "../../env/ExtensionEnv";
+import { render_as_ascii } from "../../print/render_as_ascii";
+import { render_as_human } from "../../print/render_as_human";
 import { render_as_infix } from "../../print/render_as_infix";
 import { render_as_latex } from "../../print/render_as_latex";
 import { render_as_sexpr } from "../../print/render_as_sexpr";
@@ -69,8 +71,11 @@ export abstract class AbstractExtension<T extends U> {
         }
         throw new SystemError();
     }
+    toAsciiString(expr: T, $: ExtensionEnv): string {
+        return render_as_ascii(expr, $);
+    }
     toHumanString(expr: T, $: ExtensionEnv): string {
-        return render_as_infix(expr, $);
+        return render_as_human(expr, $);
     }
     toInfixString(expr: T, $: ExtensionEnv): string {
         return render_as_infix(expr, $);

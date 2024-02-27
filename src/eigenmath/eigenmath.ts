@@ -8688,35 +8688,35 @@ function sinfunc_sum(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     list(2, $);
 }
 
-export function stack_sinh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
+export function stack_sinh(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    $.push(expr);
+    $.rest();
+    $.head();
     value_of(env, ctrl, $);
     sinhfunc(env, ctrl, $);
 }
 
 function sinhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    const p1 = pop($);
+    const x = pop($);
 
-    if (is_tensor(p1)) {
-        push(elementwise(p1, sinhfunc, env, ctrl, $), $);
+    if (is_tensor(x)) {
+        push(elementwise(x, sinhfunc, env, ctrl, $), $);
         return;
     }
 
-    if (is_flt(p1)) {
-        let d = p1.toNumber();
-        d = Math.sinh(d);
-        push_double(d, $);
+    if (is_flt(x)) {
+        push_double(Math.sinh(x.toNumber()), $);
         return;
     }
 
     // sinh(z) = 1/2 exp(z) - 1/2 exp(-z)
 
-    if (isdoublez(p1)) {
+    if (isdoublez(x)) {
         push_rational(1, 2, $);
-        push(p1, $);
+        push(x, $);
         expfunc(env, ctrl, $);
-        push(p1, $);
+        push(x, $);
         negate(env, ctrl, $);
         expfunc(env, ctrl, $);
         subtract(env, ctrl, $);
@@ -8724,28 +8724,28 @@ function sinhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
         return;
     }
 
-    if (iszero(p1, env)) {
+    if (iszero(x, env)) {
         push_integer(0, $);
         return;
     }
 
     // sinh(-x) -> -sinh(x)
 
-    if (isnegativeterm(p1)) {
-        push(p1, $);
+    if (isnegativeterm(x)) {
+        push(x, $);
         negate(env, ctrl, $);
         sinhfunc(env, ctrl, $);
         negate(env, ctrl, $);
         return;
     }
 
-    if (car(p1).equals(ARCSINH)) {
-        push(cadr(p1), $);
+    if (car(x).equals(ARCSINH)) {
+        push(cadr(x), $);
         return;
     }
 
     push(SINH, $);
-    push(p1, $);
+    push(x, $);
     list(2, $);
 }
 

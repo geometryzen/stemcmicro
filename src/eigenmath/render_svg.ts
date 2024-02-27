@@ -293,6 +293,19 @@ export function set_emit_small_font(): void {
 
 class SvgProgramStack implements ProgramStack {
     readonly #stack = new StackU();
+    #refCount = 1;
+    constructor() {
+        // Nothing to see here.
+    }
+    addRef(): void {
+        this.#refCount++;
+    }
+    release(): void {
+        this.#refCount--;
+        if (this.#refCount === 0) {
+            this.#stack.release();
+        }
+    }
     get isatom(): boolean {
         return this.#stack.isatom;
     }
@@ -378,35 +391,39 @@ export interface SvgRenderConfig {
 }
 
 export function render_svg(expr: U, env: SvgRenderEnv, options: SvgRenderConfig): string {
-    const $ = new SvgProgramStack();
+    const stack = new SvgProgramStack();
+    try {
+        emit_level = 0;
 
-    emit_level = 0;
+        emit_list(expr, env, stack, options);
 
-    emit_list(expr, env, $, options);
+        const codes = stack.pop()!;
 
-    const codes = $.pop()!;
+        const h0 = height(codes);
+        const d0 = depth(codes);
+        const w0 = width(codes);
 
-    const h0 = height(codes);
-    const d0 = depth(codes);
-    const w0 = width(codes);
+        const x = HPAD;
+        const y = Math.round(h0 + VPAD);
 
-    const x = HPAD;
-    const y = Math.round(h0 + VPAD);
+        const h = Math.round(h0 + d0 + 2 * VPAD);
+        const w = Math.round(w0 + 2 * HPAD);
 
-    const h = Math.round(h0 + d0 + 2 * VPAD);
-    const w = Math.round(w0 + 2 * HPAD);
+        const heq = "height='" + h + "'";
+        const weq = "width='" + w + "'";
 
-    const heq = "height='" + h + "'";
-    const weq = "width='" + w + "'";
+        const outbuf: string[] = [];
 
-    const outbuf: string[] = [];
+        outbuf.push("<svg " + heq + weq + ">");
 
-    outbuf.push("<svg " + heq + weq + ">");
+        draw_formula(x, y, codes, outbuf);
 
-    draw_formula(x, y, codes, outbuf);
-
-    outbuf.push("</svg>");
-    return outbuf.join('');
+        outbuf.push("</svg>");
+        return outbuf.join('');
+    }
+    finally {
+        stack.release();
+    }
 }
 
 /**
@@ -1192,8 +1209,14 @@ function emit_blade(blade: Blade, $: ProgramStack): void {
 
 function emit_atom(atom: Atom, env: SvgRenderEnv, $: ProgramStack): void {
     const handler = env.handlerFor(atom);
-    const str = nativeStr(handler.dispatch(atom, native_sym(Native.infix), nil, env));
-    emit_roman_string(str, $);
+    const value = handler.dispatch(atom, native_sym(Native.infix), nil, env);
+    try {
+        const str = nativeStr(value);
+        emit_roman_string(str, $);
+    }
+    finally {
+        value.release();
+    }
 }
 
 function emit_imaginary_unit(imu: Imu, $: ProgramStack, ec: SvgRenderConfig): void {

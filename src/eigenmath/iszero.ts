@@ -1,20 +1,30 @@
 import { Sym } from "math-expression-atoms";
 import { CompareFn, ExprContext, ExprHandler } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { Cons, is_atom, U } from "math-expression-tree";
+import { Cons, is_atom, Shareable, U } from "math-expression-tree";
 import { ProgramEnv } from "./ProgramEnv";
 
 class IsZeroExprContext implements ExprContext {
-    constructor(readonly env: Pick<ProgramEnv, 'hasState' | 'getState' | 'setState' | 'handlerFor'>) {
-
+    #refCount = 1;
+    constructor(readonly env: Pick<ProgramEnv, 'addRef' | 'hasState' | 'getState' | 'setState' | 'handlerFor' | 'release'>) {
+        this.env.addRef();
+    }
+    addRef(): void {
+        this.#refCount++;
+    }
+    release(): void {
+        this.#refCount--;
+        if (this.#refCount === 0) {
+            this.env.release();
+        }
     }
     hasState(key: string): boolean {
         return this.env.hasState(key);
     }
-    getState(key: string): unknown {
+    getState(key: string): Shareable {
         return this.env.getState(key);
     }
-    setState(key: string, value: unknown): void {
+    setState(key: string, value: Shareable): void {
         this.env.setState(key, value);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,7 +94,7 @@ class IsZeroExprContext implements ExprContext {
 /**
  * Works for expr being Rat, Flt, or Tensor.
  */
-export function iszero(atom: U, env: Pick<ProgramEnv, 'getState' | 'handlerFor' | 'hasState' | 'setState'>): boolean {
+export function iszero(atom: U, env: Pick<ProgramEnv, 'addRef' | 'getState' | 'handlerFor' | 'hasState' | 'setState' | 'release'>): boolean {
     if (is_atom(atom)) {
         const handler = env.handlerFor(atom);
         return handler.test(atom, native_sym(Native.iszero), new IsZeroExprContext(env));

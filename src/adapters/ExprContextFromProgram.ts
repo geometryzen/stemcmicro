@@ -1,22 +1,34 @@
 import { Sym } from "math-expression-atoms";
 import { CompareFn, ExprContext, ExprHandler } from "math-expression-context";
-import { Cons, U } from "math-expression-tree";
+import { Cons, Shareable, U } from "math-expression-tree";
 import { value_of } from "../eigenmath/eigenmath";
 import { ProgramControl } from "../eigenmath/ProgramControl";
 import { ProgramEnv } from "../eigenmath/ProgramEnv";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 
 export class ExprContextFromProgram implements ExprContext {
-    constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly $: ProgramStack) {
-        // Nothing to see here.
+    #refCount = 1;
+    constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly stk: ProgramStack) {
+        this.env.addRef();
+        this.stk.addRef();
+    }
+    addRef(): void {
+        this.#refCount++;
+    }
+    release(): void {
+        this.#refCount--;
+        if (this.#refCount === 0) {
+            this.env.release();
+            this.stk.release();
+        }
     }
     hasState(key: string): boolean {
         return this.env.hasState(key);
     }
-    getState(key: string): unknown {
+    getState(key: string): Shareable {
         return this.env.getState(key);
     }
-    setState(key: string, value: unknown): void {
+    setState(key: string, value: Shareable): void {
         this.env.setState(key, value);
     }
     clearBindings(): void {
@@ -63,9 +75,9 @@ export class ExprContextFromProgram implements ExprContext {
         this.env.defineUserSymbol(name);
     }
     valueOf(expr: U): U {
-        this.$.push(expr);
-        value_of(this.env, this.ctrl, this.$);
-        return this.$.pop();
+        this.stk.push(expr);
+        value_of(this.env, this.ctrl, this.stk);
+        return this.stk.pop();
     }
     getSymbolPrintName(sym: Sym): string {
         return this.ctrl.getSymbolPrintName(sym);

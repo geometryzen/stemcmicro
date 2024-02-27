@@ -17,7 +17,13 @@ export function formatStringFromArgs(text: string, argList: Cons, env: ExprConte
         const arg = argList.item(parseInt(index));
         try {
             const handler = env.handlerFor(arg);
-            return nativeStr(handler.dispatch(arg, native_sym(Native.infix), nil, env));
+            const value = handler.dispatch(arg, native_sym(Native.infix), nil, env);
+            try {
+                return nativeStr(value);
+            }
+            finally {
+                value.release();
+            }
         }
         finally {
             arg.release();

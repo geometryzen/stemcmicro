@@ -7,7 +7,6 @@ import { add_terms } from '../../calculators/add/add_terms';
 import { condense, yycondense } from '../../condense';
 import { complexity } from '../../eigenmath/eigenmath';
 import { Directive, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
-import { ShareableStack } from '../../env/Stack';
 import { add } from '../../helpers/add';
 import { clock } from '../../helpers/clock';
 import { divide } from '../../helpers/divide';
@@ -30,6 +29,7 @@ import { count, countOccurrencesOfSymbol } from '../../runtime/count';
 import { noexpand_unary } from '../../runtime/defs';
 import { is_add, is_inner_or_dot, is_multiply, is_power } from '../../runtime/helpers';
 import { stack_pop } from '../../runtime/stack';
+import { ShareableStack } from '../../shareable/ShareableStack';
 import { simfac } from '../../simfac';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, third, three, two } from '../../tree/rat/Rat';
@@ -60,8 +60,6 @@ function ensure_simplify_state(env: ExprContext): ShareableStack<U> {
         return env.getState('simplify') as ShareableStack<U>;
     }
     else {
-        // This makes it clear that we want the entries in the state to extend a Shareable interface
-        // so that we can clean them up.
         const stack = new ShareableStack<U>();
         env.setState('simplify', stack);
         return stack;

@@ -1,9 +1,9 @@
 import { Sym } from "math-expression-atoms";
 import { ExprHandler } from "math-expression-context";
-import { Cons, U } from "math-expression-tree";
+import { Cons, Shareable, U } from "math-expression-tree";
 import { ProgramStack } from "./ProgramStack";
 
-export interface ProgramEnv {
+export interface ProgramEnv extends Shareable {
     clearBindings(): void;
     executeProlog(script: string[]): void;
     getBinding(opr: Sym, target: Cons): U;
@@ -19,6 +19,6 @@ export interface ProgramEnv {
      */
     valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U;
     hasState(key: string): boolean;
-    getState(key: string): unknown;
-    setState(key: string, value: unknown): void;
+    getState(key: string): Shareable;
+    setState(key: string, value: Shareable): void;
 }

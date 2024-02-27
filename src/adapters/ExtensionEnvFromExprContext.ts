@@ -2,7 +2,7 @@
 import { CellHost, create_int, is_boo, is_rat, Sym, Tensor } from "math-expression-atoms";
 import { ExprContext, ExprHandler, LambdaExpr } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
+import { Cons, is_atom, items_to_cons, nil, Shareable, U } from "math-expression-tree";
 import { AtomListener, ExprEngineListener } from "../api/api";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { CompareFn, Directive, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
@@ -32,7 +32,7 @@ function predicate_to_boolean(expr: U): boolean {
 
 function checkThis(arg: ExtensionEnvFromExprContext): ExprContext {
     if (arg instanceof ExtensionEnvFromExprContext) {
-        return arg.ctxt;
+        return arg.context;
     }
     else {
         throw new ProgrammingError(new Error().stack);
@@ -40,25 +40,37 @@ function checkThis(arg: ExtensionEnvFromExprContext): ExprContext {
 }
 
 export class ExtensionEnvFromExprContext implements ExtensionEnv {
-    constructor(readonly ctxt: ExprContext) {
-        if (ctxt) {
-            // OK
+    readonly context: ExprContext;
+    #refCount = 1;
+    constructor(context: ExprContext) {
+        if (context) {
+            this.context = context;
+            context.addRef();
         }
         else {
             throw new ProgrammingError("ctxt MUST be defined.");
         }
     }
+    addRef(): void {
+        this.#refCount++;
+    }
+    release(): void {
+        this.#refCount--;
+        if (this.#refCount === 0) {
+            this.context.release();
+        }
+    }
     hasState(key: string): boolean {
-        return this.ctxt.hasState(key);
+        return this.context.hasState(key);
     }
-    getState(key: string): unknown {
-        return this.ctxt.getState(key);
+    getState(key: string): Shareable {
+        return this.context.getState(key);
     }
-    setState(key: string, value: unknown): void {
-        this.ctxt.setState(key, value);
+    setState(key: string, value: Shareable): void {
+        this.context.setState(key, value);
     }
     handlerFor<T extends U>(expr: T): ExprHandler<T> {
-        return this.ctxt.handlerFor(expr);
+        return this.context.handlerFor(expr);
     }
     addAtomListener(subscriber: AtomListener): void {
         throw new Error("Method not implemented.");
@@ -84,7 +96,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     abs(arg: U): U {
         const expr = items_to_cons(native_sym(Native.arg), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -96,7 +108,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     add(...args: U[]): U {
         const expr = items_to_cons(native_sym(Native.add), ...args);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -105,7 +117,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     arccos(arg: U): U {
         const expr = items_to_cons(native_sym(Native.arccos), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -114,7 +126,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     arcsin(arg: U): U {
         const expr = items_to_cons(native_sym(Native.arcsin), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -123,7 +135,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     arctan(arg: U): U {
         const expr = items_to_cons(native_sym(Native.arctan), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -132,7 +144,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     arg(arg: U): U {
         const expr = items_to_cons(native_sym(Native.arg), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -141,7 +153,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     clock(arg: U): U {
         const expr = items_to_cons(native_sym(Native.clock), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -150,7 +162,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     conj(arg: U): U {
         const expr = items_to_cons(native_sym(Native.conj), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -159,7 +171,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     cos(arg: U): U {
         const expr = items_to_cons(native_sym(Native.cos), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -172,12 +184,12 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     compareFn(opr: Sym): CompareFn {
-        return this.ctxt.compareFn(opr);
+        return this.context.compareFn(opr);
     }
     component(tensor: Tensor<U>, indices: U): U {
         const expr = items_to_cons(native_sym(Native.component), tensor, indices);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -207,7 +219,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     divide(lhs: U, rhs: U): U {
         const expr = items_to_cons(native_sym(Native.divide), lhs, rhs);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -238,7 +250,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     exp(arg: U): U {
         const expr = items_to_cons(native_sym(Native.exp), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -247,7 +259,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     factor(arg: U): U {
         const expr = items_to_cons(native_sym(Native.factor), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -259,14 +271,14 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     float(arg: U): U {
         const expr = items_to_cons(native_sym(Native.float), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
         }
     }
     getDirective(directive: number): number {
-        return this.ctxt.getDirective(directive);
+        return this.context.getDirective(directive);
     }
     getSymbolPredicates(sym: Sym): Predicates {
         const predicates: Predicates = {
@@ -317,7 +329,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     im(arg: U): U {
         const expr = items_to_cons(native_sym(Native.imag), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -326,7 +338,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     inner(lhs: U, rhs: U): U {
         const expr = items_to_cons(native_sym(Native.inner), lhs, rhs);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -338,7 +350,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     iscomplex(arg: U): boolean {
         const expr = items_to_cons(native_sym(Native.iscomplex), arg);
         try {
-            const retval = this.ctxt.valueOf(expr);
+            const retval = this.context.valueOf(expr);
             try {
                 return predicate_to_boolean(retval);
             }
@@ -351,7 +363,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         }
     }
     isExpanding(): boolean {
-        return this.ctxt.getDirective(Directive.expanding) > 0;
+        return this.context.getDirective(Directive.expanding) > 0;
     }
     isFactoring(): boolean {
         throw new Error("Method not implemented.");
@@ -359,7 +371,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     isimag(arg: U): boolean {
         const expr = items_to_cons(native_sym(Native.isimag), arg);
         try {
-            const retval = this.ctxt.valueOf(expr);
+            const retval = this.context.valueOf(expr);
             try {
                 return predicate_to_boolean(retval);
             }
@@ -374,7 +386,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     isinfinite(arg: U): boolean {
         const expr = items_to_cons(native_sym(Native.isinfinite), arg);
         try {
-            const retval = this.ctxt.valueOf(expr);
+            const retval = this.context.valueOf(expr);
             try {
                 return predicate_to_boolean(retval);
             }
@@ -389,7 +401,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     isinfinitesimal(arg: U): boolean {
         const expr = items_to_cons(native_sym(Native.isinfinitesimal), arg);
         try {
-            const retval = this.ctxt.valueOf(expr);
+            const retval = this.context.valueOf(expr);
             try {
                 return predicate_to_boolean(retval);
             }
@@ -414,7 +426,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
 
         const expr = items_to_cons(native_sym(Native.ispositive), arg);
         try {
-            const retval = this.ctxt.valueOf(expr);
+            const retval = this.context.valueOf(expr);
             try {
                 return predicate_to_boolean(retval);
             }
@@ -447,7 +459,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     iszero(arg: U): boolean {
         const expr = items_to_cons(native_sym(Native.iszero), arg);
         try {
-            const retval = this.ctxt.valueOf(expr);
+            const retval = this.context.valueOf(expr);
             try {
                 return predicate_to_boolean(retval);
             }
@@ -462,7 +474,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     log(arg: U): U {
         const expr = items_to_cons(native_sym(Native.log), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -471,7 +483,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     multiply(...args: U[]): U {
         const expr = items_to_cons(native_sym(Native.multiply), ...args);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -480,7 +492,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     negate(arg: U): U {
         const expr = items_to_cons(native_sym(Native.multiply), create_int(-1), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -488,14 +500,14 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     }
     extensionFor(expr: U): Extension<U> | undefined {
         if (is_atom(expr)) {
-            return new ExtensionFromExprHandler(this.ctxt.handlerFor(expr));
+            return new ExtensionFromExprHandler(this.context.handlerFor(expr));
         }
         throw new Error("ExtensionFromExprContext.extensionFo method not implemented.");
     }
     outer(...args: U[]): U {
         const expr = items_to_cons(native_sym(Native.outer), ...args);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -504,7 +516,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     polar(arg: U): U {
         const expr = items_to_cons(native_sym(Native.polar), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -513,7 +525,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     power(base: U, expo: U): U {
         const expr = items_to_cons(native_sym(Native.pow), base, expo);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -522,7 +534,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     re(arg: U): U {
         const expr = items_to_cons(native_sym(Native.real), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -531,7 +543,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     rect(arg: U): U {
         const expr = items_to_cons(native_sym(Native.rect), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -541,10 +553,10 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     pushDirective(directive: number, value: number): void {
-        this.ctxt.pushDirective(directive, value);
+        this.context.pushDirective(directive, value);
     }
     popDirective(): void {
-        this.ctxt.popDirective();
+        this.context.popDirective();
     }
     setSymbolOrder(sym: Sym, order: ExprComparator): void {
         throw new Error("Method not implemented.");
@@ -561,7 +573,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     simplify(arg: U): U {
         const expr = items_to_cons(native_sym(Native.simplify), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -570,7 +582,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     sin(arg: U): U {
         const expr = items_to_cons(native_sym(Native.sin), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -579,7 +591,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     sqrt(arg: U): U {
         const expr = items_to_cons(native_sym(Native.sqrt), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -588,7 +600,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     st(arg: U): U {
         const expr = items_to_cons(native_sym(Native.st), arg);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -600,7 +612,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     subtract(lhs: U, rhs: U): U {
         const expr = items_to_cons(native_sym(Native.subtract), lhs, rhs);
         try {
-            return this.ctxt.valueOf(expr);
+            return this.context.valueOf(expr);
         }
         finally {
             expr.release();
@@ -616,7 +628,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     transform(expr: U): [number, U] {
-        const value = this.ctxt.valueOf(expr);
+        const value = this.context.valueOf(expr);
         if (value.equals(expr)) {
             return [TFLAG_NONE, value];
         }
@@ -640,16 +652,16 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         }
     }
     hasBinding(opr: Sym, target: Cons): boolean {
-        return this.ctxt.hasBinding(opr, target);
+        return this.context.hasBinding(opr, target);
     }
     getBinding(opr: Sym, target: Cons): U {
-        return this.ctxt.getBinding(opr, target);
+        return this.context.getBinding(opr, target);
     }
     setBinding(opr: Sym, binding: U): void {
         throw new Error("Method not implemented.");
     }
     hasUserFunction(name: Sym): boolean {
-        return this.ctxt.hasUserFunction(name);
+        return this.context.hasUserFunction(name);
     }
     getUserFunction(name: Sym): U {
         throw new Error("Method not implemented.");

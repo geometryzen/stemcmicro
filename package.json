@@ -146,6 +146,7 @@
         "unit-schwarzchild": "mocha 'units/schwarzchild.spec.ts'",
         "unit-simplify": "mocha 'units/simplify.spec.ts'",
         "unit-sin": "mocha 'units/sin.spec.ts'",
+        "unit-sinh": "mocha 'units/sinh.spec.ts'",
         "unit-sqrt": "mocha 'units/sqrt.spec.ts'",
         "unit-svg": "mocha 'units/svg.spec.ts'",
         "unit-sum": "mocha 'units/sum.spec.ts'",
@@ -209,7 +210,7 @@
     },
     "peerDependencies": {
         "math-expression-atoms": "^0.9.39",
-        "math-expression-context": "^0.9.28",
+        "math-expression-context": "^0.9.29",
         "math-expression-native": "^0.9.22",
         "math-expression-tree": "^0.9.28"
     },

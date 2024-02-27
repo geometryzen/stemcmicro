@@ -30,7 +30,13 @@ export function render_as_sexpr(expr: U, $: PrintConfig): string {
     else if (is_atom(expr)) {
         const handler = $.handlerFor(expr);
         // FIXME: casting
-        return nativeStr(handler.dispatch(expr, native_sym(Native.sexpr), nil, $ as unknown as ExprContext));
+        const retval = handler.dispatch(expr, native_sym(Native.sexpr), nil, $ as unknown as ExprContext);
+        try {
+            return nativeStr(retval);
+        }
+        finally {
+            retval.release();
+        }
     }
     else if (expr.isnil) {
         const handler = $.handlerFor(expr);

@@ -1,6 +1,6 @@
-import { U } from "math-expression-tree";
+import { Shareable, U } from "math-expression-tree";
 
-export interface ProgramStack {
+export interface ProgramStack extends Shareable {
     get length(): number;
     set length(length: number);
     concat(exprs: U[]): void;

@@ -2,7 +2,7 @@
 import { CellHost, create_sym, is_boo, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor, Sym, Tensor } from "math-expression-atoms";
 import { ExprHandler, LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
-import { Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
+import { Cons, is_atom, is_cons, is_nil, items_to_cons, Shareable, U } from "math-expression-tree";
 import { StackFunction } from "../adapters/StackFunction";
 import { AtomListener, ExprEngineListener } from "../api/api";
 import { assert_sym_any_any } from "../clojurescript/runtime/step_setq";
@@ -37,17 +37,28 @@ export class DerivedEnv implements ExtensionEnv {
     readonly #bindings: Map<string, U> = new Map();
     readonly #userfunc: Map<string, U> = new Map();
     readonly listeners: ExprEngineListener[] = [];
+    #refCount = 1;
     constructor(baseEnv: ExtensionEnv, config: Readonly<EnvConfig>) {
         this.#baseEnv = baseEnv;
+        this.#baseEnv.addRef();
         this.#config = config;
+    }
+    addRef(): void {
+        this.#refCount++;
+    }
+    release(): void {
+        this.#refCount--;
+        if (this.#refCount === 0) {
+            this.#baseEnv.release();
+        }
     }
     hasState(key: string): boolean {
         return this.#baseEnv.hasState(key);
     }
-    getState(key: string): unknown {
+    getState(key: string): Shareable {
         return this.#baseEnv.getState(key);
     }
-    setState(key: string, value: unknown): void {
+    setState(key: string, value: Shareable): void {
         this.#baseEnv.setState(key, value);
     }
     addAtomListener(subscriber: AtomListener): void {

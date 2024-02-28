@@ -10,7 +10,7 @@
 import { is_boo } from "math-expression-atoms";
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { imu } from "../env/imu";
-import { zzfloat } from "../operators/float/float";
+import { evaluate_as_float } from "../operators/float/float";
 import { replace_assign_with_testeq } from "../operators/predicate/replace_assign_with_testeq";
 import { is_num_or_tensor_or_identity_matrix } from "../runtime/helpers";
 import { U } from "../tree/tree";
@@ -58,7 +58,7 @@ export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: Ex
     // so we might get down to a simple numeric value
     // in some of those cases
     // TODO: Why do we use zz float when we know that the value is fully evaluated?
-    const valueAsFlt = zzfloat(value, $);
+    const valueAsFlt = evaluate_as_float(value, $);
 
     // anything that could be calculated down to a simple
     // numeric value is now indeed either a

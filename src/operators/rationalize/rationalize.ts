@@ -22,10 +22,11 @@ export function eval_rationalize(expr: Cons, $: ExtensionEnv): U {
     return rationalize_factoring(value, $);
 }
 
-export function rationalize_factoring(argList: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
+export function rationalize_factoring(arg: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
+    // console.lg("rationalize_factoring", `${arg}`);
     $.pushDirective(Directive.factoring, 1);
     try {
-        return yyrationalize(argList, $);
+        return yyrationalize(arg, $);
     }
     finally {
         $.popDirective();
@@ -33,7 +34,7 @@ export function rationalize_factoring(argList: U, $: Pick<ExprContext, 'handlerF
 }
 
 function yyrationalize(arg: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
-    // console.lg(`yyrationalize ${render_as_infix(arg, $)}`);
+    // console.lg("yyrationalize", `${arg}`);
     if (is_tensor(arg)) {
         return __rationalize_tensor(arg, $);
     }
@@ -47,7 +48,7 @@ function yyrationalize(arg: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirectiv
     // get common denominator
     const commonDenominator = multiply_denominators(arg, $);
 
-    // console.lg(`commonDenominator ${render_as_infix(commonDenominator, $)}`);
+    // console.lg("commonDenominator", `${commonDenominator}`);
 
     // multiply each term by common denominator
     let temp: U = zero;
@@ -59,13 +60,16 @@ function yyrationalize(arg: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirectiv
                 temp
             );
     }
+
+    // console.lg("temp", `${temp}`);
+
     // collect common factors
     // divide by common denominator
     // console.lg(`temp ${print_expr(temp, $)}`);
     const condensed = condense(temp, $);
-    // console.lg(`condensed ${print_expr(condensed, $)}`);
+    // console.lg("condensed", `${condensed}`);
     const rationalized = divide(condensed, commonDenominator, $);
-    // console.lg(`rationalized ${print_expr(rationalized, $)}`);
+    // console.lg("retval", `${rationalized}`);
     return rationalized;
 }
 

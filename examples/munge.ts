@@ -24,7 +24,7 @@ export function munge(sourceText: string, options: Partial<MungeConfig>): U {
         const { trees, errors } = engine.parse(sourceText, { explicitAssocAdd: true, explicitAssocExt: true, explicitAssocMul: true });
         if (errors.length > 0) {
             // eslint-disable-next-line no-console
-            console.log(errors[0]);
+            console.log("munge", errors[0]);
         }
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];

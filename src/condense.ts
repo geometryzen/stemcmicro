@@ -1,5 +1,6 @@
+import { zero } from 'math-expression-atoms';
 import { ExprContext } from 'math-expression-context';
-import { ExtensionEnv } from './env/ExtensionEnv';
+import { U } from 'math-expression-tree';
 import { add } from './helpers/add';
 import { divide } from './helpers/divide';
 import { inverse } from './helpers/inverse';
@@ -9,18 +10,18 @@ import { noexpand_unary } from './runtime/defs';
 import { is_add } from './runtime/helpers';
 import { doexpand_value_of } from './scripting/doexpand_eval';
 import { cadr } from './tree/helpers';
-import { zero } from './tree/rat/Rat';
-import { U } from './tree/tree';
 
-// Condense an expression by factoring common terms.
-
-export function eval_condense(p1: U, $: ExtensionEnv): U {
-    const result = condense($.valueOf(cadr(p1)), $);
+/**
+ * Condense an expression by factoring common terms.
+ */
+export function eval_condense(expr: U, $: ExprContext): U {
+    const result = condense($.valueOf(cadr(expr)), $);
     return result;
 }
 
-export function condense(p1: U, $: Pick<ExprContext, 'popDirective' | 'pushDirective' | 'valueOf'>): U {
-    return noexpand_unary(yycondense, p1, $);
+export function condense(x: U, $: Pick<ExprContext, 'handlerFor' | 'popDirective' | 'pushDirective' | 'valueOf'>): U {
+    // console.lg("condense", `${x}`);
+    return noexpand_unary(yycondense, x, $);
 }
 
 /**
@@ -29,23 +30,25 @@ export function condense(p1: U, $: Pick<ExprContext, 'popDirective' | 'pushDirec
  * @param $ 
  * @returns 
  */
-export function yycondense(P: U, $: Pick<ExprContext, 'popDirective' | 'pushDirective' | 'valueOf'>): U {
-    // console.lg("yycondense", render_as_sexpr(P, $));
-    // console.lg("yycondense", render_as_infix(P, $));
+export function yycondense(P: U, $: Pick<ExprContext, 'handlerFor' | 'popDirective' | 'pushDirective' | 'valueOf'>): U {
+    // console.lg("yycondense", `${P}`);
 
     if (!is_add(P)) {
         return P;
     }
 
     // get gcd of all terms
-    const terms_gcd = P.tail().reduce(function (x, y) {
-        return gcd(x, y, $ as ExtensionEnv);
+    const terms_gcd = P.tail().reduce(function (previous, current) {
+        return gcd(previous, current, $);
     });
 
-    // console.lg("terms_gcd", render_as_infix(terms_gcd, $));
+    // console.lg("terms_gcd", `${terms_gcd}`);
 
     // divide each term by gcd, which is to say, multiply each by the inverse.
     const one_divided_by_gcd = inverse(terms_gcd, $);
+
+    // console.lg("one_divided_by_gcd", `${one_divided_by_gcd}`);
+
     const P_divided_by_gcd = P
         .tail()
         .reduce((a: U, b: U) => add($, a, multiply_noexpand(one_divided_by_gcd, b, $)), zero);

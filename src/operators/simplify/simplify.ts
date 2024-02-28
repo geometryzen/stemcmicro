@@ -332,44 +332,45 @@ function simplify_terms(p1: U, $: ExprContext): U {
     return p1;
 }
 
-function simplify_rational_expressions(p1: U, $: ExprContext): U {
+function simplify_rational_expressions(x: U, $: ExprContext): U {
 
-    const denom = denominator(p1, $);
+    const denom = denominator(x, $);
     if (is_plus_or_minus_one(denom, $)) {
-        return p1;
+        return x;
     }
-    const num = numerator(p1, $);
-    if (is_plus_or_minus_one(num, $)) {
-        return p1;
+    const numer = numerator(x, $);
+    if (is_plus_or_minus_one(numer, $)) {
+        return x;
     }
-    let polyVar: U | undefined;
-    if (!(polyVar = areunivarpolysfactoredorexpandedform(num, denom))) {
-        return p1;
-    }
+    const polyVar = areunivarpolysfactoredorexpandedform(numer, denom);
+    if (polyVar) {
+        const theGCD = factor(gcd(numer, denom, $), polyVar, $);
+        if (is_plus_or_minus_one(theGCD, $)) {
+            return x;
+        }
 
-    const theGCD = factor(gcd(num, denom, $), polyVar, $);
-    if (is_plus_or_minus_one(theGCD, $)) {
-        return p1;
-    }
+        const factoredNum: U = factor(numer, polyVar, $);
+        const theGCDInverse: U = inverse(theGCD, $);
+        const multipliedNoeExpandNum: U = multiply_noexpand(factoredNum, theGCDInverse, $);
+        const simplifiedNum: U = simplify(multipliedNoeExpandNum, $);
 
-    const factoredNum: U = factor(num, polyVar, $);
-    const theGCDInverse: U = inverse(theGCD, $);
-    const multipliedNoeExpandNum: U = multiply_noexpand(factoredNum, theGCDInverse, $);
-    const simplifiedNum: U = simplify(multipliedNoeExpandNum, $);
+        const factoredDenom: U = factor(denom, polyVar, $);
+        const multipliedNoeExpandDenom: U = multiply_noexpand(factoredDenom, theGCDInverse, $);
+        const simplifiedDenom: U = simplify(multipliedNoeExpandDenom, $);
 
-    const factoredDenom: U = factor(denom, polyVar, $);
-    const multipliedNoeExpandDenom: U = multiply_noexpand(factoredDenom, theGCDInverse, $);
-    const simplifiedDenom: U = simplify(multipliedNoeExpandDenom, $);
+        const numDividedDenom: U = divide(simplifiedNum, simplifiedDenom, $);
 
-    const numDividedDenom: U = divide(simplifiedNum, simplifiedDenom, $);
+        const p2 = condense(numDividedDenom, $);
 
-    const p2 = condense(numDividedDenom, $);
-
-    if (count(p2) < count(p1)) {
-        return p2;
+        if (count(p2) < count(x)) {
+            return p2;
+        }
+        else {
+            return x;
+        }
     }
     else {
-        return p1;
+        return x;
     }
 }
 

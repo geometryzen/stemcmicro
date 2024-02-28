@@ -1,6 +1,6 @@
 import { is_flt, is_num, is_rat, Num, Rat } from 'math-expression-atoms';
 import { ExprContext } from 'math-expression-context';
-import { is_cons, nil, U } from 'math-expression-tree';
+import { is_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
@@ -79,7 +79,8 @@ export function is_num_and_integer(p: U): p is Num & { __ts_integer: true } {
 
 // --------------------------------------
 
-export function isunivarpolyfactoredorexpandedform(p: U, x: U | null): U {
+export function isunivarpolyfactoredorexpandedform(p: U, x: U | null): U | false {
+    // console.lg("isunivarpolyfactoredorexpandedform", `${p}`, `${x}`);
     if (x == null) {
         x = guess(p);
     }
@@ -88,7 +89,7 @@ export function isunivarpolyfactoredorexpandedform(p: U, x: U | null): U {
         return x;
     }
     else {
-        return nil;
+        return false;
     }
 }
 

@@ -1,22 +1,16 @@
-import { ExtensionEnv } from "../env/ExtensionEnv";
-import { imu } from '../env/imu';
+import { imu, is_imu, is_tensor } from 'math-expression-atoms';
+import { ExprContext } from "math-expression-context";
+import { is_cons, U } from 'math-expression-tree';
 import { equaln } from '../is';
 import { is_rat_and_integer } from '../is_rat_and_integer';
-import { is_imu } from '../operators/imu/is_imu';
-import { is_tensor } from '../operators/tensor/is_tensor';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { caddr, cadr } from '../tree/helpers';
-import { is_cons, U } from '../tree/tree';
 import { is_power } from './helpers';
 
 /**
  * find stuff like (-1)^(something), but disregard imaginary units which are in the form (-1)^(1/2))
- * @param expr 
- * @param mysteryArg 
- * @param $ 
- * @returns 
  */
-export function has_clock_form(expr: U, mysteryArg: U, $: ExtensionEnv): boolean {
+export function has_clock_form(expr: U, mysteryArg: U, $: ExprContext): boolean {
 
     if (is_imu(expr)) {
         return false;
@@ -55,7 +49,7 @@ export function has_clock_form(expr: U, mysteryArg: U, $: ExtensionEnv): boolean
 /**
  * find stuff like (e)^(i something)
  */
-export function has_exp_form(expr: U, $: ExtensionEnv): boolean {
+export function has_exp_form(expr: U, $: ExprContext): boolean {
 
     if (is_cons(expr)) {
         // (pow e (...))

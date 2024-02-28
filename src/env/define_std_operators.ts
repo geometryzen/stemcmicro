@@ -7,16 +7,19 @@ import { AddComparator } from '../calculators/compare/compare_term_term';
 import { eval_choose } from '../choose';
 import { eval_clear, eval_clearall } from '../clear';
 import {
-    stack_abs, stack_arccos,
+    stack_arccos,
     stack_arccosh,
     stack_arcsin,
     stack_arcsinh,
     stack_arctan,
     stack_arctanh,
     stack_arg,
-    stack_binding, stack_circexp,
-    stack_clock, stack_cos,
-    stack_cosh, stack_exp,
+    stack_binding,
+    stack_circexp,
+    stack_clock,
+    stack_cos,
+    stack_cosh,
+    stack_exp,
     stack_expcos,
     stack_expcosh,
     stack_expsin,
@@ -51,6 +54,7 @@ import { stack_infix } from '../eigenmath/stack_infix';
 import { eval_filter } from '../filter';
 import { eval_leading } from '../leading';
 import { eval_lookup } from '../lookup';
+import { eval_abs } from '../operators/abs/eval_abs';
 import { add_2_rat_uom } from '../operators/add/add_2_rat_uom';
 import { eval_add } from '../operators/add/eval_add';
 import { eval_adj } from '../operators/adj/adj';
@@ -419,7 +423,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(jsobject_extension_builder);
     $.defineExtension(localizable_extension_builder);
 
-    $.defineStackFunction(native_sym(Native.abs), stack_abs);
+    // $.defineStackFunction(native_sym(Native.abs), stack_abs);
+    $.defineEvalFunction(native_sym(Native.abs), eval_abs);
 
     $.defineEvalFunction(native_sym(Native.adj), eval_adj);
 

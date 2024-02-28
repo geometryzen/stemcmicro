@@ -98,8 +98,8 @@ describe("QQ", function () {
         });
         describe("valueOf", function () {
             it("should return an equivalent number", function () {
-                for (let n = -10; n < 10; n++) {
-                    for (let d = -10; d < 10; d++) {
+                for (let n = -20; n < 20; n++) {
+                    for (let d = 0; d < 20; d++) {
                         if (d !== 0) {
                             const x = QQ.valueOf(n, d);
                             assert.strictEqual(x.numer * d, x.denom * n);

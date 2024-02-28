@@ -12,7 +12,7 @@ export function soft_reset($: ExtensionEnv): void {
 }
 
 /**
- * These should only be used in tests as a convenience.
+ * A prolog for use in tests which defines e, i, pi, and a few other things.
  */
 export const stemc_prolog = [
     'e=exp(1)',

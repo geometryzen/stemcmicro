@@ -1,4 +1,5 @@
 import { create_sym, is_blade, is_flt, is_num, is_tensor, Num, one, zero } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { assert_cons_or_nil, car, cdr, cons, Cons, is_atom, is_nil, items_to_cons, U } from "math-expression-tree";
 import { add_num_num } from "../../calculators/add/add_num_num";
@@ -8,6 +9,8 @@ import { canonical_factor_num_rhs } from "../../calculators/factorize/canonical_
 import { remove_factors } from "../../calculators/remove_factors";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { float } from "../../helpers/float";
+import { multiply } from "../../helpers/multiply";
 import { is_add, is_multiply } from "../../runtime/helpers";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { compare_blade_blade } from "../blade/blade_extension";
@@ -30,6 +33,10 @@ export function eval_add(expr: Cons, $: ExtensionEnv): U {
     finally {
         args.release();
     }
+}
+
+export function add(lhs: U, rhs: U, $: ExprContext): U {
+    return add_terms([lhs, rhs], $);
 }
 
 export function add_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {
@@ -72,7 +79,7 @@ function push_terms(terms: U[], term: U): void {
     }
 }
 
-function add_terms(terms: U[], $: ExtensionEnv): U {
+function add_terms(terms: U[], $: ExprContext): U {
     /*
     console.lg("add_terms");
     for (let i = 0; i < terms.length; i++) {
@@ -196,7 +203,7 @@ function add_terms(terms: U[], $: ExtensionEnv): U {
     }
 }
 
-function combine_terms(terms: U[], $: ExtensionEnv): void {
+function combine_terms(terms: U[], $: ExprContext): void {
     let addedZeroAsFlt = false;
     let i = 0;
     while (i < terms.length - 1) {
@@ -328,7 +335,7 @@ function combine_terms(terms: U[], $: ExtensionEnv): void {
 
         const arg2 = t ? cons(MATH_MUL, assert_cons_or_nil(lhs)) : lhs;
 
-        terms.splice(i, 2, $.multiply(p1, arg2));
+        terms.splice(i, 2, multiply($, p1, arg2));
         i--;
 
         // this i++ is to match the while
@@ -336,20 +343,25 @@ function combine_terms(terms: U[], $: ExtensionEnv): void {
     }
     if (addedZeroAsFlt) {
         for (let i = 0; i < terms.length; i++) {
-            terms[i] = $.float(terms[i]);
+            terms[i] = float(terms[i], $);
         }
     }
 }
 
-function is_num_or_tensor_and_zero(expr: U, $: Pick<ExtensionEnv, 'iszero'>): boolean {
-    return is_num_and_zero(expr) || is_tensor_and_zero(expr, $);
+function is_num_or_tensor_and_zero(expr: U, env: ExprContext): boolean {
+    return is_num_and_zero(expr) || is_tensor_and_zero(expr, env);
 }
 
 function is_num_and_zero(expr: U): boolean {
     return is_num(expr) && expr.isZero();
 }
 
-function is_tensor_and_zero(expr: U, $: Pick<ExtensionEnv, 'iszero'>): boolean {
-    // TODO: We can see here that we could simply as if the term is zero.
-    return is_tensor(expr) && $.iszero(expr);
+function is_tensor_and_zero(expr: U, env: ExprContext): boolean {
+    if (is_tensor(expr)) {
+        const handler = env.handlerFor(expr);
+        return handler.test(expr, native_sym(Native.zero), env);
+    }
+    else {
+        return false;
+    }
 }

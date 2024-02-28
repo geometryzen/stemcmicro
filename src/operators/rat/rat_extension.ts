@@ -82,7 +82,15 @@ export class RatExtension implements Extension<Rat> {
                         return lhs.mul(rhs);
                     }
                     else if (is_sym(rhs)) {
-                        return order_binary(MUL, lhs, rhs, env);
+                        if (lhs.isZero()) {
+                            return zero;
+                        }
+                        else if (lhs.isOne()) {
+                            return rhs;
+                        }
+                        else {
+                            return order_binary(MUL, lhs, rhs, env);
+                        }
                     }
                     else if (is_tensor(rhs)) {
                         if (lhs.isZero()) {

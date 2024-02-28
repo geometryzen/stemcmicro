@@ -12,6 +12,7 @@ function rank($: ProgramStack): void {
             $.push(create_int(value.rank));
         }
         else {
+            // The rank of everything else is zero.
             $.push(zero);
         }
     }

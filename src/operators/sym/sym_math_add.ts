@@ -19,14 +19,10 @@ class SymMathAdd implements Extension<Sym> {
     dependencies?: FEATURE[] | undefined;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binL(lhs: Sym, opr: Sym, rhs: U, env: ExprContext): U {
-        // eslint-disable-next-line no-console
-        console.log(`${this.name}.binL ${lhs} ${opr} ${rhs}`);
         return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binR(rhs: Sym, opr: Sym, lhs: U, env: ExprContext): U {
-        // eslint-disable-next-line no-console
-        console.log(`${this.name}.binR ${rhs} ${opr} ${lhs}`);
         return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

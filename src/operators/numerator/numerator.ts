@@ -40,6 +40,7 @@ export function numerator(p1: U, $: Pick<ExprContext, 'handlerFor' | 'pushDirect
     if (is_add(p1)) {
         //console.trace "rationalising "
         p1 = rationalize_factoring(p1, $);
+        // console.lg("rationalized", `${p1}`);
     }
     // console.lg(`rationalized=${$.toInfixString(p1)}`);
     // console.lg(`rationalized=${$.toSExprString(p1)}`);

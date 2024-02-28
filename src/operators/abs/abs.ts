@@ -1,126 +1,84 @@
+import { imu, is_imu, is_num, is_rat, is_tensor, one, Tensor } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
+import { Native, native_sym } from 'math-expression-native';
+import { car, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { complex_conjugate } from '../../complex_conjugate';
-import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
-import { imu } from '../../env/imu';
+import { Directive } from '../../env/ExtensionEnv';
+import { add } from '../../helpers/add';
+import { divide } from '../../helpers/divide';
+import { exp } from '../../helpers/exp';
+import { imag } from '../../helpers/imag';
+import { inner } from '../../helpers/inner';
+import { isone } from '../../helpers/isone';
+import { iszero } from '../../helpers/iszero';
+import { multiply } from '../../helpers/multiply';
+import { negate } from '../../helpers/negate';
+import { power } from '../../helpers/power';
+import { real } from '../../helpers/real';
+import { rect } from '../../helpers/rect';
 import { equaln, is_num_and_gt_zero } from '../../is';
-import { Native } from '../../native/Native';
-import { native_sym } from '../../native/native_sym';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../../predicates/is_negative';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_abs, is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { oneAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
-import { half, one, two } from '../../tree/rat/Rat';
-import { Tensor } from '../../tree/tensor/Tensor';
-import { car, is_cons, items_to_cons, U } from '../../tree/tree';
-import { im } from '../imag/imag';
-import { is_imu } from '../imu/is_imu';
-import { is_num } from '../num/is_num';
+import { half, two } from '../../tree/rat/Rat';
+import { denominator } from '../denominator/denominator';
+import { numerator } from '../numerator/numerator';
 import { is_pi } from '../pi/is_pi';
-import { is_rat } from '../rat/is_rat';
-import { re } from '../real/real';
 import { simplify, simplify_trig } from '../simplify/simplify';
-import { is_tensor } from '../tensor/is_tensor';
 
 export const ABS = native_sym(Native.abs);
-//(docs are generated from top-level comments, keep an eye on the formatting!)
 
-/* abs =====================================================================
+export function abs(x: U, env: ExprContext): U {
+    if (is_atom(x)) {
+        return env.handlerFor(x).dispatch(x, ABS, nil, env);
+    }
+    // console.lg("abs", `${x}`);
+    const n = numerator(x, env);
+    const d = denominator(x, env);
+    // console.lg("n => ", `${n}`, "d => ", `${d}`);
+    try {
+        const abs_numer = absval(n, env);
+        const abs_denom = absval(d, env);
+        // console.lg("abs(n) => ", `${abs_numer}`, "abs(d) => ", `${abs_denom}`);
+        try {
+            // The problem here is that if abs_denom is one, then abs_numer is or could be the same as x and we've
+            // just set up an infinite loop because the arguments will be re-evaluated.
+            return divide(abs_numer, abs_denom, env);
+        }
+        finally {
+            abs_numer.release();
+            abs_denom.release();
+        }
 
-Tags
-----
-scripting, JS, internal, treenode, general concept
-
-Parameters
-----------
-x
-
-General description
--------------------
-Returns the absolute value of a real number, the magnitude of a complex number, or the vector length.
-
-*/
-
-/*
- Absolute value of a number,or magnitude of complex z, or norm of a vector
-
-  z    abs(z)
-  -    ------
-
-  a    a
-
-  -a    a
-
-  (-1)^a    1
-
-  exp(a + i b)  exp(a)
-
-  a b    abs(a) abs(b)
-
-  a + i b    sqrt(a^2 + b^2)
-
-Notes
-
-  1. Handles mixed polar and rectangular forms, e.g. 1 + exp(i pi/3)
-
-  2. jean-francois.debroux reports that when z=(a+i*b)/(c+i*d) then
-
-    abs(numerator(z)) / abs(denominator(z))
-
-     must be used to get the correct answer. Now the operation is
-     automatic.
-*/
-
-/**
- * We take the general view that expr is a vector of an inner product space. Every inner product gives rise to a norm,
- * called the canonical or induced norm, where the norm of a vector v is defined by:
- * 
- * abs(v) = sqrt(inner(v, v))
- * 
- * For real numbers, the inner product of v with itself reduces to the square of v.
- * For complex numbers, the inner product requires taking the conjugate of the second.
- * For our use of tensors as a vector, we also take the conjugate of the second.
- * 
- * https://en.wikipedia.org/wiki/Inner_product_space
- * 
- * For real numbers,    inner(x,y) = x * y
- * For complex numbers, inner(x,y) = x * conj(y) 
- * 
- */
-/*
-export function abs(x: U, $: ExtensionEnv): U {
-    console.lg(`abs x=${print_list(x, $)}`);
-    const A = $.inner(x, x);
-    console.lg(`A=${print_list(A, $)}`);
-    const B = $.power(A, half);
-    return B;
+    }
+    finally {
+        n.release();
+        d.release();
+    }
 }
-*/
 
 /**
  * This code exists only for reference purposes. It should be replaced by specialized operators.
  */
-export function abs(x: U, $: ExtensionEnv): U {
-    // console.lg("abs", $.toSExprString(x));
+export function absval(expr: U, $: ExprContext): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
-        // console.lg(`abs ${$.toInfixString(x)} => ${$.toInfixString(retval)} @ ${description}`);
         return retval;
     };
 
-    // Just to prove that the argument is not re-assigned.
-    const expr: U = x;
-
-    if ($.iszero(expr)) {
+    if (iszero(expr, $)) {
         return hook(expr, "A");
     }
 
-    if ($.isone(expr)) {
+    if (isone(expr, $)) {
         return hook(expr, "B");
     }
 
     if (is_num(expr) && expr.isNegative()) {
-        return hook($.negate(expr), "C");
+        return hook(negate($, expr), "C");
     }
 
     if (is_num_and_gt_zero(expr)) {
@@ -147,24 +105,22 @@ export function abs(x: U, $: ExtensionEnv): U {
     // If we apply this to "a+b", we get an incorrect result.
     // Note that addition of multivectors is handled in a different operator.
     if (is_cons(expr) && is_add(expr)) {
-        // console.lg("abs", $.toInfixString(expr));
         // If it looks vaguely like a complex number perhaps?
         if (has_clock_form(expr, expr, $) || has_exp_form(expr, $) || expr.contains(imu)) {
 
             // console.lg(`z? => ${$.toInfixString(expr)}`);
 
-            const z = expr;
-            // const z = rect(expr, $); // convert polar terms, if any
+            const z = rect(expr, $); // convert polar terms, if any
 
             // console.lg(`z => ${$.toInfixString(z)}`);
 
-            const x = re(z, $);
+            const x = real(z, $);
             // console.lg(`x => ${$.toInfixString(x)}`);
-            const y = im(z, $);
-            const xx = $.power(x, two);
-            const yy = $.power(y, two);
-            const zz = $.add(xx, yy);
-            const abs_z = $.power(zz, half);
+            const y = imag(z, $);
+            const xx = power($, x, two);
+            const yy = power($, y, two);
+            const zz = add($, xx, yy);
+            const abs_z = power($, zz, half);
             // console.lg(`x => ${$.toInfixString(x)}`)
             // console.lg(`y => ${$.toInfixString(y)}`)
             const retval = simplify_trig(abs_z, $);
@@ -173,8 +129,6 @@ export function abs(x: U, $: ExtensionEnv): U {
     }
 
     if (is_cons(expr) && is_power(expr) && equaln(car(expr.cdr), -1)) {
-        // console.lg("abs of -1 to some expo", $.toInfixString(expr));
-        // console.lg("detected abs(minus one to some power) and returning 1");
         // -1 to any power
         // abs( (-1)^x ) = sqrt( (-1)^x * (-1)^x ) = sqrt( 1^x ) = 1
         return hook($.getDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one, "G");
@@ -189,8 +143,8 @@ export function abs(x: U, $: ExtensionEnv): U {
         const expo = caddr(expr);
         if (is_num(expo)) {
             if (is_num_and_gt_zero(expo)) {
-                const abs_base = $.abs(base);
-                return hook($.power(abs_base, expo), "H");
+                const abs_base = abs(base, $);
+                return hook(power($, abs_base, expo), "H");
             }
             if (is_rat(expo)) {
                 // const a = base;
@@ -202,7 +156,7 @@ export function abs(x: U, $: ExtensionEnv): U {
                 // If a is a Num that is non-negative then we can take the n-th root and it will be positive.
                 // Under these conditions abs(a^(1/n)) = a^(1/n) and abs(a^(m/n)) = a^(m/n)
                 if (is_num(base) && !base.isNegative()) {
-                    return hook($.power(base, expo), "I");
+                    return hook(power($, base, expo), "I");
                 }
             }
         }
@@ -212,15 +166,14 @@ export function abs(x: U, $: ExtensionEnv): U {
     const base = cadr(expr);
     if (is_power(expr) && is_base_of_natural_logarithm(base)) {
         // exponential
-        return hook($.exp(re(caddr(expr), $)), "I");
+        return hook(exp(real(caddr(expr), $), $), "I");
     }
 
     if (is_cons(expr) && is_multiply(expr)) {
-        // console.lg("abs", $.toInfixString(expr));
         // product
         // abs(a * b * c ...) = abs(a) * abs(b) * abs(c) ...
-        const binary_multiply = (lhs: U, rhs: U) => $.multiply(lhs, rhs);
-        return hook(expr.tail().map($.abs).reduce(binary_multiply), "J");
+        const binary_multiply = (lhs: U, rhs: U) => multiply($, lhs, rhs);
+        return hook(expr.tail().map(x => absval(x, $)).reduce(binary_multiply), "J");
     }
 
     // abs(abs(x)) => abs(x) (abs is a projection operator).
@@ -234,7 +187,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     }
 
     if (is_negative(expr) || (is_cons(expr) && is_add(expr) && is_negative(cadr(expr)))) {
-        const neg_expr = $.negate(expr);
+        const neg_expr = negate($, expr);
         return hook(items_to_cons(ABS, neg_expr), "M");
     }
 
@@ -257,12 +210,12 @@ export function abs(x: U, $: ExtensionEnv): U {
 }
 
 // also called the "norm" of a vector
-export function abs_tensor(M: Tensor, $: ExtensionEnv): U {
+export function abs_tensor(M: Tensor, $: ExprContext): U {
     if (M.ndim !== 1) {
         throw new Error('abs(tensor) with tensor rank > 1');
     }
     // 
     const K = simplify(M, $);
     // TODO: We need to be careful here. The conjugate operation really belongs inside the inner operation for tensors.
-    return $.valueOf(simplify($.power($.inner(K, complex_conjugate(K, $)), half), $));
+    return $.valueOf(simplify(power($, inner(K, complex_conjugate(K, $), $), half), $));
 }

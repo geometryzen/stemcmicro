@@ -1,5 +1,11 @@
 import { check } from "./check";
 
+describe("broken", function () {
+    it("001", function () {
+        check("abs(x)", "abs(x)");
+    });
+});
+
 describe("abs", function () {
     it("abs(x: rational)", function () {
         check("typeof(1)", "rational");

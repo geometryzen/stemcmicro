@@ -2,7 +2,7 @@ import { create_int, Flt, is_flt, Rat } from 'math-expression-atoms';
 import { assert_cons_or_nil, Cons, cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { rational } from './bignum';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { zzfloat } from './operators/float/float';
+import { evaluate_as_float } from './operators/float/float';
 import { is_tensor } from './operators/tensor/is_tensor';
 import { APPROXRATIO } from './runtime/constants';
 
@@ -37,7 +37,7 @@ function approxratio(expr: U, $: ExtensionEnv): Rat | Cons | U {
 
 function approxratio_flt(value: Flt, $: ExtensionEnv): Rat | Cons {
     // TypeScript establishes that the argument actually is a float, so we could simplify here.
-    const R = zzfloat(value, $);
+    const R = evaluate_as_float(value, $);
     if (is_flt(R)) {
         const r = R.d;
         const splitBeforeAndAfterDot = r.toString().split('.');

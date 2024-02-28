@@ -7,6 +7,8 @@ import { AtomListener, ExprEngineListener } from "../api/api";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { CompareFn, Directive, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
 import { ExtensionFromExprHandler } from "../env/ExtensionFromExprHandler";
+import { nativeStr } from "../nativeInt";
+import { render_as_infix } from "../print/render_as_infix";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import { StackFunction } from "./StackFunction";
 
@@ -619,7 +621,13 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         }
     }
     toInfixString(expr: U): string {
-        throw new Error("Method not implemented.");
+        if (is_atom(expr)) {
+            const handler = this.context.handlerFor(expr);
+            return nativeStr(handler.dispatch(expr, native_sym(Native.infix), nil, this.context));
+        }
+        else {
+            return render_as_infix(expr, this.context);
+        }
     }
     toLatexString(expr: U): string {
         throw new Error("Method not implemented.");

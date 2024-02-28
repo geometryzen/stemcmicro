@@ -27,24 +27,10 @@ export function eval_float(expr: Cons, $: ExprContext): U {
  * @param $ 
  * @returns 
  */
-export function zzfloat(expr: U, $: ExprContext): U {
+export function evaluate_as_float(expr: U, $: ExprContext): U {
     $.pushDirective(Directive.evaluatingAsFloat, 1);
     try {
-        return $.valueOf(evaluate_as_float($.valueOf(expr), $));
-    }
-    finally {
-        $.popDirective();
-    }
-}
-
-/**
- * coercion of the expr to a Flt, Tensor<Flt> etc.
- */
-export function evaluate_as_float(expr: U, $: Pick<ExprContext, 'pushDirective' | 'popDirective' | 'valueOf'>): U {
-    // console.lg(`yyfloat`, render_as_sexpr(expr, $));
-    $.pushDirective(Directive.evaluatingAsFloat, 1);
-    try {
-        return yyfloat_(expr, $);
+        return $.valueOf(yyfloat_($.valueOf(expr), $));
     }
     finally {
         $.popDirective();

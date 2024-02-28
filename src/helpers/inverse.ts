@@ -13,6 +13,7 @@ import { items_to_cons, U } from "../tree/tree";
  * (inverse arg) => (pow arg -1)
  */
 export function inverse(arg: U, $: Pick<ExprContext, 'valueOf'>): U {
+    // console.lg("inverse", `${arg}`);
     const value = $.valueOf(arg);
     try {
         if (is_num(value)) {

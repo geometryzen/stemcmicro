@@ -38,7 +38,7 @@ describe("add", function () {
         check(' "b" + "a" ', '"ba"');
         check('(a + b) + c', 'a+b+c');
     });
-    it("Broken", function () {
+    it("Flatten", function () {
         check("(a-b)-c", "a-b-c");
     });
     it("Probe", function () {

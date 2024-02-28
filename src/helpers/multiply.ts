@@ -4,8 +4,12 @@ import { items_to_cons, U } from "math-expression-tree";
 
 const MULTIPLY = native_sym(Native.multiply);
 
-export function multiply(env: Pick<ExprContext, 'valueOf'>, ...args: U[]): U {
-    const raw = items_to_cons(MULTIPLY, ...args);
+/**
+ * Delegates multiplication of values.
+ */
+export function multiply(env: Pick<ExprContext, 'valueOf'>, ...values: U[]): U {
+    const raw = items_to_cons(MULTIPLY, ...values);
+    // console.lg("multiply", `${raw}`);
     try {
         return env.valueOf(raw);
     }

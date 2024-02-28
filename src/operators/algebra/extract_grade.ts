@@ -1,12 +1,14 @@
 import { create_int, is_blade, is_flt, is_rat, is_sym, zero } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { is_atom, is_cons, items_to_cons, U } from "math-expression-tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
+import { isscalar } from "../../helpers/isscalar";
+import { multiply } from "../../helpers/multiply";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 
 const GRADE = native_sym(Native.grade);
 
-export function extract_grade(arg: U, grade: number, $: ExtensionEnv): U {
+export function extract_grade(arg: U, grade: number, $: ExprContext): U {
     if (is_atom(arg)) {
         const handler = $.handlerFor(arg);
         const argList = items_to_cons(create_int(grade));
@@ -50,11 +52,11 @@ export function extract_grade(arg: U, grade: number, $: ExtensionEnv): U {
     else if (is_cons(arg) && is_mul_2_any_any(arg)) {
         const lhs = arg.lhs;
         const rhs = arg.rhs;
-        if ($.isscalar(lhs)) {
-            return $.multiply(lhs, extract_grade(rhs, grade, $));
+        if (isscalar(lhs, $)) {
+            return multiply($, lhs, extract_grade(rhs, grade, $));
         }
-        if ($.isscalar(rhs)) {
-            return $.multiply(extract_grade(lhs, grade, $), rhs);
+        if (isscalar(rhs, $)) {
+            return multiply($, extract_grade(lhs, grade, $), rhs);
         }
         throw new Error(`extractGrade   ${lhs} * ${rhs}`);
     }

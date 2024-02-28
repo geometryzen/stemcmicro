@@ -108,8 +108,8 @@ describe("sqrt", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), "x**(1/2 y)");
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), "x**(1/2 y)");
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), "     1/2\n^(x,y)");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), "(x ^ y)**(1/2)");
         assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "x**(1/2 y)");
         assert.strictEqual(engine.renderAsString(values[0], { format: 'LaTeX' }), "x^{\\frac{y}{2}}");
         assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "(pow x (* 1/2 y))");

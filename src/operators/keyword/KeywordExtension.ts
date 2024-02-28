@@ -1,8 +1,9 @@
-import { create_sym, is_keyword, Keyword, Sym } from "math-expression-atoms";
+import { create_str, create_sym, is_keyword, Keyword, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
+import { Native } from "math-expression-native";
 import { Cons, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
-import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 
 function verify_keyword(x: Keyword): Keyword | never {
@@ -19,10 +20,9 @@ class KeywordExtension implements Extension<Keyword> {
     constructor() {
         // Nothing to see here.
     }
-    phases?: number | undefined;
-    dependencies?: FEATURE[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(atom: Keyword, opr: Sym): boolean {
-        throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
+        return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binL(atom: Keyword, opr: Sym, rhs: U, expr: ExprContext): U {
@@ -34,6 +34,23 @@ class KeywordExtension implements Extension<Keyword> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Keyword, opr: Sym, argList: Cons, env: ExprContext): U {
+        switch (opr.id) {
+            case Native.ascii: {
+                return create_str(this.toAsciiString(target));
+            }
+            case Native.human: {
+                return create_str(this.toHumanString(target));
+            }
+            case Native.infix: {
+                return create_str(this.toInfixString(target));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString(target));
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target));
+            }
+        }
         return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
@@ -48,8 +65,7 @@ class KeywordExtension implements Extension<Keyword> {
     get name(): string {
         return 'KeywordExtension';
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    valueOf(keyword: Keyword, $: ExtensionEnv): U {
+    valueOf(keyword: Keyword): U {
         verify_keyword(keyword);
         return keyword;
     }
@@ -68,6 +84,9 @@ class KeywordExtension implements Extension<Keyword> {
             }
         }
         return expr;
+    }
+    toAsciiString(keyword: Keyword): string {
+        return keyword.key();
     }
     toHumanString(keyword: Keyword): string {
         return keyword.key();

@@ -1,35 +1,69 @@
 import assert from 'assert';
-import { create_script_context } from "../src/runtime/script_engine";
+import { is_nil, U } from 'math-expression-tree';
+import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from '../src/api/api';
+
+const engineConfig: Partial<EngineConfig> = {
+};
+
+function strip_whitespace(s: string): string {
+    return s.replace(/\s/g, '');
+}
+
+const parseConfig: Partial<ParseConfig> = {
+    useCaretForExponentiation: true,
+    useParenForTensors: false
+};
+
+const renderConfig: RenderConfig = {
+    format: 'Infix',
+    useCaretForExponentiation: true,
+    useParenForTensors: false
+};
 
 describe("sandbox", function () {
-    it("0 != -0", function () {
+    it("det(A)", function () {
         const lines: string[] = [
-            `0 != -0`
+            `A=[[a,b],[c,d]]`,
+            `det(A)`
         ];
-        const engine = create_script_context({
-            useCaretForExponentiation: false,
-            useIntegersForPredicates: true
-        });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const x = engine.valueOf(tree);
+            const value = engine.simplify(x);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        // A DistributiveLawExpandRight is breaking apart the determinant before multiplying by the inverse.
+        // The result is correct but requires factoring to discover the simplification
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("a*d-b*c"));
         engine.release();
     });
-    it("(Uom, Rat)", function () {
+    it("det(A) * inv(A)", function () {
         const lines: string[] = [
-            `kilogram + 2`
+            `A=[[a,b],[c,d]]`,
+            `det(A) * inv(A)`
         ];
-        const engine = create_script_context({
-            catchExceptions: true,
-            dependencies: ['Uom']
-        });
-        const { values, errors } = engine.executeScript(lines.join('\n'));
-        if (values.length > 0) {
-            assert.strictEqual(engine.renderAsInfix(values[0]), `"Operator '+' cannot be applied to types 'rational' and 'uom'."`);
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.simplify(engine.valueOf(tree));
+            if (!is_nil(value)) {
+                values.push(value);
+            }
         }
-        else {
-            assert.strictEqual(errors.length, 1);
-            assert.strictEqual(errors[0].message, "kg+2");
-        }
+        assert.strictEqual(values.length, 1);
+        // A DistributiveLawExpandRight is breaking apart the determinant before multiplying by the inverse.
+        // The result is correct but requires factoring to discover the simplification
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[[d,-b],[-c,a]]"));
         engine.release();
     });
 });

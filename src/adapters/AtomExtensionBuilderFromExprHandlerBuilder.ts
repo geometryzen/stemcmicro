@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { create_sym, is_boo, Sym } from "math-expression-atoms";
 import { ExprContext, ExprHandler } from "math-expression-context";
+import { Native, native_sym } from "math-expression-native";
 import { Atom, Cons, is_atom, is_nil, nil, U } from "math-expression-tree";
 import { ExprHandlerBuilder } from "../api/api";
 import { diagnostic, Diagnostics } from "../diagnostics/diagnostics";
 import { EnvConfig } from "../env/EnvConfig";
 import { Extension, ExtensionBuilder, ExtensionEnv } from "../env/ExtensionEnv";
+import { nativeStr } from "../nativeInt";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { ProgrammingError } from "../programming/ProgrammingError";
 
@@ -37,16 +39,16 @@ class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
         }
     }
     toHumanString(expr: T, $: ExprContext): string {
-        throw new Error("toHumanString method not implemented.");
+        return nativeStr(this.handler.dispatch(expr, native_sym(Native.human), nil, $));
     }
     toInfixString(expr: T, $: ExprContext): string {
-        throw new Error("toInfixString method not implemented.");
+        return nativeStr(this.handler.dispatch(expr, native_sym(Native.infix), nil, $));
     }
     toLatexString(expr: T, $: ExprContext): string {
-        throw new Error("toLatexString method not implemented.");
+        return nativeStr(this.handler.dispatch(expr, native_sym(Native.latex), nil, $));
     }
     toListString(expr: T, $: ExprContext): string {
-        throw new Error("toListString method not implemented.");
+        return nativeStr(this.handler.dispatch(expr, native_sym(Native.sexpr), nil, $));
     }
     evaluate(opr: T, argList: Cons, $: ExtensionEnv): [number, U] {
         throw new Error("evaluate method not implemented.");
@@ -64,10 +66,10 @@ class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
         return this.dispatch(expr, create_sym("valueof"), nil, env);
     }
     binL(lhs: T, opr: Sym, rhs: U, env: ExprContext): U {
-        throw new Error("binL method not implemented.");
+        return this.handler.binL(lhs, opr, rhs, env);
     }
     binR(rhs: T, opr: Sym, lhs: U, env: ExprContext): U {
-        throw new Error("binR method not implemented.");
+        return this.handler.binR(rhs, opr, lhs, env);
     }
     dispatch(target: T, opr: Sym, argList: Cons, env: ExprContext): U {
         const response = this.handler.dispatch(target, opr, argList, env);
@@ -87,7 +89,7 @@ class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
             return response.isTrue();
         }
         else {
-            throw new Error(`test receiving ${response} from dispatch`);
+            throw diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(expr.type));
         }
     }
 }

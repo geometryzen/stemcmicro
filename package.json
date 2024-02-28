@@ -76,6 +76,7 @@
         "example-taylor": "mocha 'examples/taylor.spec.ts'",
         "example-uom": "mocha 'examples/uom.spec.ts'",
         "unit-abs": "mocha 'units/abs.spec.ts'",
+        "unit-algebra": "mocha 'units/algebra.spec.ts'",
         "unit-algebrite": "mocha 'units/algebrite.spec.ts'",
         "unit-api": "mocha 'units/api.spec.ts'",
         "unit-arccos": "mocha 'units/arccos.spec.ts'",

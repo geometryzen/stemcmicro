@@ -8,7 +8,8 @@ import { extract_single_blade } from "../../calculators/compare/extract_single_b
 import { canonical_factor_num_rhs } from "../../calculators/factorize/canonical_factor_num";
 import { remove_factors } from "../../calculators/remove_factors";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
-import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { dispatch_eval_varargs } from "../../dispatch/dispatch_eval_varargs";
+import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { float } from "../../helpers/float";
 import { multiply } from "../../helpers/multiply";
 import { is_add, is_multiply } from "../../runtime/helpers";
@@ -19,48 +20,25 @@ import { add_tensor_tensor } from "../tensor/tensor_extension";
 
 const ADD = native_sym(Native.add);
 
-export function eval_add(expr: Cons, $: ExtensionEnv): U {
-    const args = expr.argList;
-    try {
-        const vals = args.map(arg => $.valueOf(arg));
-        try {
-            return add_values(vals, expr, $);
-        }
-        finally {
-            vals.release();
-        }
-    }
-    finally {
-        args.release();
-    }
+export function eval_add(expr: Cons, env: ExprContext): U {
+    return dispatch_eval_varargs(expr, add_values, env);
 }
 
-export function add(lhs: U, rhs: U, $: ExprContext): U {
-    return add_terms([lhs, rhs], $);
-}
-
-export function add_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {
-    const args = expr.argList;
-    if (vals.equals(args)) {
-        const terms: U[] = [];
-        const values = [...vals];
-        const some_term_is_zero_float = values.some((term) => is_flt(term) && term.isZero());
-        if (some_term_is_zero_float) {
-            for (const value of values) {
-                push_terms(terms, evaluate_as_float(value, $));
-            }
+function add_values(vals: Cons, $: ExprContext): U {
+    const terms: U[] = [];
+    const values = [...vals];
+    const some_term_is_zero_float = values.some((term) => is_flt(term) && term.isZero());
+    if (some_term_is_zero_float) {
+        for (const value of values) {
+            push_terms(terms, evaluate_as_float(value, $));
         }
-        else {
-            for (const value of values) {
-                push_terms(terms, $.valueOf(value));
-            }
-        }
-        return add_terms(terms, $);
     }
     else {
-        // Evaluation of the arguments has produced changes so we give other operators a chance to evaluate.
-        return $.add(...vals);
+        for (const value of values) {
+            push_terms(terms, $.valueOf(value));
+        }
     }
+    return add_terms(terms, $);
 }
 
 /**
@@ -71,8 +49,9 @@ function push_terms(terms: U[], term: U): void {
         terms.push(...term.tail());
     }
     else if (is_num(term) && term.isZero()) {
-        // omit zeros
-        // console.lg("omitting", $.toInfixString(term));
+        // omit Flt and Rat zeros.
+        // Tensors are retained because they shape the result.
+        // Flt can be dropped because the remaining terms were evaluated as floats. 
     }
     else {
         terms.push(term);
@@ -349,6 +328,7 @@ function combine_terms(terms: U[], $: ExprContext): void {
 }
 
 function is_num_or_tensor_and_zero(expr: U, env: ExprContext): boolean {
+    // console.lg("is_num_or_tensor_and_zero", `${expr}`);
     return is_num_and_zero(expr) || is_tensor_and_zero(expr, env);
 }
 

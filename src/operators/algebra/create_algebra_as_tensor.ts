@@ -1,19 +1,14 @@
-import { Adapter, Blade, create_algebra, is_blade, SumTerm } from 'math-expression-atoms';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { Adapter, Blade, create_algebra, create_flt, create_int, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, one, SumTerm, Tensor, zero } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
+import { cons, Cons, items_to_cons, U } from 'math-expression-tree';
+import { isone } from '../../helpers/isone';
+import { iszero } from '../../helpers/iszero';
+import { multiply } from '../../helpers/multiply';
 import { MATH_ADD, MATH_MUL } from '../../runtime/ns_math';
-import { create_flt } from '../../tree/flt/Flt';
-import { one, two, zero } from '../../tree/rat/Rat';
-import { Tensor } from '../../tree/tensor/Tensor';
-import { cons, Cons, items_to_cons, U } from '../../tree/tree';
-import { is_flt } from '../flt/is_flt';
-import { is_num } from '../num/is_num';
-import { is_rat } from '../rat/is_rat';
-import { is_sym } from '../sym/is_sym';
-import { is_tensor } from '../tensor/is_tensor';
 import { extract_grade } from './extract_grade';
 
-function blade_times_weight(blade: Blade, weight: U, $: ExtensionEnv): Cons | Blade {
-    if ($.isone(weight)) {
+function blade_times_weight(blade: Blade, weight: U, $: ExprContext): Cons | Blade {
+    if (isone(weight, $)) {
         return blade;
     }
     else {
@@ -22,7 +17,7 @@ function blade_times_weight(blade: Blade, weight: U, $: ExtensionEnv): Cons | Bl
 }
 
 class AlgebraFieldAdapter implements Adapter<U, U> {
-    constructor(private readonly dimensions: number, private readonly $: ExtensionEnv) {
+    constructor(private readonly dimensions: number, private readonly $: ExprContext) {
     }
     get ε(): U {
         return create_flt(1e-6);
@@ -37,9 +32,9 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
         throw new Error('abs Method not implemented.');
     }
     add(lhs: U, rhs: U): U {
-        if (this.$.isone(lhs)) {
-            if (this.$.isone(rhs)) {
-                return two;
+        if (isone(lhs, this.$)) {
+            if (isone(rhs, this.$)) {
+                return create_int(2);
             }
             else {
                 throw new Error('add Method not implemented.');
@@ -86,7 +81,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
         throw new Error('min Method not implemented.');
     }
     mul(lhs: U, rhs: U): U {
-        return this.$.multiply(lhs, rhs);
+        return multiply(this.$, lhs, rhs);
         /*
         if (is_rat(lhs)) {
             if (is_rat(rhs)) {
@@ -134,7 +129,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
         throw new Error('isOne Method not implemented.');
     }
     isZero(arg: U): boolean {
-        return this.$.iszero(arg);
+        return iszero(arg, this.$);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     sin(arg: U): U {
@@ -160,7 +155,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
             const term = terms[0];
             const weight = term.weight;
             const blade = term.blade;
-            return this.$.multiply(weight, blade);
+            return multiply(this.$, weight, blade);
         }
         else if (terms.length === 2) {
             const a = blade_times_weight(terms[0].blade, terms[0].weight, this.$);
@@ -222,12 +217,12 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
  * @param $ 
  * @returns 
  */
-export function create_algebra_as_tensor<T extends U>(metric: T[], labels: string[], $: ExtensionEnv): Tensor<U> {
+export function create_algebra_as_tensor<T extends U>(metric: T[], labels: string[], $: ExprContext): Tensor<U> {
     const blades: Blade[] = create_algebra_as_blades(metric, labels, $);
     return new Tensor([metric.length], blades);
 }
 
-export function create_algebra_as_blades<T extends U>(metric: T[], labels: string[], $: ExtensionEnv): Blade[] {
+export function create_algebra_as_blades<T extends U>(metric: T[], labels: string[], $: ExprContext): Blade[] {
     const uFieldAdaptor = new AlgebraFieldAdapter(metric.length, $);
     const GA = create_algebra(metric, uFieldAdaptor, labels);
     /**

@@ -1,5 +1,5 @@
 
-import { is_blade } from "math-expression-atoms";
+import { is_blade, Sym } from "math-expression-atoms";
 import { Cons2, items_to_cons, U } from "math-expression-tree";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
@@ -7,7 +7,6 @@ import { remove_factors } from "../../calculators/remove_factors";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
-import { Sym } from "../../tree/sym/Sym";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 

@@ -12,9 +12,7 @@ import { power_blade_rat } from "../pow/power_blade_int";
 import { create_str } from "../str/create_str";
 import { is_sym } from "../sym/is_sym";
 
-const ADD = native_sym(Native.add);
 const MUL = native_sym(Native.multiply);
-const POW = native_sym(Native.pow);
 const SQRT = native_sym(Native.sqrt);
 
 /**
@@ -52,69 +50,78 @@ class BladeExtension implements Extension<Blade> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binL(lhs: Blade, opr: Sym, rhs: U, env: ExprContext): U {
-        if (opr.equalsSym(ADD)) {
-            if (is_atom(rhs)) {
-                if (is_blade(rhs)) {
-                    return lhs.add(rhs);
+        switch (opr.id) {
+            case Native.add: {
+                if (is_atom(rhs)) {
+                    if (is_blade(rhs)) {
+                        return lhs.add(rhs);
+                    }
                 }
+                break;
             }
-        }
-        else if (opr.equalsSym(MUL)) {
-            if (is_atom(rhs)) {
-                if (is_err(rhs)) {
-                    return rhs;
-                }
-                else if (is_flt(rhs)) {
-                    if (rhs.isZero()) {
+            case Native.multiply: {
+                if (is_atom(rhs)) {
+                    if (is_blade(rhs)) {
+                        return lhs.mul(rhs);
+                    }
+                    else if (is_err(rhs)) {
                         return rhs;
                     }
-                    else {
+                    else if (is_flt(rhs)) {
+                        if (rhs.isZero()) {
+                            return rhs;
+                        }
+                        else {
+                            return order_binary(MUL, lhs, rhs, env);
+                        }
+                    }
+                    else if (is_hyp(rhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_imu(rhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_rat(rhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_sym(rhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_tensor(rhs)) {
+                        return rhs.map(x => multiply(env, lhs, x));
+                    }
+                    else if (is_uom(rhs)) {
                         return order_binary(MUL, lhs, rhs, env);
                     }
                 }
-                else if (is_hyp(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
-                else if (is_imu(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
-                else if (is_rat(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
-                else if (is_sym(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
-                else if (is_tensor(rhs)) {
-                    return rhs.map(x => multiply(env, lhs, x));
-                }
-                else if (is_uom(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
             }
-        }
-        else if (opr.equalsSym(POW)) {
-            if (is_atom(rhs)) {
-                if (is_rat(rhs)) {
-                    return power_blade_rat(lhs, rhs, env);
+                break;
+            case Native.pow: {
+                if (is_atom(rhs)) {
+                    if (is_rat(rhs)) {
+                        return power_blade_rat(lhs, rhs, env);
+                    }
                 }
             }
         }
         return nil;
     }
     binR(rhs: Blade, opr: Sym, lhs: U, env: ExprContext): U {
-        if (opr.equalsSym(MUL)) {
-            if (is_atom(lhs)) {
-                if (is_hyp(lhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
-                else if (is_rat(lhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
-                else if (is_tensor(lhs)) {
-                    return lhs.map(x => multiply(env, x, rhs));
-                }
-                else if (is_uom(lhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
+        switch (opr.id) {
+            case Native.multiply: {
+                if (is_atom(lhs)) {
+                    if (is_hyp(lhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_rat(lhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_tensor(lhs)) {
+                        return lhs.map(x => multiply(env, x, rhs));
+                    }
+                    else if (is_uom(lhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
                 }
             }
         }

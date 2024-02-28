@@ -1,4 +1,4 @@
-import { create_int, is_num, is_tensor, one, Tensor, zero } from 'math-expression-atoms';
+import { assert_tensor, create_int, is_num, one, Tensor, zero } from 'math-expression-atoms';
 import { ExprContext } from 'math-expression-context';
 import { items_to_cons, U } from 'math-expression-tree';
 import { Sign } from '../../env/ExtensionEnv';
@@ -10,46 +10,27 @@ import { negate } from '../../helpers/negate';
 import { DET } from '../../runtime/constants';
 import { is_square_matrix } from '../../tensor';
 
-/* det =====================================================================
+export function det(m: Tensor, env: ExprContext): U {
 
-Tags
-----
-scripting, JS, internal, treenode, general concept
+    assert_tensor(m);
 
-Parameters
-----------
-m
-
-General description
--------------------
-Returns the determinant of matrix m.
-Uses Gaussian elimination for numerical matrices.
-
-Example:
-
-  det(((1,2),(3,4)))
-  > -2
-
-*/
-export function det(M: Tensor, $: ExprContext): U {
     const hook = function (retval: U): U {
-        // console.lg(`det of ${$.toInfixString(M)} => ${$.toInfixString(retval)}`);
         return retval;
     };
 
-    if (is_tensor(M) && is_square_matrix(M)) {
-        const elems = M.copyElements();
+    if (is_square_matrix(m)) {
+        const elems = m.copyElements();
         const is_numeric = elems.every((element) => is_num(element));
         if (is_numeric) {
-            return hook(determinant_numeric(M, $));
+            return hook(determinant_numeric(m, env));
         }
         else {
-            return hook(determinant_symbolic(elems, M.dim(0), $));
+            return hook(determinant_symbolic(elems, m.dim(0), env));
         }
     }
     else {
         // console.lg(`must be square M=${print_expr(M, $)}`);
-        return hook(items_to_cons(DET, M));
+        return hook(items_to_cons(DET, m));
     }
 }
 

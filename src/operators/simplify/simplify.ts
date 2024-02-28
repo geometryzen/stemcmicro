@@ -1,7 +1,7 @@
 import { create_int, is_imu, is_num, is_rat, one, Sym, zero } from 'math-expression-atoms';
 import { ExprContext } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
-import { car, cdr, Cons2, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
+import { car, cdr, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
 import { condense, yycondense } from '../../condense';
@@ -67,7 +67,9 @@ function ensure_simplify_state(env: ExprContext): ShareableStack<U> {
 }
 
 export function simplify(x: U, env: ExprContext): U {
-    // console.lg("simplify", `${x}`);
+    if (is_nil(x)) {
+        return x;
+    }
     const stack = ensure_simplify_state(env);
     try {
         const hook = function (retval: U): U {

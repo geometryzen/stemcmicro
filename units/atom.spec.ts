@@ -20,25 +20,25 @@ function is_testatom(expr: U): expr is TestAtom {
 
 class TestAtomExprHandlerBuilder implements ExprHandlerBuilder<TestAtom> {
     create(): ExprHandler<TestAtom> {
-        throw new Error('Method not implemented.');
+        return new TestAtomExprHandler();
     }
 }
 
 class TestAtomExprHandler implements ExprHandler<TestAtom> {
     binL(lhs: TestAtom, opr: Sym, rhs: U, env: ExprContext): U {
-        throw new Error('Method not implemented.');
+        throw new Error('TestAtomExprHandler.binL method not implemented.');
     }
     binR(rhs: TestAtom, opr: Sym, lhs: U, env: ExprContext): U {
-        throw new Error('Method not implemented.');
+        throw new Error('TestAtomExprHandler.binR method not implemented.');
     }
     dispatch(expr: TestAtom, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error('Method not implemented.');
+        throw new Error('TestAtomExprHandler.dispatch method not implemented.');
     }
     subst(expr: TestAtom, oldExpr: U, newExpr: U, env: Pick<ExprContext, 'handlerFor'>): U {
-        throw new Error('Method not implemented.');
+        throw new Error('TestAtomExprHandler.subst method not implemented.');
     }
     test(expr: TestAtom, opr: Sym, env: ExprContext): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error('TestAtomExprHandler.test method not implemented.');
     }
 }
 

@@ -39,21 +39,26 @@ export class RatExtension implements Extension<Rat> {
     binL(lhs: Rat, opr: Sym, rhs: U, env: ExprContext): U {
         switch (opr.id) {
             case Native.add: {
+                // We don't have to concern ourselves with zero Flt(s) or Rat(s) because these were removed already.
+                // TODO: Might be good to assert the preceeding assumption.
                 if (is_atom(rhs)) {
                     if (is_boo(rhs)) {
                         return diagnostic(Diagnostics.Operator_0_cannot_be_applied_to_types_1_and_2, ADD, create_sym(lhs.type), create_sym(rhs.type));
+                    }
+                    else if (is_blade(rhs)) {
+                        return order_binary(ADD, lhs, rhs, env);
                     }
                     else if (is_flt(rhs)) {
                         return create_flt(lhs.toNumber() + rhs.toNumber());
                     }
                     else if (is_imu(rhs)) {
-                        return items_to_cons(ADD, lhs, rhs);
+                        return order_binary(ADD, lhs, rhs, env);
                     }
                     else if (is_rat(rhs)) {
                         return lhs.add(rhs);
                     }
                     else if (is_sym(rhs)) {
-                        return items_to_cons(ADD, lhs, rhs);
+                        return order_binary(ADD, lhs, rhs, env);
                     }
                     else if (is_err(rhs)) {
                         return rhs;

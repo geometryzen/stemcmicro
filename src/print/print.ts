@@ -1,21 +1,18 @@
-import { create_sym, is_blade, is_err, is_flt, is_keyword, is_num, is_rat, is_sym, is_uom, one, Rat, Sym, zero } from 'math-expression-atoms';
+import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_keyword, is_num, is_rat, is_str, is_sym, is_uom, one, Rat, Sym, zero } from 'math-expression-atoms';
 import { ExprContext, ExprHandler } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { car, cdr, Cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
-import { is_localizable } from '../diagnostics/diagnostics';
+import { is_localizable } from '../diagnostics/localizable';
 import { Directive } from '../env/ExtensionEnv';
 import { isone } from '../helpers/isone';
 import { negate } from '../helpers/negate';
 import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from '../is';
 import { nativeStr } from '../nativeInt';
 import { denominator } from '../operators/denominator/denominator';
-import { is_hyp } from '../operators/hyp/is_hyp';
-import { is_imu } from '../operators/imu/is_imu';
 import { numerator } from '../operators/numerator/numerator';
 import { is_pi } from '../operators/pi/is_pi';
-import { is_str } from '../operators/str/is_str';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../predicates/is_negative';
 import { is_num_and_negative } from '../predicates/is_negative_number';
@@ -1453,7 +1450,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                     return nativeStr(response);
                 }
                 else if (is_err(response)) {
-                    throw new ProgrammingError(`${response.cause}`);
+                    throw response;
                 }
                 else {
                     throw new ProgrammingError();
@@ -2058,13 +2055,8 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
             return expr.key();
         }
         if (is_err(expr)) {
-            const cause = expr.cause;
-            try {
-                return render_using_non_sexpr_print_mode(cause, _);
-            }
-            finally {
-                cause.release();
-            }
+            const handler = _.handlerFor(expr);
+            return nativeStr(handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext));
         }
         if (is_imu(expr)) {
             if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {

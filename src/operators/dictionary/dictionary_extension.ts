@@ -2,7 +2,8 @@ import { create_str, create_sym, is_map, Map, Sym } from "math-expression-atoms"
 import { ExprContext } from "math-expression-context";
 import { Native } from "math-expression-native";
 import { cons, Cons, nil, U } from "math-expression-tree";
-import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
 import { Directive, Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { listform } from "../../helpers/listform";

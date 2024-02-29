@@ -334,7 +334,7 @@ export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, P
      * e.g. clearall 
      */
     defineKeyword(sym: Sym, runner: KeywordRunner): void;
-    defineExtension(builder: ExtensionBuilder<U>): void;
+    defineExtension(builder: ExtensionBuilder<U>, immediate?: boolean): void;
     defineUserSymbol(name: Sym): void;
     derivedEnv(): ExtensionEnv;
     divide(lhs: U, rhs: U): U;

@@ -1,117 +1,101 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import assert from 'assert';
-import { create_sym, JsAtom, Sym } from "math-expression-atoms";
+import { assert_rat, create_sym, Err, JsAtom, Str, Sym } from "math-expression-atoms";
 import { ExprContext, ExprHandler, LambdaExpr } from "math-expression-context";
-import { Cons, is_nil, U } from "math-expression-tree";
+import { Native } from 'math-expression-native';
+import { Cons, is_nil, nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, ExprHandlerBuilder } from "../src/api/api";
-import { SyntaxKind } from "../src/parser/parser";
+import { hash_for_atom } from '../src/hashing/hash_info';
 
-class TestAtom extends JsAtom {
-    readonly type = 'testatom';
-    constructor() {
-        super('TestAtom');
+const TYPE = 'myatom';
+const NAME = 'MyAtom';
+const MAKE = 'mkatom';
+
+class MyAtom extends JsAtom {
+    readonly type = TYPE;
+    constructor(readonly x: number, readonly y: number) {
+        super(NAME);
     }
 }
 
-function is_testatom(expr: U): expr is TestAtom {
-    return expr instanceof TestAtom;
+const HASH = hash_for_atom(new MyAtom(0, 0));
+
+function is_myatom(expr: U): expr is MyAtom {
+    return expr instanceof MyAtom;
 }
 
-class TestAtomExprHandlerBuilder implements ExprHandlerBuilder<TestAtom> {
-    create(): ExprHandler<TestAtom> {
-        return new TestAtomExprHandler();
+class MyAtomExprHandlerBuilder implements ExprHandlerBuilder<MyAtom> {
+    create(): ExprHandler<MyAtom> {
+        return new MyAtomHandler();
     }
 }
 
-class TestAtomExprHandler implements ExprHandler<TestAtom> {
-    binL(lhs: TestAtom, opr: Sym, rhs: U, env: ExprContext): U {
-        throw new Error('TestAtomExprHandler.binL method not implemented.');
+class MyAtomHandler implements ExprHandler<MyAtom> {
+    binL(lhs: MyAtom, opr: Sym, rhs: U, env: ExprContext): U {
+        return nil;
     }
-    binR(rhs: TestAtom, opr: Sym, lhs: U, env: ExprContext): U {
-        throw new Error('TestAtomExprHandler.binR method not implemented.');
+    binR(rhs: MyAtom, opr: Sym, lhs: U, env: ExprContext): U {
+        return nil;
     }
-    dispatch(expr: TestAtom, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error('TestAtomExprHandler.dispatch method not implemented.');
+    dispatch(atom: MyAtom, opr: Sym, argList: Cons, env: ExprContext): U {
+        switch (opr.id) {
+            case Native.infix: {
+                return new Str(`[${atom.x},${atom.y}]`);
+            }
+        }
+        if (opr.equalsSym(create_sym("valueof"))) {
+            return atom;
+        }
+        return new Err(new Str(`I'm sorry Dave, I'm afraid I can't '${opr}' on '${atom.type}' type.`));
     }
-    subst(expr: TestAtom, oldExpr: U, newExpr: U, env: Pick<ExprContext, 'handlerFor'>): U {
+    subst(atom: MyAtom, oldExpr: U, newExpr: U, env: Pick<ExprContext, 'handlerFor'>): U {
         throw new Error('TestAtomExprHandler.subst method not implemented.');
     }
-    test(expr: TestAtom, opr: Sym, env: ExprContext): boolean {
-        throw new Error('TestAtomExprHandler.test method not implemented.');
+    test(atom: MyAtom, opr: Sym, env: ExprContext): boolean {
+        return false;
     }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const create_atom: LambdaExpr = (argList: Cons, _$: ExprContext): U => {
-    return new TestAtom();
+const create_atom: LambdaExpr = (argList: Cons, env: ExprContext): U => {
+    const item0 = argList.item0;
+    const item1 = argList.item1;
+    try {
+        const value0 = env.valueOf(item0);
+        const value1 = env.valueOf(item1);
+        try {
+            return new MyAtom(assert_rat(value0).toNumber(), assert_rat(value1).toNumber());
+        }
+        finally {
+            value0.release();
+            value1.release();
+        }
+    }
+    finally {
+        item0.release();
+        item1.release();
+    }
 };
 
 
 describe("atom", function () {
     it("Native handling of custom atom", function () {
         const lines: string[] = [
-            `A=atom()`,
-            `abs(A)`
+            `a=${MAKE}(3,4)`,
+            `infix(a)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine();
-        engine.defineFunction(create_sym("atom"), create_atom);
-        const builder = new TestAtomExprHandlerBuilder();
-        engine.defineAtomHandler(builder, 'testatom', is_testatom);
+        engine.defineFunction(create_sym(MAKE), create_atom);
+        const builder = new MyAtomExprHandlerBuilder();
+        engine.defineAtomHandler(builder, HASH, is_myatom); // hash or type? hash will work because of indirection.
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.valueOf(tree);
             if (!is_nil(value)) {
-                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "abs(TestAtom)");
-            }
-        }
-        engine.release();
-    });
-    it("Eigenmath handling of custom atom", function () {
-        const lines: string[] = [
-            `A=atom()`,
-            `abs(A)`
-        ];
-        const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
-        engine.defineFunction(create_sym("atom"), create_atom);
-        const builder = new TestAtomExprHandlerBuilder();
-        engine.defineAtomHandler(builder, 'testatom', is_testatom);
-        const { trees, errors } = engine.parse(sourceText);
-        assert.strictEqual(errors.length, 0);
-        for (const tree of trees) {
-            const value = engine.valueOf(tree);
-            if (!is_nil(value)) {
-                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "abs(TestAtom)");
-                const lines: string[] = [
-                    `<svg height='41'width='213'>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>a</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='20.65234375'y='26'>b</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='32.65234375'y='26'>s</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='41.9921875'y='26'>(</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='194.58203125'y='26'>)</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='49.984375'y='26'>[</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='57.9765625'y='26'>o</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='69.9765625'y='26'>b</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='81.9765625'y='26'>j</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='88.64453125'y='26'>e</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='99.296875'y='26'>c</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='109.94921875'y='26'>t</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='116.6171875'y='26'> </text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='122.6171875'y='26'>O</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='139.94921875'y='26'>b</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='151.94921875'y='26'>j</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='158.6171875'y='26'>e</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='169.26953125'y='26'>c</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='179.921875'y='26'>t</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='186.58984375'y='26'>]</text>`,
-                    `</svg>`
-                ];
-                lines.join('');
-                // The default implementation of Atom.toString() may change.
-                // assert.strictEqual(engine.renderAsString(value, { format: 'SVG' }), lines.join(''));
+                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), `"[3,4]"`);
             }
         }
         engine.release();

@@ -2,7 +2,8 @@ import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, i
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, is_nil, items_to_cons, nil, U } from "math-expression-tree";
-import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
 import { Directive, Extension, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { float } from "../../helpers/float";

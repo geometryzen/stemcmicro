@@ -2,7 +2,8 @@ import { assert_sym, create_str, create_sym, is_sym, Sym } from "math-expression
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, cons, nil, U } from "math-expression-tree";
-import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Directive, Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";

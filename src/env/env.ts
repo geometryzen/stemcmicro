@@ -326,8 +326,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         return {};
     }
 
-    function selectAtomExtension<A extends Atom>(atom: A): Extension<A> | undefined {
+    function select_atom_extension<A extends Atom>(atom: A): Extension<A> | undefined {
+        // console.lg("select_atom_extension", `${atom}`);
         const hash = hash_for_atom(atom);
+        // console.lg("hash", `${hash}`);
         const ops = currentOpsByHash()[hash] as Extension<A>[];
         if (Array.isArray(ops) && ops.length > 0) {
             for (const op of ops) {
@@ -343,7 +345,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         }
     }
 
-    function selectNilExtension(): Extension<U> | undefined {
+    function select_nil_extension(): Extension<U> | undefined {
         // We could simply create a Nil operator and cache it.
         // How many do you need?
         // TODO: DRY. What is the hash for Nil?
@@ -527,7 +529,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         defineEvalFunction(opr: Sym, evalFunction: EvalFunction): void {
-            $.defineExtension(extension_builder_from_cons_expression(opr, evalFunction));
+            $.defineExtension(extension_builder_from_cons_expression(opr, evalFunction), false);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         defineFunction(match: U, impl: LambdaExpr): void {
@@ -536,12 +538,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             $.setBinding(opr, new Lambda(impl, hash));
         },
         defineStackFunction(opr: Sym, stackFunction: StackFunction): void {
-            $.defineExtension(extension_builder_from_cons_expression(opr, make_eval(stackFunction)));
+            $.defineExtension(extension_builder_from_cons_expression(opr, make_eval(stackFunction)), false);
         },
         defineKeyword(sym: Sym, runner: KeywordRunner): void {
-            $.defineExtension(extension_builder_from_keyword_runner(sym, runner));
+            $.defineExtension(extension_builder_from_keyword_runner(sym, runner), false);
         },
-        defineUserSymbol(name: Sym): void {
+        defineUserSymbol(name: Sym, immediate = false): void {
             // The most important thing to do is to keep track of which symbols are user symbols.
             // This will allow us to report back correctly later in hasUserFunction(sym), which is used for SVG rendering.
             userSymbols.set(name.key(), name);
@@ -551,10 +553,17 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // there's really no value in adding the following operator.
             // Leaving it for now as it does no harm and may have utility later.
             $.defineKeyword(name, make_user_symbol_runner(name));
-            $.buildOperators();
+            if (immediate) {
+                $.buildOperators();
+            }
         },
-        defineExtension(builder: ExtensionBuilder<U>): void {
+        defineExtension(builder: ExtensionBuilder<U>, immediate = false): void {
             builders.push(builder);
+            // Building the operators after every bulder is defined really slows things down.
+            // It may be caused by some of the checking.
+            if (immediate) {
+                $.buildOperators();
+            }
         },
         divide(lhs: U, rhs: U): U {
             return $.multiply(lhs, $.power(rhs, negOne));
@@ -873,7 +882,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         handlerFor<T extends U>(expr: T): ExprHandler<T> {
             if (is_atom(expr)) {
-                return selectAtomExtension(expr)!;
+                return select_atom_extension(expr)!;
             }
             else {
                 throw new ProgrammingError();
@@ -914,10 +923,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
             else if (is_atom(expr)) {
-                return selectAtomExtension(expr);
+                return select_atom_extension(expr);
             }
             else if (is_nil(expr)) {
-                return selectNilExtension();
+                return select_nil_extension();
             }
             else {
                 throw new ProgrammingError();
@@ -1011,7 +1020,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return op.toListString(x, $);
             }
             else {
-                throw new Error(`No operator found for expression of type ${JSON.stringify(x.name)}`);
+                throw new Error(`No operator found for expression with name ${JSON.stringify(x.name)}`);
             }
         },
         transform(expr: U): [TFLAGS, U] {

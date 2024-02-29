@@ -8,7 +8,8 @@ import { extract_single_blade } from "../../calculators/compare/extract_single_b
 import { extract_single_uom } from "../../calculators/compare/extract_single_uom";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { remove_factors } from "../../calculators/remove_factors";
-import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
 import { dispatch_eval_varargs } from "../../dispatch/dispatch_eval_varargs";
 import { SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { add } from "../../helpers/add";

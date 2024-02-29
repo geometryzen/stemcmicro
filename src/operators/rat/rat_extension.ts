@@ -2,8 +2,9 @@ import { assert_rat, create_flt, create_str, create_sym, is_blade, is_boo, is_er
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, is_cons, is_singleton, items_to_cons, nil, U } from "math-expression-tree";
-import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
-import { Directive, Extension, ExtensionBuilder, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
+import { Directive, Extension, ExtensionBuilder, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { iszero } from "../../helpers/iszero";
 import { multiply } from "../../helpers/multiply";
@@ -24,8 +25,6 @@ export class RatExtension implements Extension<Rat> {
     constructor() {
         // Nothing to see here.
     }
-    phases?: number | undefined;
-    dependencies?: FEATURE[] | undefined;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(atom: Rat, opr: Sym, expr: ExprContext): boolean {
         if (opr.equalsSym(ISONE)) {
@@ -122,7 +121,12 @@ export class RatExtension implements Extension<Rat> {
                         return power_rat_base_rat_expo(lhs, rhs, env);
                     }
                     else if (is_sym(rhs)) {
-                        return items_to_cons(POW, lhs, rhs);
+                        if (lhs.isOne()) {
+                            return lhs;
+                        }
+                        else {
+                            return items_to_cons(POW, lhs, rhs);
+                        }
                     }
                 }
                 break;

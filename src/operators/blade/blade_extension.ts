@@ -2,7 +2,8 @@ import { Blade, create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
-import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
 import { Extension, FEATURE, mkbuilder, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
 import { multiply } from "../../helpers/multiply";

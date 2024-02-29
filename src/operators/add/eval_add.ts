@@ -7,7 +7,8 @@ import { contains_single_blade } from "../../calculators/compare/contains_single
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { canonical_factor_num_rhs } from "../../calculators/factorize/canonical_factor_num";
 import { remove_factors } from "../../calculators/remove_factors";
-import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
 import { dispatch_eval_varargs } from "../../dispatch/dispatch_eval_varargs";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { float } from "../../helpers/float";

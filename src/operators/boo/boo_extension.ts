@@ -2,8 +2,10 @@ import { Boo, booT, create_str, create_sym, is_boo, Sym } from "math-expression-
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, nil, U } from "math-expression-tree";
-import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_BOO } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { wrap_as_transform } from "../wrap_as_transform";
 
@@ -62,7 +64,7 @@ export class BooExtension implements Extension<Boo> {
         throw new Error();
     }
     get hash(): string {
-        return booT.name;
+        return HASH_BOO;
     }
     get name(): string {
         return 'BooExtension';

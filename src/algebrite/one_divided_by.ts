@@ -1,7 +1,8 @@
 import { is_flt, is_rat, negOne } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { items_to_cons, U } from "math-expression-tree";
-import { diagnostic, Diagnostics } from "../diagnostics/diagnostics";
+import { diagnostic } from "../diagnostics/diagnostics";
+import { Diagnostics } from "../diagnostics/messages";
 
 /**
  * Constructs the combination (divide 1 expr) without any further evaluation, which is why there is no expression context.

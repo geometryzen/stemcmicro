@@ -143,8 +143,8 @@ export class DerivedEnv implements ExtensionEnv {
     defineKeyword(sym: Sym, runner: KeywordRunner): void {
         this.#baseEnv.defineKeyword(sym, runner);
     }
-    defineExtension(builder: ExtensionBuilder<U>): void {
-        this.#baseEnv.defineExtension(builder);
+    defineExtension(builder: ExtensionBuilder<U>, immediate: boolean): void {
+        this.#baseEnv.defineExtension(builder, immediate);
     }
     defineUserSymbol(name: Sym): void {
         this.#baseEnv.defineUserSymbol(name);

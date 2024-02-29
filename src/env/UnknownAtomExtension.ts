@@ -2,7 +2,8 @@
 import { create_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Atom, Cons, is_atom, nil, U } from "math-expression-tree";
-import { diagnostic, Diagnostics } from "../diagnostics/diagnostics";
+import { diagnostic } from "../diagnostics/diagnostics";
+import { Diagnostics } from "../diagnostics/messages";
 import { hash_for_atom } from "../hashing/hash_info";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { ProgrammingError } from "../programming/ProgrammingError";
@@ -57,7 +58,7 @@ export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
     }
     valueOf(atom: A, $: ExtensionEnv): U {
         // eslint-disable-next-line no-console
-        console.log(`Unknown atom of type '${atom.type}'. Consider registering an extension for this type.`);
+        console.log(`Unknown atom of type '${atom.type}'. Please define a handler for this type.`);
         return atom;
     }
     binL(lhs: A, opr: Sym, rhs: U, env: ExprContext): U {

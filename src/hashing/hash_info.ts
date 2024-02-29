@@ -24,8 +24,7 @@ type INFO = { kind: KIND, parts: string[] };
  */
 export function hash_for_atom(atom: Atom): string | never {
     if (is_atom(atom)) {
-        // TODO: Change this to atom.type...
-        return atom.name;
+        return atom.type;
     }
     else {
         throw new Error(`${atom} is not an atom`);
@@ -62,7 +61,7 @@ export const HASH_RAT = hash_for_atom(create_int(1));
 export const HASH_STR = hash_for_atom(create_str("") as Atom);  // JsString is currently an alias for Str.
 export const HASH_SYM = hash_for_atom(create_sym('x'));
 export const HASH_TENSOR = hash_for_atom(create_tensor([]));
-export const HASH_UOM = hash_for_atom(create_uom('second'));
+export const HASH_UOM = hash_for_atom(create_uom('kilogram'));
 /**
  * A special wildcard hash that matches any item.
  */
@@ -181,7 +180,7 @@ function hash_info_at_level(expr: U, level: number): INFO {
         }
     }
     if (is_atom(expr)) {
-        return { kind: KIND_ATOM, parts: [expr.name] };
+        return { kind: KIND_ATOM, parts: [hash_for_atom(expr)] };
     }
     if (is_nil(expr)) {
         return { kind: KIND_NIL, parts: [HASH_NIL] };
@@ -197,13 +196,13 @@ function hash_arg(arg: U): string {
         return arg.key();
     }
     else if (is_rat(arg)) {
-        return arg.name;
+        return hash_for_atom(arg);
     }
     else if (is_keyword(arg)) {
         return arg.toString();
     }
     else if (is_str(arg)) {
-        return arg.name;
+        return hash_for_atom(arg);
     }
     else {
         throw new Error(`hash_arg(arg=${arg})`);

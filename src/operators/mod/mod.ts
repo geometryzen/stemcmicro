@@ -1,14 +1,14 @@
-import { create_int, is_flt, is_num, Rat } from 'math-expression-atoms';
+import { bigInt, create_int, is_flt, is_num, Rat } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, U } from 'math-expression-tree';
-import { diagnostic, Diagnostics } from '../../diagnostics/diagnostics';
+import { diagnostic } from '../../diagnostics/diagnostics';
+import { Diagnostics } from '../../diagnostics/messages';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_rat_and_integer } from '../../is_rat_and_integer';
 import { mmod } from '../../mmul';
 import { nativeInt } from '../../nativeInt';
 import { halt } from '../../runtime/defs';
 import { caddr, cadr } from '../../tree/helpers';
-import { bigInt } from '../../tree/rat/big-integer';
 
 const MOD = native_sym(Native.mod);
 

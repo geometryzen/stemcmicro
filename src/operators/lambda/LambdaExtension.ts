@@ -2,7 +2,8 @@
 import { create_sym, is_lambda, Lambda, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Cons, nil, U } from "math-expression-tree";
-import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
 import { Extension, ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";
 import { HASH_LAMBDA } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";

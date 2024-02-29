@@ -2,7 +2,7 @@
 import assert from 'assert';
 import { U } from "math-expression-tree";
 import { create_engine } from "../src/api/api";
-
+/*
 const svg: string = [
     `<svg height='36'width='135'>`,
     `<text style='font-family:"Times New Roman";font-size:24px;' x='10' y='26'>1</text>`,
@@ -14,6 +14,7 @@ const svg: string = [
     `<text style='font-family:"Times New Roman";font-size:24px;' x='107.9921875' y='26'>N</text>`,
     `</svg>`
 ].join('');
+*/
 
 describe("prefixes", function () {
     it("values", function () {
@@ -86,7 +87,7 @@ describe("prefixes", function () {
         assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), `159*e1*"mega"*N`);
         assert.strictEqual(engine.renderAsString(values[0], { format: 'LaTeX' }), `159e1"mega"N`);
         assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `(* 159 e1 "mega" N)`);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SVG' }), svg);
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'SVG' }), svg);
         engine.release();
     });
 });

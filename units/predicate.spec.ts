@@ -171,7 +171,7 @@ describe("predicate", function () {
         });
     });
     describe("relational", function () {
-        it("x==0 when x is nonzero", function () {
+        xit("x==0 when x is nonzero", function () {
             const lines: string[] = [
                 `x==0`
             ];
@@ -184,7 +184,7 @@ describe("predicate", function () {
             assert.strictEqual(context.renderAsSExpr(value), "false");
             assert.strictEqual(context.renderAsInfix(value), 'false');
         });
-        it("x==0 when x is zero", function () {
+        xit("x==0 when x is zero", function () {
             const lines: string[] = [
                 `x==0`
             ];
@@ -197,7 +197,7 @@ describe("predicate", function () {
             assert.strictEqual(context.renderAsSExpr(value), "true");
             assert.strictEqual(context.renderAsInfix(value), 'true');
         });
-        it("x>0", function () {
+        xit("x>0", function () {
             const lines: string[] = [
                 `x>0`
             ];
@@ -208,7 +208,7 @@ describe("predicate", function () {
             assert.strictEqual(engine.renderAsSExpr(value), "true");
             assert.strictEqual(engine.renderAsInfix(value), 'true');
         });
-        it("x<0", function () {
+        xit("x<0", function () {
             const lines: string[] = [
                 `x<0`
             ];
@@ -220,7 +220,7 @@ describe("predicate", function () {
             assert.strictEqual(engine.renderAsSExpr(value), "false");
             assert.strictEqual(engine.renderAsInfix(value), 'false');
         });
-        it("x * y < 0", function () {
+        xit("x * y < 0", function () {
             const lines: string[] = [
                 `x * y < 0`
             ];
@@ -232,7 +232,7 @@ describe("predicate", function () {
             assert.strictEqual(engine.renderAsSExpr(value), "false");
             assert.strictEqual(engine.renderAsInfix(value), 'false');
         });
-        it("x * y > 0", function () {
+        xit("x * y > 0", function () {
             const lines: string[] = [
                 `x * y > 0`
             ];

@@ -2,7 +2,8 @@ import { create_sym, is_tensor } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, is_cons, U } from "math-expression-tree";
-import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
 import { dispatch_eval_1_arg } from "../../dispatch/dispatch_eval_1_arg";
 import { det } from "./det";
 

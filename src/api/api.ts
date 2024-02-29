@@ -383,7 +383,7 @@ class MicroEngine implements ExprEngine {
     }
     defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void {
         const builderX = new AtomExtensionBuilderFromExprHandlerBuilder<T>(builder, type, guard);
-        this.#env.defineExtension(builderX);
+        this.#env.defineExtension(builderX, false);
     }
     defineFunction(name: Sym, lambda: LambdaExpr): void {
         assert_sym(name);
@@ -391,6 +391,7 @@ class MicroEngine implements ExprEngine {
         this.#env.defineFunction(match, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
+        this.#env.buildOperators();
         const { trees, errors } = stemcmicro_parse(sourceText, stemc_parse_config(options));
         const visitor = new ExtensionEnvVisitor(this.#env);
         for (const tree of trees) {
@@ -535,7 +536,7 @@ class ClojureScriptEngine implements ExprEngine {
     }
     defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void {
         const builderX = new AtomExtensionBuilderFromExprHandlerBuilder<T>(builder, type, guard);
-        this.#env.defineExtension(builderX);
+        this.#env.defineExtension(builderX, false);
     }
     defineFunction(name: Sym, lambda: LambdaExpr): void {
         assert_sym(name);
@@ -544,6 +545,7 @@ class ClojureScriptEngine implements ExprEngine {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
+        this.#env.buildOperators();
         const useCaretForExponentiation = reify_boolean(options.useCaretForExponentiation);
         const caretDecode = useCaretForExponentiation ? native_sym(Native.pow) : native_sym(Native.outer);
         const { trees, errors } = clojurescript_parse(sourceText, {

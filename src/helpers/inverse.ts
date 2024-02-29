@@ -1,6 +1,7 @@
 import { Err } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
-import { diagnostic, Diagnostics } from "../diagnostics/diagnostics";
+import { diagnostic } from "../diagnostics/diagnostics";
+import { Diagnostics } from "../diagnostics/messages";
 import { is_flt } from "../operators/flt/is_flt";
 import { is_num } from "../operators/num/is_num";
 import { is_rat } from "../operators/rat/is_rat";

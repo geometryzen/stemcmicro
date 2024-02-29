@@ -1,7 +1,8 @@
 import { assert_jsobject, create_sym, is_jsobject, JsObject, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Cons, nil, U } from "math-expression-tree";
-import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";

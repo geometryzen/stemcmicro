@@ -1,5 +1,6 @@
 import { Err } from 'math-expression-atoms';
-import { diagnostic, Diagnostics } from './diagnostics/diagnostics';
+import { diagnostic } from './diagnostics/diagnostics';
+import { Diagnostics } from './diagnostics/messages';
 import { mdiv, mmul } from './mmul';
 import { mpow } from './mpow';
 import { is_flt } from './operators/flt/is_flt';

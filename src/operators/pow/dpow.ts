@@ -1,7 +1,8 @@
 import { create_flt, imu } from 'math-expression-atoms';
 import { ExprContext } from 'math-expression-context';
 import { U } from 'math-expression-tree';
-import { diagnostic, Diagnostics } from '../../diagnostics/diagnostics';
+import { diagnostic } from '../../diagnostics/diagnostics';
+import { Diagnostics } from '../../diagnostics/messages';
 import { add } from '../../helpers/add';
 import { multiply } from '../../helpers/multiply';
 

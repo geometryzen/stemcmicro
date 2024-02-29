@@ -623,7 +623,7 @@ function infix_atom(atom: Atom, env: ProgramEnv, ctrl: ProgramControl, config: I
             infix_write(infix, config, outbuf);
         }
         else if (is_err(response)) {
-            throw new ProgrammingError(`${response}`);
+            throw response;
         }
         else {
             throw new ProgrammingError();

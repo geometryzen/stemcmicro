@@ -6,6 +6,7 @@ export interface ProgramStack extends Shareable {
     concat(exprs: U[]): void;
     get isatom(): boolean;
     get iscons(): boolean;
+    get istrue(): boolean;
     dupl(): void;
     peek(): U;
     pop(): U;

@@ -1,4 +1,4 @@
-import { assert_rat, create_flt, create_str, create_sym, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Rat, Sym, zero } from "math-expression-atoms";
+import { assert_rat, create_flt, create_str, create_sym, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Rat, Str, Sym, zero } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { cons, Cons, is_atom, is_cons, is_singleton, items_to_cons, nil, U } from "math-expression-tree";
@@ -8,6 +8,7 @@ import { hash_for_atom } from "../../hashing/hash_info";
 import { iszero } from "../../helpers/iszero";
 import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
+import { hook_create_err } from "../../hooks/hook_create_err";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
@@ -15,6 +16,7 @@ const ADD = native_sym(Native.add);
 const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
+const PI = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
 
 export class RatExtension implements Extension<Rat> {
@@ -148,6 +150,18 @@ export class RatExtension implements Extension<Rat> {
         switch (opr.id) {
             case Native.abs: {
                 return target.abs();
+            }
+            case Native.arg: {
+                if (target.isZero()) {
+                    return hook_create_err(new Str("arg of zero (0) is undefined"));
+                }
+                else if (target.isNegative()) {
+                    return PI;
+                }
+                else {
+                    return zero;
+                }
+                break;
             }
             case Native.grade: {
                 const head = argList.head;

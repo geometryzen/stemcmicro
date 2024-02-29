@@ -21,33 +21,9 @@ const renderConfig: RenderConfig = {
 };
 
 describe("sandbox", function () {
-    it("det(A)", function () {
+    it("log(-1)", function () {
         const lines: string[] = [
-            `A=[[a,b],[c,d]]`,
-            `det(A)`
-        ];
-        const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
-        const { trees, errors } = engine.parse(sourceText, parseConfig);
-        assert.strictEqual(errors.length, 0);
-        const values: U[] = [];
-        for (const tree of trees) {
-            const x = engine.valueOf(tree);
-            const value = engine.simplify(x);
-            if (!is_nil(value)) {
-                values.push(value);
-            }
-        }
-        assert.strictEqual(values.length, 1);
-        // A DistributiveLawExpandRight is breaking apart the determinant before multiplying by the inverse.
-        // The result is correct but requires factoring to discover the simplification
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("a*d-b*c"));
-        engine.release();
-    });
-    it("det(A) * inv(A)", function () {
-        const lines: string[] = [
-            `A=[[a,b],[c,d]]`,
-            `det(A) * inv(A)`
+            `log(-1.0)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -63,7 +39,7 @@ describe("sandbox", function () {
         assert.strictEqual(values.length, 1);
         // A DistributiveLawExpandRight is breaking apart the determinant before multiplying by the inverse.
         // The result is correct but requires factoring to discover the simplification
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[[d,-b],[-c,a]]"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("i*pi"));
         engine.release();
     });
 });

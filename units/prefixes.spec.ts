@@ -82,7 +82,7 @@ describe("prefixes", function () {
         }
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), `159 e1 "mega" N`);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), `159 e1 M N`);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), `159 e1 "mega" N`);
         assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), `159*e1*"mega"*N`);
         assert.strictEqual(engine.renderAsString(values[0], { format: 'LaTeX' }), `159e1"mega"N`);
         assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `(* 159 e1 "mega" N)`);

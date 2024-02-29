@@ -1,13 +1,16 @@
 import { Boo, booT, create_str, create_sym, is_boo, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, nil, U } from "math-expression-tree";
+import { Cons, is_atom, nil, U } from "math-expression-tree";
 import { diagnostic, Diagnostics } from "../../diagnostics/diagnostics";
-import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ProgrammingError } from "../../programming/ProgrammingError";
+import { wrap_as_transform } from "../wrap_as_transform";
 
 const ADD = native_sym(Native.add);
 
 export class BooExtension implements Extension<Boo> {
+    readonly dependencies: FEATURE[] = ['Boo'];
     constructor() {
         // Nothing to see here.
     }
@@ -31,8 +34,20 @@ export class BooExtension implements Extension<Boo> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Boo, opr: Sym, argList: Cons, env: ExprContext): U {
         switch (opr.id) {
+            case Native.ascii: {
+                return create_str(this.toAsciiString(target));
+            }
+            case Native.human: {
+                return create_str(this.toHumanString(target));
+            }
             case Native.infix: {
                 return create_str(this.toInfixString(target));
+            }
+            case Native.latex: {
+                return create_str(this.toLatexString(target));
+            }
+            case Native.sexpr: {
+                return create_str(this.toListString(target));
             }
             case Native.simplify: {
                 return target;
@@ -52,20 +67,14 @@ export class BooExtension implements Extension<Boo> {
     get name(): string {
         return 'BooExtension';
     }
-    evaluate(expr: Boo, argList: Cons, $: ExtensionEnv): [number, U] {
-        return this.transform(cons(expr, argList), $);
-    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {
-        if (expr instanceof Boo) {
-            return [TFLAG_HALT, expr];
-        }
-        else {
-            return [TFLAG_NONE, expr];
-        }
+    evaluate(expr: Boo, argList: Cons, $: ExprContext): [number, U] {
+        throw new ProgrammingError();
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    valueOf(expr: Boo, $: ExtensionEnv): U {
+    transform(expr: Boo): [TFLAGS, U] {
+        return wrap_as_transform(expr, expr);
+    }
+    valueOf(expr: Boo): U {
         return expr;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -76,6 +85,9 @@ export class BooExtension implements Extension<Boo> {
     subst(expr: Boo, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
         return expr;
         // throw new Error(`Boo.subst(expr=${render_as_infix(expr, $)}, oldExpr=${render_as_infix(oldExpr, $)}, newExpr=${render_as_infix(newExpr, $)}) Method not implemented.`);
+    }
+    toAsciiString(expr: Boo): string {
+        return expr.equals(booT) ? 'true' : 'false';
     }
     toHumanString(expr: Boo): string {
         return expr.equals(booT) ? 'true' : 'false';

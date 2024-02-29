@@ -1,6 +1,9 @@
 import { booU } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from './env/ExtensionEnv';
+import { iszero } from './helpers/iszero';
 import { predicate_return_value } from './helpers/predicate_return_value';
+import { subtract } from './helpers/subtract';
 import { Native } from './native/Native';
 import { native_sym } from './native/native_sym';
 import { evaluate_as_float } from './operators/float/float';
@@ -8,7 +11,6 @@ import { is_flt } from './operators/flt/is_flt';
 import { replace_assign_with_testeq } from './operators/predicate/replace_assign_with_testeq';
 import { is_rat } from './operators/rat/is_rat';
 import { simplify } from './operators/simplify/simplify';
-import { MSIGN } from './runtime/constants';
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from './scripting/isZeroLikeOrNonZeroLikeOrUndetermined';
 import { cadr, cddr } from './tree/helpers';
 import { zero } from './tree/rat/Rat';
@@ -291,45 +293,26 @@ export function eval_or(p1: Cons, $: ExtensionEnv): U {
 /**
  * 
  */
-function cmp_args(expr: Cons, $: ExtensionEnv): Sign | null {
-    // console.lg("cmp_args", $.toInfixString(expr));
+function cmp_args(expr: Cons, $: ExprContext): Sign | null {
+
     const lhs = simplify($.valueOf(expr.lhs), $);
     const rhs = simplify($.valueOf(expr.rhs), $);
-    // console.lg("lhs", $.toInfixString(lhs));
-    // console.lg("rhs", $.toInfixString(rhs));
 
-    let diff = $.subtract(lhs, rhs);
+    let diff = subtract($, lhs, rhs);
 
-    // console.lg("diff", $.toInfixString(diff));
-
-    // try floating point if necessary
-    // This will go recursive and you will think your values are being promoted.
-    // Stay calm! Don't panic.
     if (!is_rat(diff) && !is_flt(diff)) {
         diff = $.valueOf(evaluate_as_float(diff, $));
     }
 
-    // console.lg("diff", $.toInfixString(diff));
-
-    if ($.iszero(diff)) {
+    if (iszero(diff, $)) {
         return SIGN_EQ;
     }
 
     if (is_rat(diff)) {
-        if (MSIGN(diff.a) === -1) {
-            return SIGN_LT;
-        }
-        else {
-            return SIGN_GT;
-        }
+        return diff.isNegative() ? SIGN_LT : SIGN_GT;
     }
     else if (is_flt(diff)) {
-        if (diff.d < 0.0) {
-            return SIGN_LT;
-        }
-        else {
-            return SIGN_GT;
-        }
+        return diff.isNegative() ? SIGN_LT : SIGN_GT;
     }
     else {
         return null;

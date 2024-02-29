@@ -860,11 +860,12 @@ function decomp_product(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 }
 
 /**
- * 
+ * [..., a, b] => [..., a * (1/b)]
  */
 export function divide(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    reciprocate(env, ctrl, $);
-    multiply(env, ctrl, $);
+    //                                          [..., a, b]
+    reciprocate(env, ctrl, $);              //  [..., a, 1/b]
+    multiply_factors(2, env, ctrl, $);      //  [..., a/b]
 }
 
 function dupl($: ProgramStack): void {
@@ -2329,8 +2330,8 @@ function arctanh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
 export function stack_arg(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     $.push(expr);                // [expr]
-    $.rest();                    // [argList]
-    $.head();                    // [argList.item0]
+    $.rest();                    // [expr.argList]
+    $.head();                    // [expr.argList.head]
     value_of(env, ctrl, $);      // [z]
     arg(env, ctrl, $);           // [arg(z)]
 }
@@ -2340,7 +2341,6 @@ export function stack_arg(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 function arg(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const z = pop($);
-    // console.lg("arg", "z => ", `${ z }`);
     try {
         if (is_tensor(z)) {
             const T = copy_tensor(z);
@@ -2375,103 +2375,188 @@ function arg(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
 function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    let z = pop($);
-
-    if (is_rat(z)) {
-        if (z.isZero()) {
-            $.push(hook_create_err(new Str("arg of zero (0) is undefined")));
-        }
-        else if (isnegativenumber(z)) {
-            push(MATH_PI, $);
-            negate(env, ctrl, $);
-        }
-        else {
-            push_integer(0, $);
-        }
-        return;
-    }
-
-    if (is_flt(z)) {
-        if (z.isZero()) {
-            $.push(hook_create_err(new Str("arg of zero (0.0) is undefined")));
-        }
-        else if (isnegativenumber(z)) {
-            push_double(-Math.PI, $);
-        }
-        else {
-            push_double(0.0, $);
-        }
-        return;
-    }
-
-    // arg((-1)**expo) => pi*expo
-
-    if (is_cons(z)) {
-        const opr = z.opr;
-        try {
-            if (is_sym(opr) && is_native(opr, Native.pow)) {
-                const base = z.base;
+    const z = pop($);
+    try {
+        if (is_atom(z)) {
+            const handler = env.handlerFor(z);
+            const context = new ExprContextFromProgram(env, ctrl, $);
+            try {
+                const retval = handler.dispatch(z, native_sym(Native.arg), nil, context);
                 try {
-                    if (isminusone(base)) {
-                        const expo = z.expo;
-                        try {
-                            $.push(native_sym(Native.PI));      // [pi]
-                            $.push(expo);                       // [pi expo]
-                            multiply(env, ctrl, $);             // [pi*expo]
-                            return;
-                        }
-                        finally {
-                            expo.release();
-                        }
-                    }
+                    $.push(retval);
+                    return;
                 }
                 finally {
-                    base.release();
+                    retval.release();
                 }
             }
+            finally {
+                context.release();
+            }
         }
-        finally {
-            opr.release();
+
+        if (is_rat(z)) {
+            if (z.isZero()) {
+                $.push(hook_create_err(new Str("arg of zero (0) is undefined")));
+            }
+            else if (isnegativenumber(z)) {
+                push(MATH_PI, $);
+                negate(env, ctrl, $);   // This is wrong, should be PI
+            }
+            else {
+                push_integer(0, $);
+            }
+            return;
         }
-    }
 
-    // e ^ expr
-
-    if (is_cons(z) && z.opr.equals(POWER) && cadr(z).equals(MATH_E)) {
-        push(caddr(z), $);
-        imag(env, ctrl, $);
-        return;
-    }
-
-    if (car(z).equals(MULTIPLY)) {
-        const h = $.length;
-        z = cdr(z);
-        while (is_cons(z)) {
-            push(car(z), $);
-            arg(env, ctrl, $);
-            z = cdr(z);
+        if (is_flt(z)) {
+            if (z.isZero()) {
+                $.push(hook_create_err(new Str("arg of zero (0.0) is undefined")));
+            }
+            else if (isnegativenumber(z)) {
+                push_double(-Math.PI, $);
+            }
+            else {
+                push_double(0.0, $);
+            }
+            return;
         }
-        sum_terms($.length - h, env, ctrl, $);
-        return;
-    }
 
-    if (car(z).equals(ADD)) {
-        push(z, $);
-        rect(env, ctrl, $); // convert polar and clock forms
-        z = pop($);
-        push(z, $);
-        real(env, ctrl, $);
-        const RE = pop($);
-        push(z, $);
-        imag(env, ctrl, $);
-        const IM = pop($);
-        push(IM, $);
-        push(RE, $);
-        arctan(env, ctrl, $);
-        return;
-    }
+        // arg((-1)**expo) => pi*expo
 
-    push_integer(0, $); // p1 is real
+        if (is_cons(z)) {
+            const opr = z.opr;
+            try {
+                if (is_sym(opr) && is_native(opr, Native.pow)) {
+                    const base = z.base;
+                    try {
+                        if (isminusone(base)) {
+                            const expo = z.expo;
+                            try {
+                                $.push(native_sym(Native.PI));      // [pi]
+                                $.push(expo);                       // [pi expo]
+                                multiply(env, ctrl, $);             // [pi*expo]
+                                return;
+                            }
+                            finally {
+                                expo.release();
+                            }
+                        }
+                    }
+                    finally {
+                        base.release();
+                    }
+                }
+            }
+            finally {
+                opr.release();
+            }
+        }
+
+        // e ^ expr
+
+        if (is_cons(z) && z.opr.equals(POWER) && cadr(z).equals(MATH_E)) {
+            push(caddr(z), $);
+            imag(env, ctrl, $);
+            return;
+        }
+
+        if (car(z).equals(MULTIPLY)) {
+            const h = $.length;
+            let zs = cdr(z);
+            while (is_cons(zs)) {
+                push(car(zs), $);
+                arg(env, ctrl, $);
+                zs = cdr(zs);
+            }
+            sum_terms($.length - h, env, ctrl, $);
+            principal_value(env, ctrl, $);
+            return;
+        }
+
+        if (car(z).equals(ADD)) {
+            push(z, $);
+            rect(env, ctrl, $); // convert polar and clock forms
+            const rect_z = pop($);
+            push(rect_z, $);
+            real(env, ctrl, $);
+            const x = pop($);
+            push(rect_z, $);
+            imag(env, ctrl, $);
+            const y = pop($);
+            push(y, $);
+            push(x, $);
+            arctan(env, ctrl, $);
+            return;
+        }
+
+        push_integer(0, $); // p1 is real    
+    }
+    finally {
+        z.release();
+    }
+}
+
+/**
+ * Ensures that the value on the stack lies in the interval (-pi, pi]
+ * 
+ * Note that some authors use (0, 2*pi)
+ * 
+ * [..., a*pi] => [..., a*pi]
+ */
+function principal_value(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    const context = new ExprContextFromProgram(env, ctrl, $);
+    const step = two;
+    const lowerBound = negOne;                  // or some authors use zero
+    const upperBound = lowerBound.add(step);
+    try {
+        $.push(native_sym(Native.PI));          //  [..., a*pi, pi]
+        divide(env, ctrl, $);                   //  [..., a]
+
+        $.dupl();                               //  [..., a, a]
+        push_native(Native.testgt, $);          //  [..., a, a, >]
+        $.swap();                               //  [..., a, >, a]
+        $.push(upperBound);                     //  [..., a, >, a, upperBound]
+        list(3, $);                             //  [..., a, (> a upperBound)]
+        value_of(env, ctrl, $);                 //  [..., a, value(> a upperBound)]
+        while ($.istrue) {
+            $.pop().release();                  //  [..., a]
+            $.push(step);                       //  [..., a, step]
+            subtract(env, ctrl, $);             //  [..., b], where b = a - step
+            $.dupl();                           //  [..., b, b]
+            push_native(Native.testgt, $);      //  [..., b, b, >]
+            $.swap();                           //  [..., b, >, b]
+            $.push(upperBound);                 //  [..., b, >, b, upperBound]
+            list(3, $);                         //  [..., b, (> b upperBound)]
+            value_of(env, ctrl, $);             //  [..., b, value(> b upperBound)]
+        }
+        $.pop().release();                      //  [..., b]
+
+        $.dupl();                               //  [..., b, b]
+        push_native(Native.testle, $);          //  [..., b, b, <=]
+        $.swap();                               //  [..., b, <=, b]
+        $.push(lowerBound);                     //  [..., b, <=, b, lowerBound]
+        list(3, $);                             //  [..., b, (<= b lowerBound)]
+        value_of(env, ctrl, $);                 //  [..., b, value(<= b lowerBound)]
+        while ($.istrue) {
+            $.pop().release();                  //  [..., b]
+            $.push(step);                       //  [..., b, step]
+            sum_terms(2, env, ctrl, $);         //  [..., c], where c = b + step
+            $.dupl();                           //  [..., c, c]
+            push_native(Native.testle, $);      //  [..., c, c, <=]
+            $.swap();                           //  [..., c, <=, c]
+            $.push(lowerBound);                 //  [..., c, <=, c, lowerBound]
+            list(3, $);                         //  [..., c, (<= c lowerBound)]
+            value_of(env, ctrl, $);             //  [..., c, value(<= c lowerBound)]
+        }
+        $.pop().release();                      //  [..., c]
+
+        $.push(native_sym(Native.PI));          //  [..., c, pi]
+        multiply_factors(2, env, ctrl, $);      //  [..., c * pi]
+    }
+    finally {
+        context.release();
+    }
 }
 
 /**
@@ -9325,6 +9410,9 @@ export function stack_testlt(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, 
     }
 }
 
+/**
+ * No net change in stack.
+ */
 function cmp_args(expr: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): Sign {
     //                              [...]
     _.push(expr);               //  [..., expr]
@@ -10843,6 +10931,9 @@ function lessp(p1: U, p2: U): boolean {
     return cmp(p1, p2) < 0;
 }
 
+/**
+ * [..., x1, x2, ..., xn] => [..., (x1, x2, ..., xn)]
+ */
 export function list(n: number, _: Pick<ProgramStack, 'pop' | 'push'>): void {
     push(nil, _);
     for (let i = 0; i < n; i++) {
@@ -12536,6 +12627,17 @@ function push_double(d: number, _: Pick<ProgramStack, 'push'>): void {
 export function push_integer(n: number, $: Pick<ProgramStack, 'push'>): void {
     push_rational(n, 1, $);
 }
+
+export function push_native(code: Native, $: Pick<ProgramStack, 'push'>): void {
+    const sym = native_sym(code);
+    try {
+        $.push(sym);
+    }
+    finally {
+        sym.release();
+    }
+}
+
 /**
  * Pushes a Rat onto the stack.
  * @param a 
@@ -12562,11 +12664,12 @@ export function push_string(s: string, $: ProgramStack) {
 }
 
 /**
- * x --> (pow x -1)
+ * [..., x] => [..., (pow x -1)]
  */
 function reciprocate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push_integer(-1, $);
-    power(env, ctrl, $);
+    //                              [..., x]
+    push_integer(-1, $);        //  [..., x, -1]
+    power(env, ctrl, $);        //  [..., (pow x -1)]
 }
 
 function reduce_radical_double(h: number, COEFF: Flt, $: ProgramStack): Flt {

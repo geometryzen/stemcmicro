@@ -1,5 +1,7 @@
+import { is_boo, is_err } from "math-expression-atoms";
 import { assert_cons_or_nil, car, cdr, cons, is_atom, is_cons, nil, U } from "math-expression-tree";
 import { ProgramStack } from "../eigenmath/ProgramStack";
+import { ProgrammingError } from "../programming/ProgrammingError";
 import { Stack } from "./Stack";
 
 /**
@@ -94,6 +96,18 @@ export class StackU implements ProgramStack {
     }
     get iscons(): boolean {
         return is_cons(this.#stack.top);
+    }
+    get istrue(): boolean {
+        const top = this.#stack.top;
+        if (is_boo(top)) {
+            return top.isTrue();
+        }
+        else if (is_err(top)) {
+            throw top;
+        }
+        else {
+            throw new ProgrammingError();
+        }
     }
     list(n: number): void {
         this.#stack.push(nil);

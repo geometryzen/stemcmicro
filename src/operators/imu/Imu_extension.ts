@@ -14,6 +14,7 @@ import { half, two } from "../../tree/rat/Rat";
 const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
+const PI = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
 const negImu = items_to_cons(MUL, negOne, imu);
 
@@ -120,6 +121,9 @@ class ImuExtension implements Extension<Imu> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Imu, opr: Sym, argList: Cons, env: ExprContext): U {
         switch (opr.id) {
+            case Native.arg: {
+                return order_binary(MUL, half, PI, env);
+            }
             case Native.infix: {
                 return create_str(this.toInfixString(target));
             }

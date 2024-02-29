@@ -1,10 +1,9 @@
-import { ExtensionEnv } from "../env/ExtensionEnv";
+import { imu, negOne } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
+import { items_to_cons, U } from "math-expression-tree";
 import { MATH_MUL } from "../runtime/ns_math";
-import { imu } from "../tree/imu/Imu";
-import { negOne } from "../tree/rat/Rat";
-import { items_to_cons, U } from "../tree/tree";
 
-export function divide_by_imu(expr: U, $: ExtensionEnv): U {
+export function divide_by_imu(expr: U, $: ExprContext): U {
     // TODO: This could be optimized by detecting simple inputs.
     const A = expr;
     const B = $.valueOf(items_to_cons(MATH_MUL, A, imu));

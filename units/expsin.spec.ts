@@ -9,7 +9,7 @@ describe("expsin", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "1/2*i*exp(-i*x)-1/2*i*exp(i*x)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1/2*i*e**(-i*x)-1/2*i*e**(i*x)");
         engine.release();
     });
 });

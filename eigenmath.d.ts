@@ -5,18 +5,6 @@
  * Copyright (c) 2022-2024 David Holmes
  */
 
-//==============================================================================
-// Types
-//==============================================================================
-declare class Blade {
-}
-
-declare class Sym {
-}
-
-declare class Uom {
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type U = any;
 
@@ -310,9 +298,12 @@ declare function grad(f: U): U
 declare function hadamard(...args: U[]): U
 
 /**
+ * Returns an `n` by `n` Hilbert matrix.
+ */
+declare function hilbert(n: U): U
+
+/**
  * Returns the `n`th Hermite polynomial in `x`.
- * @param x 
- * @param n 
  */
 declare function hermite(x: U, n: U): U
 
@@ -349,7 +340,7 @@ declare function isprime(n: U): U
 declare function kronecker(...args: U[]): U
 
 /**
- * Returns the `n`th Lagueere polynomial in `x`.
+ * Returns the `n`th Laguerre polynomial in `x`.
  * @param x 
  * @param n 
  * @param a 
@@ -567,17 +558,17 @@ declare function zero(...dims: U[]): U
 /**
  * The unit vector in the direction of the positive x-axis.
  */
-declare const ex: Blade;
+declare const ex: U;
 
 /**
  * The unit vector in the direction of the positive y-axis.
  */
-declare const ey: Blade;
+declare const ey: U;
 
 /**
  * The unit vector in the direction of the positive z-axis.
  */
-declare const ez: Blade;
+declare const ez: U;
 
 //==============================================================================
 // Metric (SI) Units of Measure
@@ -586,107 +577,107 @@ declare const ez: Blade;
 /**
  * SI Base Unit for electric current, symbol `A`
  */
-declare const ampere: Sym;
+declare const ampere: U;
 
 /**
  * SI Base Unit for luminous intensity, symbol `cd`.
  */
-declare const candela: Sym;
+declare const candela: U;
 
 /**
  * `C`.
  */
-declare const coulomb: Sym;
+declare const coulomb: U;
 
 /**
  * F
  */
-declare const farad: Sym;
+declare const farad: U;
 
 /**
  * H
  */
-declare const henry: Sym;
+declare const henry: U;
 
 /**
  * Hz
  */
-declare const hertz: Sym;
+declare const hertz: U;
 
 /**
  * J
  */
-declare const joule: Sym;
+declare const joule: U;
 
 /**
  * SI Base Unit for thermodynamic temperature, symbol K.
  */
-declare const kelvin: Sym;
+declare const kelvin: U;
 
 /**
  * SI Base Unit for mass, symbol kg.
  */
-declare const kilogram: Sym;
+declare const kilogram: U;
 
 /**
  * SI Base Unit for length, symbol m.
  */
-declare const meter: Sym;
+declare const meter: U;
 
 /**
  * SI Base Unit for length, symbol m.
  */
-declare const metre: Sym;
+declare const metre: U;
 
 /**
  * SI Base Unit for amount of substance, symbol mol.
  */
-declare const mole: Sym;
+declare const mole: U;
 
 /**
  * N
  */
-declare const newton: Sym;
+declare const newton: U;
 
 /**
  * Ω
  */
-declare const ohm: Sym;
+declare const ohm: U;
 
 /**
  * Pa
  */
-declare const pascal: Sym;
+declare const pascal: U;
 
 /**
  * SI Base Unit for time, symbol s.
  */
-declare const second: Sym;
+declare const second: U;
 
 /**
  * S
  */
-declare const siemens: Sym;
+declare const siemens: U;
 
 /**
  * T
  */
-declare const tesla: Sym;
+declare const tesla: U;
 
 /**
  * V
  */
-declare const volt: Sym;
+declare const volt: U;
 
 /**
  * W
  */
-declare const watt: Sym;
+declare const watt: U;
 
 /**
  * Wb
  */
-declare const weber: Sym;
+declare const weber: U;
 
 //==============================================================================
 // Metric (SI) Prefixes
@@ -695,82 +686,82 @@ declare const weber: Sym;
 /**
  * Prefix indicating one tenth (1/10 or 10e-1)
  */
-declare const deci: Sym;
+declare const deci: U;
 
 /**
  * Prefix indicating one hundredth (1/100 or 10e-2)
  */
-declare const centi: Sym;
+declare const centi: U;
 
 /**
  * Prefix indicating one thousandth (1/1000 or 10e-3)
  */
-declare const milli: Sym;
+declare const milli: U;
 
 /**
  * Prefix indicating one millionth (10e-6)
  */
-declare const micro: Sym;
+declare const micro: U;
 
 /**
  * Prefix indicating one billionth (10e-9)
  */
-declare const nano: Sym;
+declare const nano: U;
 
 /**
  * Prefix indicating one trillionth (10e-12)
  */
-declare const pico: Sym;
+declare const pico: U;
 
 /**
  * Prefix indicating one quadrillionth (10e-15)
  */
-declare const femto: Sym;
+declare const femto: U;
 
 /**
  * Prefix indicating one quintillionth (10e-18)
  */
-declare const atto: Sym;
+declare const atto: U;
 
 /**
  * Prefix indicating ten (10)
  */
-declare const decka: Sym;
+declare const decka: U;
 
 /**
  * Prefix indicating one hundred (100)
  */
-declare const hecto: Sym;
+declare const hecto: U;
 
 /**
  * Prefix indicating one thousand (10**3)
  */
-declare const kilo: Sym;
+declare const kilo: U;
 
 /**
  * Prefix indicating one million (10**6)
  */
-declare const mega: Sym;
+declare const mega: U;
 
 /**
  * Prefix indicating one billion (10**9)
  */
-declare const giga: Sym;
+declare const giga: U;
 
 /**
  * Prefix indicating one trillion (10**12)
  */
-declare const tera: Sym;
+declare const tera: U;
 
 /**
  * Prefix indicating one quadrillion (10**15)
  */
-declare const peta: Sym;
+declare const peta: U;
 
 /**
  * Prefix indicating one quintillion (10**18)
  */
-declare const exa: Sym;
+declare const exa: U;
 
 //==============================================================================
 // Constants
@@ -779,4 +770,18 @@ declare const exa: Sym;
 /**
  * Mathematical constant, Pi
  */
-declare const pi: Sym;
+declare const pi: U;
+
+//==============================================================================
+// Variables
+//==============================================================================
+
+/**
+ * Set `trace = 1` in a script to print the script as it is evaluated. Useful for debugging.
+ */
+declare let trace: U;
+
+/**
+ * Set `tty = 1` to show results in string format. Set `tty = 0` to turn off.
+ */
+declare let tty: U;

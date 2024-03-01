@@ -4,7 +4,7 @@
 // Think of these as a universal standard identifying mathematical standards.
 // Implementations do not need to couple to this file, but they should use it as a standard.
 
-// TODO: Don't need to define functions; these are pluggabel and should not be centrally defined.
+// TODO: Don't need to define functions; these are pluggable and should not be centrally defined.
 
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";

@@ -129,6 +129,9 @@ export class RatExtension implements Extension<Rat> {
                     else if (is_rat(rhs)) {
                         return lhs.mul(rhs);
                     }
+                    else if (is_sym(rhs)) {
+                        return rat_times_simple_atom(lhs, rhs, env);
+                    }
                     else if (is_uom(rhs)) {
                         return rat_times_simple_atom(lhs, rhs, env);
                     }

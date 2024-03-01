@@ -19,6 +19,7 @@ import { get_binding } from "./get_binding";
 const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
 const MUL = native_sym(Native.multiply);
+const OUTER = native_sym(Native.outer);
 const POW = native_sym(Native.pow);
 const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
@@ -50,82 +51,94 @@ class SymExtension implements Extension<Sym> {
         }
     }
     binL(lhs: Sym, opr: Sym, rhs: U, env: ExprContext): U {
-        if (opr.equalsSym(ADD)) {
-            if (is_atom(rhs)) {
-                if (is_err(rhs)) {
-                    return rhs;
-                }
-                else if (is_sym(rhs)) {
-                    return order_binary(ADD, lhs, rhs, env);
-                }
-            }
-        }
-        else if (opr.equalsSym(MUL)) {
-            if (is_atom(rhs)) {
-                if (is_blade(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
-                else if (is_err(rhs)) {
-                    return rhs;
-                }
-                else if (is_flt(rhs)) {
-                    if (rhs.isZero()) {
+        switch (opr.id) {
+            case Native.add: {
+                if (is_atom(rhs)) {
+                    if (is_err(rhs)) {
                         return rhs;
                     }
-                    else {
-                        return order_binary(MUL, float(lhs, env), rhs, env);
+                    else if (is_sym(rhs)) {
+                        return order_binary(ADD, lhs, rhs, env);
                     }
                 }
-                else if (is_hyp(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
-                else if (is_imu(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
-                else if (is_rat(rhs)) {
-                    if (rhs.isOne()) {
-                        return env.valueOf(lhs);
-                    }
-                    // console.lg(`SymExtension.binL ${lhs} ${opr} ${rhs}`);
-                    return order_binary(MUL, lhs, rhs, env);
-                }
-                else if (is_sym(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
-                else if (is_tensor(rhs)) {
-                    return rhs.map(x => multiply(env, lhs, x));
-                }
-                else if (is_uom(rhs)) {
-                    return order_binary(MUL, lhs, rhs, env);
-                }
+                break;
             }
-        }
-        else if (opr.equalsSym(POW)) {
-            if (is_atom(rhs)) {
-                if (is_rat(rhs)) {
-                    if (rhs.isZero()) {
-                        return one;
+            case Native.multiply: {
+                if (is_atom(rhs)) {
+                    if (is_blade(rhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
                     }
-                    else if (rhs.isOne()) {
-                        return lhs;
+                    else if (is_err(rhs)) {
+                        return rhs;
                     }
-                    else {
-                        return items_to_cons(POW, lhs, rhs);
+                    else if (is_flt(rhs)) {
+                        if (rhs.isZero()) {
+                            return rhs;
+                        }
+                        else {
+                            return order_binary(MUL, float(lhs, env), rhs, env);
+                        }
+                    }
+                    else if (is_hyp(rhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_imu(rhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_rat(rhs)) {
+                        if (rhs.isOne()) {
+                            return env.valueOf(lhs);
+                        }
+                        // console.lg(`SymExtension.binL ${lhs} ${opr} ${rhs}`);
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_sym(rhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_tensor(rhs)) {
+                        return rhs.map(x => multiply(env, lhs, x));
+                    }
+                    else if (is_uom(rhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
                     }
                 }
-                else if (is_flt(rhs)) {
-                    if (rhs.isZero()) {
-                        return one;
-                    }
-                    else if (rhs.isOne()) {
-                        return lhs;
-                    }
-                    else {
-                        return items_to_cons(POW, lhs, rhs);
+                break;
+            }
+            case Native.outer: {
+                if (is_atom(rhs)) {
+                    if (is_sym(rhs)) {
+                        return order_binary(OUTER, lhs, rhs, env);
                     }
                 }
-                else if (is_sym(rhs)) {
-                    return items_to_cons(POW, lhs, rhs);
+                break;
+            }
+            case Native.pow: {
+                if (is_atom(rhs)) {
+                    if (is_rat(rhs)) {
+                        if (rhs.isZero()) {
+                            return one;
+                        }
+                        else if (rhs.isOne()) {
+                            return lhs;
+                        }
+                        else {
+                            return items_to_cons(POW, lhs, rhs);
+                        }
+                    }
+                    else if (is_flt(rhs)) {
+                        if (rhs.isZero()) {
+                            return one;
+                        }
+                        else if (rhs.isOne()) {
+                            return lhs;
+                        }
+                        else {
+                            return items_to_cons(POW, lhs, rhs);
+                        }
+                    }
+                    else if (is_sym(rhs)) {
+                        return items_to_cons(POW, lhs, rhs);
+                    }
                 }
             }
         }

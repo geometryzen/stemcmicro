@@ -160,6 +160,7 @@
         "unit-test": "mocha 'units/test.spec.ts'",
         "unit-testle": "mocha 'units/testle.spec.ts'",
         "unit-testne": "mocha 'units/testne.spec.ts'",
+        "unit-tsparse": "mocha 'units/tsparse.spec.ts'",
         "unit-transpose": "mocha 'units/transpose.spec.ts'",
         "unit-iscomplex": "mocha 'units/iscomplex.spec.ts'",
         "unit-sandbox": "mocha 'units/sandbox.spec.ts'",
@@ -210,6 +211,7 @@
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "dependencies": {
+        "typescript": "^5.3.3",
         "typhon-lang": "^1.0.13"
     },
     "peerDependencies": {

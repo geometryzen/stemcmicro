@@ -1,3 +1,5 @@
+.vscode/settings.json
+deploy.sh
 build/browser/types/
 build/main/types/
 build/main/py-to-ts/
@@ -28,6 +30,7 @@ dist/umd/tests/
 dist/umd/types/
 dist/umd/units/
 coverage/
+examples/
 docs/
 runtime/
 src/

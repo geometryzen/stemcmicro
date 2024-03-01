@@ -35,6 +35,11 @@ declare function abs(x: U): U
 declare function adj(m: U): U
 
 /**
+ * Returns the basis of elements of an algebra using a `metric` and `labels` for the basis vectors.
+ */
+declare function algebra(metric: U, labels: U): U
+
+/**
  * Returns `true` if all arguments are `true`. Returns `false` otherwise.
  */
 declare function and(...args: U[]): U
@@ -178,6 +183,11 @@ declare function dot(...arg: U[]): U
 declare function draw(f: U, x: U): U
 
 /**
+ * Returns the eigenvalues fro matric `m`.
+ */
+declare function eigenval(m: U): U
+
+/**
  * Returns the eigenvectors for matrix `m`. Matrix `m` is required to be numerical, real, and symmetric.
  * The return value is a matrix with each column an eigenvector.
  */
@@ -313,7 +323,7 @@ declare function not(x: U): U
 /**
  * Returns the approximate roots of polynomial `p` in variable `x` with real or complex coefficients.
  */
-declare function nroots(p: U, x: U): U
+declare function nroots(p: U, x?: U): U
 
 /**
  * Returns the numerator of expression `x`.

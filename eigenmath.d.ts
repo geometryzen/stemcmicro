@@ -18,7 +18,7 @@ declare class Uom {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type U = any
+type U = any;
 
 //==============================================================================
 // Functions
@@ -26,6 +26,8 @@ type U = any
 
 /**
  * Returns the absolute value or vector length of `x`.
+ * @example
+ * abs[x, y, z] => [x**2 + y**2 + z**2]**(1/2)
  */
 declare function abs(x: U): U
 
@@ -36,6 +38,8 @@ declare function adj(m: U): U
 
 /**
  * Returns the basis of elements of an algebra using a `metric` and `labels` for the basis vectors.
+ * @example 
+ * G30 = algebra([1, 1, 1], ["ex", "ey", "ez"])
  */
 declare function algebra(metric: U, labels: U): U
 
@@ -80,6 +84,16 @@ declare function arctanh(x: U): U
 declare function arg(z: U): U
 
 /**
+ * Returns the Bessel function of the first kind.
+ */
+declare function besselj(x: U, n: U): U
+
+/**
+ * Returns the Bessel function of the second kind.
+ */
+declare function bessely(x: U, n: U): U
+
+/**
  * Returns the binding of the symbol `s` without evaluation.
  */
 declare function binding(s: U): U
@@ -108,6 +122,11 @@ declare function circexp(x: U): U
  * Returns complex `z` in polar form with base of negative one instead of `e`.
  */
 declare function clock(z: U): U
+
+/**
+ * Returns the coefficient of `x` to the `n` in the polynomial `p`.
+ */
+declare function coeff(p: U, x: U, n: U): U
 
 /**
  * Returns the cofactor of matrix `m` for row `i` and column `j`.
@@ -150,6 +169,13 @@ declare function curl(v: U): U
 declare function defint(f: U, x: U, a: U, b: U): U
 
 /**
+ * Returns the degree of polynomial `p` in the variable `x`. 
+ * @param p 
+ * @param x 
+ */
+declare function deg(p: U, x: U): U
+
+/**
  * Returns the denominator of expression `x`.
  */
 declare function denominator(x: U): U
@@ -183,7 +209,7 @@ declare function dot(...arg: U[]): U
 declare function draw(f: U, x: U): U
 
 /**
- * Returns the eigenvalues fro matric `m`.
+ * Returns the eigenvalues for matrix `m`.
  */
 declare function eigenval(m: U): U
 
@@ -194,6 +220,16 @@ declare function eigenval(m: U): U
 declare function eigenvec(m: U): U
 
 /**
+ * Return the error function of `x`.
+ */
+declare function erf(x: U): U
+
+/**
+ * Return the complimentary error function of `x`.
+ */
+declare function erfc(x: U): U
+
+/**
  * Returns `f` evaluated with `x` replaced by `a`, etc. All arguments can be expressions.
  */
 declare function eval(f: U, x: U, a: U, ...args: U[]): U
@@ -202,6 +238,11 @@ declare function eval(f: U, x: U, a: U, ...args: U[]): U
  * Returns the exponential of `x`.
  */
 declare function exp(x: U): U
+
+/**
+ * Returns the partial fraction expansion of the ratio of polynomials `r` in `x`;
+ */
+declare function expand(r: U, x: U): U
 
 /**
  * Returns the cosine of `z` in exponential form.
@@ -233,17 +274,30 @@ declare function exptan(z: U): U
  */
 declare function exptanh(z: U): U
 
+declare function factor(n: U): U
+
+declare function factor(p: U, x: U): U
+
 /**
  * Returns the factorial of `n`. The expression `n!` can also be used.
  */
 declare function factorial(n: U): U
+
+declare function filter(f: U, ...omits: U[]): U
 
 /**
  * Returns expression `x` with rational numbers and integers converted to floating point values.
  */
 declare function float(x: U): U
 
+declare function floor(x: U): U
+
 // declare function for(x: U): U
+
+/**
+ * Returns the greatest common divisor.
+ */
+declare function gcd(...args: U[]): U
 
 /**
  * Returns the gradient `derivative(f, [x, y, z])`.
@@ -254,6 +308,13 @@ declare function grad(f: U): U
  * Returns the Hadamard (element-wise) product. The arguments are required to have the same dimensions.
  */
 declare function hadamard(...args: U[]): U
+
+/**
+ * Returns the `n`th Hermite polynomial in `x`.
+ * @param x 
+ * @param n 
+ */
+declare function hermite(x: U, n: U): U
 
 /**
  * Returns the imaginary part of complex `z`.
@@ -280,15 +341,42 @@ declare function integral(f: U, x: U): U
  */
 declare function inv(m: U): U
 
+declare function isprime(n: U): U
+
 /**
  * Returns the kronecker product of vectors and matrices.
  */
 declare function kronecker(...args: U[]): U
 
 /**
+ * Returns the `n`th Lagueere polynomial in `x`.
+ * @param x 
+ * @param n 
+ * @param a 
+ */
+declare function laguerre(x: U, n: U, a: U): U
+
+/**
+ * Returns the least common multiple.
+ */
+declare function lcm(...args: U[]): U
+
+/**
+ * Returns the leading coefficient of the polynomial `p` in the variable `x`.
+ * @param p 
+ * @param x 
+ */
+declare function leading(p: U, x: U): U
+
+/**
  * Returns the natural logarithm of `x`.
  */
 declare function log(x: U): U
+
+/**
+ * Returns the contents of `x` without evaluating.
+ */
+declare function lookup(x: U): U
 
 /**
  * Returns the magnitude of complex `z`.
@@ -346,6 +434,27 @@ declare function outer(...args: U[]): U
 declare function polar(z: U): U
 
 /**
+ * Returns the `n`th prime number.
+ * @param n the one-based index of the prime number.
+ */
+declare function prime(n: U): U
+
+/**
+ * For `i` equals `j` through `k` evaluate `f` and return the product of all the factors.
+ * @param f 
+ * @param i 
+ * @param j 
+ * @param k 
+ */
+declare function product(f: U, i: U, j: U, k: U): U
+
+/**
+ * Returns expression x without evaluating it first.
+ * @param x 
+ */
+declare function quote(x: U): U
+
+/**
  * Returns the number of indices for tensor `a`.
  */
 declare function rank(a: U): U
@@ -376,6 +485,12 @@ declare function roots(p: U, x: U): U
 declare function rotate(u: U, ...codes: U): U
 
 /**
+ * Returns a vector with the one integer for each dimension indicating the size of the dimension.
+ * @param x 
+ */
+declare function shape(x: U): U
+
+/**
  * Returns the expression `x` in a simpler form.
  */
 declare function simplify(x: U): U
@@ -394,6 +509,23 @@ declare function sinh(x: U): U
  * Returns the square root of `x`.
  */
 declare function sqrt(x: U): U
+
+/**
+ * Returns the expression obtained by substituting `a` for `b` in the expression `c`. 
+ * @param a 
+ * @param b 
+ * @param c 
+ */
+declare function subst(a: U, b: U, c: U): U
+
+/**
+ * For `i` equals `j` through `k` evaluate `f` and return the sum of all the terms.
+ * @param f 
+ * @param i 
+ * @param j 
+ * @param k 
+ */
+declare function sum(f: U, i: U, j: U, k: U): U
 
 /**
  * Returns the tangent of `x`.

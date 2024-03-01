@@ -1,21 +1,25 @@
 import { Adapter, assert_num, assert_sym, assert_tensor, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Err, Flt, imu, is_blade, is_boo, is_err, is_flt, is_imu, is_lambda, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, negOne, Num, QQ, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
-import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
+import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { ExprContextFromProgram } from '../adapters/ExprContextFromProgram';
 import { StackFunction } from '../adapters/StackFunction';
 import { ExprEngineListener } from '../api/api';
+import { contains_single_blade } from '../calculators/compare/contains_single_blade';
 import { complex_comparator, complex_to_item, item_to_complex } from '../complex/complex';
 import { diagnostic } from '../diagnostics/diagnostics';
 import { Diagnostics } from '../diagnostics/messages';
+import { prolog_eval_varargs } from '../dispatch/prolog_eval_varargs';
 import { Directive } from '../env/ExtensionEnv';
 import { StackU } from '../env/StackU';
 import { guess } from '../guess';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
+import { handle_atom_atom_binop } from '../helpers/handle_atom_atom_binop';
 import { predicate_return_value } from '../helpers/predicate_return_value';
 import { hook_create_err } from '../hooks/hook_create_err';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { hadamard } from '../operators/hadamard/stack_hadamard';
+import { is_binop } from '../operators/helpers/is_binop';
 import { mag } from '../operators/mag/stack_mag';
 import { ProgrammingError } from '../programming/ProgrammingError';
 import { is_power } from '../runtime/helpers';
@@ -898,7 +902,7 @@ export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
     try {
         if (is_atom(x)) {
             const handler = env.handlerFor(x);
-            const retval = handler.dispatch(x, ABS, nil, new ExprContextFromProgram(env, ctrl, $));
+            const retval = handler.dispatch(x, ABS, nil, new ExprContextFromProgram(env, ctrl));
             try {
                 $.push(retval);
                 return;
@@ -2380,7 +2384,7 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     try {
         if (is_atom(z)) {
             const handler = env.handlerFor(z);
-            const context = new ExprContextFromProgram(env, ctrl, $);
+            const context = new ExprContextFromProgram(env, ctrl);
             try {
                 const retval = handler.dispatch(z, native_sym(Native.arg), nil, context);
                 try {
@@ -2506,7 +2510,7 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
  * [..., a*pi] => [..., a*pi]
  */
 function principal_value(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const context = new ExprContextFromProgram(env, ctrl, $);
+    const context = new ExprContextFromProgram(env, ctrl);
     const step = two;
     const lowerBound = negOne;                  // or some authors use zero
     const upperBound = lowerBound.add(step);
@@ -7110,84 +7114,186 @@ export function stack_or(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pro
 }
 
 export function stack_outer(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    $.push(expr);                   //  [outer(a,b,c,...)]
-    $.rest();                       //  [(a,b,c,...)]
-    $.push(one);                    //  [(a,b,c,...), 1]
-    $.swap();                       //  [1, (a,b,c,...)]
-    while ($.iscons) {
-        $.dupl();                   //  [1, (a,b,c,...), (a,b,c,...)]
-        $.rest();                   //  [1, (a,b,c,...), (b,c,...)]
-        $.rotateR(3);               //  [(b,c,...), 1, (a,b,c,...)]
-        $.head();                   //  [(b,c,...), 1, a]
-        value_of(env, ctrl, $);     //  [(b,c,...), 1, a] where both and and b have been evaluated
-        outer(env, ctrl, $);        //  [(b,c,...), (1^a)]
-        $.swap();                   //  [(1^a), (b,c,...)]
+    const context = new ExprContextFromProgram(env, ctrl);
+    try {
+        const retval = prolog_eval_varargs(expr, (values: Cons, env: ExprContext) => {
+            $.push(one);                            //  [1]
+            $.push(values);                         //  [1, (a,b,c,...)]
+            while ($.iscons) {
+                $.dupl();                           //  [1, (a,b,c,...), (a,b,c,...)]
+                $.rest();                           //  [1, (a,b,c,...), (b,c,...)]
+                $.rotateR(3);                       //  [(b,c,...), 1, (a,b,c,...)]
+                $.head();                           //  [(b,c,...), 1, a]
+                outer_prolog(expr, env, ctrl, $);   //  [(b,c,...), (1^a)]
+                $.swap();                           //  [(1^a), (b,c,...)]
+            }
+            $.pop().release();                      //  [(1 ^ a ^ b ^ c ...)]
+            return $.pop();
+        }, context);
+        $.push(retval);
+        retval.release();
     }
-    $.pop().release();
+    finally {
+        context.release();
+    }
 }
 
+function is_combo(expr: Cons2<U, U, U>, code: Native): expr is Cons2<Sym, U, U> {
+    const opr = expr.opr;
+    try {
+        if (is_sym(opr)) {
+            return opr.id === code;
+        }
+        else {
+            return false;
+        }
+    }
+    finally {
+        opr.release();
+    }
+}
+
+/**
+ * Determines whether the binary outer expression that is on the stack can be tendered to other operators or
+ * handled directly
+ * 
+ * [..., lhs, rhs] => [..., (outer lhs rhs)]
+ */
+function outer_prolog(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    binop_prolog(Native.outer, expr, outer, env, ctrl, $);
+}
+
+/**
+ * Determines whether the binary outer expression that is on the stack can be tendered to other operators or
+ * handled directly by the `next` function.
+ * 
+ * [..., lhs, rhs] => [..., (code lhs rhs)]
+ */
+function binop_prolog(code: Native, expr: Cons, next: (env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) => void, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    const rhs = pop($);
+    const lhs = pop($);
+    try {
+        if (is_binop(expr) && is_combo(expr, code)) {
+            const a = expr.lhs;
+            const b = expr.rhs;
+            try {
+                if (lhs.equals(a) && rhs.equals(b)) {
+                    // We can't put the expression (outer lhs rhs) up for tender to other handlers
+                    // because we would go into an infinite loop. So we proceed to handle as much as we can here. 
+                    $.push(lhs);
+                    $.push(rhs);
+                    next(env, ctrl, $);
+                    return;
+                }
+            }
+            finally {
+                a.release();
+                b.release();
+            }
+        }
+        // If we end up here then it's OK to tender the expression to other operators.
+        push_native(code, $);
+        $.push(lhs);
+        $.push(rhs);
+        list(3, $);
+        value_of(env, ctrl, $);
+    }
+    finally {
+        lhs.release();
+        rhs.release();
+    }
+}
+
+/**
+ * [..., a, b] => [..., (outer a b)]
+ */
 function outer(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     const rhs = pop($);
     const lhs = pop($);
-
-    if (is_atom(lhs) && is_atom(rhs)) {
-        if (is_blade(lhs)) {
-            if (is_blade(rhs)) {
-                const x = lhs.wedge(rhs);
-                push(x, $);
-                return;
+    try {
+        if (is_atom(lhs)) {
+            if (is_atom(rhs)) {
+                const context = new ExprContextFromProgram(env, ctrl);
+                try {
+                    const retval = handle_atom_atom_binop(native_sym(Native.outer), lhs, rhs, context);
+                    $.push(retval);
+                    return;
+                }
+                finally {
+                    context.release();
+                }
+            }
+            else {
+                // console.lg("outer", `${lhs}`, `${lhs.type}`, `${rhs}`);
             }
         }
-        if (is_rat(lhs)) {
-            if (is_blade(rhs)) {
-                push(native_sym(Native.multiply), $);
-                push(lhs, $);
-                push(rhs, $);
-                list(3, $);
-                value_of(env, ctrl, $);
-                return;
+        else {
+            if (is_atom(rhs)) {
+                // console.lg("outer", `${lhs}`, `${rhs}`, `${rhs.type}`);
+            }
+            else {
+                // A common use case is the outer product of multiplicative expressions.
+                // We are landng here and yet we have an overload fro this case.
+                if (contains_single_blade(lhs) && contains_single_blade(rhs)) {
+                    throw new ProgrammingError(`outer ${lhs} ${rhs}`);
+                }
             }
         }
-    }
 
-    if (!istensor(lhs) || !istensor(rhs)) {
-        push(lhs, $);
-        push(rhs, $);
-        multiply(env, ctrl, $);
-        return;
-    }
 
-    // sync diffs
-
-    const nrow = lhs.nelem;
-    const ncol = rhs.nelem;
-
-    const p3 = alloc_tensor();
-
-    for (let i = 0; i < nrow; i++)
-        for (let j = 0; j < ncol; j++) {
-            push(lhs.elems[i], $);
-            push(rhs.elems[j], $);
+        // Convert anything not involving a Tensor into ordinary multiplication...
+        if (!istensor(lhs) || !istensor(rhs)) {
+            push(lhs, $);
+            push(rhs, $);
+            // This is incorrect for blades. For example (5*ex)^ex should be 0, not 5.
+            if (contains_single_blade(lhs) && contains_single_blade(rhs)) {
+                throw new ProgrammingError(`outer ${lhs} ${rhs}`);
+            }
             multiply(env, ctrl, $);
-            p3.elems[i * ncol + j] = pop($);
+            return;
         }
 
-    // dim info
+        // From here on down it's the outer product of tensors.
+        // The multiplication is performed using a stack.
 
-    let k = 0;
+        // sync diffs
 
-    let n = lhs.ndim;
+        const nrow = lhs.nelem;
+        const ncol = rhs.nelem;
 
-    for (let i = 0; i < n; i++)
-        p3.dims[k++] = lhs.dims[i];
+        const p3 = alloc_tensor();
 
-    n = rhs.ndim;
+        for (let i = 0; i < nrow; i++)
+            for (let j = 0; j < ncol; j++) {
+                push(lhs.elems[i], $);
+                push(rhs.elems[j], $);
+                multiply(env, ctrl, $);
+                p3.elems[i * ncol + j] = pop($);
+            }
 
-    for (let i = 0; i < n; i++)
-        p3.dims[k++] = rhs.dims[i];
+        // dim info
 
-    push(p3, $);
+        let k = 0;
+
+        const nL = lhs.ndim;
+
+        for (let i = 0; i < nL; i++) {
+            p3.dims[k++] = lhs.dims[i];
+        }
+
+        const nR = rhs.ndim;
+
+        for (let i = 0; i < nR; i++) {
+            p3.dims[k++] = rhs.dims[i];
+        }
+
+        push(p3, $);
+    }
+    finally {
+        lhs.release();
+        rhs.release();
+    }
 }
 
 export function stack_polar(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -9738,7 +9844,7 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
                                         // console.lg("binding.type", "nil");
                                     }
                                     if (is_lambda(binding)) {
-                                        const ctxt = new ExprContextFromProgram(env, ctrl, $);
+                                        const ctxt = new ExprContextFromProgram(env, ctrl);
                                         const body: LambdaExpr = binding.body;
                                         // console.lg(JSON.stringify(body), typeof body);
                                         const value = body(expr.rest, ctxt);
@@ -13480,26 +13586,30 @@ function sort(n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
 
     const candidates = $.splice($.length - n);
 
-    const _ = new ExprContextFromProgram(env, ctrl, $);
+    const context = new ExprContextFromProgram(env, ctrl);
+    try {
+        const zs = candidates.map(item_to_complex(context));
 
-    const zs = candidates.map(item_to_complex(_));
+        for (let i = 0; i < candidates.length; i++) {
+            candidates[i].release();
+        }
 
-    for (let i = 0; i < candidates.length; i++) {
-        candidates[i].release();
+        zs.sort(complex_comparator(compareFn));
+
+        const sorted: U[] = zs.map(complex_to_item(context));
+
+        for (let i = 0; i < zs.length; i++) {
+            zs[i].release();
+        }
+
+        $.concat(sorted);
+
+        for (let i = 0; i < sorted.length; i++) {
+            sorted[i].release();
+        }
     }
-
-    zs.sort(complex_comparator(compareFn));
-
-    const sorted: U[] = zs.map(complex_to_item(_));
-
-    for (let i = 0; i < zs.length; i++) {
-        zs[i].release();
-    }
-
-    $.concat(sorted);
-
-    for (let i = 0; i < sorted.length; i++) {
-        sorted[i].release();
+    finally {
+        context.release();
     }
 }
 

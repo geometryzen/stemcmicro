@@ -10,7 +10,7 @@ import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { remove_factors } from "../../calculators/remove_factors";
 import { diagnostic } from "../../diagnostics/diagnostics";
 import { Diagnostics } from "../../diagnostics/messages";
-import { dispatch_eval_varargs } from "../../dispatch/dispatch_eval_varargs";
+import { prolog_eval_varargs } from "../../dispatch/prolog_eval_varargs";
 import { SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { add } from "../../helpers/add";
 import { is_expanding } from "../../helpers/is_expanding";
@@ -24,7 +24,7 @@ import { cddr } from "../../tree/helpers";
 const MUL = native_sym(Native.multiply);
 
 export function eval_multiply(expr: Cons, env: ExprContext): U {
-    return dispatch_eval_varargs(expr, multiply_values, env);
+    return prolog_eval_varargs(expr, multiply_values, env);
 }
 
 function multiply_values(values: Cons, $: ExprContext) {

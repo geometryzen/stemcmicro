@@ -1,10 +1,11 @@
 import { assert_rat, create_flt, create_str, create_sym, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Rat, Str, Sym, zero } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, is_cons, is_singleton, items_to_cons, nil, U } from "math-expression-tree";
+import { Atom, Cons, is_atom, is_cons, is_singleton, items_to_cons, nil, U } from "math-expression-tree";
+import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { diagnostic } from "../../diagnostics/diagnostics";
 import { Diagnostics } from "../../diagnostics/messages";
-import { Directive, Extension, ExtensionBuilder, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, Extension, ExtensionBuilder, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { iszero } from "../../helpers/iszero";
 import { multiply } from "../../helpers/multiply";
@@ -12,6 +13,7 @@ import { order_binary } from "../../helpers/order_binary";
 import { hook_create_err } from "../../hooks/hook_create_err";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { ProgrammingError } from "../../programming/ProgrammingError";
+import { wrap_as_transform } from "../wrap_as_transform";
 
 const ADD = native_sym(Native.add);
 const ISONE = native_sym(Native.isone);
@@ -19,6 +21,18 @@ const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);
 const PI = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
+
+function rat_times_simple_atom(lhs: Rat, rhs: Atom, env: ExprContext) {
+    if (lhs.isZero()) {
+        return lhs;
+    }
+    else if (lhs.isOne()) {
+        return rhs;
+    }
+    else {
+        return order_binary(MUL, lhs, rhs, env);
+    }
+}
 
 export class RatExtension implements Extension<Rat> {
     readonly #hash = hash_for_atom(assert_rat(one));
@@ -70,33 +84,25 @@ export class RatExtension implements Extension<Rat> {
             case Native.multiply: {
                 if (is_atom(rhs)) {
                     if (is_blade(rhs)) {
-                        return order_binary(MUL, lhs, rhs, env);
+                        return rat_times_simple_atom(lhs, rhs, env);
                     }
                     else if (is_err(rhs)) {
                         return rhs;
                     }
                     else if (is_flt(rhs)) {
-                        return create_flt(lhs.toNumber() * rhs.toNumber());
+                        return multiply_num_num(lhs, rhs);
                     }
                     else if (is_hyp(rhs)) {
-                        return order_binary(MUL, lhs, rhs, env);
+                        return rat_times_simple_atom(lhs, rhs, env);
                     }
                     else if (is_imu(rhs)) {
-                        return order_binary(MUL, lhs, rhs, env);
+                        return rat_times_simple_atom(lhs, rhs, env);
                     }
                     else if (is_rat(rhs)) {
                         return lhs.mul(rhs);
                     }
                     else if (is_sym(rhs)) {
-                        if (lhs.isZero()) {
-                            return zero;
-                        }
-                        else if (lhs.isOne()) {
-                            return rhs;
-                        }
-                        else {
-                            return order_binary(MUL, lhs, rhs, env);
-                        }
+                        return rat_times_simple_atom(lhs, rhs, env);
                     }
                     else if (is_tensor(rhs)) {
                         if (lhs.isZero()) {
@@ -110,7 +116,21 @@ export class RatExtension implements Extension<Rat> {
                         }
                     }
                     else if (is_uom(rhs)) {
-                        return order_binary(MUL, lhs, rhs, env);
+                        return rat_times_simple_atom(lhs, rhs, env);
+                    }
+                }
+                break;
+            }
+            case Native.outer: {
+                if (is_atom(rhs)) {
+                    if (is_flt(rhs)) {
+                        return multiply_num_num(lhs, rhs);
+                    }
+                    else if (is_rat(rhs)) {
+                        return lhs.mul(rhs);
+                    }
+                    else if (is_uom(rhs)) {
+                        return rat_times_simple_atom(lhs, rhs, env);
                     }
                 }
                 break;
@@ -200,7 +220,7 @@ export class RatExtension implements Extension<Rat> {
                 return target;
             }
         }
-        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
+        return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;
@@ -246,29 +266,23 @@ export class RatExtension implements Extension<Rat> {
     toListString(rat: Rat): string {
         return rat.toListString();
     }
-    evaluate(rat: Rat, argList: Cons, $: ExtensionEnv): [TFLAGS, U] {
-        if (is_cons(rat)) {
-            throw new Error(`The expr is really a Cons! ${rat}`);
-        }
-        return this.transform(cons(rat, argList), $);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    evaluate(rat: Rat, argList: Cons, $: ExprContext): [TFLAGS, U] {
+        throw new ProgrammingError();
     }
     toString(): string {
         return this.name;
     }
-    transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {
-        if (expr instanceof Rat) {
-            // console.lg(`RatExtension.transform ${expr}`);
-            if ($.getDirective(Directive.evaluatingAsFloat)) {
-                return [TFLAG_DIFF, create_flt(expr.toNumber())];
-            }
-            else {
-                return [TFLAG_HALT, expr];
-            }
-        }
-        return [TFLAG_NONE, expr];
+    transform(expr: Rat, $: ExprContext): [TFLAGS, U] {
+        return wrap_as_transform(this.valueOf(expr, $), expr);
     }
-    valueOf(expr: Rat, $: ExtensionEnv): U {
-        return this.transform(expr, $)[1];
+    valueOf(expr: Rat, $: ExprContext): U {
+        if ($.getDirective(Directive.evaluatingAsFloat)) {
+            return create_flt(expr.toNumber());
+        }
+        else {
+            return expr;
+        }
     }
 }
 

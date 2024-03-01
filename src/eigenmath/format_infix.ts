@@ -2,7 +2,6 @@ import { Flt, is_err, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, Num, Ra
 import { Native, native_sym } from "math-expression-native";
 import { Atom, car, cdr, Cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
-import { StackU } from "../env/StackU";
 import { nativeStr } from "../nativeInt";
 import { is_imu } from "../operators/imu/is_imu";
 import { ProgrammingError } from "../programming/ProgrammingError";
@@ -613,24 +612,28 @@ function infix_tensor_nib(p: Tensor, d: number, k: number, env: ProgramEnv, ctrl
     }
 }
 function infix_atom(atom: Atom, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
-    const stack = new StackU();
-    const $ = new ExprContextFromProgram(env, ctrl, stack);
-    const handler = env.handlerFor(atom);
-    const response = handler.dispatch(atom, native_sym(Native.infix), nil, $);
+    const context = new ExprContextFromProgram(env, ctrl);
     try {
-        if (is_str(response)) {
-            const infix = nativeStr(response);
-            infix_write(infix, config, outbuf);
+        const handler = env.handlerFor(atom);
+        const response = handler.dispatch(atom, native_sym(Native.infix), nil, context);
+        try {
+            if (is_str(response)) {
+                const infix = nativeStr(response);
+                infix_write(infix, config, outbuf);
+            }
+            else if (is_err(response)) {
+                throw response;
+            }
+            else {
+                throw new ProgrammingError();
+            }
         }
-        else if (is_err(response)) {
-            throw response;
-        }
-        else {
-            throw new ProgrammingError();
+        finally {
+            response.release();
         }
     }
     finally {
-        response.release();
+        context.release();
     }
 }
 

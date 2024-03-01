@@ -1024,7 +1024,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         transform(expr: U): [TFLAGS, U] {
-            // console.lg("trnsfrm", `${expr}`);
+            // console.lg("ExtensionEnv.trnsfrm", `${expr}`);
             // We short-circuit some expressions in order to improve performance.
             if (is_cons(expr)) {
                 // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
@@ -1090,7 +1090,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 // console.lg("hashes", JSON.stringify(hashes));
                 for (const hash of hashes) {
                     const ops = hash_to_ops[hash];
-                    // console.lg(`Looking for key: ${JSON.stringify(key)} expr: ${expr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                    // console.lg(`Looking for hash: ${JSON.stringify(hash)} expr: ${expr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                     // Determine whether there are handlers in the bucket.
                     if (Array.isArray(ops)) {
                         const op = unambiguous_extension(expr, ops, $);
@@ -1158,14 +1158,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 // If it's not a list or nil, then it's an atom.
                 const op = $.extensionFor(expr);
                 if (op) {
-                    try {
-                        return op.transform(expr, $);
-                    }
-                    catch (e) {
-                        // eslint-disable-next-line no-console
-                        console.log("Exception caught.", "expr", `${expr}`, "e => ", `${e}`);
-                        throw e;
-                    }
+                    return op.transform(expr, $);
                 }
                 else {
                     return [TFLAG_NONE, expr];
@@ -1173,7 +1166,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         valueOf(expr: U, stack?: Pick<ProgramStack, 'push'>): U {
-            // console.lg("valueOf", `${expr}`);
+            // console.lg("ExtensionEnv.valueOf", `${expr}`);
             // TOOD: We'd like to do this the newWay = !oldWay.
             // This flag makes it easier to switch back and forth.
             const oldWay = true;

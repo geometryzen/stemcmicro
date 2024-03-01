@@ -4,13 +4,15 @@ import { Cons, Shareable, U } from "math-expression-tree";
 import { value_of } from "../eigenmath/eigenmath";
 import { ProgramControl } from "../eigenmath/ProgramControl";
 import { ProgramEnv } from "../eigenmath/ProgramEnv";
-import { ProgramStack } from "../eigenmath/ProgramStack";
+import { StackU } from "../env/StackU";
 
+/**
+ * @deprecated Move away from this once ProgramEnv becomes the same as ExprContext.
+ */
 export class ExprContextFromProgram implements ExprContext {
     #refCount = 1;
-    constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly stk: ProgramStack) {
+    constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl) {
         this.env.addRef();
-        this.stk.addRef();
     }
     addRef(): void {
         this.#refCount++;
@@ -19,7 +21,6 @@ export class ExprContextFromProgram implements ExprContext {
         this.#refCount--;
         if (this.#refCount === 0) {
             this.env.release();
-            this.stk.release();
         }
     }
     hasState(key: string): boolean {
@@ -56,7 +57,6 @@ export class ExprContextFromProgram implements ExprContext {
         return this.env.hasBinding(opr, target);
     }
     getBinding(opr: Sym, target: Cons): U {
-        // console.lg("ExprContextAdapter.getBinding", `${opr}`, `${target}`);
         return this.env.getBinding(opr, target);
     }
     setBinding(opr: Sym, binding: U): void {
@@ -75,9 +75,15 @@ export class ExprContextFromProgram implements ExprContext {
         this.env.defineUserSymbol(name);
     }
     valueOf(expr: U): U {
-        this.stk.push(expr);
-        value_of(this.env, this.ctrl, this.stk);
-        return this.stk.pop();
+        const stack = new StackU();
+        try {
+            stack.push(expr);
+            value_of(this.env, this.ctrl, stack);
+            return stack.pop();
+        }
+        finally {
+            stack.release();
+        }
     }
     getSymbolPrintName(sym: Sym): string {
         return this.ctrl.getSymbolPrintName(sym);

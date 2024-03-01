@@ -91,7 +91,7 @@ export function make_stack_draw(io: Pick<ProgramIO, 'listeners'>): StackFunction
             // Do nothing
         }
         else {
-            const exprContext = new ExprContextFromProgram(env, ctrl, $);
+            const exprContext = new ExprContextFromProgram(env, ctrl);
             ctrl.pushDirective(Directive.drawing, 1);
             try {
                 const [F, varName, n, pass2] = draw_args(expr.argList, env, ctrl, $);

@@ -9,7 +9,7 @@ import { canonical_factor_num_rhs } from "../../calculators/factorize/canonical_
 import { remove_factors } from "../../calculators/remove_factors";
 import { diagnostic } from "../../diagnostics/diagnostics";
 import { Diagnostics } from "../../diagnostics/messages";
-import { dispatch_eval_varargs } from "../../dispatch/dispatch_eval_varargs";
+import { prolog_eval_varargs } from "../../dispatch/prolog_eval_varargs";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { float } from "../../helpers/float";
 import { multiply } from "../../helpers/multiply";
@@ -22,7 +22,7 @@ import { add_tensor_tensor } from "../tensor/tensor_extension";
 const ADD = native_sym(Native.add);
 
 export function eval_add(expr: Cons, env: ExprContext): U {
-    return dispatch_eval_varargs(expr, add_values, env);
+    return prolog_eval_varargs(expr, add_values, env);
 }
 
 function add_values(vals: Cons, $: ExprContext): U {

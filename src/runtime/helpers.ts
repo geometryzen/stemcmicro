@@ -1,6 +1,6 @@
 import { is_num, is_sym, is_tensor, Num, Sym, Tensor } from "math-expression-atoms";
 import { is_native, Native, native_sym } from "math-expression-native";
-import { Cons, is_cons, U } from "math-expression-tree";
+import { Cons, Cons0, is_cons, U } from "math-expression-tree";
 import { is_cons_opr_eq_add } from "../operators/add/is_cons_opr_eq_add";
 import { Cons2 } from "../operators/helpers/Cons2";
 import { is_cons_opr_eq_sym } from "../predicates/is_cons_opr_eq_sym";
@@ -24,7 +24,7 @@ export function is_exp(expr: U): expr is Cons2<Sym, U, U> & { __ts_sym: 'MATH_EX
     return is_cons(expr) && is_sym(expr.opr) && is_native(expr.opr, Native.exp);
 }
 
-export function is_multiply(expr: U): expr is Cons & { __ts_sym: 'MATH_MUL' } {
+export function is_multiply(expr: U): expr is Cons0<Sym> & { __ts_sym: 'MATH_MUL' } {
     return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_MUL);
 }
 

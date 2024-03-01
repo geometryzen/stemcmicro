@@ -1,4 +1,4 @@
-import { Blade, create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_tensor, is_uom, Sym } from "math-expression-atoms";
+import { Blade, create_str, create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, items_to_cons, nil, U } from "math-expression-tree";
@@ -10,8 +10,6 @@ import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { power_blade_rat } from "../pow/power_blade_int";
-import { create_str } from "../str/create_str";
-import { is_sym } from "../sym/is_sym";
 
 const MUL = native_sym(Native.multiply);
 const SQRT = native_sym(Native.sqrt);
@@ -95,8 +93,35 @@ class BladeExtension implements Extension<Blade> {
                         return order_binary(MUL, lhs, rhs, env);
                     }
                 }
-            }
                 break;
+            }
+            case Native.outer: {
+                if (is_atom(rhs)) {
+                    if (is_flt(rhs)) {
+                        if (rhs.isZero()) {
+                            return rhs;
+                        }
+                        else {
+                            return order_binary(MUL, lhs, rhs, env);
+                        }
+                    }
+                    else if (is_rat(rhs)) {
+                        if (rhs.isZero()) {
+                            return rhs;
+                        }
+                        else if (rhs.isOne()) {
+                            return lhs;
+                        }
+                        else {
+                            return order_binary(MUL, lhs, rhs, env);
+                        }
+                    }
+                    else if (is_uom(rhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                }
+                break;
+            }
             case Native.pow: {
                 if (is_atom(rhs)) {
                     if (is_rat(rhs)) {
@@ -124,6 +149,32 @@ class BladeExtension implements Extension<Blade> {
                         return order_binary(MUL, lhs, rhs, env);
                     }
                 }
+                break;
+            }
+            case Native.outer: {
+                if (is_atom(lhs)) {
+                    if (is_blade(lhs)) {
+                        return lhs.wedge(rhs);
+                    }
+                    else if (is_flt(lhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                    else if (is_rat(lhs)) {
+                        if (lhs.isZero()) {
+                            return lhs;
+                        }
+                        else if (lhs.isOne()) {
+                            return rhs;
+                        }
+                        else {
+                            return order_binary(MUL, lhs, rhs, env);
+                        }
+                    }
+                    else if (is_uom(lhs)) {
+                        return order_binary(MUL, lhs, rhs, env);
+                    }
+                }
+                throw new ProgrammingError(`${rhs} ${lhs}`);
             }
         }
         return nil;
@@ -171,7 +222,7 @@ class BladeExtension implements Extension<Blade> {
                 return target;
             }
         }
-        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
+        return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): boolean {
         return false;

@@ -56,25 +56,17 @@ export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
         const newExpr = this.valueOf(atom, $);
         return wrap_as_transform(newExpr, atom);
     }
-    valueOf(atom: A, $: ExtensionEnv): U {
-        // eslint-disable-next-line no-console
-        console.log(`Unknown atom of type '${atom.type}'. Please define a handler for this type.`);
-        return atom;
+    valueOf(atom: A, $: ExprContext): U {
+        return this.dispatch(atom, create_sym("valueof"), nil, $);
     }
     binL(lhs: A, opr: Sym, rhs: U, env: ExprContext): U {
-        // eslint-disable-next-line no-console
-        console.log(`UnknownAtomExtension.binL lhs => ${lhs} opr => ${opr} rhs => ${rhs}`);
-        // We'll not participate in operator overloading.
         return nil;
     }
     binR(rhs: A, opr: Sym, lhs: U, env: ExprContext): U {
-        // eslint-disable-next-line no-console
-        console.log(`UnknownAtomExtension.binR rhs => ${rhs} opr => ${opr} lhs => ${lhs}`);
-        // We'll not participate in operator overloading.
         return nil;
     }
     dispatch(target: A, opr: Sym, argList: Cons, env: ExprContext): U {
-        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
+        return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     subst(expr: A, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U {
         throw new Error("subst method not implemented.");

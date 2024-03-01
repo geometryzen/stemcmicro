@@ -55,7 +55,7 @@ export class BooExtension implements Extension<Boo> {
                 return target;
             }
         }
-        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
+        return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

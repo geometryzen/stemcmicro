@@ -1,7 +1,10 @@
 import { one, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { isone } from "../../helpers/isone";
+import { isreal } from "../../helpers/isreal";
 import { items_to_cons } from "../../makeList";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Cons2 } from "../helpers/Cons2";
@@ -12,12 +15,11 @@ type LHS = U;
 type RHS = U;
 type EXP = Cons2<Sym, LHS, RHS>;
 
-function is_real(expr: LHS, $: ExtensionEnv): expr is U {
-    if ($.isone(expr)) {
+function is_real(expr: LHS, $: ExprContext): expr is U {
+    if (isone(expr, $)) {
         return false;
     }
-    const retval = $.isreal(expr);
-    return retval;
+    return isreal(expr, $);
 }
 
 /**

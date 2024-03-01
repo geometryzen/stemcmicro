@@ -217,7 +217,7 @@ class TensorExtension implements Extension<Tensor> {
                 return target.map(x => simplify(x, env));
             }
         }
-        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
+        return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): false {
         return false;

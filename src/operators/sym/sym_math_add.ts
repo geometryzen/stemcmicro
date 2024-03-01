@@ -45,7 +45,7 @@ class SymMathAdd implements Extension<Sym> {
                 return create_str(this.toListString(target, env));
             }
         }
-        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
+        return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(expr: Sym, opr: Sym): boolean {

@@ -1,15 +1,20 @@
 
 import { Blade, is_blade, Sym } from "math-expression-atoms";
 import { Cons2, U } from "math-expression-tree";
-import { FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { FEATURE, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_OUTER } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
+import { wrap_as_transform } from "../wrap_as_transform";
+
+type LHS = Blade;
+type RHS = Blade;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * Blade ^ Blade
  */
-class OuterBladeBlade extends Function2<Blade, Blade> {
+class Op extends Function2<LHS, RHS> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
     constructor() {
@@ -19,9 +24,15 @@ class OuterBladeBlade extends Function2<Blade, Blade> {
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: Blade, rhs: Blade): [TFLAGS, U] {
-        return [TFLAG_DIFF, lhs.wedge(rhs)];
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, oldExpr: EXP): [TFLAGS, U] {
+        const newExpr = lhs.wedge(rhs);
+        try {
+            return wrap_as_transform(newExpr, oldExpr);
+        }
+        finally {
+            newExpr.release();
+        }
     }
 }
 
-export const outer_2_blade_blade = mkbuilder<Cons2<Sym, Blade, Blade>>(OuterBladeBlade);
+export const outer_2_blade_blade = mkbuilder<EXP>(Op);

@@ -1,3 +1,3 @@
-import { ExtensionEnv } from "../../env/ExtensionEnv";
+import { ExprContext } from "math-expression-context";
 
-export type GUARD<I, O extends I> = (arg: I, $: ExtensionEnv) => arg is O;
+export type GUARD<I, O extends I> = (arg: I, $: ExprContext) => arg is O;

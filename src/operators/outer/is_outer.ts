@@ -1,6 +1,6 @@
+import { is_sym } from "math-expression-atoms";
+import { Cons } from "math-expression-tree";
 import { MATH_OUTER } from "../../runtime/ns_math";
-import { Cons } from "../../tree/tree";
-import { is_sym } from "../sym/is_sym";
 
 export function is_outer(expr: Cons): boolean {
     const opr = expr.opr;

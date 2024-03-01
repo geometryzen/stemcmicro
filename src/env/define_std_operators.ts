@@ -197,11 +197,10 @@ import { mul_2_tensor_tensor } from '../operators/mul/mul_2_tensor_tensor';
 import { nil_extension_builder } from '../operators/nil/nil_extension';
 import { eval_numerator } from '../operators/numerator/numerator';
 import { or_varargs } from '../operators/or/or_varargs';
-import { outer_2_any_any } from '../operators/outer/outer_2_any_any';
-import { outer_2_any_mul_2_scalar_any } from '../operators/outer/outer_2_any_mul_2_scalar_any';
 import { outer_2_blade_blade } from '../operators/outer/outer_2_blade_blade';
-import { outer_2_mul_2_scalar_any_any } from '../operators/outer/outer_2_mul_2_scalar_any_any';
-import { outer_2_sym_sym } from '../operators/outer/outer_2_sym_sym';
+import { outer_2_blade_mul } from '../operators/outer/outer_2_blade_mul';
+import { outer_2_mul_blade } from '../operators/outer/outer_2_mul_blade';
+import { outer_2_mul_mul } from '../operators/outer/outer_2_mul_mul';
 import { outer_2_tensor_tensor } from '../operators/outer/outer_2_tensor_tensor';
 import { pred_any } from '../operators/pred/pred_any';
 import { pred_rat } from '../operators/pred/pred_rat';
@@ -293,6 +292,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.setSymbolOrder(MATH_ADD, new AddComparator());
     $.setSymbolOrder(MATH_MUL, new MulComparator());
+    $.setSymbolOrder(MATH_OUTER, new MulComparator());
 
     // Addition (+)
     // Associative(MATH_ADD, zero);
@@ -397,11 +397,12 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(outer_2_tensor_tensor);
     $.defineExtension(make_lhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
     $.defineExtension(make_rhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
-    $.defineExtension(outer_2_mul_2_scalar_any_any);
-    $.defineExtension(outer_2_sym_sym);
-    $.defineExtension(outer_2_any_mul_2_scalar_any);
-    $.defineExtension(outer_2_any_any);
+    $.defineExtension(outer_2_mul_blade);
+    // $.defineExtension(outer_2_sym_sym);
+    $.defineExtension(outer_2_blade_mul);
+    // $.defineExtension(outer_2_any_any);
     // Associative(MATH_OUTER, one);
+    $.defineExtension(outer_2_mul_mul);
     $.defineStackFunction(MATH_OUTER, stack_outer);
 
     $.defineEvalFunction(PRIME, eval_prime);

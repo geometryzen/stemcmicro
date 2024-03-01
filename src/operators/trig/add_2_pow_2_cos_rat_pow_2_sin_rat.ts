@@ -1,18 +1,14 @@
+import { is_rat, one, Rat, Sym } from "math-expression-atoms";
+import { Cons1, Cons2, is_cons, U } from "math-expression-tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, MODE_FACTORING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_POW } from "../../runtime/ns_math";
-import { one, Rat } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { is_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { and } from "../helpers/and";
-import { Cons1 } from "../helpers/Cons1";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_opr_1_any } from "../helpers/is_opr_1_any";
 import { is_opr_2_lhs_rhs } from "../helpers/is_opr_2_lhs_rhs";
-import { is_rat } from "../rat/is_rat";
 import { MATH_SIN } from "../sin/MATH_SIN";
 
 type LL = Cons1<Sym, U>;

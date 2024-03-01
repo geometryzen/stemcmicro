@@ -101,7 +101,7 @@ export class LocalizableExtension implements Extension<Localizable> {
                 return create_str(this.toInfixString(target, env));
             }
         }
-        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
+        return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     subst(expr: Localizable, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U {
         throw new Error("Method not implemented.");

@@ -1,4 +1,5 @@
 import { is_sym, Sym } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { Cons2, is_cons, items_to_cons, U } from "math-expression-tree";
 import { diffFlag, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { FunctionVarArgs } from "./FunctionVarArgs";
@@ -8,11 +9,11 @@ export abstract class Function2<L extends U, R extends U> extends FunctionVarArg
     constructor(name: string, opr: Sym, private readonly guardL: GUARD<U, L>, private readonly guardR: GUARD<U, R>) {
         super(name, opr);
     }
-    isKind(expr: U, $: ExtensionEnv): expr is Cons2<Sym, L, R> {
+    isKind(expr: U, $: ExprContext): expr is Cons2<Sym, L, R> {
         const m = this.match(expr, $);
         return !!m;
     }
-    match(expr: U, $: ExtensionEnv): Cons2<Sym, L, R> | undefined {
+    match(expr: U, $: ExprContext): Cons2<Sym, L, R> | undefined {
         try {
             if (is_cons(expr) && expr.length === 3) {
                 const opr = expr.opr;

@@ -75,7 +75,7 @@ class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
     dispatch(target: T, opr: Sym, argList: Cons, env: ExprContext): U {
         const response = this.handler.dispatch(target, opr, argList, env);
         if (is_nil(response)) {
-            return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
+            return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
         }
         else {
             return response;
@@ -90,7 +90,7 @@ class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
             return response.isTrue();
         }
         else {
-            throw diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(expr.type));
+            throw diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(expr.type));
         }
     }
 }

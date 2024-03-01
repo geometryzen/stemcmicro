@@ -132,7 +132,7 @@ class ImuExtension implements Extension<Imu> {
                 return target;
             }
         }
-        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
+        return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     test(expr: Imu, opr: Sym): boolean {
         if (opr.equalsSym(ISONE)) {

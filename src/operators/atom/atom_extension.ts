@@ -50,7 +50,7 @@ class CellExtension implements Extension<Cell> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Cell, opr: Sym, argList: Cons, env: ExprContext): U {
-        return diagnostic(Diagnostics.Poperty_0_does_not_exist_on_type_1, opr, create_sym(target.type));
+        return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
     iscons(): boolean {
         return false;

@@ -4,7 +4,7 @@ import { Cons, cons, U } from "math-expression-tree";
 /**
  * The correct way to handle eval functions that respects to the overloading of operators mechanism. 
  */
-export function dispatch_eval_varargs(expr: Cons, handler: (values: Cons, env: ExprContext) => U, env: ExprContext) {
+export function prolog_eval_varargs(expr: Cons, handler: (values: Cons, env: ExprContext) => U, env: ExprContext) {
     const argList = expr.argList;
     try {
         const values = argList.map(arg => env.valueOf(arg));

@@ -2,9 +2,10 @@ import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_st
 import { pos_end_items_to_cons, U } from "math-expression-tree";
 import { stemcmicro_parse, STEMCParseOptions } from "../algebrite/stemc_parse";
 import { EDNListParser, ParseConfig } from "../edn";
+import { ProgrammingError } from "../programming/ProgrammingError";
 import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
 import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
-import { TsParseOptions, ts_parse } from "../typescript/ts_parse";
+// import { TsParseOptions, ts_parse } from "../typescript/ts_parse";
 
 export enum SyntaxKind {
     /**
@@ -20,10 +21,7 @@ export enum SyntaxKind {
      */
     Eigenmath = 3,
     PythonScript = 4,
-    /**
-     * TypeScript Language by Microsoft.
-     */
-    TypeScript = 5,
+    JavaScript = 5,
 }
 
 export function human_readable_syntax_kind(syntaxKind: SyntaxKind): 'STEMCscript' | 'ClojureScript' | 'Eigenmath' | 'PythonScript' | 'TypeScript' {
@@ -32,13 +30,13 @@ export function human_readable_syntax_kind(syntaxKind: SyntaxKind): 'STEMCscript
             case SyntaxKind.ClojureScript: return "ClojureScript";
             case SyntaxKind.Eigenmath: return "Eigenmath";
             case SyntaxKind.PythonScript: return "PythonScript";
-            case SyntaxKind.TypeScript: return "TypeScript";
+            case SyntaxKind.JavaScript: return "TypeScript";
         }
     }
     return "STEMCscript";
 }
 
-export const syntaxKinds: SyntaxKind[] = [SyntaxKind.STEMCscript, SyntaxKind.ClojureScript, SyntaxKind.Eigenmath, SyntaxKind.PythonScript, SyntaxKind.TypeScript];
+export const syntaxKinds: SyntaxKind[] = [SyntaxKind.STEMCscript, SyntaxKind.ClojureScript, SyntaxKind.Eigenmath, SyntaxKind.PythonScript, SyntaxKind.JavaScript];
 
 export interface ParseOptions {
     catchExceptions?: boolean,
@@ -165,9 +163,10 @@ export function delegate_parse_script(sourceText: string, options?: ParseOptions
         case SyntaxKind.PythonScript: {
             return pythonscript_parse(sourceText, python_parse_options(options));
         }
-        case SyntaxKind.TypeScript: {
-            const tree = ts_parse("", sourceText, ts_parse_options(options));
-            return { trees: [tree], errors: [] };
+        case SyntaxKind.JavaScript: {
+            throw new ProgrammingError();
+            // const tree = ts_parse("", sourceText, ts_parse_options(options));
+            // return { trees: [tree], errors: [] };
         }
         default: {
             // Handle Eigenmath and STEMCscript
@@ -191,6 +190,7 @@ function stemc_parse_options(options?: ParseOptions): STEMCParseOptions {
     }
 }
 
+/*
 function ts_parse_options(options?: ParseOptions): TsParseOptions {
     if (options) {
         if (options.useCaretForExponentiation) {
@@ -205,6 +205,7 @@ function ts_parse_options(options?: ParseOptions): TsParseOptions {
         return {};
     }
 }
+*/
 
 function clojurescript_parse_options(options?: ParseOptions): ClojureScriptParseOptions {
     if (options) {

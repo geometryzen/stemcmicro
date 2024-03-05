@@ -125,6 +125,7 @@
         "unit-inv": "mocha 'units/inv.spec.ts'",
         "unit-ispositive": "mocha 'units/ispositive.spec.ts'",
         "unit-javascript": "mocha 'units/javascript.spec.ts'",
+        "unit-jsparse": "mocha 'units/jsparse.spec.ts'",
         "unit-juxtaposition": "mocha 'units/juxtaposition.spec.ts'",
         "unit-log": "mocha 'units/log.spec.ts'",
         "unit-mixedprint": "mocha 'units/mixedprint.spec.ts'",
@@ -211,6 +212,7 @@
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "dependencies": {
+        "@geometryzen/esprima": "^0.9.10",
         "typhon-lang": "^1.0.13"
     },
     "peerDependencies": {
@@ -228,8 +230,8 @@
         "@types/mocha": "^10.0.6",
         "@types/node": "^20.11.24",
         "@types/rollup-plugin-peer-deps-external": "^2.2.5",
-        "@typescript-eslint/eslint-plugin": "^7.1.0",
-        "@typescript-eslint/parser": "^7.1.0",
+        "@typescript-eslint/eslint-plugin": "^7.1.1",
+        "@typescript-eslint/parser": "^7.1.1",
         "eslint": "^8.57.0",
         "gh-pages": "^6.1.1",
         "jest": "^29.7.0",
@@ -240,7 +242,7 @@
         "rollup-plugin-dts": "^6.1.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "ts-node": "^10.9.2",
-        "typedoc": "^0.25.9",
+        "typedoc": "^0.25.10",
         "typescript": "^5.3.3"
     }
 }

@@ -1,31 +1,37 @@
 
-import { Sym } from "math-expression-atoms";
+import { create_str, create_sym, Sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
+import { Native } from "math-expression-native";
 import { cons, Cons, nil, U } from "math-expression-tree";
-import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { diagnostic } from "../../diagnostics/diagnostics";
+import { Diagnostics } from "../../diagnostics/messages";
+import { Extension, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_NIL } from "../../hashing/hash_info";
 
 class NilExtension implements Extension<Cons> {
     constructor() {
         // Nothing to see here.
     }
-    phases?: number | undefined;
-    dependencies?: FEATURE[] | undefined;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binL(expr: Cons, opr: Sym, rhs: U, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binR(expr: Cons, opr: Sym, lhs: U, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+        return nil;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    dispatch(expr: Cons, opr: Sym, argList: Cons, env: ExprContext): U {
-        throw new Error("Method not implemented.");
+    dispatch(target: Cons, opr: Sym, argList: Cons, env: ExprContext): U {
+        switch (opr.id) {
+            case Native.sexpr: {
+                return create_str(this.toListString());
+            }
+        }
+        return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym("nil"));
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(expr: Cons, opr: Sym): boolean {
-        throw new Error("Method not implemented.");
+        return false;
     }
     iscons(): false {
         return false;
@@ -55,20 +61,19 @@ class NilExtension implements Extension<Cons> {
             return expr;
         }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toHumanString(expr: Cons): string {
+    toAsciiString(): string {
         return 'nil';
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(expr: Cons): string {
+    toHumanString(): string {
         return 'nil';
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toLatexString(expr: Cons): string {
+    toInfixString(): string {
         return 'nil';
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(expr: Cons): string {
+    toLatexString(): string {
+        return 'nil';
+    }
+    toListString(): string {
         return '()';
     }
     evaluate(argList: Cons): [TFLAGS, U] {

@@ -2,7 +2,7 @@ import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_st
 import { pos_end_items_to_cons, U } from "math-expression-tree";
 import { stemcmicro_parse, STEMCParseOptions } from "../algebrite/stemc_parse";
 import { EDNListParser, ParseConfig } from "../edn";
-import { js_parse } from "../javascript/js_parse";
+import { javascript_parse } from "../javascript/js_parse";
 import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
 import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
 // import { TsParseOptions, ts_parse } from "../typescript/ts_parse";
@@ -21,6 +21,9 @@ export enum SyntaxKind {
      */
     Eigenmath = 3,
     PythonScript = 4,
+    /**
+     * EcmaScript
+     */
     JavaScript = 5,
 }
 
@@ -160,12 +163,11 @@ export function delegate_parse_script(sourceText: string, options?: ParseOptions
         case SyntaxKind.ClojureScript: {
             return clojurescript_parse(sourceText, clojurescript_parse_options(options));
         }
+        case SyntaxKind.JavaScript: {
+            return javascript_parse(sourceText);
+        }
         case SyntaxKind.PythonScript: {
             return pythonscript_parse(sourceText, python_parse_options(options));
-        }
-        case SyntaxKind.JavaScript: {
-            const tree = js_parse(sourceText);
-            return { trees: [tree], errors: [] };
         }
         default: {
             // Handle Eigenmath and STEMCscript

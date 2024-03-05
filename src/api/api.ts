@@ -3,7 +3,7 @@ import { ExprHandler, LambdaExpr } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
 import { Atom, Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { AtomExtensionBuilderFromExprHandlerBuilder } from '../adapters/AtomExtensionBuilderFromExprHandlerBuilder';
-import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
+import { STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig } from '../eigenmath/eigenmath';
 import { ProgramEnv } from '../eigenmath/ProgramEnv';
@@ -16,7 +16,7 @@ import { assert_U } from '../operators/helpers/is_any';
 import { simplify } from '../operators/simplify/simplify';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, UOM_NAMES } from '../operators/uom/uom';
-import { clojurescript_parse, SyntaxKind } from '../parser/parser';
+import { clojurescript_parse, delegate_parse_script, SyntaxKind } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
@@ -28,12 +28,19 @@ import { env_term, init_env } from '../runtime/script_engine';
 import { visit } from '../visitor/visit';
 import { Visitor } from '../visitor/Visitor';
 
+function shallowCopy<T extends object>(source: T): T {
+    return {
+        ...source,
+    };
+}
+
 export interface ParseConfig {
     useCaretForExponentiation: boolean;
     useParenForTensors: boolean;
     explicitAssocAdd: boolean;
     explicitAssocExt: boolean;
     explicitAssocMul: boolean;
+    syntaxKind: SyntaxKind;
 }
 
 /**
@@ -54,6 +61,7 @@ export function stemc_parse_config(options: Partial<ParseConfig>): STEMCParseOpt
         explicitAssocAdd: options.explicitAssocAdd,
         explicitAssocExt: options.explicitAssocExt,
         explicitAssocMul: options.explicitAssocMul,
+        syntaxKind: options.syntaxKind,
         useCaretForExponentiation: reify_boolean(options.useCaretForExponentiation),
         useParenForTensors: reify_boolean(options.useParenForTensors)
     };
@@ -129,10 +137,9 @@ export interface ExprEngine extends Pick<ProgramEnv, 'clearBindings'> {
  * This is an implementation detail. 
  */
 enum EngineKind {
-    STEMCscript = 1,
-    Eigenmath = 2,
-    ClojureScript = 3,
-    PythonScript = 4
+    Micro = 1,
+    ClojureScript = 2,
+    PythonScript = 3
 }
 
 /**
@@ -156,16 +163,14 @@ export interface EngineConfig {
 function engine_kind_from_engine_options(options: Partial<EngineConfig>): EngineKind {
     if (options.syntaxKind) {
         switch (options.syntaxKind) {
-            case SyntaxKind.ClojureScript: {
-                return EngineKind.ClojureScript;
-            }
-            case SyntaxKind.Eigenmath: {
-                return EngineKind.Eigenmath;
-            }
+            case SyntaxKind.ClojureScript: return EngineKind.ClojureScript;
+            case SyntaxKind.Eigenmath: return EngineKind.Micro;
+            case SyntaxKind.JavaScript: return EngineKind.Micro;
+            case SyntaxKind.PythonScript: return EngineKind.PythonScript;
+            case SyntaxKind.STEMCscript: return EngineKind.Micro;
         }
     }
-    // The default will be an infix syntax.
-    return EngineKind.STEMCscript;
+    return EngineKind.Micro;
 }
 
 class ExtensionEnvVisitor implements Visitor {
@@ -392,7 +397,14 @@ class MicroEngine implements ExprEngine {
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         this.#env.buildOperators();
-        const { trees, errors } = stemcmicro_parse(sourceText, stemc_parse_config(options));
+        const optionsCopy = shallowCopy(options);
+        if (typeof options.syntaxKind === 'number') {
+            // The user has specified an override.
+        }
+        else {
+            optionsCopy.syntaxKind = this.#options.syntaxKind;
+        }
+        const { trees, errors } = delegate_parse_script(sourceText, stemc_parse_config(optionsCopy));
         const visitor = new ExtensionEnvVisitor(this.#env);
         for (const tree of trees) {
             visit(tree, visitor);
@@ -765,8 +777,7 @@ class PythonEngine implements ExprEngine {
 export function create_engine(options: Partial<EngineConfig> = {}): ExprEngine {
     const engineKind = engine_kind_from_engine_options(options);
     switch (engineKind) {
-        case EngineKind.Eigenmath:
-        case EngineKind.STEMCscript: {
+        case EngineKind.Micro: {
             return new MicroEngine(options);
         }
         case EngineKind.ClojureScript: {

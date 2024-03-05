@@ -212,7 +212,7 @@
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "dependencies": {
-        "@geometryzen/esprima": "^0.9.10",
+        "@geometryzen/esprima": "^0.9.12",
         "typhon-lang": "^1.0.13"
     },
     "peerDependencies": {

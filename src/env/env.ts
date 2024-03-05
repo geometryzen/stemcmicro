@@ -884,8 +884,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             if (is_atom(expr)) {
                 return select_atom_extension(expr)!;
             }
+            else if (is_nil(expr)) {
+                return select_nil_extension()!;
+            }
             else {
-                throw new ProgrammingError();
+                throw new ProgrammingError(`${expr}`);
             }
         },
         extensionFor(expr: U): Extension<U> | undefined {

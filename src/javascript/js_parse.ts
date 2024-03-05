@@ -1,9 +1,11 @@
-import { is_assignment_expression, Node, ParseOptions, parseScript, Script } from '@geometryzen/esprima';
-import { create_flt, create_rat, create_str, create_sym } from 'math-expression-atoms';
+import { is_array_expression, is_assignment_expression, is_member_expression, is_sequence_expression, Node, ParseOptions, parseScript, Script } from '@geometryzen/esprima';
+import { create_boo, create_flt, create_rat, create_str, create_sym, create_tensor } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
-import { items_to_cons, nil, U } from 'math-expression-tree';
+import { assert_cons_or_nil, cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { StackU } from '../env/StackU';
-import { is_binary_expression, is_expression_statement, is_identifier, is_literal, is_program, is_variable_declaration, is_variable_declarator, op_from_string } from './helpers';
+import { is_sym } from '../operators/sym/is_sym';
+import { is_binary_expression, is_call_expression, is_expression_statement, is_identifier, is_literal, is_program, is_variable_declaration, is_variable_declarator, op_from_string } from './helpers';
+import { geometric_algebra_operator_precedence } from './precedence';
 
 type Lift = (nodes: Node[]) => Node;
 type Test = (node: Node) => boolean;
@@ -16,13 +18,14 @@ function visitNode(node: Node, visitor: Visitor, test?: Test, lift?: Lift): void
 
 
 
-export function js_parse(sourceText: string): U {
+export function javascript_parse(sourceText: string): { trees: U[], errors: Error[] } {
     const options: ParseOptions = {
         attachComment: false,
         comment: false,
         jsx: false,
         loc: false,
-        range: false
+        range: false,
+        operatorPrecedence: geometric_algebra_operator_precedence,
     };
     const stack = new StackU();
     try {
@@ -37,7 +40,23 @@ export function js_parse(sourceText: string): U {
                 const rhs = stack.pop();
                 const lhs = stack.pop();
                 const opr = stack.pop();
-                stack.push(items_to_cons(opr, lhs, rhs));
+                if (is_sym(opr)) {
+                    switch (opr.id) {
+                        case Native.divide: {
+                            const x = items_to_cons(native_sym(Native.pow), rhs, create_rat(-1));
+                            stack.push(items_to_cons(native_sym(Native.multiply), lhs, x));
+                            break;
+                        }
+                        case Native.subtract: {
+                            const x = items_to_cons(native_sym(Native.multiply), create_rat(-1), rhs);
+                            stack.push(items_to_cons(native_sym(Native.add), lhs, x));
+                            break;
+                        }
+                        default: {
+                            stack.push(items_to_cons(opr, lhs, rhs));
+                        }
+                    }
+                }
             }
             else if (is_literal(node)) {
                 if (typeof node.value === 'number') {
@@ -57,6 +76,14 @@ export function js_parse(sourceText: string): U {
                 else if (typeof node.value === 'string') {
                     stack.push(create_str(node.value));
                 }
+                else if (typeof node.value === 'boolean') {
+                    stack.push(create_boo(node.value));
+                }
+                else if (typeof node.value === 'object') {
+                    if (node.value === null) {
+                        stack.push(nil);
+                    }
+                }
                 else {
                     console.log(node.value, `${typeof node.value}`);
                     throw new Error();
@@ -70,6 +97,16 @@ export function js_parse(sourceText: string): U {
                 const lhs = stack.pop();
                 const opr = stack.pop();
                 stack.push(items_to_cons(opr, lhs, rhs));
+            }
+            else if (is_call_expression(node)) {
+                const items: U[] = [];
+                visitNode(node.callee, visitor);
+                items.push(stack.pop());
+                node.arguments.forEach(argument => {
+                    visitNode(argument, visitor);
+                    items.push(stack.pop());
+                });
+                stack.push(items_to_cons(...items));
             }
             else if (is_variable_declaration(node)) {
                 node.declarations.forEach(declaration => {
@@ -85,13 +122,43 @@ export function js_parse(sourceText: string): U {
                     const varName = stack.pop();
                     const assign = items_to_cons(native_sym(Native.assign), varName, rhs);
                     const def = stack.pop();
-                    stack.push(items_to_cons(def, assign));    
+                    stack.push(items_to_cons(def, assign));
                 }
                 else {
                     const varName = stack.pop();
                     const def = stack.pop();
-                    stack.push(items_to_cons(def, varName));    
+                    stack.push(items_to_cons(def, varName));
                 }
+            }
+            else if (is_array_expression(node)) {
+                const elements: U[] = [];
+                node.elements.forEach(element => {
+                    if (element) {
+                        visitNode(element, visitor);
+                        elements.push(stack.pop());
+                    }
+                    else {
+                        // null?
+                    }
+                });
+                stack.push(create_tensor(elements));
+            }
+            else if (is_member_expression(node)) {
+                visitNode(node.object, visitor);
+                const obj = stack.pop();
+                visitNode(node.property, visitor);
+                const indices = stack.pop();
+                const ois = cons(obj, assert_cons_or_nil(indices));
+                const x = cons(native_sym(Native.component), ois);
+                stack.push(x);
+            }
+            else if (is_sequence_expression(node)) {
+                const xs: U[] = [];
+                node.expressions.forEach(expr => {
+                    visitNode(expr, visitor);
+                    xs.push(stack.pop());
+                });
+                stack.push(items_to_cons(...xs));
             }
             else if (is_expression_statement(node)) {
                 visitNode(node.expression, visitor);
@@ -117,9 +184,12 @@ export function js_parse(sourceText: string): U {
         };
         // Note that test and lift are only called when producing Node(s) with the visitor, which we do not do.
         visitNode(script, visitor, test, lift);
-        return stack.pop();
-
-        return nil;
+        const trees: U[] = [];
+        while (stack.length > 0) {
+            trees.push(stack.pop());
+        }
+        trees.reverse();
+        return { trees, errors: [] };
     }
     finally {
         stack.release();

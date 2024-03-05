@@ -66,6 +66,9 @@ class StrExtension implements Extension<Str> {
             case Native.sexpr: {
                 return create_str(this.toListString(target));
             }
+            case Native.simplify: {
+                return target;
+            }
         }
         return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }

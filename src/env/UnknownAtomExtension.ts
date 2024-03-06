@@ -37,17 +37,17 @@ export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
             return false;
         }
     }
-    toHumanString(expr: A, $: ExprContext): string {
-        throw new Error("toHumanString method not implemented.");
+    toHumanString(atom: A, $: ExprContext): string {
+        return `${atom}`;
     }
-    toInfixString(expr: A, $: ExprContext): string {
-        throw new Error("toInfixString method not implemented.");
+    toInfixString(atom: A, $: ExprContext): string {
+        return `${atom}`;
     }
-    toLatexString(expr: A, $: ExprContext): string {
-        throw new Error("toLatexString method not implemented.");
+    toLatexString(atom: A, $: ExprContext): string {
+        return `${atom}`;
     }
-    toListString(expr: A, $: ExprContext): string {
-        throw new Error("toListString method not implemented.");
+    toListString(atom: A, $: ExprContext): string {
+        return `${atom}`;
     }
     evaluate(opr: A, argList: Cons, $: ExtensionEnv): [number, U] {
         throw new Error("evaluate method not implemented.");
@@ -57,7 +57,7 @@ export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
         return wrap_as_transform(newExpr, atom);
     }
     valueOf(atom: A, $: ExprContext): U {
-        return this.dispatch(atom, create_sym("valueof"), nil, $);
+        return atom;
     }
     binL(lhs: A, opr: Sym, rhs: U, env: ExprContext): U {
         return nil;
@@ -68,8 +68,8 @@ export class UnknownAtomExtension<A extends Atom> implements Extension<A> {
     dispatch(target: A, opr: Sym, argList: Cons, env: ExprContext): U {
         return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
-    subst(expr: A, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U {
-        throw new Error("subst method not implemented.");
+    subst(atom: A, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U {
+        return atom;
     }
     test(expr: A, opr: Sym, env: ExprContext): boolean {
         return false;

@@ -7,7 +7,7 @@ import { create_engine, EngineConfig, ExprEngine, ParseConfig } from "../src/api
 import { SyntaxKind } from "../src/parser/parser";
 
 describe("examples", function () {
-    it("STEMCscript", function () {
+    it("Eigenmath", function () {
         const lines: string[] = [
             `1 + 2 + 3 + 4`
         ];
@@ -98,7 +98,7 @@ describe("examples", function () {
         assert.strictEqual(is_rat(values[0]), true);
         engine.release();
     });
-    it("STEMCscript", function () {
+    it("Eigenmath", function () {
         const lines: string[] = [
             `joule / coulomb`
         ];
@@ -127,7 +127,7 @@ describe("examples", function () {
         assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `V`);
         engine.release();
     });
-    it("STEMCscript", function () {
+    it("Eigenmath", function () {
         const lines: string[] = [
             `joule / coulomb`
         ];

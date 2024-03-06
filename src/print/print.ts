@@ -1128,7 +1128,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
     // quick check this is actually a square root.
     if (is_num_and_equal_one_half(expo)) {
         if (equaln(base, 2)) {
-            if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+            if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
                 str += print_str('Math.SQRT2');
                 return str;
             }
@@ -1140,7 +1140,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
                 str += print_str('}');
                 return str;
             }
-            else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+            else if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
                 str += print_str('Math.sqrt(');
                 str += render_using_non_sexpr_print_mode(base, _);
                 str += print_str(')');
@@ -1150,7 +1150,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
     }
 
     if (equaln(_.getBinding(PRINT_LEAVE_E_ALONE, nil), 1) && is_base_of_natural_logarithm(base)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             str += print_str('Math.exp(');
             str += print_expo_of_denom(expo, _);
             str += print_str(')');
@@ -1170,7 +1170,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
         return str;
     }
 
-    if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+    if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
         str += print_str('Math.pow(');
         str += print_base_of_denom(base, _);
         str += print_str(', ');
@@ -1289,7 +1289,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
         }
         else if (is_num_and_negative(base)) {
             // Prevent ambiguity when dealing with unary minus.
-            // As an example, in JavaScript unary minus technically has higher precedence than exponentiation,
+            // As an example, in EcmaScript unary minus technically has higher precedence than exponentiation,
             // but compilers sometimes require parentheses to avoid errors.
             str += print_str('(');
             str += render_using_non_sexpr_print_mode(base, _);
@@ -1586,7 +1586,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                 let str = '';
                 const body = argList.item(1);
                 try {
-                    if (_.getDirective(Directive.printMode) !== PrintMode.JavaScript) {
+                    if (_.getDirective(Directive.printMode) !== PrintMode.EcmaScript) {
                         const paramList = argList.item(0);
                         try {
                             str += print_str('fn ');
@@ -1609,7 +1609,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                 let str = '';
                 const body = argList.item(0);
                 try {
-                    if (_.getDirective(Directive.printMode) !== PrintMode.JavaScript) {
+                    if (_.getDirective(Directive.printMode) !== PrintMode.EcmaScript) {
                         const paramList = argList.item(1);
                         try {
                             str += print_str('function ');
@@ -1661,7 +1661,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
     }
 
     // TODO: The generalization here would be that we look up the operator then ask for the right format
-    // based upon _.getDirective(Directive.printMode), _.getDirective(Directive.printMode)===PrintMode.JavaScript
+    // based upon _.getDirective(Directive.printMode), _.getDirective(Directive.printMode)===PrintMode.EcmaScript
     if (is_cons(expr) && is_factorial(expr)) {
         return print_factorial_function(expr, _);
     }
@@ -1693,14 +1693,14 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_TRANSPOSE_latex(expr, _);
             return str;
         }
-        else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        else if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_TRANSPOSE_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(UNIT)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_UNIT_codegen(expr, _);
             return str;
@@ -1712,7 +1712,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_INV_latex(expr, _);
             return str;
         }
-        else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        else if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_INV_codegen(expr, _);
             return str;
@@ -1734,49 +1734,49 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_DOT_latex(expr, _);
             return str;
         }
-        else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        else if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_DOT_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(SIN)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_SIN_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(COS)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_COS_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(TAN)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_TAN_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(ARCSIN)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_ARCSIN_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(ARCCOS)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_ARCCOS_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(ARCTAN)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_ARCTAN_codegen(expr, _);
             return str;
@@ -1788,7 +1788,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_SUM_latex(expr, _);
             return str;
         }
-        else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        else if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_SUM_codegen(expr, _);
             return str;
@@ -1804,28 +1804,28 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_PRODUCT_latex(expr, _);
             return str;
         }
-        else if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        else if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_PRODUCT_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(FOR)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_FOR_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(DO)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_DO_codegen(expr, _);
             return str;
         }
     }
     else if (car(expr).equals(TEST)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_TEST_codegen(expr, _);
             return str;
@@ -1837,7 +1837,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(TESTLT)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str +=
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') < (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
@@ -1850,7 +1850,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(TESTLE)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str +=
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') <= (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
@@ -1863,7 +1863,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(TESTGT)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str +=
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') > (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
@@ -1876,7 +1876,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(TESTGE)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str +=
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') >= (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
@@ -1889,7 +1889,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (is_cons(expr) && expr.opr.equals(TESTEQ)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str +=
                 '((' + render_using_non_sexpr_print_mode(cadr(expr), _) + ') === (' + render_using_non_sexpr_print_mode(caddr(expr), _) + '))';
@@ -1902,7 +1902,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(FLOOR)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += 'Math.floor(' + render_using_non_sexpr_print_mode(cadr(expr), _) + '),$';
             return str;
@@ -1914,7 +1914,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(CEILING)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += 'Math.ceiling(' + render_using_non_sexpr_print_mode(cadr(expr), _) + '),$';
             return str;
@@ -1926,14 +1926,14 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         }
     }
     else if (car(expr).equals(ROUND)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += 'Math.round(' + render_using_non_sexpr_print_mode(cadr(expr), _) + '),$';
             return str;
         }
     }
     else if (car(expr).equals(ASSIGN)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = '';
             str += print_SETQ_codegen(expr, _);
             return str;
@@ -2006,7 +2006,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
         return print_char('d');
     }
     else if (is_base_of_natural_logarithm(expr)) {
-        if (_.getDirective(Directive.printMode) === PrintMode.JavaScript) {
+        if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             return print_str('Math.E');
         }
         else {

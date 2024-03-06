@@ -49,7 +49,7 @@ import { MATH_ADD, MATH_DIV, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_PO
 import { Str } from "../tree/str/Str";
 import { create_sym } from "../tree/sym/Sym";
 import { items_to_cons, nil, U } from "../tree/tree";
-import { PythonScriptParseOptions } from "./PythonScriptParseOptions";
+import { PyParseOptions } from "./PyParseOptions";
 
 export const COMPONENT = native_sym(Native.component);
 
@@ -238,7 +238,7 @@ class PythonVisitor implements Visitor {
     }
 }
 
-export function pythonscript_parse(sourceText: string, options?: PythonScriptParseOptions): { trees: U[], errors: Error[] } {
+export function py_parse(sourceText: string, options?: PyParseOptions): { trees: U[], errors: Error[] } {
     const node = parse(sourceText, SourceKind.File);
     if (typeof node === 'object') {
         const stmts: Statement[] = astFromParse(node);

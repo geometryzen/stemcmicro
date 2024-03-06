@@ -305,7 +305,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
 
     // A power sum is possible if the terms are real and the exponent is a positive integer in safe number range.
     // (a + b + ...) ^ n  ->  (a + b + ...) * (a + b + ...) ...
-    // The exponent must be an integer and convertable to a JavaScript number.
+    // The exponent must be an integer and convertable to a EcmaScript number.
     // We don't always want to do this. It can make otherwise simple expressions explode and can throw off symbolic integration.
     // console.lg("expanding =>", $.getDirective(Directive.expanding));
     // console.lg("expandPowSum", $.getDirective(Directive.expandPowSum));

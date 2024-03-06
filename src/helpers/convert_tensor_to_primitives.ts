@@ -5,7 +5,7 @@ import { is_tensor } from "../operators/tensor/is_tensor";
 import { U } from "../tree/tree";
 
 /**
- * Converts the tensor of values to a JavaScript native array of primitives.
+ * Converts the tensor of values to a EcmaScript native array of primitives.
  */
 export function convert_tensor_to_primitives(tensor: U): (boolean | string)[] {
     if (is_tensor(tensor)) {

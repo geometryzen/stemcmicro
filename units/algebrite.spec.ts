@@ -3,7 +3,7 @@ import assert from 'assert';
 import { assert_boo, assert_keyword, assert_map, assert_rat } from "math-expression-atoms";
 import { create_engine, ExprEngine } from "../src/api/api";
 
-describe("STEMCscript", function () {
+describe("Eigenmath", function () {
     it("empty Map", function () {
         const lines: string[] = [
             `{}`

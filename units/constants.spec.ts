@@ -25,7 +25,7 @@ const pi_svg_digits = [
     `</svg>`
 ].join('');
 
-describe("pi in STEMCscript", function () {
+describe("pi in Eigenmath", function () {
     it("is recognized as being the mathematical symbol", function () {
         const lines: string[] = [
             `pi=tau(1/2)`,

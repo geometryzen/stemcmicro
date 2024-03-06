@@ -8,7 +8,7 @@ function create_str(s: string): Str {
     return new Str(s);
 }
 
-describe("JavaScript", function () {
+describe("EcmaScript", function () {
     it("algebra", function () {
         const context: ScriptContext = create_script_context({});
         const $: ExtensionEnv = context.$;

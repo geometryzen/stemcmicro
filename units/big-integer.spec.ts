@@ -703,7 +703,7 @@ describe("BigInteger", function () {
     });
 
     xdescribe("Power", function () {
-        it("of 0 to 0 is 1 (mathematically debatable, but matches JavaScript behavior)", function () {
+        it("of 0 to 0 is 1 (mathematically debatable, but matches EcmaScript behavior)", function () {
             expect(bigInt(0).pow(0)).toEqualBigInt(1);
             expect(bigInt(0).pow("-0")).toEqualBigInt(1);
             expect(bigInt("-0").pow(0)).toEqualBigInt(1);

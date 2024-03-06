@@ -20,7 +20,7 @@ run_test([
   'isprime(9007199254740991)',
   '0',
 
-  // The largest prime that JavaScript supports
+  // The largest prime that EcmaScript supports
 
   'isprime(2^53 - 111)',
   '1',

@@ -2,7 +2,7 @@
 import assert from 'assert';
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
-import { pythonscript_parse } from "../src/pythonscript/pythonscript_parse";
+import { py_parse } from "../src/pythonscript/py_parse";
 
 describe("Python parse", function () {
     it("def f(x): return x", function () {
@@ -12,7 +12,7 @@ describe("Python parse", function () {
 
         const context = create_script_context({});
 
-        const { trees } = pythonscript_parse(lines.join('\n'));
+        const { trees } = py_parse(lines.join('\n'));
         assert.strictEqual(trees.length, 1);
         const tree = trees[0];
         assert.strictEqual(context.renderAsSExpr(tree), "(define f (lambda (x) (* a x)))");

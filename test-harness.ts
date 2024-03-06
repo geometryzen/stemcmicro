@@ -258,7 +258,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : USE_CARET_FOR_EXPONENTIATION,
             useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : USE_DERIVATIVE_SHORTHAND,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : USE_INTEGER_PREDICATES,
-            syntaxKind: typeof options.syntaxKind === 'number' ? options.syntaxKind : SyntaxKind.STEMCscript,
+            syntaxKind: typeof options.syntaxKind === 'number' ? options.syntaxKind : SyntaxKind.Eigenmath,
             verbose: typeof options.verbose === 'boolean' ? options.verbose : false
         };
         return config;
@@ -270,7 +270,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
             useCaretForExponentiation: USE_CARET_FOR_EXPONENTIATION,
             useDerivativeShorthandLowerD: USE_DERIVATIVE_SHORTHAND,
             useIntegersForPredicates: USE_INTEGER_PREDICATES,
-            syntaxKind: SyntaxKind.STEMCscript,
+            syntaxKind: SyntaxKind.Eigenmath,
             verbose: false
         };
         return config;
@@ -283,7 +283,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
 function harness_options_to_engine_options(options: TestOptions | undefined): Partial<EngineConfig> {
     if (options) {
         return {
-            syntaxKind: typeof options.syntaxKind === 'number' ? options.syntaxKind : SyntaxKind.STEMCscript,
+            syntaxKind: typeof options.syntaxKind === 'number' ? options.syntaxKind : SyntaxKind.Eigenmath,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : USE_CARET_FOR_EXPONENTIATION,
             useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : USE_DERIVATIVE_SHORTHAND,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : USE_INTEGER_PREDICATES,
@@ -291,7 +291,7 @@ function harness_options_to_engine_options(options: TestOptions | undefined): Pa
     }
     else {
         return {
-            syntaxKind: SyntaxKind.STEMCscript,
+            syntaxKind: SyntaxKind.Eigenmath,
             useCaretForExponentiation: USE_CARET_FOR_EXPONENTIATION,
             useDerivativeShorthandLowerD: USE_DERIVATIVE_SHORTHAND,
             useIntegersForPredicates: USE_INTEGER_PREDICATES,

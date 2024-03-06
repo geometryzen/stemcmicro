@@ -1,6 +1,6 @@
 
 import assert from 'assert';
-import { stemcmicro_parse } from "../src/algebrite/stemc_parse";
+import { stemcmicro_parse } from "../src/algebrite/em_parse";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("eigenmath-parse", function () {

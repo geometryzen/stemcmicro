@@ -33,7 +33,7 @@ export function eval_check(expr: Cons, $: ExtensionEnv): Rat | Cons {
     const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(value, $);
 
     if (typeof checkResult === 'boolean') {
-        // returned JavaScript true or false -> 1 or 0
+        // returned EcmaScript true or false -> 1 or 0
         // TODO: More natural to return Bool. Should we make this configurable.
         // e.g. $.getDirective(Directive.useIntegerForBoolean)
         return create_int(Number(checkResult));

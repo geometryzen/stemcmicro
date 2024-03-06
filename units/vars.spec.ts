@@ -6,7 +6,7 @@ import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 
 describe("ClojureScript", function () {
-    it("Use of undeclared Var in STEMCscript", function () {
+    it("Use of undeclared Var in Eigenmath", function () {
         const lines: string[] = [
             `a`,
         ];

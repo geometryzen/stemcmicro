@@ -4,7 +4,7 @@ import { create_engine, EngineConfig, ExprEngine, RenderConfig } from "../src/ap
 import { SyntaxKind } from "../src/parser/parser";
 
 const engineConfig: Partial<EngineConfig> = {
-    syntaxKind: SyntaxKind.JavaScript
+    syntaxKind: SyntaxKind.EcmaScript
 };
 
 const infixConfig: RenderConfig = {

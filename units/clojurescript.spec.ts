@@ -413,7 +413,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(is_map(values[0]), true);
         engine.release();
     });
-    it("Tensors in STEMCscript", function () {
+    it("Tensors in Eigenmath", function () {
         const lines: string[] = [
             `["Alice", "Bob", "Carol"]`
         ];

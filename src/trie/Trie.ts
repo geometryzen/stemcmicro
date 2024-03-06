@@ -1,8 +1,3 @@
-// https://en.wikipedia.org/wiki/Trie
-// https://kevinwin.com/blog/How-to-implement-a-Trie-in-JavaScript/
-// https://gist.github.com/tpae/72e1c54471e88b689f85ad2b3940a8f0
-//
-
 class TrieNode<T> {
     parent: TrieNode<T> | null = null;
     readonly children: { [key: string]: TrieNode<T> } = {};

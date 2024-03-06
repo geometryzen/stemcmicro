@@ -4,7 +4,7 @@ import { move_top_of_stack } from "../runtime/defs";
 import { normalize_unicode_dots } from "../runtime/normalize_dots";
 import { scan } from "./scan";
 
-export interface STEMCParseOptions {
+export interface EmParseOptions {
     catchExceptions?: boolean;
     /**
      * Determines whether the caret symbol '^' is used to denote exponentiation.
@@ -38,7 +38,7 @@ interface ScanConfig {
     explicitAssocExt: boolean;
 }
 
-function config_from_options(options: STEMCParseOptions | undefined): ScanConfig {
+function config_from_options(options: EmParseOptions | undefined): ScanConfig {
     if (options) {
         return {
             useCaretForExponentiation: !!options.useCaretForExponentiation,
@@ -64,7 +64,7 @@ function config_from_options(options: STEMCParseOptions | undefined): ScanConfig
  * @param sourceText The source text. May contain embedded newline characters.
  * @param options Determine how the parsing behaves.
  */
-export function stemcmicro_parse(sourceText: string, options: STEMCParseOptions = {}): { trees: U[], errors: Error[] } {
+export function em_parse(sourceText: string, options: EmParseOptions = {}): { trees: U[], errors: Error[] } {
     // console.lg(`scan(sourceText = ${JSON.stringify(sourceText)})`);
 
     const config: ScanConfig = config_from_options(options);

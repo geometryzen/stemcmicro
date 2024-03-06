@@ -49,7 +49,7 @@ export function eval_dotdot(expr: Cons, $: ExtensionEnv): U {
                     }
                     else {
                         // eslint-disable-next-line no-console
-                        console.warn("JavaScript to U", `${value}`);
+                        console.warn("EcmaScript to U", `${value}`);
                         throw new ProgrammingError();
                     }
                 }

@@ -1,45 +1,44 @@
 import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_str, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from "math-expression-atoms";
 import { pos_end_items_to_cons, U } from "math-expression-tree";
-import { stemcmicro_parse, STEMCParseOptions } from "../algebrite/stemc_parse";
+import { EmParseOptions, em_parse } from "../algebrite/em_parse";
 import { EDNListParser, ParseConfig } from "../edn";
-import { javascript_parse } from "../javascript/js_parse";
-import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
-import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
+import { js_parse } from "../javascript/js_parse";
+import { PyParseOptions } from "../pythonscript/PyParseOptions";
+import { py_parse } from "../pythonscript/py_parse";
 // import { TsParseOptions, ts_parse } from "../typescript/ts_parse";
 
 export enum SyntaxKind {
     /**
-     * STEMC Scripting Language.
+     * ClojureScript Language.
      */
-    STEMCscript = 1,
-    /**
-     * ClojureScript Programming Language.
-     */
-    ClojureScript = 2,
+    ClojureScript = 1,
     /**
      * Eigenmath Scripting Language by George Weigt.
      */
-    Eigenmath = 3,
-    PythonScript = 4,
+    Eigenmath = 2,
     /**
-     * EcmaScript
+     * EcmaScript Language
      */
-    JavaScript = 5,
+    EcmaScript = 3,
+    /**
+     * Python Scripting Language
+     */
+    PythonScript = 4,
 }
 
-export function human_readable_syntax_kind(syntaxKind: SyntaxKind): 'STEMCscript' | 'ClojureScript' | 'Eigenmath' | 'JavaScript' | 'PythonScript' {
+export function human_readable_syntax_kind(syntaxKind: SyntaxKind): 'ClojureScript' | 'EcmaScript' | 'Eigenmath' | 'PythonScript' {
     if (syntaxKind) {
         switch (syntaxKind) {
             case SyntaxKind.ClojureScript: return "ClojureScript";
+            case SyntaxKind.EcmaScript: return "EcmaScript";
             case SyntaxKind.Eigenmath: return "Eigenmath";
             case SyntaxKind.PythonScript: return "PythonScript";
-            case SyntaxKind.JavaScript: return "JavaScript";
         }
     }
-    return "STEMCscript";
+    return "Eigenmath";
 }
 
-export const syntaxKinds: SyntaxKind[] = [SyntaxKind.STEMCscript, SyntaxKind.ClojureScript, SyntaxKind.Eigenmath, SyntaxKind.PythonScript, SyntaxKind.JavaScript];
+export const syntaxKinds: SyntaxKind[] = [SyntaxKind.ClojureScript, SyntaxKind.Eigenmath, SyntaxKind.PythonScript, SyntaxKind.EcmaScript];
 
 export interface ParseOptions {
     catchExceptions?: boolean,
@@ -93,7 +92,7 @@ interface ClojureScriptParseOptions {
  * @param options 
  * @returns 
  */
-export function clojurescript_parse(sourceText: string, options: ClojureScriptParseOptions = {}): { trees: U[], errors: Error[] } {
+export function cs_parse(sourceText: string, options: ClojureScriptParseOptions = {}): { trees: U[], errors: Error[] } {
     // options.useCaretForExponentiation;
     // options.useParenForTensors;
     const parseConfig: ParseConfig<U> = {
@@ -158,25 +157,24 @@ export function clojurescript_parse(sourceText: string, options: ClojureScriptPa
 }
 
 export function delegate_parse_script(sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
-    const syntaxKind = script_kind_from_options(options);
+    const syntaxKind = syntax_kind_from_options(options);
     switch (syntaxKind) {
         case SyntaxKind.ClojureScript: {
-            return clojurescript_parse(sourceText, clojurescript_parse_options(options));
+            return cs_parse(sourceText, cs_parse_options(options));
         }
-        case SyntaxKind.JavaScript: {
-            return javascript_parse(sourceText);
+        case SyntaxKind.EcmaScript: {
+            return js_parse(sourceText);
         }
         case SyntaxKind.PythonScript: {
-            return pythonscript_parse(sourceText, python_parse_options(options));
+            return py_parse(sourceText, py_parse_options(options));
         }
         default: {
-            // Handle Eigenmath and STEMCscript
-            return stemcmicro_parse(sourceText, stemc_parse_options(options));
+            return em_parse(sourceText, em_parse_options(options));
         }
     }
 }
 
-function stemc_parse_options(options?: ParseOptions): STEMCParseOptions {
+function em_parse_options(options?: ParseOptions): EmParseOptions {
     if (options) {
         return {
             explicitAssocAdd: options.explicitAssocAdd,
@@ -208,7 +206,7 @@ function ts_parse_options(options?: ParseOptions): TsParseOptions {
 }
 */
 
-function clojurescript_parse_options(options?: ParseOptions): ClojureScriptParseOptions {
+function cs_parse_options(options?: ParseOptions): ClojureScriptParseOptions {
     if (options) {
         return {
             // explicitAssocAdd: options.explicitAssocAdd,
@@ -225,7 +223,7 @@ function clojurescript_parse_options(options?: ParseOptions): ClojureScriptParse
     }
 }
 
-function python_parse_options(options?: ParseOptions): PythonScriptParseOptions {
+function py_parse_options(options?: ParseOptions): PyParseOptions {
     if (options) {
         if (options.useCaretForExponentiation) {
             throw new Error("useCaretForExponentiation is not supported by the Python parser.");
@@ -244,17 +242,17 @@ function python_parse_options(options?: ParseOptions): PythonScriptParseOptions 
     }
 }
 
-function script_kind_from_options(options?: ParseOptions): SyntaxKind {
+function syntax_kind_from_options(options?: ParseOptions): SyntaxKind {
     if (options) {
         if (options.syntaxKind) {
             return options.syntaxKind;
         }
         else {
-            return SyntaxKind.STEMCscript;
+            return SyntaxKind.Eigenmath;
         }
     }
     else {
-        return SyntaxKind.STEMCscript;
+        return SyntaxKind.Eigenmath;
     }
 }
 

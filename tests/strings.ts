@@ -16,7 +16,7 @@ run_test([
     '"hey" * "hey"',
     '"hey"^2',
 
-    // 'a\nb' is a legal JavaScript string but it is not parsable JSON
+    // 'a\nb' is a legal EcmaScript string but it is not parsable JSON
     // JSON.stringify('a\nb') gives the parseable representation which is '"a\\nb"'. Notice the escaping.
     // JSON.parse('"a\nb"') gives SyntaxError: Bad control character in string literal in JSON at position 2 (line 1 column 3)
     `"a\\nb"`,

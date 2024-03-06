@@ -30,7 +30,7 @@ export enum PrintMode {
      * Symbolic Expression is LISP-like.
      */
     SExpr = 4,
-    JavaScript = 5
+    EcmaScript = 5
 }
 
 export class Defs {

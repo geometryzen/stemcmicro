@@ -1,10 +1,10 @@
-import { is_array_expression, is_assignment_expression, is_member_expression, is_sequence_expression, Node, ParseOptions, parseScript, Script } from '@geometryzen/esprima';
+import { is_array_expression, is_assignment_expression, is_binary_expression, is_call_expression, is_expression_statement, is_identifier, is_literal, is_member_expression, is_program, is_sequence_expression, is_unary_expression, is_variable_declaration, is_variable_declarator, Node, ParseOptions, parseScript, Script } from '@geometryzen/esprima';
 import { create_boo, create_flt, create_int, create_rat, create_str, create_sym, create_tensor } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { cons, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { StackU } from '../env/StackU';
 import { is_sym } from '../operators/sym/is_sym';
-import { is_binary_expression, is_call_expression, is_expression_statement, is_identifier, is_literal, is_program, is_unary_expression, is_variable_declaration, is_variable_declarator, op_from_string } from './helpers';
+import { op_from_string } from './helpers';
 import { geometric_algebra_operator_precedence } from './precedence';
 
 type Lift = (nodes: Node[]) => Node;
@@ -18,7 +18,7 @@ function visitNode(node: Node, visitor: Visitor, test?: Test, lift?: Lift): void
 
 
 
-export function javascript_parse(sourceText: string): { trees: U[], errors: Error[] } {
+export function js_parse(sourceText: string): { trees: U[], errors: Error[] } {
     const options: ParseOptions = {
         attachComment: false,
         comment: false,

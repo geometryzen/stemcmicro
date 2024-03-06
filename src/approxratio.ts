@@ -57,7 +57,7 @@ function approxratio_flt(value: Flt, $: ExtensionEnv): Rat | Cons {
 // original routine by John Kennedy, see
 // https://web.archive.org/web/20111027100847/http://homepage.smc.edu/kennedy_john/DEC2FRAC.PDF
 // courtesy of Michael Borcherds
-// who ported this to JavaScript under MIT licence
+// who ported this to EcmaScript under MIT licence
 // also see
 // https://github.com/geogebra/geogebra/blob/master/common/src/main/java/org/geogebra/common/kernel/algos/AlgoFractionText.java
 // potential other ways to do this:

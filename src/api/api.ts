@@ -3,7 +3,7 @@ import { ExprHandler, LambdaExpr } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
 import { Atom, Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { AtomExtensionBuilderFromExprHandlerBuilder } from '../adapters/AtomExtensionBuilderFromExprHandlerBuilder';
-import { STEMCParseOptions } from '../algebrite/stemc_parse';
+import { EmParseOptions } from '../algebrite/em_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig } from '../eigenmath/eigenmath';
 import { ProgramEnv } from '../eigenmath/ProgramEnv';
@@ -16,7 +16,7 @@ import { assert_U } from '../operators/helpers/is_any';
 import { simplify } from '../operators/simplify/simplify';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, UOM_NAMES } from '../operators/uom/uom';
-import { clojurescript_parse, delegate_parse_script, SyntaxKind } from '../parser/parser';
+import { cs_parse, delegate_parse_script, SyntaxKind } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
@@ -55,8 +55,8 @@ function reify_boolean(optionValue: boolean | undefined, defaultValue: boolean =
     }
 }
 
-export function stemc_parse_config(options: Partial<ParseConfig>): STEMCParseOptions {
-    const config: STEMCParseOptions = {
+export function stemc_parse_config(options: Partial<ParseConfig>): EmParseOptions {
+    const config: EmParseOptions = {
         catchExceptions: false,
         explicitAssocAdd: options.explicitAssocAdd,
         explicitAssocExt: options.explicitAssocExt,
@@ -147,7 +147,7 @@ enum EngineKind {
  */
 export enum UndeclaredVars {
     Err = 1,    // ClojureScript
-    Nil = 2     // STEMCscript and Eigenmath
+    Nil = 2     // Eigenmath
     // Sym = 3
 }
 
@@ -165,9 +165,8 @@ function engine_kind_from_engine_options(options: Partial<EngineConfig>): Engine
         switch (options.syntaxKind) {
             case SyntaxKind.ClojureScript: return EngineKind.ClojureScript;
             case SyntaxKind.Eigenmath: return EngineKind.Micro;
-            case SyntaxKind.JavaScript: return EngineKind.Micro;
+            case SyntaxKind.EcmaScript: return EngineKind.Micro;
             case SyntaxKind.PythonScript: return EngineKind.PythonScript;
-            case SyntaxKind.STEMCscript: return EngineKind.Micro;
         }
     }
     return EngineKind.Micro;
@@ -560,7 +559,7 @@ class ClojureScriptEngine implements ExprEngine {
         this.#env.buildOperators();
         const useCaretForExponentiation = reify_boolean(options.useCaretForExponentiation);
         const caretDecode = useCaretForExponentiation ? native_sym(Native.pow) : native_sym(Native.outer);
-        const { trees, errors } = clojurescript_parse(sourceText, {
+        const { trees, errors } = cs_parse(sourceText, {
             lexicon: {
                 '^': caretDecode,
                 '|': native_sym(Native.inner),

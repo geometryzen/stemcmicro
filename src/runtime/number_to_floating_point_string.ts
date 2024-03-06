@@ -7,7 +7,7 @@ export function number_to_floating_point_string(d: number, $: Pick<PrintConfig, 
     // when generating code, print out
     // the standard JS Number printout
     let str: string;
-    if (($.getDirective(Directive.printMode) === PrintMode.JavaScript) || $.getDirective(Directive.renderFloatAsEcmaScript)) {
+    if (($.getDirective(Directive.printMode) === PrintMode.EcmaScript) || $.getDirective(Directive.renderFloatAsEcmaScript)) {
         return `${d}`;
     }
 

@@ -3,7 +3,7 @@ import { is_str } from "../operators/str/is_str";
 import { is_tensor } from "../operators/tensor/is_tensor";
 
 /**
- * Converts the tensor of Str values to a JavaScript native array of strings.
+ * Converts the tensor of Str values to a EcmaScript native array of strings.
  */
 export function convert_tensor_to_strings(tensor: U): string[] {
     if (is_tensor(tensor)) {

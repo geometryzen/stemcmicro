@@ -6,7 +6,7 @@ import { ProgrammingError } from "./programming/ProgrammingError";
 
 /**
  * If the expr is not a Rat or Flt then the result is NaN.
- * If the expr is a Rat and an integer and in safe range for JavaScript number then a number is returned.
+ * If the expr is a Rat and an integer and in safe range for EcmaScript number then a number is returned.
  * If the expr is a Flt and an integer then the number is returned.
  */
 export function nativeInt(expr: U): number {

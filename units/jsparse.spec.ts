@@ -238,6 +238,19 @@ describe("jsparse", function () {
     });
     it("should be able to parse a member expression", function () {
         const lines: string[] = [
+            `x[1]`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText);
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 1);
+        assert.strictEqual(engine.renderAsString(trees[0], infixConfig), 'x[1]');
+        assert.strictEqual(engine.renderAsString(trees[0], sexprConfig), '(component x 1)');
+        engine.release();
+    });
+    it("should be able to parse a member expression", function () {
+        const lines: string[] = [
             `x[1,2,3]`
         ];
         const sourceText = lines.join('\n');
@@ -260,6 +273,44 @@ describe("jsparse", function () {
         assert.strictEqual(trees.length, 1);
         assert.strictEqual(engine.renderAsString(trees[0], infixConfig), '()');
         assert.strictEqual(engine.renderAsString(trees[0], sexprConfig), '()');
+        engine.release();
+    });
+    it("STEMCmicro", function () {
+        const lines: string[] = [
+            `G20 = algebra([1, 1, 1], ["ex", "ey", "ez"])`,
+            `ex = G20[1]`,
+            `ey = G20[2]`,
+            `i = sqrt(-1)`,
+            `nroots(x ** 4 + 1)`,
+            `mega * joule`,
+            `pi`,
+            `ex * (2 * ex + 3 * ey)`,
+            `2.7 * kilo * volt / (milli * ampere)`,
+            `cos(x) ** 2 + sin(x) ** 2`,
+            `A = hilbert(3)`,
+            `A`,
+            `eigenval(A)`,
+            `cross(ex, ey)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText);
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 14);
+        assert.strictEqual(engine.renderAsString(trees[0], infixConfig), 'G20=algebra([1,1,1],["ex","ey","ez"])');
+        assert.strictEqual(engine.renderAsString(trees[1], infixConfig), 'ex=G20[1]');
+        assert.strictEqual(engine.renderAsString(trees[2], infixConfig), 'ey=G20[2]');
+        assert.strictEqual(engine.renderAsString(trees[3], infixConfig), 'i=sqrt(-1)');
+        assert.strictEqual(engine.renderAsString(trees[4], infixConfig), 'nroots(x**4+1)');
+        assert.strictEqual(engine.renderAsString(trees[5], infixConfig), 'mega*joule');
+        assert.strictEqual(engine.renderAsString(trees[6], infixConfig), 'pi');
+        assert.strictEqual(engine.renderAsString(trees[7], infixConfig), 'ex*(2*ex+3*ey)');
+        assert.strictEqual(engine.renderAsString(trees[8], infixConfig), '((2.7*kilo)*volt)/(milli*ampere)');
+        assert.strictEqual(engine.renderAsString(trees[9], infixConfig), 'cos(x)**2+sin(x)**2');
+        assert.strictEqual(engine.renderAsString(trees[10], infixConfig), 'A=hilbert(3)');
+        assert.strictEqual(engine.renderAsString(trees[11], infixConfig), 'A');
+        assert.strictEqual(engine.renderAsString(trees[12], infixConfig), 'eigenval(A)');
+        assert.strictEqual(engine.renderAsString(trees[13], infixConfig), 'cross(ex,ey)');
         engine.release();
     });
 });

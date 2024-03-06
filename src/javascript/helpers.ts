@@ -1,4 +1,4 @@
-import { ArrayExpression, AssignmentExpression, BinaryExpression, CallExpression, ComputedMemberExpression, ExpressionStatement, Identifier, Literal, Node, Script, Syntax, VariableDeclaration, VariableDeclarator } from '@geometryzen/esprima';
+import { ArrayExpression, AssignmentExpression, BinaryExpression, CallExpression, ComputedMemberExpression, ExpressionStatement, Identifier, Literal, Node, Script, Syntax, UnaryExpression, VariableDeclaration, VariableDeclarator } from '@geometryzen/esprima';
 import { Sym } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 
@@ -36,6 +36,10 @@ export function is_member_expression(node: Node): node is ComputedMemberExpressi
 
 export function is_program(node: Node): node is Script {
     return node.type == Syntax.Program;
+}
+
+export function is_unary_expression(node: Node): node is UnaryExpression {
+    return node.type == Syntax.UnaryExpression;
 }
 
 export function is_variable_declaration(node: Node): node is VariableDeclaration {

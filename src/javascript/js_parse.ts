@@ -84,7 +84,6 @@ export function js_parse(sourceText: string): { trees: U[], errors: Error[] } {
                     }
                 }
                 else {
-                    console.log(node.value, `${typeof node.value}`);
                     throw new Error();
                 }
             }

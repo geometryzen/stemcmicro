@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/core",
-    "version": "0.9.46",
+    "version": "0.9.47",
     "description": "Computer Algebra System in TypeScript",
     "publishConfig": {
         "access": "public"
@@ -213,7 +213,6 @@
         "url": "https://github.com/geometryzen/stemcmicro/issues"
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
-    "dependencies": {},
     "peerDependencies": {
         "@stemcmicro/atoms": "file:../stemcmicro-atoms",
         "@stemcmicro/context": "file:../stemcmicro-context",

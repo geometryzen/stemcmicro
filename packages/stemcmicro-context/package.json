@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/context",
-    "version": "0.9.46",
+    "version": "0.9.47",
     "description": "",
     "exports": {
         ".": {

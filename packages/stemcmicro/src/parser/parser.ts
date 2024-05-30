@@ -2,7 +2,6 @@ import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_st
 import { pos_end_items_to_cons, U } from "@stemcmicro/tree";
 import { EmParseOptions, em_parse } from "../algebrite/em_parse";
 import { EDNListParser, ParseConfig } from "../edn";
-import { js_parse } from "../javascript/js_parse";
 import { PyParseOptions } from "../pythonscript/PyParseOptions";
 import { py_parse } from "../pythonscript/py_parse";
 // import { TsParseOptions, ts_parse } from "../typescript/ts_parse";
@@ -17,10 +16,6 @@ export enum SyntaxKind {
      */
     Eigenmath = 2,
     /**
-     * EcmaScript Language
-     */
-    EcmaScript = 3,
-    /**
      * Python Scripting Language
      */
     PythonScript = 4
@@ -31,8 +26,6 @@ export function human_readable_syntax_kind(syntaxKind: SyntaxKind): "ClojureScri
         switch (syntaxKind) {
             case SyntaxKind.ClojureScript:
                 return "ClojureScript";
-            case SyntaxKind.EcmaScript:
-                return "EcmaScript";
             case SyntaxKind.Eigenmath:
                 return "Eigenmath";
             case SyntaxKind.PythonScript:
@@ -42,7 +35,7 @@ export function human_readable_syntax_kind(syntaxKind: SyntaxKind): "ClojureScri
     return "Eigenmath";
 }
 
-export const syntaxKinds: SyntaxKind[] = [SyntaxKind.ClojureScript, SyntaxKind.Eigenmath, SyntaxKind.PythonScript, SyntaxKind.EcmaScript];
+export const syntaxKinds: SyntaxKind[] = [SyntaxKind.ClojureScript, SyntaxKind.Eigenmath, SyntaxKind.PythonScript];
 
 export interface ParseOptions {
     catchExceptions?: boolean;
@@ -161,9 +154,6 @@ export function delegate_parse_script(sourceText: string, options?: ParseOptions
     switch (syntaxKind) {
         case SyntaxKind.ClojureScript: {
             return cs_parse(sourceText, cs_parse_options(options));
-        }
-        case SyntaxKind.EcmaScript: {
-            return js_parse(sourceText);
         }
         case SyntaxKind.PythonScript: {
             return py_parse(sourceText, py_parse_options(options));

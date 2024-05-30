@@ -38,7 +38,7 @@
         "docs": "npm run docs:typedoc && open-cli docs/index.html",
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
         "lint": "eslint . --ext .ts",
-        "pages": "npm run docs:typedoc && gh-pages -d docs",
+        "pages": "npm run docs:typedoc && gh-pages -dist docs --dest atoms",
         "pretest": "npm run build",
         "release": "release-it",
         "test": "jest"

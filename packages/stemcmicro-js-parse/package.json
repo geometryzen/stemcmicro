@@ -1,7 +1,7 @@
 {
-    "name": "@stemcmicro/tree",
+    "name": "@stemcmicro/js-parse",
     "version": "0.9.44",
-    "description": "Data structure for constructing math expressions",
+    "description": "JavaScript parser for math expressions",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -9,26 +9,22 @@
             "default": "./dist/commonjs/index.js"
         }
     },
-    "main": "./dist/commonjs/index,js",
     "module": "./dist/esm/index.min.js",
     "types": "./dist/index.d.ts",
     "files": [
         "dist/commonjs/index.js",
         "dist/commonjs/index.js.map",
-        "dist/esm/index.js",
-        "dist/esm/index.js.map",
         "dist/esm/index.min.js",
         "dist/esm/index.min.js.map",
         "dist/index.d.ts",
-        "dist/system/index.js",
-        "dist/system/index.js.map",
         "dist/system/index.min.js",
         "dist/system/index.min.js.map"
     ],
     "keywords": [
         "math",
-        "exprression",
-        "tree"
+        "expression",
+        "atoms",
+        "Boo"
     ],
     "publishConfig": {
         "access": "public"
@@ -42,7 +38,7 @@
         "docs": "npm run docs:typedoc && open-cli docs/index.html",
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
         "lint": "eslint . --ext .ts",
-        "pages": "npm run docs:typedoc && gh-pages --dist docs --dest tree",
+        "pages": "npm run docs:typedoc && gh-pages --dist docs --dest js-parse",
         "pretest": "npm run build",
         "release": "release-it",
         "test": "jest"
@@ -60,5 +56,14 @@
         "url": "https://github.com/geometryzen/stemcmicro/issues"
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
+    "dependencies": {
+        "@geometryzen/esprima": "0.9.13",
+        "generic-rbtree": "^1.1.2"
+    },
+    "peerDependencies": {
+        "@stemcmicro/atoms": "file:../stemcmicro-atoms",
+        "@stemcmicro/native": "file:../stemcmicro-native",
+        "@stemcmicro/tree": "file:../stemcmicro-tree"
+    },
     "gitHead": "912942167a188ae4dcb9d4490f4dc4367b01c599"
 }

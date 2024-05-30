@@ -23,7 +23,6 @@
         "examples": "mocha 'examples/**/*.spec.ts' --sort",
         "pages": "npm run docs:typedoc && gh-pages -d docs",
         "pretest": "npm run build",
-        "prepublishOnly": "npm run examples",
         "release": "release-it",
         "repl": "npm run build && node repl.mjs",
         "test": "npm run examples",
@@ -220,5 +219,6 @@
         "math-expression-context": "file:../math-expression-context",
         "math-expression-native": "file:../math-expression-native",
         "math-expression-tree": "file:../math-expression-tree"
-    }
+    },
+    "gitHead": "8b3cc97479caad9c72e6b06716fc33cfa998919d"
 }

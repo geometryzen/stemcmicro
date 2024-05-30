@@ -40,7 +40,6 @@
         "lint": "eslint . --ext .ts",
         "pages": "npm run docs:typedoc && gh-pages -d docs",
         "pretest": "npm run build",
-        "prepublishOnly": "npm run check && npm run build && npm run test && npm run lint && npm run pages",
         "release": "release-it",
         "test": "jest"
     },
@@ -63,5 +62,6 @@
     "peerDependencies": {
         "math-expression-atoms": "file:../math-expression-atoms",
         "math-expression-tree": "file:../math-expression-tree"
-    }
+    },
+    "gitHead": "8b3cc97479caad9c72e6b06716fc33cfa998919d"
 }

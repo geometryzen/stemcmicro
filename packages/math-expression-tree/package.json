@@ -1,6 +1,6 @@
 {
     "name": "math-expression-tree",
-    "version": "0.9.41",
+    "version": "0.9.42",
     "description": "Data structure for constructing math expressions",
     "exports": {
         ".": {

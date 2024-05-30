@@ -2,6 +2,9 @@
     "name": "@stemcmicro/core",
     "version": "0.9.43",
     "description": "Computer Algebra System in TypeScript",
+    "publishConfig": {
+        "access": "public"
+    },
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -220,5 +223,5 @@
         "@stemcmicro/native": "file:../stemcmicro-native",
         "@stemcmicro/tree": "file:../stemcmicro-tree"
     },
-    "gitHead": "8b3cc97479caad9c72e6b06716fc33cfa998919d"
+    "gitHead": "912942167a188ae4dcb9d4490f4dc4367b01c599"
 }

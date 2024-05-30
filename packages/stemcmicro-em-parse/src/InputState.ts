@@ -1,16 +1,7 @@
 /* eslint-disable no-console */
-import { create_keyword_ns, Keyword } from "@stemcmicro/atoms";
-import { code_from_native_sym } from "@stemcmicro/native";
-import { Native } from "../native/Native";
-import { native_sym } from "../native/native_sym";
-import { FltTokenParser } from "../operators/flt/FltTokenParser";
-import { IntTokenParser } from "../operators/int/IntTokenParser";
-import { StrTokenParser } from "../operators/str/StrTokenParser";
-import { SymTokenParser } from "../operators/sym/SymTokenParser";
-import { METAA, METAB, METAX } from "../runtime/constants";
-import { LANG_COLON_EQ } from "../runtime/ns_lang";
-import { create_sym, Sym } from "../tree/sym/Sym";
-import { U } from "../tree/tree";
+import { create_keyword_ns, create_sym, Keyword, Sym } from "@stemcmicro/atoms";
+import { code_from_native_sym, Native, native_sym } from "@stemcmicro/native";
+import { U } from "@stemcmicro/tree";
 import {
     T_ASTRX,
     T_ASTRX_ASTRX,
@@ -48,12 +39,24 @@ import {
     T_VBAR
 } from "./codes";
 import { consume_unsigned_num } from "./consume_num";
+import { FltTokenParser } from "./FltTokenParser";
+import { IntTokenParser } from "./IntTokenParser";
 import { is_alphabetic } from "./is_alphabetic";
 import { is_alphanumeric_or_underscore } from "./is_alphabetic_or_underscore";
 import { is_space } from "./is_space";
 import { ScanConfig } from "./ScanConfig";
+import { StrTokenParser } from "./StrTokenParser";
+import { SymTokenParser } from "./SymTokenParser";
 import { Token, TokenCode } from "./Token";
 import { TokenError } from "./TokenError";
+
+export const METAA = create_sym("$METAA");
+export const METAB = create_sym("$METAB");
+export const METAX = create_sym("$METAX");
+/**
+ * ':='
+ */
+export const LANG_COLON_EQ = create_sym(":=");
 
 function split_qualified_name(qualifiedName: string, searchString: "/"): [localName: string, namespace: string] {
     const searchIdx = qualifiedName.indexOf(searchString);

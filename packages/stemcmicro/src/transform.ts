@@ -1,7 +1,7 @@
 import { is_num, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { ScanOptions, scan_meta } from "@stemcmicro/em-parse";
 import { assert_cons, car, cdr, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { ScanOptions, scan_meta } from "./algebrite/scan";
 import { polyform } from "./bake";
 import { decomp } from "./decomp";
 import { Directive } from "./env/ExtensionEnv";

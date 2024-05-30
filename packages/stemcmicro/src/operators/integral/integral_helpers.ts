@@ -1,27 +1,24 @@
+import { create_flt, is_num, is_sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { ScanOptions, scan_meta } from "../../algebrite/scan";
+import { ScanOptions, scan_meta } from "@stemcmicro/em-parse";
+import { car, cdr, Cons, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { guess } from "../../guess";
 import { add } from "../../helpers/add";
 import { exp } from "../../helpers/exp";
 import { multiply } from "../../helpers/multiply";
 import { is_num_and_equalq, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one } from "../../is";
-import { items_to_cons } from "../../makeList";
 import { nativeInt } from "../../nativeInt";
 import { partition } from "../../partition";
 import { ADD, EXP, INTEGRAL, METAX, MULTIPLY, POWER, SQRT } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { is_add, is_multiply } from "../../runtime/helpers";
 import { transform } from "../../transform";
-import { create_flt } from "../../tree/flt/Flt";
 import { cadr } from "../../tree/helpers";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { car, cdr, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { derivative } from "../derivative/derivative";
-import { is_num } from "../num/is_num";
 import { simplify } from "../simplify/simplify";
-import { is_sym } from "../sym/is_sym";
 
 /*
  Table of integrals

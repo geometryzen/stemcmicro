@@ -19,7 +19,6 @@ import { eval_lambda_in_fn_syntax } from "../operators/fn/eval_fn";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import { FN, FUNCTION } from "../runtime/constants";
-import { execute_definitions } from "../runtime/init";
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { ShareableMap } from "../shareable/ShareableMap";

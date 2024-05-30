@@ -1,6 +1,6 @@
 import { U } from "@stemcmicro/tree";
-import { move_top_of_stack } from "../runtime/defs";
-import { normalize_unicode_dots } from "../runtime/normalize_dots";
+import { move_top_of_stack } from "./defs";
+import { normalize_unicode_dots } from "./normalize_dots";
 import { scan } from "./scan";
 
 export interface EmParseOptions {

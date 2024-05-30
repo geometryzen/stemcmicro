@@ -3,9 +3,7 @@ import { nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Directive, Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
-import { get_last_print_mode_symbol } from "../../print/print";
 import { render_using_print_mode } from "../../print/render_using_print_mode";
-import { store_text_in_binding } from "../../print/store_text_in_binding";
 import { PrintMode } from "../../runtime/defs";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
 import { AbstractKeywordExtension } from "../helpers/KeywordSymbol";
@@ -38,8 +36,6 @@ export class PrintKeyword extends AbstractKeywordExtension {
 
                 const printHandler = $.getPrintHandler();
                 printHandler.print(str);
-
-                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
 
                 return [TFLAG_DIFF, nil];
             } finally {

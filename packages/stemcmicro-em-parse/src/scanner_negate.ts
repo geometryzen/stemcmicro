@@ -1,9 +1,6 @@
-import { Native } from "../native/Native";
-import { native_sym } from "../native/native_sym";
-import { is_flt } from "../operators/flt/is_flt";
-import { is_rat } from "../operators/rat/is_rat";
-import { negOne } from "../tree/rat/Rat";
-import { items_to_cons, U } from "../tree/tree";
+import { is_flt, is_rat, negOne } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { items_to_cons, U } from "@stemcmicro/tree";
 
 export const MULTIPLY = native_sym(Native.multiply);
 

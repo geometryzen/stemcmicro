@@ -1,9 +1,9 @@
 import { is_flt, is_rat } from "@stemcmicro/atoms";
-import { cs_parse } from "../src/cs_parse";
+import { em_parse } from "../src/em_parse";
 
-describe("cs_parse", () => {
+describe("em_parse", () => {
     it("Rat", () => {
-        const { trees, errors } = cs_parse("2");
+        const { trees, errors } = em_parse("2");
         expect(errors.length).toBe(0);
         expect(trees.length).toBe(1);
         const tree = trees[0];
@@ -14,7 +14,7 @@ describe("cs_parse", () => {
         }
     });
     it("Flt", () => {
-        const { trees, errors } = cs_parse("0.5");
+        const { trees, errors } = em_parse("0.5");
         expect(errors.length).toBe(0);
         expect(trees.length).toBe(1);
         const tree = trees[0];

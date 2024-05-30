@@ -1,4 +1,4 @@
-import { Sym } from "../tree/sym/Sym";
+import { Sym } from "@stemcmicro/atoms";
 
 /**
  * Creates a clone of the first symbol using the scanner information from the second symbol.

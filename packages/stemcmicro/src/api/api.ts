@@ -1,9 +1,8 @@
-import { Boo, Cell, create_int, create_rat, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
+import { Cell, create_int, create_rat, create_sym, Sym } from "@stemcmicro/atoms";
 import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Atom, Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { AtomExtensionBuilderFromExprHandlerBuilder } from "../adapters/AtomExtensionBuilderFromExprHandlerBuilder";
-import { Scope, Stepper } from "../clojurescript/runtime/Stepper";
 import { ProgramEnv } from "../eigenmath/ProgramEnv";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { render_svg } from "../eigenmath/render_svg";
@@ -21,7 +20,6 @@ import { render_as_sexpr } from "../print/render_as_sexpr";
 import { transform_tree } from "../runtime/execute";
 import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from "../runtime/ns_script";
 import { env_term, init_env } from "../runtime/script_engine";
-import { Visitor } from "../visitor/Visitor";
 
 export interface ParseConfig {
     useCaretForExponentiation: boolean;
@@ -29,17 +27,6 @@ export interface ParseConfig {
     explicitAssocAdd: boolean;
     explicitAssocExt: boolean;
     explicitAssocMul: boolean;
-}
-
-/**
- * If the option is specified (defined correctly) then use it, otherwise use the default value.
- */
-function reify_boolean(optionValue: boolean | undefined, defaultValue: boolean = false): boolean {
-    if (typeof optionValue === "boolean") {
-        return optionValue;
-    } else {
-        return defaultValue;
-    }
 }
 
 export interface RenderConfig {
@@ -96,19 +83,11 @@ export interface ExprEngine extends Pick<ProgramEnv, "clearBindings"> {
 }
 
 /**
- * This is an implementation detail.
- */
-enum EngineKind {
-    Micro = 1
-}
-
-/**
  * Determines the action upon attempts to access an undeclared variable.
  */
 export enum UndeclaredVars {
     Err = 1,
     Nil = 2
-    // Sym = 3
 }
 
 export interface EngineConfig {
@@ -117,50 +96,6 @@ export interface EngineConfig {
     useCaretForExponentiation: boolean;
     useDerivativeShorthandLowerD: boolean;
     useIntegersForPredicates: boolean;
-}
-
-function engine_kind_from_engine_options(options: Partial<EngineConfig>): EngineKind {
-    return EngineKind.Micro;
-}
-
-class ExtensionEnvVisitor implements Visitor {
-    readonly #env: ExtensionEnv;
-    constructor(env: ExtensionEnv) {
-        this.#env = env;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    beginCons(expr: Cons): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    endCons(expr: Cons): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    beginTensor(tensor: Tensor<U>): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    endTensor(tensor: Tensor<U>): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    beginMap(map: Map): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    endMap(map: Map): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    boo(boo: Boo): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    keyword(keyword: Keyword): void {}
-    sym(name: Sym): void {
-        if (!this.#env.hasBinding(name, nil)) {
-            this.#env.defineUserSymbol(name);
-        }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    rat(rat: Rat): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    str(str: Str): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    tag(tag: Tag): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    flt(flt: Flt): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    atom(atom: U): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    nil(expr: U): void {}
 }
 
 function allow_undeclared_vars(options: Partial<EngineConfig>, allowDefault: UndeclaredVars): UndeclaredVars {
@@ -267,18 +202,14 @@ export function define_metric_prefixes_for_si_units($: ExtensionEnv): void {
 
 class MicroEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
-    readonly #options: Partial<EngineConfig>;
     constructor(options: Partial<EngineConfig>) {
-        // console.lg(`options`, JSON.stringify(options));
-        this.#options = options;
         this.#env = create_env({
             allowUndeclaredVars: allow_undeclared_vars(options, UndeclaredVars.Nil),
             dependencies: ALL_FEATURES
         });
         init_env(this.#env, {
             allowUndeclaredVars: allow_undeclared_vars(options, UndeclaredVars.Nil),
-            useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
-            prolog: options.prolog
+            useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD
         });
         define_math_constant_pi(this.#env);
         define_spacetime_algebra(this.#env);
@@ -409,123 +340,5 @@ class MicroEngine implements ExprEngine {
 }
 
 export function create_engine(options: Partial<EngineConfig> = {}): ExprEngine {
-    const engineKind = engine_kind_from_engine_options(options);
-    switch (engineKind) {
-        case EngineKind.Micro: {
-            return new MicroEngine(options);
-        }
-        default: {
-            throw new Error();
-        }
-    }
-}
-
-/**
- * @deprecated
- */
-export interface ScriptHandler<T> {
-    begin($: T): void;
-    output(value: U, input: U, $: T): void;
-    text(text: string): void;
-    end($: T): void;
-}
-
-/**
- * @deprecated
- */
-class MyExprEngineListener<T> implements ExprEngineListener {
-    constructor(private readonly handler: ScriptHandler<T>) {}
-    output(output: string): void {
-        this.handler.text(output);
-    }
-}
-
-/**
- * @deprecated
- */
-export class NoopScriptHandler implements ScriptHandler<ExprEngine> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    begin($: ExprEngine): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    output(_value: U, _input: U, $: ExprEngine): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    text(text: string): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    end($: ExprEngine): void {}
-}
-
-/**
- * @deprecated
- */
-const BLACK_HOLE = new NoopScriptHandler();
-
-/**
- * @deprecated Use ExprEngine.evaluate and the PrintScriptHandler instead.
- */
-export function run_script(engine: ExprEngine, inputs: U[], handler: ScriptHandler<ExprEngine> = BLACK_HOLE): void {
-    const listen = new MyExprEngineListener(handler);
-    engine.addListener(listen);
-    handler.begin(engine);
-    try {
-        for (const input of inputs) {
-            const result = engine.valueOf(input);
-            handler.output(result, input, engine);
-            if (!result.isnil) {
-                engine.setBinding(engine.symbol(Concept.Last), result);
-            }
-        }
-    } finally {
-        handler.end(engine);
-        engine.removeListener(listen);
-    }
-}
-
-function symbol_from_concept(concept: Concept): Sym {
-    switch (concept) {
-        case Concept.Last: {
-            return RESERVED_KEYWORD_LAST;
-        }
-        case Concept.TTY: {
-            return RESERVED_KEYWORD_TTY;
-        }
-        default: {
-            throw new Error(`symbol(${concept}) not implemented.`);
-        }
-    }
-}
-
-/**
- * This is a proof of concept. Do not expose.
- * @deprecated
- */
-export function run_module(module: Cons, handler: ScriptHandler<Stepper>): void {
-    const stepper = new Stepper(module);
-    const listen: ExprEngineListener = new MyExprEngineListener(handler);
-    stepper.addListener(listen);
-    handler.begin(stepper);
-    try {
-        while (stepper.next()) {
-            // const state = stepper.getStateStack().top;
-            // const $: Scope = state.$;
-            // $.getSymbolBindings();
-            // console.lg(`${state.node}`);
-            // console.lg(`${state.done}`);
-        }
-        const state = stepper.stack.top;
-        const $: Scope = state.$;
-
-        const inputs = state.inputs;
-        const values = state.values;
-        for (let i = 0; i < values.length; i++) {
-            const input = inputs[i];
-            const value = values[i];
-            handler.output(value, input, stepper);
-            if (!value.isnil) {
-                $.setBinding(symbol_from_concept(Concept.Last), value);
-            }
-        }
-    } finally {
-        handler.end(stepper);
-        stepper.removeListener(listen);
-    }
+    return new MicroEngine(options);
 }

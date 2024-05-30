@@ -254,9 +254,7 @@ import { stack_uom } from "../operators/uom/stack_uom";
 import { uom_extension_builder } from "../operators/uom/uom_extension";
 import { eval_zero } from "../operators/zero/zero";
 import { eval_prime } from "../prime";
-import { get_last_print_mode_symbol } from "../print/print";
 import { render_using_print_mode } from "../print/render_using_print_mode";
-import { store_text_in_binding } from "../print/store_text_in_binding";
 import { eval_quotient } from "../quotient";
 import { eval_roots } from "../roots";
 import { AND, APPROXRATIO, CHECK, CHOOSE, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, QUOTE, RANK, UOM } from "../runtime/constants";
@@ -336,8 +334,6 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
         const str = render_using_print_mode(factored, $.getDirective(Directive.printMode), $);
         const printHandler = $.getPrintHandler();
         printHandler.print(str);
-
-        store_text_in_binding(str, get_last_print_mode_symbol($.getDirective(Directive.printMode)), $);
     });
 
     $.defineEvalFunction(FILTER, eval_filter);

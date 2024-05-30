@@ -4,4 +4,3 @@ export { Scope, State, Stepper, StepperConfig, StepperHandler, Thing } from "./s
 export { FEATURE } from "./src/env/ExtensionEnv";
 export { Stack } from "./src/env/Stack";
 export { roots } from "./src/roots";
-export { create_script_context } from "./src/runtime/script_engine";

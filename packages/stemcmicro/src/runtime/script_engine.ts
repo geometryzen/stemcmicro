@@ -1,19 +1,11 @@
-import { assert_sym, create_sym, Sym } from "@stemcmicro/atoms";
+import { create_sym, Sym } from "@stemcmicro/atoms";
 import { LambdaExpr } from "@stemcmicro/context";
 import { Cons, U } from "@stemcmicro/tree";
-import { define_geometric30_algebra, define_math_constant_pi, define_metric_prefixes_for_si_units, define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api/api";
+import { UndeclaredVars } from "../api/api";
 import { define_std_operators } from "../env/define_std_operators";
-import { create_env, EnvOptions } from "../env/env";
+import { EnvOptions } from "../env/env";
 import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
-import { simplify } from "../operators/simplify/simplify";
-import { render_as_ascii } from "../print/render_as_ascii";
-import { render_as_human } from "../print/render_as_human";
-import { render_as_infix } from "../print/render_as_infix";
-import { render_as_latex } from "../print/render_as_latex";
-import { render_as_sexpr } from "../print/render_as_sexpr";
 import { move_top_of_stack } from "./defs";
-import { transform_tree } from "./execute";
-import { execute_definitions } from "./init";
 
 export interface ExprTransformOptions {
     autoExpand?: boolean;
@@ -54,10 +46,6 @@ export interface ScriptContextOptions extends ScriptExecuteOptions {
     useCaretForExponentiation?: boolean;
     useDerivativeShorthandLowerD?: boolean;
     /**
-     *
-     */
-    prolog?: string[];
-    /**
      * Determines whether test functions will return boolean or integer values.
      *
      * The default is false.
@@ -88,14 +76,6 @@ export function init_env($: ExtensionEnv, options: ScriptContextOptions = { useD
     });
 
     $.buildOperators();
-
-    if (options && options.prolog) {
-        if (Array.isArray(options.prolog)) {
-            execute_definitions(options.prolog, $);
-        } else {
-            throw new Error("prolog must be a string[]");
-        }
-    }
 }
 
 export function env_term($: ExtensionEnv) {
@@ -156,107 +136,4 @@ export function env_options_from_script_context_options(options: ScriptContextOp
         };
         return hook(config, "B");
     }
-}
-
-/**
- * TODO: The REP should migrate toward the ExprEngine API.
- * @deprecated Used only by development REPL.
- */
-export function create_script_context(contextOptions: ScriptContextOptions = {}): ScriptContext {
-    // console.lg("create_script_context");
-    let ref_count = 1;
-    const envOptions: EnvOptions = env_options_from_script_context_options(contextOptions);
-    const $ = create_env(envOptions);
-    init_env($, contextOptions);
-    define_math_constant_pi($);
-    define_spacetime_algebra($);
-    define_geometric30_algebra($);
-    define_si_units($);
-    define_metric_prefixes_for_si_units($);
-    const theEngine: ScriptContext = {
-        get $(): ExtensionEnv {
-            return $;
-        },
-        clearBindings(): void {
-            $.clearBindings();
-        },
-        defineFunction(pattern: U, impl: LambdaExpr): void {
-            $.defineFunction(pattern, impl);
-        },
-        getSymbolProps(sym: Sym): Predicates {
-            return $.getSymbolPredicates(sym);
-        },
-        getBinding(opr: Sym, target: Cons): U {
-            assert_sym(opr);
-            return $.getBinding(opr, target);
-        },
-        getSymbolsInfo(): { sym: Sym; value: U }[] {
-            return $.getSymbolsInfo();
-        },
-        evaluate(tree: U, options?: ExprTransformOptions): { value: U; prints: string[]; errors: Error[] } {
-            const merged = merge_options(options, contextOptions);
-            return transform_tree(tree, merged, $);
-        },
-        renderAsAscii(expr: U): string {
-            return render_as_ascii(expr, $);
-        },
-        renderAsInfix(expr: U): string {
-            return render_as_infix(expr, $);
-        },
-        renderAsHuman(expr: U): string {
-            return render_as_human(expr, $);
-        },
-        renderAsLaTeX(expr: U): string {
-            return render_as_latex(expr, $);
-        },
-        renderAsSExpr(expr: U): string {
-            return render_as_sexpr(expr, $);
-        },
-        simplify(expr: U): U {
-            return simplify(expr, $);
-        },
-        addRef(): void {
-            ref_count++;
-        },
-        release(): void {
-            ref_count--;
-            if (ref_count === 0) {
-                env_term($);
-            }
-        }
-    };
-    return theEngine;
-}
-
-function merge_options(options: ExprTransformOptions | undefined, contextOptions: ScriptContextOptions | undefined): ExprTransformOptions {
-    const merged: ExprTransformOptions = {};
-    if (contextOptions) {
-        if (typeof contextOptions.autoExpand === "boolean") {
-            merged.autoExpand = contextOptions.autoExpand;
-        }
-        if (typeof contextOptions.autoFactor === "boolean") {
-            merged.autoFactor = contextOptions.autoFactor;
-        }
-        if (Array.isArray(contextOptions.disable)) {
-            merged.disable = contextOptions.disable;
-        }
-        if (Array.isArray(contextOptions.enable)) {
-            merged.enable = contextOptions.enable;
-        }
-    }
-    if (options) {
-        if (typeof options.autoExpand === "boolean") {
-            merged.autoExpand = options.autoExpand;
-        }
-        if (typeof options.autoFactor === "boolean") {
-            merged.autoFactor = options.autoFactor;
-        }
-        if (Array.isArray(options.disable)) {
-            merged.disable = options.disable;
-        }
-        if (Array.isArray(options.enable)) {
-            merged.enable = options.enable;
-        }
-    }
-    return merged;
 }

@@ -1,8 +1,6 @@
-import { bigInt } from "../../tree/rat/big-integer";
-import { TokenParser } from "../../algebrite/ScanConfig";
-import { Rat } from "../../tree/rat/Rat";
+import { bigInt, Rat } from "@stemcmicro/atoms";
 
-export class IntTokenParser implements TokenParser {
+export class IntTokenParser {
     parse(token: string, pos: number, end: number): Rat {
         // TODO: Make use of pos and end
         const sign = token[0];

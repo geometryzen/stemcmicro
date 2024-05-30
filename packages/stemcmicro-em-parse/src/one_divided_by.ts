@@ -1,8 +1,8 @@
 import { is_flt, is_rat, negOne } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { items_to_cons, U } from "@stemcmicro/tree";
-import { diagnostic } from "../diagnostics/diagnostics";
-import { Diagnostics } from "../diagnostics/messages";
+import { diagnostic } from "./diagnostics";
+import { Diagnostics } from "./messages";
 
 /**
  * Constructs the combination (divide 1 expr) without any further evaluation, which is why there is no expression context.

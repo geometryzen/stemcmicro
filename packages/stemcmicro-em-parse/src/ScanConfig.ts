@@ -1,5 +1,5 @@
-import { Sym } from "../tree/sym/Sym";
-import { U } from "../tree/tree";
+import { Sym } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 
 export interface TokenParser {
     /**

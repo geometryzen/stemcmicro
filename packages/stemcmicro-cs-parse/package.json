@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/cs-parse",
-    "version": "0.9.47",
+    "version": "0.9.48",
     "description": "Python parser for math expressions",
     "exports": {
         ".": {
@@ -56,7 +56,6 @@
         "url": "https://github.com/geometryzen/stemcmicro/issues"
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
-    "dependencies": {},
     "peerDependencies": {
         "@stemcmicro/atoms": "file:../stemcmicro-atoms",
         "@stemcmicro/native": "file:../stemcmicro-native",

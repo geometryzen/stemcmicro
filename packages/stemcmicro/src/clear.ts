@@ -6,8 +6,6 @@ import { halt } from "./runtime/defs";
 export function eval_clearall($: ExtensionEnv): U {
     $.clearBindings();
 
-    $.executeProlog($.getProlog());
-
     return nil;
 }
 

@@ -3,9 +3,7 @@ import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Atom, Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { AtomExtensionBuilderFromExprHandlerBuilder } from "../adapters/AtomExtensionBuilderFromExprHandlerBuilder";
-import { EmParseOptions } from "../algebrite/em_parse";
 import { Scope, Stepper } from "../clojurescript/runtime/Stepper";
-import { EigenmathParseConfig } from "../eigenmath/eigenmath";
 import { ProgramEnv } from "../eigenmath/ProgramEnv";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { render_svg } from "../eigenmath/render_svg";
@@ -25,12 +23,6 @@ import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from "../runtime/ns_scrip
 import { env_term, init_env } from "../runtime/script_engine";
 import { Visitor } from "../visitor/Visitor";
 
-function shallowCopy<T extends object>(source: T): T {
-    return {
-        ...source
-    };
-}
-
 export interface ParseConfig {
     useCaretForExponentiation: boolean;
     useParenForTensors: boolean;
@@ -48,25 +40,6 @@ function reify_boolean(optionValue: boolean | undefined, defaultValue: boolean =
     } else {
         return defaultValue;
     }
-}
-
-export function stemc_parse_config(options: Partial<ParseConfig>): EmParseOptions {
-    const config: EmParseOptions = {
-        catchExceptions: false,
-        explicitAssocAdd: options.explicitAssocAdd,
-        explicitAssocExt: options.explicitAssocExt,
-        explicitAssocMul: options.explicitAssocMul,
-        useCaretForExponentiation: reify_boolean(options.useCaretForExponentiation),
-        useParenForTensors: reify_boolean(options.useParenForTensors)
-    };
-    return config;
-}
-
-export function eigenmath_parse_config(options: Partial<ParseConfig>): EigenmathParseConfig {
-    return {
-        useCaretForExponentiation: reify_boolean(options.useCaretForExponentiation, true),
-        useParenForTensors: reify_boolean(options.useParenForTensors, true)
-    };
 }
 
 export interface RenderConfig {
@@ -94,7 +67,6 @@ export interface ExprHandlerBuilder<T extends U> {
 
 export interface ExprEngine extends Pick<ProgramEnv, "clearBindings"> {
     clearBindings(): void;
-    executeProlog(prolog: string[]): void;
 
     defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void;
     defineFunction(name: Sym, lambda: LambdaExpr): void;
@@ -322,9 +294,6 @@ class MicroEngine implements ExprEngine {
     }
     clearBindings(): void {
         this.#env.clearBindings();
-    }
-    executeProlog(prolog: string[]): void {
-        this.#env.executeProlog(prolog);
     }
     hasBinding(opr: Sym, target: Cons): boolean {
         assert_sym(opr);

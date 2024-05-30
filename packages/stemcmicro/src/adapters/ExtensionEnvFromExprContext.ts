@@ -226,9 +226,6 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     evaluate(opr: Native, ...args: U[]): U {
         throw new Error("Method not implemented.");
     }
-    executeProlog(prolog: readonly string[]): void {
-        throw new Error("Method not implemented.");
-    }
     exp(arg: U): U {
         const expr = items_to_cons(native_sym(Native.exp), arg);
         try {

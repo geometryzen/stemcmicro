@@ -161,9 +161,6 @@ export class DerivedEnv implements ExtensionEnv {
     evaluate(opr: Native, ...args: U[]): U {
         throw new Error("evaluate method not implemented.");
     }
-    executeProlog(prolog: readonly string[]): void {
-        throw new Error("executeProlog method not implemented.");
-    }
     exp(expr: U): U {
         throw new Error("exp method not implemented.");
     }

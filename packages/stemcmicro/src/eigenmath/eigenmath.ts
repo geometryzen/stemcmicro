@@ -2633,9 +2633,6 @@ export function stack_clear(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $
     save_symbol(TTY, env);
     try {
         env.clearBindings();
-
-        // TODO: A restore or rest would be better here.
-        env.executeProlog(eigenmath_prolog);
     } finally {
         restore_symbol(env);
         restore_symbol(env);

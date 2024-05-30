@@ -342,7 +342,6 @@ export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, P
      */
     equals(lhs: U, rhs: U): boolean;
     evaluate(opr: Native, ...args: U[]): U;
-    executeProlog(prolog: readonly string[]): void;
     exp(expr: U): U;
     factor(expr: U): U;
     /**

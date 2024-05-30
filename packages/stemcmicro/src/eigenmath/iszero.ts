@@ -42,10 +42,6 @@ class IsZeroExprContext implements ExprContext {
         throw new Error("Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    executeProlog(script: string[]): void {
-        throw new Error("Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     hasBinding(opr: Sym, target: Cons): boolean {
         throw new Error("Method not implemented.");
     }

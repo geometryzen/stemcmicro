@@ -594,9 +594,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             const expr = cons(native_sym(opr), argList);
             return $.valueOf(expr);
         },
-        executeProlog(prolog: readonly string[]): void {
-            execute_definitions(prolog, $);
-        },
         exp(expr: U): U {
             return $.evaluate(Native.exp, expr);
         },

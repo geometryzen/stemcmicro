@@ -25,7 +25,6 @@ export interface ExprHandler<T extends U> {
 export interface ExprContext extends Shareable {
     clearBindings(): void;
     compareFn(opr: Sym): CompareFn;
-    executeProlog(script: string[]): void;
     handlerFor<T extends U>(expr: T): ExprHandler<T>;
     hasBinding(opr: Sym, target: Cons): boolean;
     getBinding(opr: Sym, target: Cons): U;

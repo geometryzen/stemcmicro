@@ -6,8 +6,6 @@ import { Directive, ExtensionEnv, flag_from_directive } from "../env/ExtensionEn
  */
 export function soft_reset($: ExtensionEnv): void {
     $.clearBindings();
-
-    $.executeProlog($.getProlog());
 }
 
 /**

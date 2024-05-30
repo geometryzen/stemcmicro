@@ -5,7 +5,6 @@ import { ProgramStack } from "./ProgramStack";
 
 export interface ProgramEnv extends Shareable {
     clearBindings(): void;
-    executeProlog(script: string[]): void;
     getBinding(opr: Sym, target: Cons): U;
     getUserFunction(name: Sym): U;
     hasBinding(opr: Sym, target: Cons): boolean;

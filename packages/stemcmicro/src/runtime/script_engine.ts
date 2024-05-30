@@ -111,7 +111,6 @@ export interface ScriptContext {
     getBinding(opr: Sym, target: Cons): U;
     getSymbolsInfo(): { sym: Sym; value: U }[];
     evaluate(tree: U, options?: ExprTransformOptions): { value: U; prints: string[]; errors: Error[] };
-    executeProlog(prolog: string[]): void;
     renderAsAscii(expr: U): string;
     renderAsHuman(expr: U): string;
     renderAsInfix(expr: U): string;
@@ -197,9 +196,6 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
         evaluate(tree: U, options?: ExprTransformOptions): { value: U; prints: string[]; errors: Error[] } {
             const merged = merge_options(options, contextOptions);
             return transform_tree(tree, merged, $);
-        },
-        executeProlog(prolog: string[]): void {
-            execute_definitions(prolog, $);
         },
         renderAsAscii(expr: U): string {
             return render_as_ascii(expr, $);

@@ -41,9 +41,6 @@ export class ExprContextFromProgram implements ExprContext {
     compareFn(opr: Sym): CompareFn {
         return this.ctrl.compareFn(opr);
     }
-    executeProlog(script: string[]): void {
-        this.env.executeProlog(script);
-    }
     getDirective(directive: number): number {
         return this.ctrl.getDirective(directive);
     }

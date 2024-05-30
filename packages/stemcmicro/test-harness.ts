@@ -175,8 +175,6 @@ export { test };
 function setup_test(f: () => void, engine: ExprEngine, options: Partial<EngineConfig>) {
     engine.clearBindings();
 
-    engine.executeProlog(stemc_prolog);
-
     // TODO: Remove these comments when everything is working.
     // Not going to do this anymore.
     // It represents hidden knowledge that we don't want to keep track of.

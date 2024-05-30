@@ -1,14 +1,16 @@
 #!/bin/sh
-npm install
-npm update
+npm --registry=http://localhost:4873 install
+npm --registry=http://localhost:4873 update
+npm run format:write
 npm run build
-npm run lint
+npm run test
 git status
-git add --all
 echo "Please enter a commit message"
 read message
+git add --all
 git commit -m "'$message'"
 git push origin main
-npm run release
-#npm run docs
-#npm run pages
+npm run version
+npm run publish
+npm run docs
+npm run pages

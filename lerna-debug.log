@@ -1,0 +1,125 @@
+0 silly argv {
+0 silly argv   _: [ 'version' ],
+0 silly argv   private: false,
+0 silly argv   'force-publish': true,
+0 silly argv   forcePublish: true,
+0 silly argv   lernaVersion: '999.9.9',
+0 silly argv   '$0': 'node_modules/.bin/lerna'
+0 silly argv }
+1 notice cli v999.9.9
+2 verbose packageConfigs Resolving packages based on package.json "workspaces" configuration.
+3 verbose rootPath /home/david/Development/g20mono
+4 info current version 1.0.0-alpha.8
+5 silly isAnythingCommitted
+6 verbose isAnythingCommitted 1
+7 silly getCurrentBranch
+8 verbose currentBranch main
+9 silly remoteBranchExists
+10 silly isBehindUpstream
+11 silly isBehindUpstream main is behind origin/main by 0 commit(s) and ahead by 0
+12 silly hasTags
+13 verbose hasTags true
+14 silly git-describe.sync "v1.0.0-alpha.8-1-g58a84843" => {"lastTagName":"v1.0.0-alpha.8","lastVersion":"v1.0.0-alpha.8","refCount":"1","sha":"58a84843","isDirty":false}
+15 warn force-publish all packages
+16 info Assuming all packages changed
+17 verbose updated @g20/browser
+18 verbose updated @g20/canvas
+19 verbose updated @g20/core
+20 verbose updated @g20/euclid
+21 verbose updated @g20/gradient
+22 verbose updated @g20/graphics
+23 verbose updated @g20/grid
+24 verbose updated @g20/mock
+25 verbose updated @g20/player
+26 verbose updated @g20/reactive
+27 verbose updated @g20/server
+28 verbose updated @g20/svg
+29 verbose updated @g20/texture
+30 info execute Skipping releases
+31 warn lifecycle Skipping root "preversion" because it has already been called
+32 silly lifecycle No script for "preversion" in "@g20/canvas", continuing
+33 silly lifecycle No script for "preversion" in "@g20/core", continuing
+34 silly lifecycle No script for "preversion" in "@g20/euclid", continuing
+35 silly lifecycle No script for "preversion" in "@g20/gradient", continuing
+36 silly lifecycle No script for "preversion" in "@g20/graphics", continuing
+37 silly lifecycle No script for "preversion" in "@g20/grid", continuing
+38 silly lifecycle No script for "preversion" in "@g20/mock", continuing
+39 silly lifecycle No script for "preversion" in "@g20/player", continuing
+40 verbose version @g20/canvas has no lockfile. Skipping lockfile update.
+41 verbose version @g20/core has no lockfile. Skipping lockfile update.
+42 verbose version @g20/euclid has no lockfile. Skipping lockfile update.
+43 verbose version @g20/gradient has no lockfile. Skipping lockfile update.
+44 verbose version @g20/grid has no lockfile. Skipping lockfile update.
+45 verbose version @g20/mock has no lockfile. Skipping lockfile update.
+46 verbose version @g20/graphics has no lockfile. Skipping lockfile update.
+47 verbose version @g20/player has no lockfile. Skipping lockfile update.
+48 silly lifecycle No script for "version" in "@g20/canvas", continuing
+49 silly lifecycle No script for "preversion" in "@g20/reactive", continuing
+50 silly lifecycle No script for "version" in "@g20/euclid", continuing
+51 silly lifecycle No script for "preversion" in "@g20/server", continuing
+52 silly lifecycle No script for "version" in "@g20/gradient", continuing
+53 silly lifecycle No script for "preversion" in "@g20/svg", continuing
+54 silly lifecycle No script for "version" in "@g20/core", continuing
+55 silly lifecycle No script for "preversion" in "@g20/texture", continuing
+56 silly lifecycle No script for "version" in "@g20/grid", continuing
+57 silly lifecycle No script for "version" in "@g20/mock", continuing
+58 silly lifecycle No script for "version" in "@g20/graphics", continuing
+59 verbose version @g20/reactive has no lockfile. Skipping lockfile update.
+60 verbose version @g20/server has no lockfile. Skipping lockfile update.
+61 verbose version @g20/svg has no lockfile. Skipping lockfile update.
+62 silly lifecycle No script for "version" in "@g20/player", continuing
+63 verbose version @g20/texture has no lockfile. Skipping lockfile update.
+64 silly lifecycle No script for "version" in "@g20/texture", continuing
+65 silly lifecycle No script for "version" in "@g20/reactive", continuing
+66 silly lifecycle No script for "version" in "@g20/server", continuing
+67 silly lifecycle No script for "version" in "@g20/svg", continuing
+68 silly lifecycle No script for "preversion" in "@g20/browser", continuing
+69 verbose version @g20/browser has no lockfile. Skipping lockfile update.
+70 silly lifecycle No script for "version" in "@g20/browser", continuing
+71 warn lifecycle Skipping root "version" because it has already been called
+72 verbose version Updating root package-lock.json
+73 error Error: Command failed with exit code 1: npm install --package-lock-only --ignore-scripts
+73 error npm WARN ERESOLVE overriding peer dependency
+73 error npm WARN While resolving: @g20/canvas@1.0.0-alpha.9
+73 error npm WARN Found: @g20/core@undefined
+73 error npm WARN node_modules/@g20/core
+73 error npm WARN   workspace packages/core from the root project
+73 error npm WARN
+73 error npm WARN Could not resolve dependency:
+73 error npm WARN peer @g20/core@"1.0.0-alpha.8" from @g20/canvas@1.0.0-alpha.9
+73 error npm WARN packages/canvas
+73 error npm WARN   @g20/canvas@1.0.0-alpha.8
+73 error npm WARN   node_modules/@g20/canvas
+73 error npm WARN ERESOLVE overriding peer dependency
+73 error npm WARN While resolving: @g20/canvas@1.0.0-alpha.9
+73 error npm WARN Found: @g20/svg@undefined
+73 error npm WARN node_modules/@g20/svg
+73 error npm WARN   workspace packages/svg from the root project
+73 error npm WARN
+73 error npm WARN Could not resolve dependency:
+73 error npm WARN peer @g20/svg@"1.0.0-alpha.8" from @g20/canvas@1.0.0-alpha.9
+73 error npm WARN packages/canvas
+73 error npm WARN   @g20/canvas@1.0.0-alpha.8
+73 error npm WARN   node_modules/@g20/canvas
+73 error npm WARN ERESOLVE overriding peer dependency
+73 error npm WARN While resolving: @g20/euclid@1.0.0-alpha.9
+73 error npm WARN Found: @g20/reactive@undefined
+73 error npm WARN node_modules/@g20/reactive
+73 error npm WARN   workspace packages/reactive from the root project
+73 error npm WARN
+73 error npm WARN Could not resolve dependency:
+73 error npm WARN peer @g20/reactive@"1.0.0-alpha.8" from @g20/euclid@1.0.0-alpha.9
+73 error npm WARN packages/euclid
+73 error npm WARN   @g20/euclid@1.0.0-alpha.8
+73 error npm WARN   node_modules/@g20/euclid
+73 error npm ERR! code ETARGET
+73 error npm ERR! notarget No matching version found for @g20/core@1.0.0-alpha.8.
+73 error npm ERR! notarget In most cases you or one of your dependencies are requesting
+73 error npm ERR! notarget a package version that doesn't exist.
+73 error
+73 error npm ERR! A complete log of this run can be found in: /home/david/.npm/_logs/2024-05-20T16_08_58_741Z-debug-0.log
+73 error     at makeError (/home/david/Development/g20mono/node_modules/lerna/node_modules/execa/lib/error.js:59:11)
+73 error     at handlePromise (/home/david/Development/g20mono/node_modules/lerna/node_modules/execa/index.js:114:26)
+73 error     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+73 error     at async VersionCommand.updatePackageVersions (/home/david/Development/g20mono/node_modules/lerna/dist/index.js:8486:13)
+73 error     at async Promise.all (index 0)

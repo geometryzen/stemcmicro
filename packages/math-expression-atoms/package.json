@@ -1,0 +1,66 @@
+{
+    "name": "math-expression-atoms",
+    "version": "0.9.40",
+    "description": "Atoms for constructing math expressions",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "system": "./dist/system/index.min.js",
+            "default": "./dist/commonjs/index.js"
+        }
+    },
+    "module": "./dist/esm/index.min.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist/commonjs/index.js",
+        "dist/commonjs/index.js.map",
+        "dist/esm/index.min.js",
+        "dist/esm/index.min.js.map",
+        "dist/index.d.ts",
+        "dist/system/index.min.js",
+        "dist/system/index.min.js.map"
+    ],
+    "keywords": [
+        "math",
+        "expression",
+        "atoms",
+        "Boo"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
+        "check": "npx package-check",
+        "clean": "rm -rf coverage && rm -rf dist && rm -rf docs && rm -rf es2015 && rm -rf system && rm -rf types && rm -rf build",
+        "coverage": "npm run test -- --coverage",
+        "dev": "rollup -c -w",
+        "docs": "npm run docs:typedoc && open-cli docs/index.html",
+        "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
+        "lint": "eslint . --ext .ts",
+        "pages": "npm run docs:typedoc && gh-pages -d docs",
+        "pretest": "npm run build",
+        "prepublishOnly": "npm run check && npm run build && npm run test && npm run lint && npm run pages",
+        "release": "release-it",
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/geometryzen/math-expression-atoms.git"
+    },
+    "author": {
+        "name": "David Geo Holmes",
+        "email": "david.geo.holmes@gmail.com"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/geometryzen/math-expression-atoms/issues"
+    },
+    "homepage": "https://github.com/geometryzen/math-expression-atoms#readme",
+    "dependencies": {
+        "generic-rbtree": "^1.1.2"
+    },
+    "peerDependencies": {
+        "math-expression-tree": "file:../math-expression-tree"
+    }
+}

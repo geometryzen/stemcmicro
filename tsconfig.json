@@ -1,26 +1,25 @@
 {
     "compilerOptions": {
-        "target": "es2020",
+        "target": "esnext",
         "module": "esnext",
-        "sourceMap": true,
-        "outDir": "build",
-        "strict": true,
         "moduleResolution": "node",
-        "noImplicitOverride": false,
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "skipLibCheck": true,
-        "strictNullChecks": true,
         "declaration": true,
         "declarationDir": "types",
         "emitDeclarationOnly": true,
+        "sourceMap": true,
+        "outDir": "build",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": false,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+        "noImplicitReturns": true,
+        "skipLibCheck": true,
         "removeComments": false,
         "resolveJsonModule": true
     },
-    "include": [
-        "index.ts",
-        "src/**/*.ts",
-        "repl.mts",
-        "rollup.config.mts"
-    ]
+    "exclude": ["node_modules", "**/*.spec.ts"]
 }

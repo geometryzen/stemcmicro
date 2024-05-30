@@ -1,29 +1,48 @@
-# Developer Notes
+## WARNING
 
-## API
+stemcmicro currently uses a proprietary version of the Lerna monorepo pending the acceptance of a Pull Request (PR).
 
-Not yet stable.
+This version is available at https://github.com/geometryzen/lerna
 
-## tests
+In order to develop stemcmicro, you MUST clone this repo then take the following actions.
 
-This is the suite that tests for (approximate) backwards compatibility with Algebrite.
+Read the contributing guide in Lerna and set up volta, verdaccio, etc as if you were going to develop Lerna.
 
-Some have been renamed from *.ts to *.md to evade execution.
+In the Lerna folder, in a Terminal (1)
 
-## units
+```
+npm run local-registry start
+```
 
-Used for on-going unit tests and to debug issues in tests.
+This starts a local package registry using verdaccio on port 4873.
 
-## big-integer
+We're going to install a modified Lerna package into this local registry.
 
-May not be up-to-date with JavaScript developments.
+Later, when building stemcmicro, we'll install Lerna from this local registry.
 
-See also
+In the Lerna folder, in a second Terminal (2)
 
-https://github.com/MikeMcl/bignumber.js
+```
+npm --registry=http://localhost:4873 run lerna-release 999.9.9 --local
+```
 
-## REPL
+This builds the modified Lerna and publishes it to the local registry.
 
-npm run repl
+In the stemcmicro folder,
 
-Make sure to build first.
+```
+npm --registry=http://localhost:4873/ install
+```
+
+This installs dependencies in the node_modules folder.
+
+You are now ready to build stemcmicro...
+
+```
+npm run build
+```
+
+In order to allow Jest testing in consuming libraries, it is necessary to make some "undesirable" changes to this package.json
+
+1. Must remove "type": "module".
+2. Must point the default export to the commonjs distribution.

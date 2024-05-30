@@ -1,5 +1,5 @@
-import { create_int, Flt, is_flt, Rat } from "math-expression-atoms";
-import { assert_cons_or_nil, Cons, cons, is_cons, items_to_cons, U } from "math-expression-tree";
+import { create_int, Flt, is_flt, Rat } from "@stemcmicro/atoms";
+import { assert_cons_or_nil, Cons, cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "./bignum";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { evaluate_as_float } from "./operators/float/float";

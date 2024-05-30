@@ -1,5 +1,5 @@
-import { Sym } from "math-expression-atoms";
-import { Cons2, items_to_cons, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { Cons2, items_to_cons, U } from "@stemcmicro/tree";
 import { diffFlag, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Function2 } from "./Function2";
 import { GUARD } from "./GUARD";

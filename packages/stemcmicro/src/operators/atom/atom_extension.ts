@@ -1,7 +1,7 @@
-import { Cell, create_sym, is_cell, Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { cons, Cons, is_atom, nil, U } from "math-expression-tree";
+import { Cell, create_sym, is_cell, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { cons, Cons, is_atom, nil, U } from "@stemcmicro/tree";
 import { diagnostic } from "../../diagnostics/diagnostics";
 import { Diagnostics } from "../../diagnostics/messages";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";

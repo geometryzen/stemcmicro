@@ -1,6 +1,6 @@
 // import assert from 'assert';
 import assert from "assert"; // The Node assert module.
-import { nil, U } from "math-expression-tree";
+import { nil, U } from "@stemcmicro/tree";
 import { create_engine, ExprEngineListener, UndeclaredVars } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 

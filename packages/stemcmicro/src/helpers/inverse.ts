@@ -1,5 +1,5 @@
-import { Err } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
+import { Err } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
 import { diagnostic } from "../diagnostics/diagnostics";
 import { Diagnostics } from "../diagnostics/messages";
 import { is_flt } from "../operators/flt/is_flt";

@@ -1,5 +1,5 @@
-import { booU } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
+import { booU } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "./env/ExtensionEnv";
 import { iszero } from "./helpers/iszero";
 import { predicate_return_value } from "./helpers/predicate_return_value";

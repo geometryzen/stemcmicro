@@ -1,8 +1,8 @@
 // always returns a matrix with rank 2
 // i.e. two dimensions,
 
-import { one, Sym, Tensor, zero } from "math-expression-atoms";
-import { Cons, Cons1, U } from "math-expression-tree";
+import { one, Sym, Tensor, zero } from "@stemcmicro/atoms";
+import { Cons, Cons1, U } from "@stemcmicro/tree";
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { cadr } from "../../tree/helpers";

@@ -1,1 +1,1 @@
-export { assert_flt } from "math-expression-atoms";
+export { assert_flt } from "@stemcmicro/atoms";

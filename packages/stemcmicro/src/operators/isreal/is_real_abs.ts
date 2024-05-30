@@ -1,4 +1,4 @@
-import { Native, native_sym } from "math-expression-native";
+import { Native, native_sym } from "@stemcmicro/native";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder } from "../../env/ExtensionEnv";
 import { CompositePredicate } from "../helpers/CompositePredicate";

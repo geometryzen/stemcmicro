@@ -1,4 +1,4 @@
-import { ExprContext, LambdaExpr } from "math-expression-context";
+import { ExprContext, LambdaExpr } from "@stemcmicro/context";
 import { complex_conjugate } from "../../complex_conjugate";
 import { imu } from "../../env/imu";
 import { conj } from "../../helpers/conj";

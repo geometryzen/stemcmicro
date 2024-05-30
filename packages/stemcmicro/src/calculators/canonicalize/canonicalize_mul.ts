@@ -1,5 +1,5 @@
-import { one } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
+import { one } from "@stemcmicro/atoms";
+import { Cons, U } from "@stemcmicro/tree";
 import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 
 /**

@@ -1,5 +1,5 @@
-import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_str, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from "math-expression-atoms";
-import { pos_end_items_to_cons, U } from "math-expression-tree";
+import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_str, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from "@stemcmicro/atoms";
+import { pos_end_items_to_cons, U } from "@stemcmicro/tree";
 import { EmParseOptions, em_parse } from "../algebrite/em_parse";
 import { EDNListParser, ParseConfig } from "../edn";
 import { js_parse } from "../javascript/js_parse";

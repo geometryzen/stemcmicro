@@ -1,6 +1,6 @@
-import { create_sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { nil } from "math-expression-tree";
+import { create_sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { nil } from "@stemcmicro/tree";
 import { eval_approxratio } from "../approxratio";
 import { MulComparator } from "../calculators/compare/compare_factor_factor";
 import { AddComparator } from "../calculators/compare/compare_term_term";

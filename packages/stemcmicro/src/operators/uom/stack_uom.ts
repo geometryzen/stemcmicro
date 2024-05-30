@@ -1,5 +1,5 @@
-import { is_str } from "math-expression-atoms";
-import { Cons } from "math-expression-tree";
+import { is_str } from "@stemcmicro/atoms";
+import { Cons } from "@stemcmicro/tree";
 import { pop, push, stopf, value_of } from "../../eigenmath/eigenmath";
 import { ProgramControl } from "../../eigenmath/ProgramControl";
 import { ProgramEnv } from "../../eigenmath/ProgramEnv";

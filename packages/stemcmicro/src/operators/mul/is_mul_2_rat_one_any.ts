@@ -1,4 +1,4 @@
-import { is_rat } from "math-expression-atoms";
+import { is_rat } from "@stemcmicro/atoms";
 import { Cons } from "../../tree/tree";
 import { is_mul_2_any_any } from "./is_mul_2_any_any";
 

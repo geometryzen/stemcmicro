@@ -1,5 +1,5 @@
-import { is_tensor } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
+import { is_tensor } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
 import { negate } from "../../helpers/negate";
 import { halt } from "../../runtime/defs";
 import { evaluate_integer } from "../../scripting/evaluate_integer";

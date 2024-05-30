@@ -1,6 +1,6 @@
-import { is_num, is_rat, is_sym } from "math-expression-atoms";
-import { is_native, Native } from "math-expression-native";
-import { is_cons, U } from "math-expression-tree";
+import { is_num, is_rat, is_sym } from "@stemcmicro/atoms";
+import { is_native, Native } from "@stemcmicro/native";
+import { is_cons, U } from "@stemcmicro/tree";
 import { bignum_equal } from "./bignum_equal";
 
 export function isnumerator(expr: U): boolean {

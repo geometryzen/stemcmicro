@@ -1,5 +1,5 @@
-import { is_str, Tensor, zero } from "math-expression-atoms";
-import { car, cdr, is_cons, nil, U } from "math-expression-tree";
+import { is_str, Tensor, zero } from "@stemcmicro/atoms";
+import { car, cdr, is_cons, nil, U } from "@stemcmicro/tree";
 import { compare_term_term } from "./calculators/compare/compare_term_term";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { defs } from "./runtime/defs";

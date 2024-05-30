@@ -1,5 +1,5 @@
-import { is_sym } from "math-expression-atoms";
-import { ExprContext, LambdaExpr } from "math-expression-context";
+import { is_sym } from "@stemcmicro/atoms";
+import { ExprContext, LambdaExpr } from "@stemcmicro/context";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_COS } from "./MATH_COS";

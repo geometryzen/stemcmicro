@@ -1,6 +1,6 @@
-import { is_flt, is_num, is_rat, is_uom } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { is_atom, U } from "math-expression-tree";
+import { is_flt, is_num, is_rat, is_uom } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { is_atom, U } from "@stemcmicro/tree";
 import { divide_numbers } from "../bignum";
 import { Directive } from "../env/ExtensionEnv";
 import { float } from "./float";

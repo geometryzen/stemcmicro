@@ -1,1 +1,1 @@
-export { Native } from "math-expression-native";
+export { Native } from "@stemcmicro/native";

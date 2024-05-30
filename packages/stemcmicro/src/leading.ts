@@ -1,4 +1,4 @@
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { filter } from "./filter";
 import { guess } from "./guess";

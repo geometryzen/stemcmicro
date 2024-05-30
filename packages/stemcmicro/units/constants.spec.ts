@@ -1,7 +1,7 @@
 import assert from "assert";
-import { is_sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { is_nil, U } from "math-expression-tree";
+import { is_sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { is_nil, U } from "@stemcmicro/tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 import { assert_sym } from "../src/operators/sym/assert_sym";
 import { SyntaxKind } from "../src/parser/parser";

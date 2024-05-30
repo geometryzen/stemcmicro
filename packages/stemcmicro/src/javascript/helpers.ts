@@ -1,6 +1,6 @@
 import { BinaryOperator } from "@geometryzen/esprima";
-import { Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
+import { Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
 
 export function op_from_string(operator: BinaryOperator): Sym {
     switch (operator) {

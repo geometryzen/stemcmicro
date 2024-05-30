@@ -1,6 +1,6 @@
-import { is_sym, Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { cons, Cons, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { is_sym, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { cons, Cons, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { listform } from "../../helpers/listform";
 import { to_infix_string } from "../../print/to_infix_string";

@@ -1,6 +1,6 @@
-import { assert_cell, Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { U } from "math-expression-tree";
+import { assert_cell, Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";

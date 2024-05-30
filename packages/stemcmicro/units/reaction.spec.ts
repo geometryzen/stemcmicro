@@ -1,6 +1,6 @@
 import assert from "assert";
-import { is_rat } from "math-expression-atoms";
-import { is_nil, U } from "math-expression-tree";
+import { is_rat } from "@stemcmicro/atoms";
+import { is_nil, U } from "@stemcmicro/tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 

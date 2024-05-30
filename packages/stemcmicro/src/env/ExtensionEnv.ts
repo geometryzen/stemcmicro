@@ -1,6 +1,6 @@
-import { CellHost, Sym, Tensor } from "math-expression-atoms";
-import { ExprContext, ExprHandler, LambdaExpr } from "math-expression-context";
-import { Cons, U } from "math-expression-tree";
+import { CellHost, Sym, Tensor } from "@stemcmicro/atoms";
+import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
+import { Cons, U } from "@stemcmicro/tree";
 import { StackFunction } from "../adapters/StackFunction";
 import { AtomListener } from "../api/api";
 import { ProgramControl } from "../eigenmath/ProgramControl";

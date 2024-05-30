@@ -1,5 +1,5 @@
-import { create_flt, is_flt, zero } from "math-expression-atoms";
-import { Cons, items_to_cons, U } from "math-expression-tree";
+import { create_flt, is_flt, zero } from "@stemcmicro/atoms";
+import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";

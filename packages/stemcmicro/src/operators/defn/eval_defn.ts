@@ -1,6 +1,6 @@
-import { assert_map, assert_sym, assert_tensor, is_err, is_map, is_str, is_tensor, Map, Str, Sym, Tensor } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, items_to_cons, nil, U } from "math-expression-tree";
+import { assert_map, assert_sym, assert_tensor, is_err, is_map, is_str, is_tensor, Map, Str, Sym, Tensor } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";

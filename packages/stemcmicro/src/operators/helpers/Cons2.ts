@@ -1,1 +1,1 @@
-export { Cons2 } from "math-expression-tree";
+export { Cons2 } from "@stemcmicro/tree";

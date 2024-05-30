@@ -1,6 +1,6 @@
-import { is_sym, Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons2, is_cons, items_to_cons, U } from "math-expression-tree";
+import { is_sym, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons2, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { diffFlag, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";

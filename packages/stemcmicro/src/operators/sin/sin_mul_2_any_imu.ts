@@ -1,5 +1,5 @@
-import { is_imu, Sym } from "math-expression-atoms";
-import { Cons1, Cons2, is_cons, items_to_cons, U } from "math-expression-tree";
+import { is_imu, Sym } from "@stemcmicro/atoms";
+import { Cons1, Cons2, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_unaop_cons } from "../../hashing/hash_info";

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import fs from "fs";
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 import process from "process";
 import { create_engine, EngineConfig, ExprEngine } from "./src/api/api";
 import { Predicates } from "./src/env/ExtensionEnv";

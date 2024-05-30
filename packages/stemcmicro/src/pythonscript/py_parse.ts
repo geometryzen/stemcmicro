@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { create_int, create_tensor } from "math-expression-atoms";
+import { create_int, create_tensor } from "@stemcmicro/atoms";
 import {
     Add,
     AnnAssign,

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import { assert_sym, Boo, create_keyword_ns, create_tensor, is_num, is_rat, Map, negOne, one, Tensor } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { items_to_cons, nil, pos_end_items_to_cons, U } from "math-expression-tree";
+import { assert_sym, Boo, create_keyword_ns, create_tensor, is_num, is_rat, Map, negOne, one, Tensor } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { items_to_cons, nil, pos_end_items_to_cons, U } from "@stemcmicro/tree";
 import { QUOTE, TRANSPOSE, TRANSPOSE_CHAR_CODE } from "../runtime/constants";
 import { ShareableStack } from "../shareable/ShareableStack";
 import { assert_token_code } from "./assert_token_code";

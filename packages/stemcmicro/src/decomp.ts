@@ -1,5 +1,5 @@
-import { ExprContext } from "math-expression-context";
-import { assert_cons_or_nil } from "math-expression-tree";
+import { ExprContext } from "@stemcmicro/context";
+import { assert_cons_or_nil } from "@stemcmicro/tree";
 import { add_terms } from "./calculators/add/add_terms";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { guess } from "./guess";

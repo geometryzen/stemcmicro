@@ -1,6 +1,6 @@
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { car, cdr, is_atom, is_cons, nil, U } from "math-expression-tree";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { car, cdr, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { nativeStr } from "../nativeInt";
 import { PrintConfig } from "./print";
 

@@ -1,6 +1,6 @@
 import assert from "assert";
-import { is_err } from "math-expression-atoms";
-import { is_atom } from "math-expression-tree";
+import { is_err } from "@stemcmicro/atoms";
+import { is_atom } from "@stemcmicro/tree";
 import { is_localizable } from "../src/diagnostics/diagnostics";
 import { create_script_context } from "../src/runtime/script_engine";
 

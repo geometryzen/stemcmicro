@@ -1,5 +1,5 @@
-import { create_int, is_tensor, zero } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
+import { create_int, is_tensor, zero } from "@stemcmicro/atoms";
+import { Cons, U } from "@stemcmicro/tree";
 import { value_of } from "../../eigenmath/eigenmath";
 import { ProgramStack } from "../../eigenmath/ProgramStack";
 import { ExtensionEnv } from "../../env/ExtensionEnv";

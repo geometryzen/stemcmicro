@@ -1,1 +1,1 @@
-export { emptyStr, Str } from "math-expression-atoms";
+export { emptyStr, Str } from "@stemcmicro/atoms";

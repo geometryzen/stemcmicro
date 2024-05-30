@@ -1,5 +1,5 @@
-import { assert_cell, create_sym, Sym } from "math-expression-atoms";
-import { nil, U } from "math-expression-tree";
+import { assert_cell, create_sym, Sym } from "@stemcmicro/atoms";
+import { nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";

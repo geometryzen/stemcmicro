@@ -1,5 +1,5 @@
-import { create_flt, create_sym, Flt, is_flt, Sym } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { create_flt, create_sym, Flt, is_flt, Sym } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Function1 } from "../helpers/Function1";

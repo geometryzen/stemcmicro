@@ -1,5 +1,5 @@
-import { is_flt, is_rat, one, zero } from "math-expression-atoms";
-import { Cons, is_cons, items_to_cons, U } from "math-expression-tree";
+import { is_flt, is_rat, one, zero } from "@stemcmicro/atoms";
+import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { is_negative } from "./predicates/is_negative";
 import { DIRAC } from "./runtime/constants";

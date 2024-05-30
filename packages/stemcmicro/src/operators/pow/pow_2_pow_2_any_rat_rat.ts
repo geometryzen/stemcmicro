@@ -1,5 +1,5 @@
-import { is_rat, Sym } from "math-expression-atoms";
-import { Cons2, is_cons, U } from "math-expression-tree";
+import { is_rat, Sym } from "@stemcmicro/atoms";
+import { Cons2, is_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";

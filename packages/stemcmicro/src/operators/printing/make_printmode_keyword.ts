@@ -1,5 +1,5 @@
-import { create_sym, is_sym, Sym } from "math-expression-atoms";
-import { nil, U } from "math-expression-tree";
+import { create_sym, is_sym, Sym } from "@stemcmicro/atoms";
+import { nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Directive, Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";

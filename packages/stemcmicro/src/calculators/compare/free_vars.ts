@@ -1,4 +1,4 @@
-import { is_blade } from "math-expression-atoms";
+import { is_blade } from "@stemcmicro/atoms";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { is_flt } from "../../operators/flt/is_flt";

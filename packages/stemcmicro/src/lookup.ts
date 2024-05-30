@@ -1,5 +1,5 @@
-import { is_sym } from "math-expression-atoms";
-import { car, Cons, is_cons, nil, U } from "math-expression-tree";
+import { is_sym } from "@stemcmicro/atoms";
+import { car, Cons, is_cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { cadr } from "./tree/helpers";
 

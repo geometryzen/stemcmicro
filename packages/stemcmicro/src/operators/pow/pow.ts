@@ -1,6 +1,6 @@
-import { Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { items_to_cons, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { items_to_cons, U } from "@stemcmicro/tree";
 import { Cons2 } from "../helpers/Cons2";
 
 export function pow<BASE extends U, EXPO extends U>(base: BASE, expo: EXPO): Cons2<Sym, BASE, EXPO> {

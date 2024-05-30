@@ -1,6 +1,6 @@
-import { is_num, is_sym, is_tensor, Num, Sym, Tensor } from "math-expression-atoms";
-import { is_native, Native, native_sym } from "math-expression-native";
-import { Cons, Cons0, is_cons, U } from "math-expression-tree";
+import { is_num, is_sym, is_tensor, Num, Sym, Tensor } from "@stemcmicro/atoms";
+import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { Cons, Cons0, is_cons, U } from "@stemcmicro/tree";
 import { is_cons_opr_eq_add } from "../operators/add/is_cons_opr_eq_add";
 import { Cons2 } from "../operators/helpers/Cons2";
 import { is_cons_opr_eq_sym } from "../predicates/is_cons_opr_eq_sym";

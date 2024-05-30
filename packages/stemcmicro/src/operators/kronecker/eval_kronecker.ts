@@ -1,4 +1,4 @@
-import { Cons, is_cons, U } from "math-expression-tree";
+import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { kronecker } from "../../eigenmath/eigenmath";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";

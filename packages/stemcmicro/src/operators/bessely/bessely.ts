@@ -1,5 +1,5 @@
-import { create_flt, is_flt, negOne } from "math-expression-atoms";
-import { Cons, items_to_cons, U } from "math-expression-tree";
+import { create_flt, is_flt, negOne } from "@stemcmicro/atoms";
+import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { nativeInt } from "../../nativeInt";
 import { is_negative } from "../../predicates/is_negative";

@@ -1,6 +1,6 @@
 import assert from "assert";
-import { is_sym } from "math-expression-atoms";
-import { is_cons, U } from "math-expression-tree";
+import { is_sym } from "@stemcmicro/atoms";
+import { is_cons, U } from "@stemcmicro/tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 
 describe("arctan", function () {

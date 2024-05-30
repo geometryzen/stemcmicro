@@ -1,6 +1,6 @@
-import { Err, is_tensor, one, Sym, Tensor, zero } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, items_to_cons, U } from "math-expression-tree";
+import { Err, is_tensor, one, Sym, Tensor, zero } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { inv } from "./inv";
 import { nativeInt } from "./nativeInt";

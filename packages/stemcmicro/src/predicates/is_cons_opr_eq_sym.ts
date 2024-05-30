@@ -1,5 +1,5 @@
-import { is_sym, Sym } from "math-expression-atoms";
-import { Cons, Cons0 } from "math-expression-tree";
+import { is_sym, Sym } from "@stemcmicro/atoms";
+import { Cons, Cons0 } from "@stemcmicro/tree";
 
 export function is_cons_opr_eq_sym(expr: Cons, name: Sym): expr is Cons0<Sym> {
     const opr = expr.car;

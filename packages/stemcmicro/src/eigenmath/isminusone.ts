@@ -1,4 +1,4 @@
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 import { isequaln } from "./isequaln";
 
 export function isminusone(p: U): boolean {

@@ -1,4 +1,4 @@
-import { Imu, is_flt, is_imu } from "math-expression-atoms";
+import { Imu, is_flt, is_imu } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_IMU } from "../../hashing/hash_info";

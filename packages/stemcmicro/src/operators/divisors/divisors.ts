@@ -1,6 +1,6 @@
-import { create_int, is_num, one, Tensor, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { car, cdr, is_cons, U } from "math-expression-tree";
+import { create_int, is_num, one, Tensor, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { car, cdr, is_cons, U } from "@stemcmicro/tree";
 import { sort_factors } from "../../calculators/compare/sort_factors";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { add } from "../../helpers/add";

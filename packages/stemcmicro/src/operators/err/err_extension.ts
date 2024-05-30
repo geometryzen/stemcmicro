@@ -1,7 +1,7 @@
-import { create_str, create_sym, Err, is_err, Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { is_native, Native } from "math-expression-native";
-import { cons, Cons, nil, U } from "math-expression-tree";
+import { create_str, create_sym, Err, is_err, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { is_native, Native } from "@stemcmicro/native";
+import { cons, Cons, nil, U } from "@stemcmicro/tree";
 import { diagnostic } from "../../diagnostics/diagnostics";
 import { Diagnostics } from "../../diagnostics/messages";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";

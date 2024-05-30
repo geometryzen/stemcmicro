@@ -1,6 +1,6 @@
-import { imu } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { U } from "math-expression-tree";
+import { imu } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { U } from "@stemcmicro/tree";
 import { negate } from "./helpers/negate";
 import { subst } from "./operators/subst/subst";
 

@@ -1,4 +1,4 @@
-import { is_blade, is_flt, is_rat, is_sym } from "math-expression-atoms";
+import { is_blade, is_flt, is_rat, is_sym } from "@stemcmicro/atoms";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_imu } from "../../operators/imu/is_imu";

@@ -1,4 +1,4 @@
-import { assert_str, Sym } from "math-expression-atoms";
+import { assert_str, Sym } from "@stemcmicro/atoms";
 import { scan } from "../algebrite/scan";
 import { Directive, ExtensionEnv, flag_from_directive } from "../env/ExtensionEnv";
 

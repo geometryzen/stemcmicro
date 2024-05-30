@@ -1,7 +1,7 @@
 // import assert from 'assert';
 import assert from "assert";
-import { is_rat, is_uom } from "math-expression-atoms";
-import { is_nil, U } from "math-expression-tree";
+import { is_rat, is_uom } from "@stemcmicro/atoms";
+import { is_nil, U } from "@stemcmicro/tree";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 

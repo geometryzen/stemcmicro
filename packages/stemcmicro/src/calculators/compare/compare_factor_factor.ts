@@ -1,5 +1,5 @@
-import { is_blade, is_hyp, is_num, is_str, is_sym, is_tensor, is_uom } from "math-expression-atoms";
-import { car, cdr, is_cons, is_nil, U } from "math-expression-tree";
+import { is_blade, is_hyp, is_num, is_str, is_sym, is_tensor, is_uom } from "@stemcmicro/atoms";
+import { car, cdr, is_cons, is_nil, U } from "@stemcmicro/tree";
 import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_imu } from "../../operators/imu/is_imu";
 import { strcmp } from "../../operators/str/str_extension";

@@ -1,6 +1,6 @@
-import { Sym } from "math-expression-atoms";
-import { ExprHandler } from "math-expression-context";
-import { Cons, Shareable, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { ExprHandler } from "@stemcmicro/context";
+import { Cons, Shareable, U } from "@stemcmicro/tree";
 import { ProgramStack } from "./ProgramStack";
 
 export interface ProgramEnv extends Shareable {

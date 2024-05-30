@@ -1,6 +1,6 @@
-import { Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { cons, Cons, is_cons, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { cons, Cons, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { AbstractExtension } from "./AbstractExtension";
 

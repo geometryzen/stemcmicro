@@ -1,5 +1,5 @@
-import { is_blade, Sym } from "math-expression-atoms";
-import { Cons2, items_to_cons, U } from "math-expression-tree";
+import { is_blade, Sym } from "@stemcmicro/atoms";
+import { Cons2, items_to_cons, U } from "@stemcmicro/tree";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { remove_factors } from "../../calculators/remove_factors";

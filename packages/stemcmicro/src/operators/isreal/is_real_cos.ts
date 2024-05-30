@@ -1,6 +1,6 @@
-import { create_boo, Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, U } from "math-expression-tree";
+import { create_boo, Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { CompositeOperator } from "../helpers/CompositeOperator";
 

@@ -1,4 +1,4 @@
-import { car, cdr, Cons, U } from "math-expression-tree";
+import { car, cdr, Cons, U } from "@stemcmicro/tree";
 
 export function caar(p: U): U {
     return car(car(p));

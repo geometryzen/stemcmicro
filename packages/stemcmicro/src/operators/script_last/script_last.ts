@@ -1,5 +1,5 @@
-import { Sym } from "math-expression-atoms";
-import { nil, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";

@@ -1,5 +1,5 @@
-import { Native, native_sym } from "math-expression-native";
-import { Cons, is_cons, nil, U } from "math-expression-tree";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, is_cons, nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { guess } from "../../guess";

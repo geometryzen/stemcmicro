@@ -1,6 +1,6 @@
-import { create_sym, Flt, Str } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { items_to_cons, pos_end_items_to_cons, U } from "math-expression-tree";
+import { create_sym, Flt, Str } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { items_to_cons, pos_end_items_to_cons, U } from "@stemcmicro/tree";
 import {
     BinaryExpression,
     createSourceFile,

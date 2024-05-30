@@ -34,10 +34,10 @@ import {
     SumTerm,
     Sym,
     Tensor
-} from "math-expression-atoms";
-import { CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "math-expression-context";
-import { is_native, Native, native_sym } from "math-expression-native";
-import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "math-expression-tree";
+} from "@stemcmicro/atoms";
+import { CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
+import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
 import { StackFunction } from "../adapters/StackFunction";
 import { ExprEngineListener } from "../api/api";

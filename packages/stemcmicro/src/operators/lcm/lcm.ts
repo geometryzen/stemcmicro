@@ -1,5 +1,5 @@
-import { ExprContext } from "math-expression-context";
-import { car, cdr, Cons, is_cons, U } from "math-expression-tree";
+import { ExprContext } from "@stemcmicro/context";
+import { car, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { divide } from "../../helpers/divide";
 import { inverse } from "../../helpers/inverse";
 import { doexpand_binary } from "../../runtime/defs";

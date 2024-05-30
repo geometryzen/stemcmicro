@@ -1,4 +1,4 @@
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { half } from "../../tree/rat/Rat";

@@ -1,4 +1,4 @@
-import { Atom, Cons, is_atom, is_cons, U } from "math-expression-tree";
+import { Atom, Cons, is_atom, is_cons, U } from "@stemcmicro/tree";
 import { ProgrammingError } from "../programming/ProgrammingError";
 
 function is_cons_or_atom(expr: U): expr is Cons | Atom {

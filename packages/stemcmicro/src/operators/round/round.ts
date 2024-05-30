@@ -1,5 +1,5 @@
-import { create_flt, create_int, is_flt, is_num } from "math-expression-atoms";
-import { Cons, items_to_cons, U } from "math-expression-tree";
+import { create_flt, create_int, is_flt, is_num } from "@stemcmicro/atoms";
+import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { is_rat_and_integer } from "../../is_rat_and_integer";
 import { ROUND } from "../../runtime/constants";

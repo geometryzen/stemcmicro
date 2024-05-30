@@ -1,5 +1,5 @@
-import { imu } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
+import { imu } from "@stemcmicro/atoms";
+import { Cons, U } from "@stemcmicro/tree";
 import { complex_conjugate } from "../complex_conjugate";
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { cadr } from "../tree/helpers";

@@ -1,7 +1,7 @@
-import { Blade, Boo, create_flt, create_sym, Flt, Imu, is_blade, is_boo, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, Sym, Tensor, Uom } from "math-expression-atoms";
-import { ExprContext, ExprHandler } from "math-expression-context";
-import { is_native, Native, native_sym } from "math-expression-native";
-import { assert_cons_or_nil, Atom, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { Blade, Boo, create_flt, create_sym, Flt, Imu, is_blade, is_boo, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, Sym, Tensor, Uom } from "@stemcmicro/atoms";
+import { ExprContext, ExprHandler } from "@stemcmicro/context";
+import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { assert_cons_or_nil, Atom, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { StackU } from "../env/StackU";
 import { nativeStr } from "../nativeInt";
 import { is_imu } from "../operators/imu/is_imu";

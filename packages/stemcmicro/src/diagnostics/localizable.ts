@@ -1,4 +1,4 @@
-import { Atom, Cons, U } from "math-expression-tree";
+import { Atom, Cons, U } from "@stemcmicro/tree";
 
 export class Localizable implements Atom {
     readonly name = "Localizable";

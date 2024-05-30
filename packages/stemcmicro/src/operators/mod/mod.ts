@@ -1,6 +1,6 @@
-import { bigInt, create_int, is_flt, is_num, Rat } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, items_to_cons, U } from "math-expression-tree";
+import { bigInt, create_int, is_flt, is_num, Rat } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { diagnostic } from "../../diagnostics/diagnostics";
 import { Diagnostics } from "../../diagnostics/messages";
 import { ExtensionEnv } from "../../env/ExtensionEnv";

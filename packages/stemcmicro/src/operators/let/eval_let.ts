@@ -1,5 +1,5 @@
-import { assert_sym, assert_tensor } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
+import { assert_sym, assert_tensor } from "@stemcmicro/atoms";
+import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 
 /**

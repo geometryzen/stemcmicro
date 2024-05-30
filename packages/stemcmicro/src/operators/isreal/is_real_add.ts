@@ -1,5 +1,5 @@
-import { Native, native_sym } from "math-expression-native";
-import { Cons } from "math-expression-tree";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";
 import { CompositePredicate } from "../helpers/CompositePredicate";

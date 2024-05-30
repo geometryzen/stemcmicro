@@ -1,5 +1,5 @@
-import { Native, native_sym } from "math-expression-native";
-import { Cons, is_nil, items_to_cons, U } from "math-expression-tree";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { power_base_expo } from "../operators/pow/power_base_expo";
 import { ProgrammingError } from "../programming/ProgrammingError";

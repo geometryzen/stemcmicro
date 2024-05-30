@@ -1,5 +1,5 @@
-import { Sym } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { SYMBOL_S, SYMBOL_T, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from "./runtime/constants";
 
 /**

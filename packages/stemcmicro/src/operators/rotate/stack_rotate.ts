@@ -1,6 +1,6 @@
-import { create_sym, imu, Tensor } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { car, cdr, Cons, is_cons, U } from "math-expression-tree";
+import { create_sym, imu, Tensor } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { car, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { add, expfunc, istensor, multiply, multiply_factors, negate, pop, pop_integer, power, push, push_integer, push_rational, sqrtfunc, stopf, subtract, value_of } from "../../eigenmath/eigenmath";
 import { ProgramControl } from "../../eigenmath/ProgramControl";
 import { ProgramEnv } from "../../eigenmath/ProgramEnv";

@@ -1,5 +1,5 @@
-import { is_rat, one, Rat, Sym } from "math-expression-atoms";
-import { Cons, is_cons, items_to_cons, U } from "math-expression-tree";
+import { is_rat, one, Rat, Sym } from "@stemcmicro/atoms";
+import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { Cons2 } from "../operators/helpers/Cons2";
 import { is_mul_2_any_any } from "../operators/mul/is_mul_2_any_any";
 import { is_pow_2_any_any } from "../operators/pow/is_pow_2_any_any";

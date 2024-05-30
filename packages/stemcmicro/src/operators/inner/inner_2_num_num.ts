@@ -1,5 +1,5 @@
-import { is_num, Num, Sym } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { is_num, Num, Sym } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";

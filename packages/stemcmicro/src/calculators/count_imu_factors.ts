@@ -1,4 +1,4 @@
-import { Cons } from "math-expression-tree";
+import { Cons } from "@stemcmicro/tree";
 import { is_imu } from "../operators/imu/is_imu";
 import { count_factors } from "./count_factors";
 

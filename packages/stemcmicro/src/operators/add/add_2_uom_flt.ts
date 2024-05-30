@@ -1,4 +1,4 @@
-import { is_uom, Uom } from "math-expression-atoms";
+import { is_uom, Uom } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, FEATURE, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_UOM } from "../../hashing/hash_info";

@@ -1,6 +1,6 @@
-import { is_num, Num, one, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons, is_cons, U } from "math-expression-tree";
+import { is_num, Num, one, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { compare_num_num } from "../../calculators/compare/compare_num_num";
 import { guess } from "../../guess";
 import { is_power } from "../../runtime/helpers";

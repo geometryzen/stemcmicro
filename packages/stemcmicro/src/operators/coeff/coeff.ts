@@ -1,6 +1,6 @@
-import { one, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons, is_cons, nil, U } from "math-expression-tree";
+import { one, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons, is_cons, nil, U } from "@stemcmicro/tree";
 import { subtract } from "../../calculators/sub/subtract";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { Vector } from "../../env/Vector";

@@ -1,6 +1,6 @@
-import { is_sym, is_tensor, Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { is_atom, is_cons, U } from "math-expression-tree";
+import { is_sym, is_tensor, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { is_atom, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../env/ExtensionEnv";
 
 const sum = (arr: number[]): number => arr.reduce((a: number, b: number) => a + b, 0);

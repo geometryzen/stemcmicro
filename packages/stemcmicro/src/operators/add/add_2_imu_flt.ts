@@ -1,5 +1,5 @@
-import { Flt, Imu, is_flt, is_imu, Sym } from "math-expression-atoms";
-import { Cons2, items_to_cons, U } from "math-expression-tree";
+import { Flt, Imu, is_flt, is_imu, Sym } from "@stemcmicro/atoms";
+import { Cons2, items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { FEATURE, mkbuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_FLT } from "../../hashing/hash_info";

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_lambda, is_rat, is_sym, Keyword, Lambda, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from "math-expression-atoms";
-import { ExprContext, ExprHandler, LambdaExpr } from "math-expression-context";
-import { is_native, Native, native_sym } from "math-expression-native";
-import { Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, Shareable, U } from "math-expression-tree";
+import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_lambda, is_rat, is_sym, Keyword, Lambda, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
+import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
+import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
 import { ExprEngineListener } from "../..";
 import { ExtensionEnvFromExprContext } from "../adapters/ExtensionEnvFromExprContext";
 import { make_eval } from "../adapters/make_eval";

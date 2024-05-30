@@ -1,5 +1,5 @@
-import { create_int, one, zero } from "math-expression-atoms";
-import { Cons, items_to_cons, nil, U } from "math-expression-tree";
+import { create_int, one, zero } from "@stemcmicro/atoms";
+import { Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { guess } from "../../guess";
 import { divide } from "../../helpers/divide";

@@ -1,6 +1,6 @@
-import { create_sym, is_sym, Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, is_cons, items_to_cons, U } from "math-expression-tree";
+import { create_sym, is_sym, Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";

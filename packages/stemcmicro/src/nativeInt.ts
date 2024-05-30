@@ -1,5 +1,5 @@
-import { is_flt, is_rat, is_str, Num } from "math-expression-atoms";
-import { is_atom, U } from "math-expression-tree";
+import { is_flt, is_rat, is_str, Num } from "@stemcmicro/atoms";
+import { is_atom, U } from "@stemcmicro/tree";
 import { in_safe_integer_range } from "./in_safe_integer_range";
 import { is_rat_and_integer } from "./is_rat_and_integer";
 import { ProgrammingError } from "./programming/ProgrammingError";

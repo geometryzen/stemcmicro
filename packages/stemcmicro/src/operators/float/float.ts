@@ -1,6 +1,6 @@
-import { is_rat, is_tensor, Tensor } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons, is_cons, items_to_cons, U } from "math-expression-tree";
+import { is_rat, is_tensor, Tensor } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { rat_to_flt } from "../../bignum";
 import { Directive } from "../../env/ExtensionEnv";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";

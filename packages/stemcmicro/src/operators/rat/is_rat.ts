@@ -1,1 +1,1 @@
-export { is_rat } from "math-expression-atoms";
+export { is_rat } from "@stemcmicro/atoms";

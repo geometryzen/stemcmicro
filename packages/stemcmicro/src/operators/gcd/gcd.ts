@@ -1,6 +1,6 @@
-import { is_num, is_rat, one } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { car, cdr, Cons, is_cons, items_to_cons, U } from "math-expression-tree";
+import { is_num, is_rat, one } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { car, cdr, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { compare_num_num } from "../../calculators/compare/compare_num_num";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";

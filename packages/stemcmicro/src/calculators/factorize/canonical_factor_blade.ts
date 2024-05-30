@@ -1,4 +1,4 @@
-import { Blade, is_blade } from "math-expression-atoms";
+import { Blade, is_blade } from "@stemcmicro/atoms";
 import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { one, Rat } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";

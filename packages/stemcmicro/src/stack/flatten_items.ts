@@ -1,5 +1,5 @@
-import { is_sym, Sym } from "math-expression-atoms";
-import { is_atom, is_cons, U } from "math-expression-tree";
+import { is_sym, Sym } from "@stemcmicro/atoms";
+import { is_atom, is_cons, U } from "@stemcmicro/tree";
 import { list } from "../eigenmath/eigenmath";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { ProgrammingError } from "../programming/ProgrammingError";

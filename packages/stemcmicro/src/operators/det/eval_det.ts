@@ -1,7 +1,7 @@
-import { create_sym, is_tensor } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, is_atom, is_cons, U } from "math-expression-tree";
+import { create_sym, is_tensor } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, is_atom, is_cons, U } from "@stemcmicro/tree";
 import { diagnostic } from "../../diagnostics/diagnostics";
 import { Diagnostics } from "../../diagnostics/messages";
 import { prolog_eval_1_arg } from "../../dispatch/prolog_eval_1_arg";

@@ -1,6 +1,6 @@
-import { is_rat, Rat, Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons2 } from "math-expression-tree";
+import { is_rat, Rat, Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons2 } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, mkbuilder } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";

@@ -1,6 +1,6 @@
 import assert from "assert";
-import { assert_err, assert_str, is_err, is_sym } from "math-expression-atoms";
-import { is_nil, U } from "math-expression-tree";
+import { assert_err, assert_str, is_err, is_sym } from "@stemcmicro/atoms";
+import { is_nil, U } from "@stemcmicro/tree";
 import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 

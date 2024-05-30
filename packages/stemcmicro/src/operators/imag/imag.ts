@@ -1,5 +1,5 @@
-import { ExprContext, LambdaExpr } from "math-expression-context";
-import { Cons, items_to_cons, U } from "math-expression-tree";
+import { ExprContext, LambdaExpr } from "@stemcmicro/context";
+import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { IMAG } from "../../runtime/constants";
 /**

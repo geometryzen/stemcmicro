@@ -1,4 +1,4 @@
-import { Sym, zero } from "math-expression-atoms";
+import { Sym, zero } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hook_create_err } from "../../hooks/hook_create_err";

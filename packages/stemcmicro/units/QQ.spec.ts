@@ -1,5 +1,5 @@
 import assert from "assert";
-import { QQ } from "math-expression-atoms";
+import { QQ } from "@stemcmicro/atoms";
 
 describe("QQ", function () {
     describe("constructor", function () {

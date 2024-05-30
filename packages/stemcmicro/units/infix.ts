@@ -1,4 +1,4 @@
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 import { create_engine } from "../src/api/api";
 
 export function infix(expr: U): string {

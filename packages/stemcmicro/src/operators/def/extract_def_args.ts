@@ -1,5 +1,5 @@
-import { assert_sym, Sym } from "math-expression-atoms";
-import { Cons, nil, U } from "math-expression-tree";
+import { assert_sym, Sym } from "@stemcmicro/atoms";
+import { Cons, nil, U } from "@stemcmicro/tree";
 
 /**
  * The top syntax doesn't tell you how the arguments get allocated.

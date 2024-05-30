@@ -1,4 +1,4 @@
-import { Sym } from "math-expression-atoms";
+import { Sym } from "@stemcmicro/atoms";
 
 export interface ClojureScriptParseOptions {
     lexicon: { [op: string]: Sym };

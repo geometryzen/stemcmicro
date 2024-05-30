@@ -1,7 +1,7 @@
-import { assert_rat, create_flt, create_str, create_sym, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Rat, Str, Sym, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { Atom, Cons, is_atom, is_cons, is_singleton, items_to_cons, nil, U } from "math-expression-tree";
+import { assert_rat, create_flt, create_str, create_sym, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Rat, Str, Sym, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Atom, Cons, is_atom, is_cons, is_singleton, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { diagnostic } from "../../diagnostics/diagnostics";
 import { Diagnostics } from "../../diagnostics/messages";

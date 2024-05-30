@@ -1,5 +1,5 @@
-import { booT, Cell, CellHost, create_flt, create_int, create_str, create_sym, create_tensor, epsilon, et, imu, is_keyword, is_rat, is_str, is_sym, Lambda, Map, Sym } from "math-expression-atoms";
-import { Atom, Cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { booT, Cell, CellHost, create_flt, create_int, create_str, create_sym, create_tensor, epsilon, et, imu, is_keyword, is_rat, is_str, is_sym, Lambda, Map, Sym } from "@stemcmicro/atoms";
+import { Atom, Cons, is_atom, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { hook_create_err } from "../hooks/hook_create_err";
 import { create_uom } from "../operators/uom/uom";
 

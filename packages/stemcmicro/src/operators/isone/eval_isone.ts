@@ -1,7 +1,7 @@
-import { Boo, booF, create_boo } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, is_atom, U } from "math-expression-tree";
+import { Boo, booF, create_boo } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, is_atom, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 
 const ISONE = native_sym(Native.isone);

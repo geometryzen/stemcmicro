@@ -1,1 +1,1 @@
-export { delta, epsilon, Hyp } from "math-expression-atoms";
+export { delta, epsilon, Hyp } from "@stemcmicro/atoms";

@@ -1,6 +1,6 @@
-import { is_rat, Rat, Sym, zero } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { U } from "math-expression-tree";
+import { is_rat, Rat, Sym, zero } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";

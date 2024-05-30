@@ -1,4 +1,4 @@
-import { BigInteger, create_sym } from "math-expression-atoms";
+import { BigInteger, create_sym } from "@stemcmicro/atoms";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { MATH_COS, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_POW, MATH_SIN, MATH_TAN } from "./ns_math";

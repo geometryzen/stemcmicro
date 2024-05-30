@@ -1,5 +1,5 @@
-import { Flt, is_flt, negOne, one, Rat, Sym, zero } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { Flt, is_flt, negOne, one, Rat, Sym, zero } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
 import { SGN } from "../../runtime/constants";

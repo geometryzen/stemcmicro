@@ -1,6 +1,6 @@
-import { Adapter, Blade, create_algebra, create_flt, create_int, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, one, SumTerm, Tensor, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { cons, Cons, items_to_cons, U } from "math-expression-tree";
+import { Adapter, Blade, create_algebra, create_flt, create_int, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, one, SumTerm, Tensor, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { cons, Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { isone } from "../../helpers/isone";
 import { iszero } from "../../helpers/iszero";
 import { multiply } from "../../helpers/multiply";

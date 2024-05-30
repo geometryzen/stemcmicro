@@ -1,5 +1,5 @@
 import assert from "assert";
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 /**
  * A useful function for diagnosing problems.
  * Use in conjunction with the execute function.

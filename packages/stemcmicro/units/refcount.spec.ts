@@ -1,5 +1,5 @@
 import assert from "assert";
-import { JsAtom } from "math-expression-atoms";
+import { JsAtom } from "@stemcmicro/atoms";
 import { StackU } from "../src/env/StackU";
 
 class Widget extends JsAtom {

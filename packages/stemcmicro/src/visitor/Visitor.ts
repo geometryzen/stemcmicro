@@ -1,5 +1,5 @@
-import { Boo, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
+import { Boo, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
+import { Cons, U } from "@stemcmicro/tree";
 
 /**
  * TODO: This probably should recognize all atoms known to Extensibe Data Notation?

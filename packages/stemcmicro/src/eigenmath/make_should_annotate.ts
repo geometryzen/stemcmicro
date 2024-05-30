@@ -1,5 +1,5 @@
-import { is_native_sym } from "math-expression-native";
-import { is_nil, U } from "math-expression-tree";
+import { is_native_sym } from "@stemcmicro/native";
+import { is_nil, U } from "@stemcmicro/tree";
 import { Sym } from "../tree/sym/Sym";
 import { ProgramEnv } from "./ProgramEnv";
 

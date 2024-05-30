@@ -1,7 +1,7 @@
-import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_keyword, is_num, is_rat, is_str, is_sym, is_uom, one, Rat, Sym, zero } from "math-expression-atoms";
-import { ExprContext, ExprHandler } from "math-expression-context";
-import { is_native, Native, native_sym } from "math-expression-native";
-import { car, cdr, Cons, is_atom, is_cons, nil, U } from "math-expression-tree";
+import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_keyword, is_num, is_rat, is_str, is_sym, is_uom, one, Rat, Sym, zero } from "@stemcmicro/atoms";
+import { ExprContext, ExprHandler } from "@stemcmicro/context";
+import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { mp_denominator, mp_numerator } from "../bignum";
 import { lt_num_num } from "../calculators/compare/lt_num_num";
 import { is_localizable } from "../diagnostics/localizable";

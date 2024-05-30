@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Dimensions, QQ, Uom } from "math-expression-atoms";
+import { Dimensions, QQ, Uom } from "@stemcmicro/atoms";
 
 const Rat0 = QQ.valueOf(0, 1);
 const Rat1 = QQ.valueOf(1, 1);

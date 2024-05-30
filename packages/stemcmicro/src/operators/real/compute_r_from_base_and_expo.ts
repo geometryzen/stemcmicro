@@ -1,6 +1,6 @@
-import { ExprContext } from "math-expression-context";
-import { exp, log, multiply, real } from "math-expression-native";
-import { U } from "math-expression-tree";
+import { ExprContext } from "@stemcmicro/context";
+import { exp, log, multiply, real } from "@stemcmicro/native";
+import { U } from "@stemcmicro/tree";
 
 export function compute_r_from_base_and_expo(base: U, expo: U, $: Pick<ExprContext, "valueOf">): U {
     const a = log(base);

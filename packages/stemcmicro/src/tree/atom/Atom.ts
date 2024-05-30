@@ -1,1 +1,1 @@
-export { JsAtom } from "math-expression-atoms";
+export { JsAtom } from "@stemcmicro/atoms";

@@ -1,5 +1,5 @@
-import { create_boo, create_flt, create_sym, is_jsobject, is_sym, Str } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
+import { create_boo, create_flt, create_sym, is_jsobject, is_sym, Str } from "@stemcmicro/atoms";
+import { Cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";

@@ -1,6 +1,6 @@
 import assert from "assert";
-import { JsAtom } from "math-expression-atoms";
-import { car, cdr, Cons, is_cons, is_singleton, items_to_cons, nil, U } from "math-expression-tree";
+import { JsAtom } from "@stemcmicro/atoms";
+import { car, cdr, Cons, is_cons, is_singleton, items_to_cons, nil, U } from "@stemcmicro/tree";
 
 /**
  * A simple atom for testing purposes.

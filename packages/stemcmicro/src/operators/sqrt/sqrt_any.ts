@@ -1,6 +1,6 @@
-import { Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons1, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons1, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { half } from "../../tree/rat/Rat";

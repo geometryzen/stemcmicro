@@ -1,4 +1,4 @@
-import { imu, is_blade, is_uom } from "math-expression-atoms";
+import { imu, is_blade, is_uom } from "@stemcmicro/atoms";
 import { count_factors } from "../../calculators/count_factors";
 import { remove_factors } from "../../calculators/remove_factors";
 import { EnvConfig } from "../../env/EnvConfig";

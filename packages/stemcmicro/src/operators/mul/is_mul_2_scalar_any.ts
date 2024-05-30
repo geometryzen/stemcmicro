@@ -1,6 +1,6 @@
-import { Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons2, is_cons, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons2, is_cons, U } from "@stemcmicro/tree";
 import { isscalar } from "../../helpers/isscalar";
 import { is_mul_2_any_any } from "./is_mul_2_any_any";
 

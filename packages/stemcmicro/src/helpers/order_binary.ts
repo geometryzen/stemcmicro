@@ -1,6 +1,6 @@
-import { Sym } from "math-expression-atoms";
-import { ExprContext, SIGN_GT, SIGN_LT } from "math-expression-context";
-import { items_to_cons, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { ExprContext, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
+import { items_to_cons, U } from "@stemcmicro/tree";
 
 /**
  * Ensures the ordering of binary products. There is no evaluation.

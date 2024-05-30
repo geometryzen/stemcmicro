@@ -1,6 +1,6 @@
-import { Blade, is_blade, Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, U } from "math-expression-tree";
+import { Blade, is_blade, Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { Function2 } from "../helpers/Function2";

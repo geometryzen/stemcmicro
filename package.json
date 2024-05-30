@@ -17,10 +17,10 @@
         "lerna-version": "lerna --version"
     },
     "workspaces": [
-        "packages/math-expression-atoms",
-        "packages/math-expression-context",
-        "packages/math-expression-native",
-        "packages/math-expression-tree",
+        "packages/stemcmicro-atoms",
+        "packages/stemcmicro-context",
+        "packages/stemcmicro-native",
+        "packages/stemcmicro-tree",
         "packages/stemcmicro"
     ],
     "devDependencies": {

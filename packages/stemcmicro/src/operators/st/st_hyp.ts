@@ -1,5 +1,5 @@
-import { Hyp, is_hyp, Sym, zero } from "math-expression-atoms";
-import { Cons1, U } from "math-expression-tree";
+import { Hyp, is_hyp, Sym, zero } from "@stemcmicro/atoms";
+import { Cons1, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_HYP, hash_unaop_atom } from "../../hashing/hash_info";

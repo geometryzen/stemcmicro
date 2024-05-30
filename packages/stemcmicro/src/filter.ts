@@ -1,5 +1,5 @@
-import { is_tensor, Tensor, zero } from "math-expression-atoms";
-import { car, cdr, Cons, is_cons, U } from "math-expression-tree";
+import { is_tensor, Tensor, zero } from "@stemcmicro/atoms";
+import { car, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { is_add } from "./runtime/helpers";
 

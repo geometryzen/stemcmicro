@@ -1,5 +1,5 @@
 import assert from "assert";
-import { is_nil } from "math-expression-tree";
+import { is_nil } from "@stemcmicro/tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";

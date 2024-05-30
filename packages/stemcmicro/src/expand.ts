@@ -1,6 +1,6 @@
-import { create_int, one, Tensor, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons, U } from "math-expression-tree";
+import { create_int, one, Tensor, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { factors } from "./factors";
 import { filter } from "./filter";

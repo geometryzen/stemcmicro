@@ -1,6 +1,6 @@
-import { assert_tensor, create_int, is_num, one, Tensor, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { items_to_cons, U } from "math-expression-tree";
+import { assert_tensor, create_int, is_num, one, Tensor, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { items_to_cons, U } from "@stemcmicro/tree";
 import { Sign } from "../../env/ExtensionEnv";
 import { add } from "../../helpers/add";
 import { divide } from "../../helpers/divide";

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import assert from "assert";
-import { assert_rat, create_sym, Err, JsAtom, Str, Sym } from "math-expression-atoms";
-import { ExprContext, ExprHandler, LambdaExpr } from "math-expression-context";
-import { Native } from "math-expression-native";
-import { Cons, is_nil, nil, U } from "math-expression-tree";
+import { assert_rat, create_sym, Err, JsAtom, Str, Sym } from "@stemcmicro/atoms";
+import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
+import { Native } from "@stemcmicro/native";
+import { Cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { create_engine, ExprEngine, ExprHandlerBuilder } from "../src/api/api";
 import { hash_for_atom } from "../src/hashing/hash_info";
 

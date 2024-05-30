@@ -1,5 +1,5 @@
-import { is_uom, Uom } from "math-expression-atoms";
-import { is_cons, U } from "math-expression-tree";
+import { is_uom, Uom } from "@stemcmicro/atoms";
+import { is_cons, U } from "@stemcmicro/tree";
 import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { count_factors } from "../count_factors";
 import { remove_factors } from "../remove_factors";

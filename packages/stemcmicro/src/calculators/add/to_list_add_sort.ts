@@ -1,6 +1,6 @@
-import { is_num, is_tensor, Num, one, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { assert_cons_or_nil, car, cdr, cons, is_cons, items_to_cons, nil, U } from "math-expression-tree";
+import { is_num, is_tensor, Num, one, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { assert_cons_or_nil, car, cdr, cons, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { add } from "../../helpers/add";
 import { iszero } from "../../helpers/iszero";
 import { multiply } from "../../helpers/multiply";

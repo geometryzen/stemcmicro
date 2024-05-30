@@ -1,5 +1,5 @@
 {
-    "name": "stemcmicro",
+    "name": "@stemcmicro/core",
     "version": "0.9.42",
     "description": "Computer Algebra System in TypeScript",
     "exports": {
@@ -215,10 +215,10 @@
         "typhon-lang": "^1.0.13"
     },
     "peerDependencies": {
-        "math-expression-atoms": "file:../math-expression-atoms",
-        "math-expression-context": "file:../math-expression-context",
-        "math-expression-native": "file:../math-expression-native",
-        "math-expression-tree": "file:../math-expression-tree"
+        "@stemcmicro/atoms": "file:../stemcmicro-atoms",
+        "@stemcmicro/context": "file:../stemcmicro-context",
+        "@stemcmicro/native": "file:../stemcmicro-native",
+        "@stemcmicro/tree": "file:../stemcmicro-tree"
     },
     "gitHead": "8b3cc97479caad9c72e6b06716fc33cfa998919d"
 }

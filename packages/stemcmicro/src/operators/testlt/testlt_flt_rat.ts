@@ -1,6 +1,6 @@
-import { Flt, is_flt, is_rat, Rat, Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons2 } from "math-expression-tree";
+import { Flt, is_flt, is_rat, Rat, Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons2 } from "@stemcmicro/tree";
 import { compare_num_num } from "../../calculators/compare/compare_num_num";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, mkbuilder } from "../../env/ExtensionEnv";

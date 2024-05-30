@@ -1,6 +1,6 @@
-import { Hyp, is_sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons, is_atom, U } from "math-expression-tree";
+import { Hyp, is_sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons, is_atom, U } from "@stemcmicro/tree";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
 export function eval_differential(expr: Cons, env: ExprContext): U {

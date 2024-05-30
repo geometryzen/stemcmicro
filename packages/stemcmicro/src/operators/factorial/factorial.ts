@@ -1,5 +1,5 @@
-import { create_int, one, zero } from "math-expression-atoms";
-import { is_cons, is_nil, items_to_cons, nil, U } from "math-expression-tree";
+import { create_int, one, zero } from "@stemcmicro/atoms";
+import { is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { bignum_factorial } from "../../bignum";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { nativeInt } from "../../nativeInt";

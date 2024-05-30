@@ -1,7 +1,7 @@
-import { assert_str } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { items_to_cons, U } from "math-expression-tree";
+import { assert_str } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { items_to_cons, U } from "@stemcmicro/tree";
 
 const INFIX = native_sym(Native.infix);
 

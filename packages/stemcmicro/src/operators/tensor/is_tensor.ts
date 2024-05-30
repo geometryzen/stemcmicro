@@ -1,1 +1,1 @@
-export { is_tensor } from "math-expression-atoms";
+export { is_tensor } from "@stemcmicro/atoms";

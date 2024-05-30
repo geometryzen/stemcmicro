@@ -1,6 +1,6 @@
-import { create_int, is_rat, is_sym, one, Rat } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { U } from "math-expression-tree";
+import { create_int, is_rat, is_sym, one, Rat } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { yyfactorpoly } from "../../factorpoly";
 import { is_poly_expanded_form } from "../../is";

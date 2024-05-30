@@ -1,6 +1,6 @@
-import { Boo, booF, booT, one, Rat, Sym, zero } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, U } from "math-expression-tree";
+import { Boo, booF, booT, one, Rat, Sym, zero } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { CompositeOperator } from "../helpers/CompositeOperator";

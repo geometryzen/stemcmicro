@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { create_sym, is_lambda, Lambda, Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons, nil, U } from "math-expression-tree";
+import { create_sym, is_lambda, Lambda, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons, nil, U } from "@stemcmicro/tree";
 import { diagnostic } from "../../diagnostics/diagnostics";
 import { Diagnostics } from "../../diagnostics/messages";
 import { Extension, ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";

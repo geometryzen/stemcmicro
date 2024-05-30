@@ -1,4 +1,4 @@
-import { car, Cons, U } from "math-expression-tree";
+import { car, Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { items_to_cons } from "../../makeList";
 import { ARCTANH, TANH } from "../../runtime/constants";

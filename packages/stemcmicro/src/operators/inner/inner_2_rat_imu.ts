@@ -1,5 +1,5 @@
-import { Imu, is_imu, is_rat, Rat, Sym } from "math-expression-atoms";
-import { items_to_cons, U } from "math-expression-tree";
+import { Imu, is_imu, is_rat, Rat, Sym } from "@stemcmicro/atoms";
+import { items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_IMU, HASH_RAT } from "../../hashing/hash_info";

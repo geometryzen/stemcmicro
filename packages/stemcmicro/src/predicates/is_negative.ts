@@ -1,4 +1,4 @@
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 import { is_add } from "../runtime/helpers";
 import { is_negative_term } from "./is_negative_term";
 

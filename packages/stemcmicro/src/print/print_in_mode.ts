@@ -1,4 +1,4 @@
-import { Cons, is_cons, U } from "math-expression-tree";
+import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { PrintMode } from "../runtime/defs";
 import { get_last_print_mode_symbol, render_using_non_sexpr_print_mode } from "./print";

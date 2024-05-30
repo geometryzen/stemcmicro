@@ -1,5 +1,5 @@
-import { bigInt, create_flt, is_flt, is_num, is_rat, negOne, Rat } from "math-expression-atoms";
-import { items_to_cons, U } from "math-expression-tree";
+import { bigInt, create_flt, is_flt, is_num, is_rat, negOne, Rat } from "@stemcmicro/atoms";
+import { items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { mdiv } from "./mmul";
 import { is_num_and_negative } from "./predicates/is_negative_number";

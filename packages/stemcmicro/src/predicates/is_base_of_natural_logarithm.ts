@@ -1,6 +1,6 @@
-import { is_num, is_sym, Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { U } from "math-expression-tree";
+import { is_num, is_sym, Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { U } from "@stemcmicro/tree";
 import { is_power } from "../runtime/helpers";
 
 const MATH_E = native_sym(Native.E);

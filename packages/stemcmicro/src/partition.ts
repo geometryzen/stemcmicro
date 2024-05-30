@@ -1,6 +1,6 @@
-import { one } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { cdr, is_cons, U } from "math-expression-tree";
+import { one } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { cdr, is_cons, U } from "@stemcmicro/tree";
 import { multiply } from "./helpers/multiply";
 
 /*

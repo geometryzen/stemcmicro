@@ -1,5 +1,5 @@
-import { Err, is_tensor, one, Sym, Tensor, zero } from "math-expression-atoms";
-import { Cons, is_cons, items_to_cons, U } from "math-expression-tree";
+import { Err, is_tensor, one, Sym, Tensor, zero } from "@stemcmicro/atoms";
+import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { divide } from "./helpers/divide";
 import { det } from "./operators/det/det";

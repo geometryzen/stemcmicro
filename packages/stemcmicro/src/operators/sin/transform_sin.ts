@@ -1,4 +1,4 @@
-import { create_int, negOne, one, zero } from "math-expression-atoms";
+import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
 import { rational } from "../../bignum";
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";

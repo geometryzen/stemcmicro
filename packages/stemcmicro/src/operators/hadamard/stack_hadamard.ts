@@ -1,4 +1,4 @@
-import { Cons, is_cons } from "math-expression-tree";
+import { Cons, is_cons } from "@stemcmicro/tree";
 import { copy_tensor, istensor, multiply, stopf, value_of } from "../../eigenmath/eigenmath";
 import { ProgramControl } from "../../eigenmath/ProgramControl";
 import { ProgramEnv } from "../../eigenmath/ProgramEnv";

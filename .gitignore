@@ -3,7 +3,3 @@ node_modules/
 packages/*/node_modules
 packages/*/dist
 packages/*/docs
-packages/core/www/main.js
-packages/core/www/main.js.map
-packages/euclid/www/main.js
-packages/euclid/www/main.js.map

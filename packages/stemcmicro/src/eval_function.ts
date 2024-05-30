@@ -1,5 +1,5 @@
-import { is_num, is_str, is_sym, is_tensor, Tensor } from "math-expression-atoms";
-import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from "math-expression-tree";
+import { is_num, is_str, is_sym, is_tensor, Tensor } from "@stemcmicro/atoms";
+import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { StackU } from "./env/StackU";
 import { eval_derivative } from "./operators/derivative/eval_derivative";

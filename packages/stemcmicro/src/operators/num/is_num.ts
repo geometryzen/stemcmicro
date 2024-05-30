@@ -1,5 +1,5 @@
-import { is_flt, is_rat, Num } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { is_flt, is_rat, Num } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 
 /**
  * Determines whether an atom belongs to the class of numbers.

@@ -1,1 +1,1 @@
-export { create_sym, Sym } from "math-expression-atoms";
+export { create_sym, Sym } from "@stemcmicro/atoms";

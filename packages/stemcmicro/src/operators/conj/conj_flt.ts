@@ -1,4 +1,4 @@
-import { is_flt } from "math-expression-atoms";
+import { is_flt } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Flt } from "../../tree/flt/Flt";

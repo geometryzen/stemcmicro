@@ -1,4 +1,4 @@
-import { Cons } from "math-expression-tree";
+import { Cons } from "@stemcmicro/tree";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { MATH_MUL } from "../../runtime/ns_math";
 

@@ -1,7 +1,7 @@
-import { Blade, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, one, Rat, Str, Sym, Tensor, Uom } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { is_native, Native, native_sym } from "math-expression-native";
-import { Atom, car, cdr, Cons, is_atom, is_cons, nil, U } from "math-expression-tree";
+import { Blade, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, one, Rat, Str, Sym, Tensor, Uom } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { Atom, car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { mp_denominator, mp_numerator } from "../bignum";
 import { Directive } from "../env/ExtensionEnv";
 import { isone } from "../helpers/isone";

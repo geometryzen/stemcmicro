@@ -1,5 +1,5 @@
-import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_imu, is_num, is_tensor, Sym } from "math-expression-atoms";
-import { assert_cons, Cons, nil, U } from "math-expression-tree";
+import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_imu, is_num, is_tensor, Sym } from "@stemcmicro/atoms";
+import { assert_cons, Cons, nil, U } from "@stemcmicro/tree";
 import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
 import { StackFunction } from "../adapters/StackFunction";
 import { Directive } from "../env/ExtensionEnv";

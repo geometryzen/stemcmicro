@@ -1,5 +1,5 @@
-import { create_int, Rat } from "math-expression-atoms";
-import { Cons } from "math-expression-tree";
+import { create_int, Rat } from "@stemcmicro/atoms";
+import { Cons } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
 import { replace_assign_with_testeq } from "../predicate/replace_assign_with_testeq";

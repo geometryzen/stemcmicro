@@ -1,4 +1,4 @@
-import { is_flt } from "math-expression-atoms";
+import { is_flt } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_FLT } from "../../hashing/hash_info";

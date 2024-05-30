@@ -1,5 +1,5 @@
 import assert from "assert";
-import { create_int, create_tensor, Str } from "math-expression-atoms";
+import { create_int, create_tensor, Str } from "@stemcmicro/atoms";
 import { ExtensionEnv } from "../src/env/ExtensionEnv";
 import { create_uom } from "../src/operators/uom/uom";
 import { create_script_context, ScriptContext } from "../src/runtime/script_engine";

@@ -1,4 +1,4 @@
-[![npm version](https://badge.fury.io/js/stemcmicro.svg)](https://badge.fury.io/js/stemcmicro)
+[![npm version](https://badge.fury.io/js/@stemcmicro/core.svg)](https://badge.fury.io/js/@stemcmicro/core)
 
 STEMCmicro is a Javascript (Typescript) library for symbolic mathematics.
 
@@ -7,7 +7,7 @@ STEMCmicro is a Javascript (Typescript) library for symbolic mathematics.
 ```typescript
 
 import assert from 'assert';
-import { is_rat } from "math-expression-atoms";
+import { is_rat } from "@stemcmicro/atoms";
 import { create_engine, ExprEngine } from "../src/api/index";
 import { State, Stepper } from '../src/clojurescript/runtime/Interpreter';
 import { Stack } from "../src/env/Stack";

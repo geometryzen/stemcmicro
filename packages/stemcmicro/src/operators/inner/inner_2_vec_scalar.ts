@@ -1,5 +1,5 @@
-import { Blade, is_blade, Sym, zero } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { Blade, is_blade, Sym, zero } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { isscalar } from "../../helpers/isscalar";

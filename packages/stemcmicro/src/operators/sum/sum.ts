@@ -1,5 +1,5 @@
-import { create_int, is_sym, zero } from "math-expression-atoms";
-import { Cons, nil, U } from "math-expression-tree";
+import { create_int, is_sym, zero } from "@stemcmicro/atoms";
+import { Cons, nil, U } from "@stemcmicro/tree";
 import { cadnr } from "../../calculators/cadnr";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { halt } from "../../runtime/defs";

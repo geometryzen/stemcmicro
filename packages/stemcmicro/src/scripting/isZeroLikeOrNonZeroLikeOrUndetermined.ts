@@ -7,7 +7,7 @@
 // Note that if one wants to check if we have a simple
 // zero atom or tensor in our hands, then the isZeroAtomOrTensor
 
-import { is_boo } from "math-expression-atoms";
+import { is_boo } from "@stemcmicro/atoms";
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { imu } from "../env/imu";
 import { evaluate_as_float } from "../operators/float/float";

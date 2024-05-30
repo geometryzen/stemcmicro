@@ -1,5 +1,5 @@
-import { is_sym, Sym } from "math-expression-atoms";
-import { Cons, is_cons, nil, U } from "math-expression-tree";
+import { is_sym, Sym } from "@stemcmicro/atoms";
+import { Cons, is_cons, nil, U } from "@stemcmicro/tree";
 import { Stack } from "../../env/Stack";
 import { define_function } from "../../operators/assign/define_function";
 import { setq_indexed } from "../../operators/assign/setq_indexed";

@@ -1,5 +1,5 @@
-import { is_sym } from "math-expression-atoms";
-import { is_nil, U } from "math-expression-tree";
+import { is_sym } from "@stemcmicro/atoms";
+import { is_nil, U } from "@stemcmicro/tree";
 import { Sign } from "../../env/ExtensionEnv";
 import { compare_sym_sym } from "./compare_sym_sym";
 

@@ -1,4 +1,4 @@
-import { Cons, U } from "math-expression-tree";
+import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { simplify } from "./simplify";
 

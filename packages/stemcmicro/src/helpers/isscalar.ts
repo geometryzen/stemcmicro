@@ -1,5 +1,5 @@
-import { ExprContext } from "math-expression-context";
-import { U } from "math-expression-tree";
+import { ExprContext } from "@stemcmicro/context";
+import { U } from "@stemcmicro/tree";
 import { is_scalar } from "../operators/isscalar/is_scalar";
 
 // const ISSCALAR = native_sym(Native.);

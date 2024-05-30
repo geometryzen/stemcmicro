@@ -1,4 +1,4 @@
-import { is_blade } from "math-expression-atoms";
+import { is_blade } from "@stemcmicro/atoms";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { Cons2 } from "../../operators/helpers/Cons2";

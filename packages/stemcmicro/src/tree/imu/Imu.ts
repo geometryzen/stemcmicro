@@ -1,1 +1,1 @@
-export { Imu, imu } from "math-expression-atoms";
+export { Imu, imu } from "@stemcmicro/atoms";

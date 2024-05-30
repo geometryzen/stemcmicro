@@ -1,4 +1,4 @@
-import { ExprContext } from "math-expression-context";
+import { ExprContext } from "@stemcmicro/context";
 import { ScanOptions, scan_meta } from "../../algebrite/scan";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { guess } from "../../guess";

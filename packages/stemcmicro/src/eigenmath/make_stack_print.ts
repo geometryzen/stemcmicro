@@ -1,5 +1,5 @@
-import { create_sym, is_imu } from "math-expression-atoms";
-import { car, cdr, is_cons, nil, U } from "math-expression-tree";
+import { create_sym, is_imu } from "@stemcmicro/atoms";
+import { car, cdr, is_cons, nil, U } from "@stemcmicro/tree";
 import { get_binding, value_of } from "./eigenmath";
 import { make_should_annotate } from "./make_should_annotate";
 import { print_value_and_input_as_svg_or_infix } from "./print_value_and_input_as_svg_or_infix";

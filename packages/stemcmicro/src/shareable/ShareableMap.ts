@@ -1,4 +1,4 @@
-import { Shareable } from "math-expression-tree";
+import { Shareable } from "@stemcmicro/tree";
 import { ProgrammingError } from "../programming/ProgrammingError";
 
 export class ShareableMap<K, V extends Shareable> implements Shareable {

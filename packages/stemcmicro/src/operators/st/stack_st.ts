@@ -1,5 +1,5 @@
-import { is_hyp, zero } from "math-expression-atoms";
-import { Cons, is_atom } from "math-expression-tree";
+import { is_hyp, zero } from "@stemcmicro/atoms";
+import { Cons, is_atom } from "@stemcmicro/tree";
 import { value_of } from "../../eigenmath/eigenmath";
 import { ProgramControl } from "../../eigenmath/ProgramControl";
 import { ProgramEnv } from "../../eigenmath/ProgramEnv";

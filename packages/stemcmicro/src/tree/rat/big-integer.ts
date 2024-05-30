@@ -1,4 +1,4 @@
-import { BigInteger } from "math-expression-atoms";
+import { BigInteger } from "@stemcmicro/atoms";
 import { BASE, DEFAULT_ALPHABET, isPrecise, truncate } from "./big-helpers";
 
 export { BigInteger };

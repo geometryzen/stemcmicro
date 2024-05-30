@@ -1,1 +1,1 @@
-export { Lambda } from "math-expression-atoms";
+export { Lambda } from "@stemcmicro/atoms";

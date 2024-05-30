@@ -1,7 +1,7 @@
-import { create_sym, is_blade, is_flt, is_num, is_tensor, Num, one, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { assert_cons_or_nil, car, cdr, cons, Cons, is_atom, is_nil, items_to_cons, U } from "math-expression-tree";
+import { create_sym, is_blade, is_flt, is_num, is_tensor, Num, one, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { assert_cons_or_nil, car, cdr, cons, Cons, is_atom, is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { add_num_num } from "../../calculators/add/add_num_num";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";

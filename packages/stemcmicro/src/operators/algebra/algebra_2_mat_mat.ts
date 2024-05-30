@@ -1,5 +1,5 @@
-import { assert_tensor, create_sym, is_tensor, Sym, Tensor } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
+import { assert_tensor, create_sym, is_tensor, Sym, Tensor } from "@stemcmicro/atoms";
+import { Cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_TENSOR } from "../../hashing/hash_info";
 import { Function2 } from "../helpers/Function2";

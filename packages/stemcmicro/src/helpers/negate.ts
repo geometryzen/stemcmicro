@@ -1,6 +1,6 @@
-import { create_int } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { U } from "math-expression-tree";
+import { create_int } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { U } from "@stemcmicro/tree";
 import { multiply } from "./multiply";
 
 export function negate(_: Pick<ExprContext, "valueOf">, arg: U): U {

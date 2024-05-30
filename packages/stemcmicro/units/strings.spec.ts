@@ -1,6 +1,6 @@
 import assert from "assert";
-import { assert_str, is_str, Str } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { assert_str, is_str, Str } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { create_engine } from "../src/api/api";
 
 const core_with_nl = "a\nb";

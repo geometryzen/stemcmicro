@@ -1,4 +1,4 @@
-import { car, cdr, Cons, is_cons, U } from "math-expression-tree";
+import { car, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { cadr, cddr } from "../../tree/helpers";
 import { integral } from "../integral/integral_helpers";

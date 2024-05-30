@@ -1,6 +1,6 @@
-import { Blade, is_blade, is_rat, is_tensor, zero } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, U } from "math-expression-tree";
+import { Blade, is_blade, is_rat, is_tensor, zero } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, U } from "@stemcmicro/tree";
 import { assert_stack_length, combine_terms, cons, copy_tensor, list, pop, push, simplify_terms, sum_tensors, value_of_args } from "../../eigenmath/eigenmath";
 import { ProgramControl } from "../../eigenmath/ProgramControl";
 import { ProgramEnv } from "../../eigenmath/ProgramEnv";

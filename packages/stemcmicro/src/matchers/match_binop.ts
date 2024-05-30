@@ -1,5 +1,5 @@
-import { is_sym, Sym } from "math-expression-atoms";
-import { Cons, is_cons, U } from "math-expression-tree";
+import { is_sym, Sym } from "@stemcmicro/atoms";
+import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { args } from "../calculators/args";
 
 /**

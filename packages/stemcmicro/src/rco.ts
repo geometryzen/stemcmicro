@@ -1,5 +1,5 @@
-import { is_blade } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { is_blade } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 
 /**
  * Right Contraction (>>)

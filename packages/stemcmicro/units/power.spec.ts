@@ -1,5 +1,5 @@
 import assert from "assert";
-import { is_nil, U } from "math-expression-tree";
+import { is_nil, U } from "@stemcmicro/tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 import { Directive } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";

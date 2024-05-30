@@ -1,4 +1,4 @@
-import { car, cdr, U } from "math-expression-tree";
+import { car, cdr, U } from "@stemcmicro/tree";
 import { add_terms } from "../../../calculators/add/add_terms";
 import { ExtensionEnv } from "../../../env/ExtensionEnv";
 import { length_of_cons_otherwise_zero } from "../../../length_of_cons_or_zero";

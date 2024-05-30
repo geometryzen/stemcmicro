@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { create_sym, is_boo, Sym } from "math-expression-atoms";
-import { ExprContext, ExprHandler } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { Atom, Cons, is_atom, is_nil, nil, U } from "math-expression-tree";
+import { create_sym, is_boo, Sym } from "@stemcmicro/atoms";
+import { ExprContext, ExprHandler } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Atom, Cons, is_atom, is_nil, nil, U } from "@stemcmicro/tree";
 import { ExprHandlerBuilder } from "../api/api";
 import { diagnostic } from "../diagnostics/diagnostics";
 import { Diagnostics } from "../diagnostics/messages";

@@ -1,4 +1,4 @@
-import { ExprContext } from "math-expression-context";
+import { ExprContext } from "@stemcmicro/context";
 import { mp_numerator } from "../../bignum";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { isone } from "../../helpers/isone";

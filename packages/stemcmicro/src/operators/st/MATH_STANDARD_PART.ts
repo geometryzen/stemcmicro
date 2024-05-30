@@ -1,4 +1,4 @@
-import { Native, native_sym } from "math-expression-native";
+import { Native, native_sym } from "@stemcmicro/native";
 
 /**
  * Standard part function

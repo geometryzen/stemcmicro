@@ -1,6 +1,6 @@
-import { is_sym, Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { is_nil, items_to_cons, U } from "math-expression-tree";
+import { is_sym, Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
 import { ExprEngineListener } from "../api/api";
 import { infix_config_from_options } from "./format_infix";

@@ -1,6 +1,6 @@
-import { negOne } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { U } from "math-expression-tree";
+import { negOne } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { U } from "@stemcmicro/tree";
 import { Directive } from "../../env/ExtensionEnv";
 import { abs } from "../../helpers/abs";
 import { arg } from "../../helpers/arg";

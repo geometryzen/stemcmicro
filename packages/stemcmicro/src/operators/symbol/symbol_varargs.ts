@@ -1,5 +1,5 @@
-import { create_sym, is_str, is_tensor } from "math-expression-atoms";
-import { Cons, is_nil, U } from "math-expression-tree";
+import { create_sym, is_str, is_tensor } from "@stemcmicro/atoms";
+import { Cons, is_nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, mkbuilder, Predicates, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_nonop_cons, HASH_STR, HASH_TENSOR } from "../../hashing/hash_info";

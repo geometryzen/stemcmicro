@@ -1,6 +1,6 @@
-import { is_rat, is_sym } from "math-expression-atoms";
-import { is_native, Native } from "math-expression-native";
-import { car, cdr, Cons, is_cons } from "math-expression-tree";
+import { is_rat, is_sym } from "@stemcmicro/atoms";
+import { is_native, Native } from "@stemcmicro/native";
+import { car, cdr, Cons, is_cons } from "@stemcmicro/tree";
 import { isnegativenumber } from "./isnegativenumber";
 
 /**

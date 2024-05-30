@@ -1,6 +1,6 @@
-import { create_flt, create_int, is_flt, negOne, one, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { car, Cons, items_to_cons, U } from "math-expression-tree";
+import { create_flt, create_int, is_flt, negOne, one, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { car, Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";

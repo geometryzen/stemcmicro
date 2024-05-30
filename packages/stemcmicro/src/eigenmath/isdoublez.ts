@@ -1,5 +1,5 @@
-import { is_flt } from "math-expression-atoms";
-import { car, U } from "math-expression-tree";
+import { is_flt } from "@stemcmicro/atoms";
+import { car, U } from "@stemcmicro/tree";
 import { ADD, MULTIPLY, POWER } from "../runtime/constants";
 import { caddr, cadr } from "../tree/helpers";
 import { isequalq } from "./isequalq";

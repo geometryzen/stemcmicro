@@ -1,5 +1,5 @@
-import { assert_str, create_sym, is_str, is_sym, Str, Sym } from "math-expression-atoms";
-import { Cons3, nil, U } from "math-expression-tree";
+import { assert_str, create_sym, is_str, is_sym, Str, Sym } from "@stemcmicro/atoms";
+import { Cons3, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hook_create_err } from "../../hooks/hook_create_err";
 import { Function3 } from "../helpers/Function3";

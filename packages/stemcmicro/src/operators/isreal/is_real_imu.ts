@@ -1,6 +1,6 @@
-import { Boo, booF, Imu, is_imu, Rat, Sym, zero } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { U } from "math-expression-tree";
+import { Boo, booF, Imu, is_imu, Rat, Sym, zero } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";

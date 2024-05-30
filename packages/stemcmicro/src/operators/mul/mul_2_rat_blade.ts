@@ -1,5 +1,5 @@
-import { Blade, is_blade, is_rat, Rat, Sym, zero } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { Blade, is_blade, is_rat, Rat, Sym, zero } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE, HASH_RAT } from "../../hashing/hash_info";

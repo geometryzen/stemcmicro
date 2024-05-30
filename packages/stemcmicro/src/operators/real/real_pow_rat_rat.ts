@@ -1,4 +1,4 @@
-import { assert_rat, is_rat } from "math-expression-atoms";
+import { assert_rat, is_rat } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";

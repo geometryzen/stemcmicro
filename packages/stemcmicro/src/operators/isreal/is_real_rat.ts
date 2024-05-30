@@ -1,5 +1,5 @@
-import { Boo, booT, is_rat, one, Rat, Sym } from "math-expression-atoms";
-import { Cons1, U } from "math-expression-tree";
+import { Boo, booT, is_rat, one, Rat, Sym } from "@stemcmicro/atoms";
+import { Cons1, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";

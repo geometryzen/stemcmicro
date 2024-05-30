@@ -1,6 +1,6 @@
-import { is_imu, is_num, is_sym, is_tensor, is_uom, one } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { car, cdr, Cons, is_atom, is_cons } from "math-expression-tree";
+import { is_imu, is_num, is_sym, is_tensor, is_uom, one } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { car, cdr, Cons, is_atom, is_cons } from "@stemcmicro/tree";
 import { absfunc, add, denominator, divide, elementwise, expfunc, imag, multiply, multiply_factors, numerator, pop, power, push, push_integer, push_rational, real, rect, value_of } from "../../eigenmath/eigenmath";
 import { isminusone } from "../../eigenmath/isminusone";
 import { ProgramControl } from "../../eigenmath/ProgramControl";

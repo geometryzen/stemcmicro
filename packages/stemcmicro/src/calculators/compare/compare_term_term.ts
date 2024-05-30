@@ -1,6 +1,6 @@
-import { is_blade, is_boo } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { is_cons, U } from "math-expression-tree";
+import { is_blade, is_boo } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { is_cons, U } from "@stemcmicro/tree";
 import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { is_imu } from "../../operators/imu/is_imu";

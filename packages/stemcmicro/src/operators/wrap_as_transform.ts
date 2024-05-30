@@ -1,4 +1,4 @@
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 import { TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
 
 /**

@@ -1,6 +1,6 @@
-import { Flt, is_err, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, Num, Rat, Tensor } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Atom, car, cdr, Cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { Flt, is_err, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, Num, Rat, Tensor } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Atom, car, cdr, Cons, is_atom, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
 import { nativeStr } from "../nativeInt";
 import { is_imu } from "../operators/imu/is_imu";

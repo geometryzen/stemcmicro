@@ -1,5 +1,5 @@
-import { is_imu, is_rat, is_sym, negOne, one, Sym } from "math-expression-atoms";
-import { is_cons, items_to_cons, U } from "math-expression-tree";
+import { is_imu, is_rat, is_sym, negOne, one, Sym } from "@stemcmicro/atoms";
+import { is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";

@@ -1,4 +1,4 @@
-import { is_rat } from "math-expression-atoms";
+import { is_rat } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { MATH_POW } from "../../runtime/ns_math";

@@ -1,4 +1,4 @@
-import { Cons, U } from "math-expression-tree";
+import { Cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { HERMITE } from "../../runtime/constants";

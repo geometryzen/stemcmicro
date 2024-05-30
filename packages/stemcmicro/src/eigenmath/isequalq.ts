@@ -1,5 +1,5 @@
-import { create_rat, is_flt, is_rat } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { create_rat, is_flt, is_rat } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 
 export function isequalq(p: U, a: number, b: number): boolean {
     if (is_rat(p)) {

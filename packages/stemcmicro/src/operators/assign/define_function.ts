@@ -1,4 +1,4 @@
-import { Cons, items_to_cons } from "math-expression-tree";
+import { Cons, items_to_cons } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { EVAL, FUNCTION } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";

@@ -1,7 +1,7 @@
 import assert from "assert";
-import { create_int, create_sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { items_to_cons } from "math-expression-tree";
+import { create_int, create_sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { items_to_cons } from "@stemcmicro/tree";
 import { StackU } from "../src/env/StackU";
 import { flatten_items } from "../src/stack/flatten_items";
 

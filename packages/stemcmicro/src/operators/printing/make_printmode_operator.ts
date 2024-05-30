@@ -1,5 +1,5 @@
-import { create_sym, Sym } from "math-expression-atoms";
-import { Cons, is_cons, items_to_cons, nil, U } from "math-expression-tree";
+import { create_sym, Sym } from "@stemcmicro/atoms";
+import { Cons, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { print_in_mode } from "../../print/print_in_mode";

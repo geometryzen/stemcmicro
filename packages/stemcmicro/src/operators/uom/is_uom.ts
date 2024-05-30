@@ -1,1 +1,1 @@
-export { is_uom } from "math-expression-atoms";
+export { is_uom } from "@stemcmicro/atoms";

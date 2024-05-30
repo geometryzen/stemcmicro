@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Cons, is_cons, U } from "math-expression-tree";
+import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 
 function assert_cons(x: U): Cons {

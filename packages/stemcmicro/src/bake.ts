@@ -1,6 +1,6 @@
-import { create_int } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { car, cons, is_cons, items_to_cons, U } from "math-expression-tree";
+import { create_int } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { car, cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { iszero } from "./helpers/iszero";
 import { equaln, is_poly_expanded_form } from "./is";

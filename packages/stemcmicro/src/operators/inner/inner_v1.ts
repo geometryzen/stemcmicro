@@ -1,4 +1,4 @@
-import { is_blade, is_tensor } from "math-expression-atoms";
+import { is_blade, is_tensor } from "@stemcmicro/atoms";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { inv } from "../../inv";
 import { items_to_cons } from "../../makeList";

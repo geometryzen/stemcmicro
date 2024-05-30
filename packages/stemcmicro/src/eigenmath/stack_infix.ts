@@ -1,4 +1,4 @@
-import { Cons } from "math-expression-tree";
+import { Cons } from "@stemcmicro/tree";
 import { push_string, value_of } from "./eigenmath";
 import { infix_expr, infix_config_from_options } from "./format_infix";
 import { ProgramControl } from "./ProgramControl";

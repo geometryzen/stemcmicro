@@ -1,7 +1,7 @@
 import assert from "assert";
-import { create_sym, negOne } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { items_to_cons } from "math-expression-tree";
+import { create_sym, negOne } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { items_to_cons } from "@stemcmicro/tree";
 import { hash_info } from "../src/hashing/hash_info";
 
 describe("hash_info", function () {

@@ -29,8 +29,8 @@ import {
     Tag,
     Timestamp,
     Uuid
-} from "math-expression-atoms";
-import { is_cons, is_nil, pos_end_items_to_cons, U } from "math-expression-tree";
+} from "@stemcmicro/atoms";
+import { is_cons, is_nil, pos_end_items_to_cons, U } from "@stemcmicro/tree";
 import { EDNListParser, ParseConfig } from "../src/edn";
 
 describe("edn", function () {

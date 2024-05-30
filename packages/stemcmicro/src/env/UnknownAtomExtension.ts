@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { create_sym, Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Atom, Cons, is_atom, nil, U } from "math-expression-tree";
+import { create_sym, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Atom, Cons, is_atom, nil, U } from "@stemcmicro/tree";
 import { diagnostic } from "../diagnostics/diagnostics";
 import { Diagnostics } from "../diagnostics/messages";
 import { hash_for_atom } from "../hashing/hash_info";

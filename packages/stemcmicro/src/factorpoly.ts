@@ -1,7 +1,7 @@
-import { create_int, imu, negOne, one, Sym, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { items_to_cons, U } from "math-expression-tree";
+import { create_int, imu, negOne, one, Sym, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "./bignum";
 import { complex_conjugate } from "./complex_conjugate";
 import { yycondense } from "./condense";

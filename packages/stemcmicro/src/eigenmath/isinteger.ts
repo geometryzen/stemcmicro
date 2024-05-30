@@ -1,4 +1,4 @@
-import { Rat } from "math-expression-atoms";
+import { Rat } from "@stemcmicro/atoms";
 
 /**
  * @deprecated Use x.isInteger() instead.

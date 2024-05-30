@@ -1,4 +1,4 @@
-import { Cons, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { Cons, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { StackU } from "../env/StackU";
 import { ProgrammingError } from "../programming/ProgrammingError";
 

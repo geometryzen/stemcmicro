@@ -1,5 +1,5 @@
-import { is_sym } from "math-expression-atoms";
-import { Cons } from "math-expression-tree";
+import { is_sym } from "@stemcmicro/atoms";
+import { Cons } from "@stemcmicro/tree";
 import { MATH_OUTER } from "../../runtime/ns_math";
 
 export function is_outer(expr: Cons): boolean {

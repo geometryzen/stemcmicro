@@ -1,6 +1,6 @@
-import { is_flt, is_num, is_rat, Num, Rat } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { is_cons, U } from "math-expression-tree";
+import { is_flt, is_num, is_rat, Num, Rat } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { imu } from "./env/imu";
 import { guess } from "./guess";

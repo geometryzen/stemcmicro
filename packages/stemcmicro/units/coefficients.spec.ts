@@ -1,6 +1,6 @@
 import assert from "assert";
-import { is_tensor } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { is_tensor } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { create_engine } from "../src/api/api";
 
 describe("coefficients", function () {

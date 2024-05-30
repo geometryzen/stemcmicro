@@ -1,5 +1,5 @@
-import { Sym } from "math-expression-atoms";
-import { Cons, is_nil, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { Cons, is_nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 
 /**

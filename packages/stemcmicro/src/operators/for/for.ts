@@ -1,5 +1,5 @@
-import { create_int, is_sym } from "math-expression-atoms";
-import { Cons, nil, U } from "math-expression-tree";
+import { create_int, is_sym } from "@stemcmicro/atoms";
+import { Cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { halt } from "../../runtime/defs";
 import { evaluate_integer } from "../../scripting/evaluate_integer";

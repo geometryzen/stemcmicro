@@ -1,6 +1,6 @@
-import { assert_str, create_sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { items_to_cons, U } from "math-expression-tree";
+import { assert_str, create_sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { items_to_cons, U } from "@stemcmicro/tree";
 
 const LISTFORM = create_sym("listform");
 

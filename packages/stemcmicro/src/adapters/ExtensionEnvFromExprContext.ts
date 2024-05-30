@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CellHost, create_int, is_boo, is_rat, Sym, Tensor } from "math-expression-atoms";
-import { ExprContext, ExprHandler, LambdaExpr } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, is_atom, items_to_cons, nil, Shareable, U } from "math-expression-tree";
+import { CellHost, create_int, is_boo, is_rat, Sym, Tensor } from "@stemcmicro/atoms";
+import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, is_atom, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
 import { AtomListener, ExprEngineListener } from "../api/api";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { CompareFn, Directive, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";

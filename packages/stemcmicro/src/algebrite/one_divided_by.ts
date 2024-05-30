@@ -1,6 +1,6 @@
-import { is_flt, is_rat, negOne } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { items_to_cons, U } from "math-expression-tree";
+import { is_flt, is_rat, negOne } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { items_to_cons, U } from "@stemcmicro/tree";
 import { diagnostic } from "../diagnostics/diagnostics";
 import { Diagnostics } from "../diagnostics/messages";
 

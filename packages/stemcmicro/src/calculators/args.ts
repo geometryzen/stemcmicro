@@ -1,5 +1,5 @@
-import { is_sym } from "math-expression-atoms";
-import { Cons, is_cons, is_cons_or_nil, U } from "math-expression-tree";
+import { is_sym } from "@stemcmicro/atoms";
+import { Cons, is_cons, is_cons_or_nil, U } from "@stemcmicro/tree";
 
 /**
  * Unpacks a Cons expression into an array.

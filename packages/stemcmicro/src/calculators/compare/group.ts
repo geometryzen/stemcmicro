@@ -1,5 +1,5 @@
-import { is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_imu } from "../../operators/imu/is_imu";
 

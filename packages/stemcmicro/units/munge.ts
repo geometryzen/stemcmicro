@@ -1,5 +1,5 @@
 import assert from "assert";
-import { nil, U } from "math-expression-tree";
+import { nil, U } from "@stemcmicro/tree";
 import { create_engine, ExprEngineListener } from "../src/api/api";
 
 class TestListener implements ExprEngineListener {

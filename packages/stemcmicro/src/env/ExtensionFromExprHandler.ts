@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Sym } from "math-expression-atoms";
-import { ExprContext, ExprHandler } from "math-expression-context";
-import { Atom, Cons, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { ExprContext, ExprHandler } from "@stemcmicro/context";
+import { Atom, Cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, FEATURE } from "./ExtensionEnv";
 
 /**

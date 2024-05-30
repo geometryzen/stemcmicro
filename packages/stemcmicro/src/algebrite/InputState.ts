@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { create_keyword_ns, Keyword } from "math-expression-atoms";
-import { code_from_native_sym } from "math-expression-native";
+import { create_keyword_ns, Keyword } from "@stemcmicro/atoms";
+import { code_from_native_sym } from "@stemcmicro/native";
 import { split_qualified_name } from "../edn";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";

@@ -1,5 +1,5 @@
-import { create_int, is_tensor, Tensor, zero } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
+import { create_int, is_tensor, Tensor, zero } from "@stemcmicro/atoms";
+import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { halt } from "../../runtime/defs";
 import { cadr } from "../../tree/helpers";

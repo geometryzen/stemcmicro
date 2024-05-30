@@ -1,4 +1,4 @@
-import { create_int, negOne, one, zero } from "math-expression-atoms";
+import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { imu } from "./env/imu";
 import { divide } from "./helpers/divide";

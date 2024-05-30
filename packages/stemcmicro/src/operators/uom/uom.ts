@@ -1,4 +1,4 @@
-import { QQ, Uom } from "math-expression-atoms";
+import { QQ, Uom } from "@stemcmicro/atoms";
 
 const NEWTON = Uom.KILOGRAM.mul(Uom.METER).div(Uom.SECOND).div(Uom.SECOND);
 const JOULE = NEWTON.mul(Uom.METER);

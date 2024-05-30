@@ -1,5 +1,5 @@
-import { ExprContext } from "math-expression-context";
-import { Cons, U } from "math-expression-tree";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons, U } from "@stemcmicro/tree";
 import { StackU } from "../env/StackU";
 import { StackFunction } from "./StackFunction";
 

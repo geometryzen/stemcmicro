@@ -1,6 +1,6 @@
-import { is_rat, one } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { car, is_cons, U } from "math-expression-tree";
+import { is_rat, one } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { car, is_cons, U } from "@stemcmicro/tree";
 import { inverse } from "../../helpers/inverse";
 import { isone } from "../../helpers/isone";
 import { multiply_items } from "../../multiply";

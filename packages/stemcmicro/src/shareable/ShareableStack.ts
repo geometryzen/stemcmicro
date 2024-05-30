@@ -1,4 +1,4 @@
-import { Shareable } from "math-expression-tree";
+import { Shareable } from "@stemcmicro/tree";
 import { Stack } from "../env/Stack";
 
 export class ShareableStack<T extends Shareable> implements Shareable {

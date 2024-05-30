@@ -1,4 +1,4 @@
-import { Str } from "math-expression-atoms";
+import { Str } from "@stemcmicro/atoms";
 
 const Chars: Record<string, Str> = {};
 

@@ -1,5 +1,5 @@
-import { is_sym, Sym } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { is_sym, Sym } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
 export function assert_sym(expr: U): Sym {

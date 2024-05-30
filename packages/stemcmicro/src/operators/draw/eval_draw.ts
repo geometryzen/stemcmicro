@@ -1,4 +1,4 @@
-import { Cons, U } from "math-expression-tree";
+import { Cons, U } from "@stemcmicro/tree";
 import { StackFunction } from "../../adapters/StackFunction";
 import { make_stack_draw } from "../../eigenmath/make_stack_draw";
 import { ProgramIO } from "../../eigenmath/ProgramIO";

@@ -1,6 +1,6 @@
-import { imu, is_imu, is_tensor } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { is_cons, U } from "math-expression-tree";
+import { imu, is_imu, is_tensor } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { is_cons, U } from "@stemcmicro/tree";
 import { equaln } from "../is";
 import { is_rat_and_integer } from "../is_rat_and_integer";
 import { is_base_of_natural_logarithm } from "../predicates/is_base_of_natural_logarithm";

@@ -1,4 +1,4 @@
-import { Err } from "math-expression-atoms";
+import { Err } from "@stemcmicro/atoms";
 import { diagnostic } from "./diagnostics/diagnostics";
 import { Diagnostics } from "./diagnostics/messages";
 import { mdiv, mmul } from "./mmul";

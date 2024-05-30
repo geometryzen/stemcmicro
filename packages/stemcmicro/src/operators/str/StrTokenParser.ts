@@ -1,4 +1,4 @@
-import { Str } from "math-expression-atoms";
+import { Str } from "@stemcmicro/atoms";
 import { TokenParser } from "../../algebrite/ScanConfig";
 
 export class StrTokenParser implements TokenParser {

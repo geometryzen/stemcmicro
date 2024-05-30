@@ -1,5 +1,5 @@
 import assert from "assert";
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 import { create_engine } from "../src/api/api";
 import { is_multiply } from "../src/runtime/helpers";
 import { create_script_context } from "../src/runtime/script_engine";

@@ -1,4 +1,4 @@
-import { Cons, is_cons } from "math-expression-tree";
+import { Cons, is_cons } from "@stemcmicro/tree";
 
 export function arity(expr: Cons): number {
     const cdr_expr = expr.cdr;

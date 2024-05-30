@@ -1,6 +1,6 @@
 import assert from "assert";
-import { create_rat, create_sym, is_sym, Sym } from "math-expression-atoms";
-import { Cons, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { create_rat, create_sym, is_sym, Sym } from "@stemcmicro/atoms";
+import { Cons, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { zip } from "../src/functional/zip";
 import { items_to_cons } from "../src/makeList";
 import { ProgrammingError } from "../src/programming/ProgrammingError";

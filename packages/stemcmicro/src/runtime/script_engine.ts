@@ -1,6 +1,6 @@
-import { assert_sym, create_sym, Sym } from "math-expression-atoms";
-import { LambdaExpr } from "math-expression-context";
-import { Cons, U } from "math-expression-tree";
+import { assert_sym, create_sym, Sym } from "@stemcmicro/atoms";
+import { LambdaExpr } from "@stemcmicro/context";
+import { Cons, U } from "@stemcmicro/tree";
 import { define_geometric30_algebra, define_math_constant_pi, define_metric_prefixes_for_si_units, define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api/api";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";

@@ -1,5 +1,5 @@
-import { create_sym } from "math-expression-atoms";
-import { nil } from "math-expression-tree";
+import { create_sym } from "@stemcmicro/atoms";
+import { nil } from "@stemcmicro/tree";
 import { get_binding } from "./eigenmath";
 import { iszero } from "./iszero";
 import { ProgramEnv } from "./ProgramEnv";

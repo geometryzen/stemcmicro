@@ -1,4 +1,4 @@
-import { Cons, is_cons, U } from "math-expression-tree";
+import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { SystemError } from "../../runtime/SystemError";
 
 export function assert_cons(expr: U): Cons {

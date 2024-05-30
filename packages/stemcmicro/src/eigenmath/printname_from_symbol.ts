@@ -1,5 +1,5 @@
-import { Sym } from "math-expression-atoms";
-import { is_native, Native } from "math-expression-native";
+import { Sym } from "@stemcmicro/atoms";
+import { is_native, Native } from "@stemcmicro/native";
 
 export function printname_from_symbol(sym: Sym): string {
     if (is_native(sym, Native.PI)) {

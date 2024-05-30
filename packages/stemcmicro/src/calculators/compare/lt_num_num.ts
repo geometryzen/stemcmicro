@@ -1,4 +1,4 @@
-import { Num } from "math-expression-atoms";
+import { Num } from "@stemcmicro/atoms";
 import { SIGN_LT } from "../../env/ExtensionEnv";
 import { compare_num_num } from "./compare_num_num";
 

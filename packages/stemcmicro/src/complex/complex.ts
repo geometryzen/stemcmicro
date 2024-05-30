@@ -1,6 +1,6 @@
-import { is_flt } from "math-expression-atoms";
-import { ExprContext, Sign, SIGN_GT, SIGN_LT } from "math-expression-context";
-import { Shareable, U } from "math-expression-tree";
+import { is_flt } from "@stemcmicro/atoms";
+import { ExprContext, Sign, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
+import { Shareable, U } from "@stemcmicro/tree";
 import { abs } from "../helpers/abs";
 import { arg } from "../helpers/arg";
 

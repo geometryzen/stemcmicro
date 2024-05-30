@@ -1,7 +1,7 @@
-import { Boo, Cell, create_int, create_rat, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from "math-expression-atoms";
-import { ExprHandler, LambdaExpr } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { Atom, Cons, items_to_cons, nil, U } from "math-expression-tree";
+import { Boo, Cell, create_int, create_rat, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
+import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Atom, Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { AtomExtensionBuilderFromExprHandlerBuilder } from "../adapters/AtomExtensionBuilderFromExprHandlerBuilder";
 import { EmParseOptions } from "../algebrite/em_parse";
 import { Scope, Stepper } from "../clojurescript/runtime/Stepper";

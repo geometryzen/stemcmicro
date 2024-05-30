@@ -1,5 +1,5 @@
-import { Err } from "math-expression-atoms";
-import { is_nil, U } from "math-expression-tree";
+import { Err } from "@stemcmicro/atoms";
+import { is_nil, U } from "@stemcmicro/tree";
 
 /**
  * A hook to allow the inspection of errors as they are created.

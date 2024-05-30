@@ -1,5 +1,5 @@
-import { create_tensor } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
+import { create_tensor } from "@stemcmicro/atoms";
+import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { coefficients } from "./coeff";
 

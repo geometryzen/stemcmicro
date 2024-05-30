@@ -1,6 +1,6 @@
-import { create_flt, is_flt, zero } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { car, Cons, items_to_cons, U } from "math-expression-tree";
+import { create_flt, is_flt, zero } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { car, Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { COSH } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";

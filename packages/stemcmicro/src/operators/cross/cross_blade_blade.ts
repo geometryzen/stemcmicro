@@ -1,4 +1,4 @@
-import { Blade, is_blade, is_rat } from "math-expression-atoms";
+import { Blade, is_blade, is_rat } from "@stemcmicro/atoms";
 import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";

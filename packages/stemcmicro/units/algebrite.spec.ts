@@ -1,5 +1,5 @@
 import assert from "assert";
-import { assert_boo, assert_keyword, assert_map, assert_rat } from "math-expression-atoms";
+import { assert_boo, assert_keyword, assert_map, assert_rat } from "@stemcmicro/atoms";
 import { create_engine, ExprEngine } from "../src/api/api";
 
 describe("Eigenmath", function () {

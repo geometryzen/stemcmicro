@@ -5,8 +5,8 @@
 //  2  -1
 //  3  i
 
-import { imu, is_num } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { imu, is_num } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
 import { nativeInt } from "./nativeInt";

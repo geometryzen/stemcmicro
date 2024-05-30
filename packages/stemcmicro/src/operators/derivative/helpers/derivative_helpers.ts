@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { create_int, negOne, one, zero } from "math-expression-atoms";
-import { is_native, Native, native_sym } from "math-expression-native";
+import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
+import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { rational } from "../../../bignum";
 import { add_terms } from "../../../calculators/add/add_terms";
 import { dirac } from "../../../dirac";

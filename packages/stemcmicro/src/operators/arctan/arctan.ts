@@ -1,6 +1,6 @@
-import { create_flt, create_rat, is_flt, is_sym, is_tensor, Num, Sym } from "math-expression-atoms";
-import { is_native, Native, native_sym } from "math-expression-native";
-import { car, cdr, Cons, Cons1, is_cons, items_to_cons, nil, U } from "math-expression-tree";
+import { create_flt, create_rat, is_flt, is_sym, is_tensor, Num, Sym } from "@stemcmicro/atoms";
+import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { car, cdr, Cons, Cons1, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { eigenmath_arctan_numbers } from "../../eigenmath/eigenmath";
 import { isdoublez } from "../../eigenmath/isdoublez";

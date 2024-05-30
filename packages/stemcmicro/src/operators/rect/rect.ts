@@ -1,5 +1,5 @@
-import { imu, is_imu, is_sym, zero } from "math-expression-atoms";
-import { Cons, is_cons, items_to_cons, U } from "math-expression-tree";
+import { imu, is_imu, is_sym, zero } from "@stemcmicro/atoms";
+import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { cadnr } from "../../calculators/cadnr";
 import { count_factors } from "../../calculators/count_factors";
 import { remove_factors } from "../../calculators/remove_factors";

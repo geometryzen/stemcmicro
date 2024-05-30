@@ -1,6 +1,6 @@
-import { imu, negOne } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { items_to_cons, U } from "math-expression-tree";
+import { imu, negOne } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { items_to_cons, U } from "@stemcmicro/tree";
 import { MATH_MUL } from "../runtime/ns_math";
 
 export function divide_by_imu(expr: U, $: ExprContext): U {

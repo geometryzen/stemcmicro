@@ -1,4 +1,4 @@
-import { ExprContext } from "math-expression-context";
+import { ExprContext } from "@stemcmicro/context";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { iszero } from "../../helpers/iszero";
 import { is_add } from "../../runtime/helpers";

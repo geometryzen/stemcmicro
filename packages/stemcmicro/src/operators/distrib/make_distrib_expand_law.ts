@@ -1,5 +1,5 @@
-import { Sym } from "math-expression-atoms";
-import { Cons } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { Cons } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder } from "../../env/ExtensionEnv";
 import { DistributiveLawExpandLeft } from "./DistributiveLawExpandLeft";
 import { DistributiveLawExpandRight } from "./DistributiveLawExpandRight";

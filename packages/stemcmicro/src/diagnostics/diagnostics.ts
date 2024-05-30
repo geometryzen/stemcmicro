@@ -1,5 +1,5 @@
-import { Err } from "math-expression-atoms";
-import { items_to_cons, U } from "math-expression-tree";
+import { Err } from "@stemcmicro/atoms";
+import { items_to_cons, U } from "@stemcmicro/tree";
 import { hook_create_err } from "../hooks/hook_create_err";
 import { Localizable, LocalizableMessage } from "./localizable";
 

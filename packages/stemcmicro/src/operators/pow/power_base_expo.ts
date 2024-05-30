@@ -1,6 +1,6 @@
-import { create_flt, create_sym, imu, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, is_uom, negOne, one, QQ } from "math-expression-atoms";
-import { is_native, Native, native_sym } from "math-expression-native";
-import { car, is_atom, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
+import { create_flt, create_sym, imu, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, is_uom, negOne, one, QQ } from "@stemcmicro/atoms";
+import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { car, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { nativeDouble, rational } from "../../bignum";
 import { complex_conjugate } from "../../complex_conjugate";
 import { diagnostic } from "../../diagnostics/diagnostics";

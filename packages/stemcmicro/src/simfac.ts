@@ -1,4 +1,4 @@
-import { ExprContext } from "math-expression-context";
+import { ExprContext } from "@stemcmicro/context";
 import { add_terms } from "./calculators/add/add_terms";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { add } from "./helpers/add";

@@ -1,4 +1,4 @@
-import { Cons, U } from "math-expression-tree";
+import { Cons, U } from "@stemcmicro/tree";
 import { ProgramControl } from "../eigenmath/ProgramControl";
 import { ProgramEnv } from "../eigenmath/ProgramEnv";
 import { EvalFunction } from "../env/ExtensionEnv";

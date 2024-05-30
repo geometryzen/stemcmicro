@@ -1,6 +1,6 @@
-import { one, Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons2, items_to_cons, U } from "math-expression-tree";
+import { one, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons2, items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { isone } from "../../helpers/isone";

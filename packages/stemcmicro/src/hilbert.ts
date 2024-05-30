@@ -1,5 +1,5 @@
-import { create_int, Sym, Tensor } from "math-expression-atoms";
-import { Cons, items_to_cons, U } from "math-expression-tree";
+import { create_int, Sym, Tensor } from "@stemcmicro/atoms";
+import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { inverse } from "./helpers/inverse";
 import { nativeInt } from "./nativeInt";

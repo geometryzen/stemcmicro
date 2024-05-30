@@ -1,4 +1,4 @@
-import { ExprContext } from "math-expression-context";
+import { ExprContext } from "@stemcmicro/context";
 import { bignum_power_number, bignum_truncate } from "./bignum";
 import { iszero } from "./helpers/iszero";
 import { multiply } from "./helpers/multiply";

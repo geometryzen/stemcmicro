@@ -1,5 +1,5 @@
-import { Sym } from "math-expression-atoms";
-import { Cons, Cons2, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { Cons, Cons2, U } from "@stemcmicro/tree";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { is_binop } from "./is_binop";
 

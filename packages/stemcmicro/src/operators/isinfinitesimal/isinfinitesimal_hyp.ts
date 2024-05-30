@@ -1,5 +1,5 @@
-import { Hyp, is_hyp } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
+import { Hyp, is_hyp } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder } from "../../env/ExtensionEnv";
 import { HASH_HYP, hash_unaop_atom } from "../../hashing/hash_info";

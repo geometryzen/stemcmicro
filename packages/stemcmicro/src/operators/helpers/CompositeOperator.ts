@@ -1,5 +1,5 @@
-import { Sym } from "math-expression-atoms";
-import { Cons, Cons1, is_cons, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { Cons, Cons1, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { Function1 } from "./Function1";

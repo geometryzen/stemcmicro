@@ -1,6 +1,6 @@
-import { create_int, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons, U } from "math-expression-tree";
+import { create_int, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons, U } from "@stemcmicro/tree";
 import { add } from "./helpers/add";
 import { divide } from "./helpers/divide";
 import { multiply } from "./helpers/multiply";

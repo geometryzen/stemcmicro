@@ -1,5 +1,5 @@
-import { Blade, is_blade, Sym } from "math-expression-atoms";
-import { Cons2, U } from "math-expression-tree";
+import { Blade, is_blade, Sym } from "@stemcmicro/atoms";
+import { Cons2, U } from "@stemcmicro/tree";
 import { FEATURE, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_OUTER } from "../../runtime/ns_math";

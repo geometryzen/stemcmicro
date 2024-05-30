@@ -1,4 +1,4 @@
-import { create_int, create_rat, Rat } from "math-expression-atoms";
+import { create_int, create_rat, Rat } from "@stemcmicro/atoms";
 
 export { Rat };
 

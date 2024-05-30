@@ -1,4 +1,4 @@
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 import { Directive } from "../env/ExtensionEnv";
 import { PrintMode } from "../runtime/defs";
 import { PrintConfig, render_using_non_sexpr_print_mode } from "./print";

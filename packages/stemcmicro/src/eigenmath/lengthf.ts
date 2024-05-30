@@ -1,4 +1,4 @@
-import { cdr, is_cons, U } from "math-expression-tree";
+import { cdr, is_cons, U } from "@stemcmicro/tree";
 
 /**
  * Beware! atoms and nil will return zero.

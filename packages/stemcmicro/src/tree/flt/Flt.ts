@@ -1,4 +1,4 @@
-import { Flt } from "math-expression-atoms";
+import { Flt } from "@stemcmicro/atoms";
 
 // TODO: Use the cache to intern common Flt values.
 const cache: Flt[] = [];

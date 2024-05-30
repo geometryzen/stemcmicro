@@ -1,6 +1,6 @@
 
 import assert from "assert";
-import { is_str } from "math-expression-atoms";
+import { is_str } from "@stemcmicro/atoms";
 import { create_script_context } from "../src/runtime/script_engine";
 import { ts_parse } from "../src/typescript/ts_parse";
 import { assert_one_value } from "./assert_one_value";

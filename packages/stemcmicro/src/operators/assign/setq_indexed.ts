@@ -20,8 +20,8 @@
 //  cadadr(p1) -> a
 //
 
-import { is_sym } from "math-expression-atoms";
-import { Cons, is_cons, nil } from "math-expression-tree";
+import { is_sym } from "@stemcmicro/atoms";
+import { Cons, is_cons, nil } from "@stemcmicro/tree";
 import { set_component } from "../../calculators/set_component";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { defs } from "../../runtime/defs";

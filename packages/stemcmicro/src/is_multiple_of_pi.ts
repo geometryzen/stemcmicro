@@ -2,8 +2,8 @@
 // returns for the following multiples of pi...
 //  -4/2  -3/2  -2/2  -1/2  1/2  2/2  3/2  4/2
 
-import { ExprContext } from "math-expression-context";
-import { U } from "math-expression-tree";
+import { ExprContext } from "@stemcmicro/context";
+import { U } from "@stemcmicro/tree";
 import { multiply } from "./helpers/multiply";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
 import { nativeInt } from "./nativeInt";

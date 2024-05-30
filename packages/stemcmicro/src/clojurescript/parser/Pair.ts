@@ -1,4 +1,4 @@
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 
 /**
  * The parser requires a mutable for our Cons.

@@ -1,5 +1,5 @@
-import { ExprContext } from "math-expression-context";
-import { U } from "math-expression-tree";
+import { ExprContext } from "@stemcmicro/context";
+import { U } from "@stemcmicro/tree";
 import { imag } from "../../helpers/imag";
 import { log } from "../../helpers/log";
 import { multiply } from "../../helpers/multiply";

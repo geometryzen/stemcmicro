@@ -1,4 +1,4 @@
-import { Cons, U } from "math-expression-tree";
+import { Cons, U } from "@stemcmicro/tree";
 import { eval_dirac } from "../../dirac";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";

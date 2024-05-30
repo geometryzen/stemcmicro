@@ -1,4 +1,4 @@
-import { Cons, Cons2, U } from "math-expression-tree";
+import { Cons, Cons2, U } from "@stemcmicro/tree";
 
 /**
  * TODO: Rename is_cons2?

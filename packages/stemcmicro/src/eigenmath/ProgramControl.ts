@@ -1,5 +1,5 @@
-import { Sym } from "math-expression-atoms";
-import { CompareFn } from "math-expression-context";
+import { Sym } from "@stemcmicro/atoms";
+import { CompareFn } from "@stemcmicro/context";
 
 export interface ProgramControl {
     compareFn(opr: Sym): CompareFn;

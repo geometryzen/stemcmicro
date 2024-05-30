@@ -1,5 +1,5 @@
-import { is_flt, is_rat } from "math-expression-atoms";
-import { car, cdr, is_cons, items_to_cons, U } from "math-expression-tree";
+import { is_flt, is_rat } from "@stemcmicro/atoms";
+import { car, cdr, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { equaln, isminusoneoversqrttwo, isMinusSqrtThreeOverTwo, isoneoversqrttwo, isSqrtThreeOverTwo, is_num_and_equalq } from "../../is";

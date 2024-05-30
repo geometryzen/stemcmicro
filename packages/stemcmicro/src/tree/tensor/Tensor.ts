@@ -1,1 +1,1 @@
-export { Tensor } from "math-expression-atoms";
+export { Tensor } from "@stemcmicro/atoms";

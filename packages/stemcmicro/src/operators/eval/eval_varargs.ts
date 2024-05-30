@@ -1,5 +1,5 @@
-import { ExprContext } from "math-expression-context";
-import { Cons, is_cons, U } from "math-expression-tree";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { EVAL } from "../../runtime/constants";

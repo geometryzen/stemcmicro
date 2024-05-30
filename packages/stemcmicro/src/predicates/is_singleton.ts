@@ -1,1 +1,1 @@
-export { is_singleton } from "math-expression-tree";
+export { is_singleton } from "@stemcmicro/tree";

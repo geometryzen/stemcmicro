@@ -1,4 +1,4 @@
-import { Flt, Rat } from "math-expression-atoms";
+import { Flt, Rat } from "@stemcmicro/atoms";
 
 /**
  * The Num type is the union of Flt and Rat (and maybe Int in future).

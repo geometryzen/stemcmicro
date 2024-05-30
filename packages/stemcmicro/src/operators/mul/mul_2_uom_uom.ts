@@ -1,5 +1,5 @@
-import { create_int, is_uom, Sym, Uom } from "math-expression-atoms";
-import { U } from "math-expression-tree";
+import { create_int, is_uom, Sym, Uom } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_UOM } from "../../hashing/hash_info";

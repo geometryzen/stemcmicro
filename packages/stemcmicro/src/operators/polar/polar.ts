@@ -1,6 +1,6 @@
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
-import { Cons, U } from "math-expression-tree";
+import { Cons, U } from "@stemcmicro/tree";
 
 /*
 Convert complex z to polar form

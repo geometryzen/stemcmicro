@@ -1,5 +1,5 @@
-import { ExprContext } from "math-expression-context";
-import { assert_cons_or_nil, cons, is_atom, is_cons, nil, U } from "math-expression-tree";
+import { ExprContext } from "@stemcmicro/context";
+import { assert_cons_or_nil, cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 
 /**
  * BEWARE: The order of parameters does not match the scripting language which is (subst newExpr, oldExpr, expr).

@@ -1,6 +1,6 @@
 import assert from "assert";
-import { is_boo, is_tensor } from "math-expression-atoms";
-import { is_nil, U } from "math-expression-tree";
+import { is_boo, is_tensor } from "@stemcmicro/atoms";
+import { is_nil, U } from "@stemcmicro/tree";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 

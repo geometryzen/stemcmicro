@@ -1,6 +1,6 @@
-import { Sym } from "math-expression-atoms";
-import { CompareFn, ExprContext, ExprHandler } from "math-expression-context";
-import { Cons, Shareable, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { CompareFn, ExprContext, ExprHandler } from "@stemcmicro/context";
+import { Cons, Shareable, U } from "@stemcmicro/tree";
 import { value_of } from "../eigenmath/eigenmath";
 import { ProgramControl } from "../eigenmath/ProgramControl";
 import { ProgramEnv } from "../eigenmath/ProgramEnv";

@@ -1,4 +1,4 @@
-import { Blade } from "math-expression-atoms";
+import { Blade } from "@stemcmicro/atoms";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";

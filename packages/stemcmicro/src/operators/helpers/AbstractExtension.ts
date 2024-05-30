@@ -1,6 +1,6 @@
-import { is_sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { is_cons, items_to_cons, U } from "math-expression-tree";
+import { is_sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, Sign } from "../../env/ExtensionEnv";
 import { render_as_ascii } from "../../print/render_as_ascii";
 import { render_as_human } from "../../print/render_as_human";

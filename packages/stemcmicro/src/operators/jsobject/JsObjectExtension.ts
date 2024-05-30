@@ -1,6 +1,6 @@
-import { assert_jsobject, create_sym, is_jsobject, JsObject, Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons, nil, U } from "math-expression-tree";
+import { assert_jsobject, create_sym, is_jsobject, JsObject, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons, nil, U } from "@stemcmicro/tree";
 import { diagnostic } from "../../diagnostics/diagnostics";
 import { Diagnostics } from "../../diagnostics/messages";
 import { EnvConfig } from "../../env/EnvConfig";

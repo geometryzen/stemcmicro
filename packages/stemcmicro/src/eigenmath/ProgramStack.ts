@@ -1,4 +1,4 @@
-import { Shareable, U } from "math-expression-tree";
+import { Shareable, U } from "@stemcmicro/tree";
 
 export interface ProgramStack extends Shareable {
     get length(): number;

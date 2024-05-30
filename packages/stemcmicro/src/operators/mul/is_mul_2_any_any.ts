@@ -1,6 +1,6 @@
-import { Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, Cons2, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, Cons2, U } from "@stemcmicro/tree";
 import { is_opr_2_any_any } from "../helpers/is_opr_2_any_any";
 
 export function is_mul_2_any_any(expr: Cons): expr is Cons2<Sym, U, U> {

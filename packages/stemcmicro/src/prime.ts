@@ -1,5 +1,5 @@
-import { create_int, Rat } from "math-expression-atoms";
-import { Cons, U } from "math-expression-tree";
+import { create_int, Rat } from "@stemcmicro/atoms";
+import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { nativeInt } from "./nativeInt";
 import { MAXPRIMETAB, primetab } from "./runtime/constants";

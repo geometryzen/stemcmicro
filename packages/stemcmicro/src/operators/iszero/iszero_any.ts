@@ -1,6 +1,6 @@
-import { booF, Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons1, is_atom, U } from "math-expression-tree";
+import { booF, Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons1, is_atom, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";

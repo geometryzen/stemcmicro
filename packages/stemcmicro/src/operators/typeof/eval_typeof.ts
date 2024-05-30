@@ -1,5 +1,5 @@
-import { create_sym, Sym } from "math-expression-atoms";
-import { Cons, is_atom, is_cons } from "math-expression-tree";
+import { create_sym, Sym } from "@stemcmicro/atoms";
+import { Cons, is_atom, is_cons } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 

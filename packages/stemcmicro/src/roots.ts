@@ -1,7 +1,7 @@
-import { create_int, imu, is_rat, negOne, one, Tensor } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { car, Cons, nil, U } from "math-expression-tree";
+import { create_int, imu, is_rat, negOne, one, Tensor } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { car, Cons, nil, U } from "@stemcmicro/tree";
 import { rational } from "./bignum";
 import { add_terms } from "./calculators/add/add_terms";
 import { compare_expr_expr } from "./calculators/compare/compare_expr_expr";

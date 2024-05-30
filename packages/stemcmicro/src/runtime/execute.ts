@@ -1,6 +1,6 @@
-import { imu, is_imu, is_sym, Sym } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, is_cons, is_nil, items_to_cons, nil, U } from "math-expression-tree";
+import { imu, is_imu, is_sym, Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ScanOptions } from "../algebrite/scan";
 import { eval_bake } from "../bake";
 import { Directive, directive_from_flag, ExtensionEnv, flag_from_directive } from "../env/ExtensionEnv";

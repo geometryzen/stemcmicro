@@ -1,6 +1,6 @@
-import { is_tensor, one, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Cons, is_cons, U } from "math-expression-tree";
+import { is_tensor, one, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { condense } from "../../condense";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { add } from "../../helpers/add";

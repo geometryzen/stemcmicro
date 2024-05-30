@@ -1,5 +1,5 @@
 import assert from "assert";
-import { U } from "math-expression-tree";
+import { U } from "@stemcmicro/tree";
 import { ScriptContext, ScriptExecuteOptions } from "../src/runtime/script_engine";
 import { assert_one_value } from "./assert_one_value";
 

@@ -1,6 +1,6 @@
 import assert from "assert";
-import { is_rat, is_uom } from "math-expression-atoms";
-import { is_nil, U } from "math-expression-tree";
+import { is_rat, is_uom } from "@stemcmicro/atoms";
+import { is_nil, U } from "@stemcmicro/tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";

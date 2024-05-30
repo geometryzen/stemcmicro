@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Sym, Tensor } from "math-expression-atoms";
-import { LambdaExpr } from "math-expression-context";
-import { Native } from "math-expression-native";
-import { Cons, U } from "math-expression-tree";
+import { Sym, Tensor } from "@stemcmicro/atoms";
+import { LambdaExpr } from "@stemcmicro/context";
+import { Native } from "@stemcmicro/native";
+import { Cons, U } from "@stemcmicro/tree";
 import { CompareFn, Directive, EvalFunction, ExprComparator, ExtensionEnv, KeywordRunner, Predicates, PrintHandler } from "../../env/ExtensionEnv";
 import { Scope, Thing } from "./Stepper";
 

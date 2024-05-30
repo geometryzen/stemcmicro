@@ -1,4 +1,4 @@
-import { ExprContext } from "math-expression-context";
+import { ExprContext } from "@stemcmicro/context";
 import { nativeInt } from "../nativeInt";
 import { U } from "../tree/tree";
 

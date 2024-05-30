@@ -1,7 +1,7 @@
-import { create_int, is_imu, is_num, is_rat, one, Sym, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { car, cdr, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "math-expression-tree";
+import { create_int, is_imu, is_num, is_rat, one, Sym, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { car, cdr, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { nativeDouble } from "../../bignum";
 import { add_terms } from "../../calculators/add/add_terms";
 import { condense, yycondense } from "../../condense";

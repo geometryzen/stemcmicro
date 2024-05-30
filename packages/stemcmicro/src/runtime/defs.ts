@@ -2,9 +2,9 @@
 // WARNING This module should not depend on anything.
 // The imports below are for types only and will not create a dependency.
 //
-import { Flt, negOne, Rat, Sym } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { U } from "math-expression-tree";
+import { Flt, negOne, Rat, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { U } from "@stemcmicro/tree";
 import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { negOneAsFlt, piAsFlt } from "../tree/flt/Flt";
 import { MATH_PI } from "./ns_math";

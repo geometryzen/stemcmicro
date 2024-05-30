@@ -1,6 +1,6 @@
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, is_atom, nil, U } from "math-expression-tree";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, is_atom, nil, U } from "@stemcmicro/tree";
 import { prolog_eval_1_arg } from "../../dispatch/prolog_eval_1_arg";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 

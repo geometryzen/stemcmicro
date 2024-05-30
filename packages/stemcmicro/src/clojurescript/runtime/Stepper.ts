@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { create_sym, Sym } from "math-expression-atoms";
-import { LambdaExpr } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, is_atom, is_cons, items_to_cons, nil, U } from "math-expression-tree";
+import { create_sym, Sym } from "@stemcmicro/atoms";
+import { LambdaExpr } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, is_atom, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExprEngineListener, UndeclaredVars } from "../../api/api";
 import { create_env, EnvOptions } from "../../env/env";
 import { ALL_FEATURES, ExtensionEnv } from "../../env/ExtensionEnv";

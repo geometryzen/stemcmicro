@@ -1,7 +1,7 @@
-import { Sym } from "math-expression-atoms";
-import { CompareFn, ExprContext, ExprHandler } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { Cons, is_atom, Shareable, U } from "math-expression-tree";
+import { Sym } from "@stemcmicro/atoms";
+import { CompareFn, ExprContext, ExprHandler } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, is_atom, Shareable, U } from "@stemcmicro/tree";
 import { ProgramEnv } from "./ProgramEnv";
 
 class IsZeroExprContext implements ExprContext {

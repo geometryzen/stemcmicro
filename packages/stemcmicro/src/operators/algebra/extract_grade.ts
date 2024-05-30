@@ -1,7 +1,7 @@
-import { create_int, is_blade, is_flt, is_rat, is_sym, zero } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
-import { Native, native_sym } from "math-expression-native";
-import { is_atom, is_cons, items_to_cons, U } from "math-expression-tree";
+import { create_int, is_blade, is_flt, is_rat, is_sym, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
+import { is_atom, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { isscalar } from "../../helpers/isscalar";
 import { multiply } from "../../helpers/multiply";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";

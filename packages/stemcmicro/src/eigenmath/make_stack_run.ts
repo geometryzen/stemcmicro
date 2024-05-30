@@ -1,5 +1,5 @@
-import { create_sym, is_str } from "math-expression-atoms";
-import { is_nil, nil, U } from "math-expression-tree";
+import { create_sym, is_str } from "@stemcmicro/atoms";
+import { is_nil, nil, U } from "@stemcmicro/tree";
 import { is_imu } from "../operators/imu/is_imu";
 import { cadr } from "../tree/helpers";
 import { EigenmathParseConfig, evaluate_expression, get_binding, scan_inbuf, set_symbol, stopf, value_of } from "./eigenmath";

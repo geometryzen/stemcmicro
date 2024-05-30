@@ -1,6 +1,6 @@
-import { is_num, is_sym } from "math-expression-atoms";
-import { is_native, Native } from "math-expression-native";
-import { is_cons, U } from "math-expression-tree";
+import { is_num, is_sym } from "@stemcmicro/atoms";
+import { is_native, Native } from "@stemcmicro/native";
+import { is_cons, U } from "@stemcmicro/tree";
 
 export function isnegativeterm(expr: U): boolean {
     if (is_num(expr) && expr.isNegative()) {

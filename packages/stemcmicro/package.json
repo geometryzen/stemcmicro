@@ -56,12 +56,10 @@
         "url": "https://github.com/geometryzen/stemcmicro/issues"
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
-    "dependencies": {
-        "@stemcmicro/em-parse": "file:../stemcmicro-em-parse"
-    },
     "peerDependencies": {
         "@stemcmicro/atoms": "file:../stemcmicro-atoms",
         "@stemcmicro/context": "file:../stemcmicro-context",
+        "@stemcmicro/em-parse": "file:../stemcmicro-em-parse",
         "@stemcmicro/native": "file:../stemcmicro-native",
         "@stemcmicro/tree": "file:../stemcmicro-tree"
     },

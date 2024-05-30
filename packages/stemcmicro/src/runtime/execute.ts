@@ -1,9 +1,8 @@
 import { imu, is_imu, is_sym, Sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { ScanOptions } from "../algebrite/scan";
 import { eval_bake } from "../bake";
-import { Directive, directive_from_flag, ExtensionEnv, flag_from_directive } from "../env/ExtensionEnv";
+import { Directive, directive_from_flag, ExtensionEnv } from "../env/ExtensionEnv";
 import { subst } from "../operators/subst/subst";
 import { Box } from "./Box";
 import { BAKE, SYMBOL_I, SYMBOL_J } from "./constants";
@@ -19,16 +18,6 @@ const FACTOR = native_sym(Native.factor);
 const POLAR = native_sym(Native.polar);
 const RATIONALIZE = native_sym(Native.rationalize);
 const RECT = native_sym(Native.rect);
-
-function scan_options($: ExtensionEnv): ScanOptions {
-    return {
-        useCaretForExponentiation: flag_from_directive($.getDirective(Directive.useCaretForExponentiation)),
-        useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
-        explicitAssocAdd: false,
-        explicitAssocMul: false,
-        explicitAssocExt: false
-    };
-}
 
 /**
  * Evaluates the parse tree using the operators defined in the environment.

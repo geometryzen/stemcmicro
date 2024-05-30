@@ -2,9 +2,6 @@ import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_st
 import { pos_end_items_to_cons, U } from "@stemcmicro/tree";
 import { EmParseOptions, em_parse } from "../algebrite/em_parse";
 import { EDNListParser, ParseConfig } from "../edn";
-import { PyParseOptions } from "../pythonscript/PyParseOptions";
-import { py_parse } from "../pythonscript/py_parse";
-// import { TsParseOptions, ts_parse } from "../typescript/ts_parse";
 
 export enum SyntaxKind {
     /**
@@ -14,28 +11,22 @@ export enum SyntaxKind {
     /**
      * Eigenmath Scripting Language by George Weigt.
      */
-    Eigenmath = 2,
-    /**
-     * Python Scripting Language
-     */
-    PythonScript = 4
+    Eigenmath = 2
 }
 
-export function human_readable_syntax_kind(syntaxKind: SyntaxKind): "ClojureScript" | "EcmaScript" | "Eigenmath" | "PythonScript" {
+export function human_readable_syntax_kind(syntaxKind: SyntaxKind): "ClojureScript" | "EcmaScript" | "Eigenmath" {
     if (syntaxKind) {
         switch (syntaxKind) {
             case SyntaxKind.ClojureScript:
                 return "ClojureScript";
             case SyntaxKind.Eigenmath:
                 return "Eigenmath";
-            case SyntaxKind.PythonScript:
-                return "PythonScript";
         }
     }
     return "Eigenmath";
 }
 
-export const syntaxKinds: SyntaxKind[] = [SyntaxKind.ClojureScript, SyntaxKind.Eigenmath, SyntaxKind.PythonScript];
+export const syntaxKinds: SyntaxKind[] = [SyntaxKind.ClojureScript, SyntaxKind.Eigenmath];
 
 export interface ParseOptions {
     catchExceptions?: boolean;
@@ -155,9 +146,6 @@ export function delegate_parse_script(sourceText: string, options?: ParseOptions
         case SyntaxKind.ClojureScript: {
             return cs_parse(sourceText, cs_parse_options(options));
         }
-        case SyntaxKind.PythonScript: {
-            return py_parse(sourceText, py_parse_options(options));
-        }
         default: {
             return em_parse(sourceText, em_parse_options(options));
         }
@@ -208,24 +196,6 @@ function cs_parse_options(options?: ParseOptions): ClojureScriptParseOptions {
         return {
             lexicon: {}
         };
-    }
-}
-
-function py_parse_options(options?: ParseOptions): PyParseOptions {
-    if (options) {
-        if (options.useCaretForExponentiation) {
-            throw new Error("useCaretForExponentiation is not supported by the Python parser.");
-        }
-        if (options.useParenForTensors) {
-            throw new Error("useParenForTensors is not supported by the Python parser.");
-        }
-        return {
-            explicitAssocAdd: options.explicitAssocAdd,
-            explicitAssocExt: options.explicitAssocExt,
-            explicitAssocMul: options.explicitAssocMul
-        };
-    } else {
-        return {};
     }
 }
 

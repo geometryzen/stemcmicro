@@ -178,8 +178,7 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
     init_env($, contextOptions);
     switch (contextOptions.syntaxKind) {
         case SyntaxKind.ClojureScript:
-        case SyntaxKind.Eigenmath:
-        case SyntaxKind.PythonScript: {
+        case SyntaxKind.Eigenmath: {
             break;
         }
         default: {

@@ -137,8 +137,7 @@ export interface ExprEngine extends Pick<ProgramEnv, "clearBindings"> {
  */
 enum EngineKind {
     Micro = 1,
-    ClojureScript = 2,
-    PythonScript = 3
+    ClojureScript = 2
 }
 
 /**
@@ -166,10 +165,6 @@ function engine_kind_from_engine_options(options: Partial<EngineConfig>): Engine
                 return EngineKind.ClojureScript;
             case SyntaxKind.Eigenmath:
                 return EngineKind.Micro;
-            case SyntaxKind.EcmaScript:
-                return EngineKind.Micro;
-            case SyntaxKind.PythonScript:
-                return EngineKind.PythonScript;
         }
     }
     return EngineKind.Micro;
@@ -754,9 +749,6 @@ export function create_engine(options: Partial<EngineConfig> = {}): ExprEngine {
         }
         case EngineKind.ClojureScript: {
             return new ClojureScriptEngine(options);
-        }
-        case EngineKind.PythonScript: {
-            return new PythonEngine(options);
         }
         default: {
             throw new Error();

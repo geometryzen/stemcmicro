@@ -23,4 +23,5 @@ All packages are published together with the same version number.
 ### [@stemcmicro/context](https://geometryzen.github.io/stemcmicro/context)
 ### [@stemcmicro/js-parse](https://geometryzen.github.io/stemcmicro/js-parse)
 ### [@stemcmicro/native](https://geometryzen.github.io/stemcmicro/native)
+### [@stemcmicro/py-parse](https://geometryzen.github.io/stemcmicro/py-parse)
 ### [@stemcmicro/tree](https://geometryzen.github.io/stemcmicro/tree)

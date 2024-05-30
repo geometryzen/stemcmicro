@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { create_int, create_tensor } from "@stemcmicro/atoms";
+import { create_int, create_sym, create_tensor, Str } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
+import { items_to_cons, nil, U } from "@stemcmicro/tree";
 import {
     Add,
     AnnAssign,
@@ -41,18 +43,21 @@ import {
     UnaryOp,
     Visitor
 } from "typhon-lang";
-import { Native } from "../native/Native";
-import { native_sym } from "../native/native_sym";
-import { FltTokenParser } from "../operators/flt/FltTokenParser";
-import { IntTokenParser } from "../operators/int/IntTokenParser";
-import { ASSIGN } from "../runtime/constants";
-import { MATH_ADD, MATH_DIV, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SUB } from "../runtime/ns_math";
-import { Str } from "../tree/str/Str";
-import { create_sym } from "../tree/sym/Sym";
-import { items_to_cons, nil, U } from "../tree/tree";
+import { FltTokenParser } from "./FltTokenParser";
+import { IntTokenParser } from "./IntTokenParser";
 import { PyParseOptions } from "./PyParseOptions";
 
+export const ASSIGN = native_sym(Native.assign);
 export const COMPONENT = native_sym(Native.component);
+export const MATH_ADD = native_sym(Native.add);
+export const MATH_DIV = native_sym(Native.divide);
+export const MATH_INNER = native_sym(Native.inner);
+export const MATH_LCO = native_sym(Native.lco);
+export const MATH_MUL = native_sym(Native.multiply);
+export const MATH_OUTER = native_sym(Native.outer);
+export const MATH_POW = native_sym(Native.pow);
+export const MATH_RCO = native_sym(Native.rco);
+export const MATH_SUB = native_sym(Native.subtract);
 
 class PythonVisitor implements Visitor {
     readonly stack: U[] = [];

@@ -21,6 +21,7 @@
         "packages/stemcmicro-context",
         "packages/stemcmicro-js-parse",
         "packages/stemcmicro-native",
+        "packages/stemcmicro-py-parse",
         "packages/stemcmicro-tree",
         "packages/stemcmicro"
     ],

@@ -213,9 +213,7 @@
         "url": "https://github.com/geometryzen/stemcmicro/issues"
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
-    "dependencies": {
-        "typhon-lang": "^1.0.13"
-    },
+    "dependencies": {},
     "peerDependencies": {
         "@stemcmicro/atoms": "file:../stemcmicro-atoms",
         "@stemcmicro/context": "file:../stemcmicro-context",

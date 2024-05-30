@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { create_keyword_ns, Keyword } from "@stemcmicro/atoms";
 import { code_from_native_sym } from "@stemcmicro/native";
-import { split_qualified_name } from "../edn";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { FltTokenParser } from "../operators/flt/FltTokenParser";
@@ -55,6 +54,17 @@ import { is_space } from "./is_space";
 import { ScanConfig } from "./ScanConfig";
 import { Token, TokenCode } from "./Token";
 import { TokenError } from "./TokenError";
+
+function split_qualified_name(qualifiedName: string, searchString: "/"): [localName: string, namespace: string] {
+    const searchIdx = qualifiedName.indexOf(searchString);
+    if (searchIdx > 0) {
+        const localName = qualifiedName.substring(searchIdx + 1);
+        const namespace = qualifiedName.substring(0, searchIdx);
+        return [localName, namespace];
+    } else {
+        return [qualifiedName, ""];
+    }
+}
 
 const scanConfig: ScanConfig = {
     fltParser: new FltTokenParser(),

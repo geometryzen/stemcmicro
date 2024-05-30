@@ -19,6 +19,7 @@
     "workspaces": [
         "packages/stemcmicro-atoms",
         "packages/stemcmicro-context",
+        "packages/stemcmicro-cs-parse",
         "packages/stemcmicro-js-parse",
         "packages/stemcmicro-native",
         "packages/stemcmicro-py-parse",

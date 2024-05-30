@@ -12,20 +12,17 @@ import { render_svg } from "../eigenmath/render_svg";
 import { create_env } from "../env/env";
 import { ALL_FEATURES, Directive, directive_from_flag, ExtensionEnv } from "../env/ExtensionEnv";
 import { create_algebra_as_blades } from "../operators/algebra/create_algebra_as_tensor";
-import { assert_U } from "../operators/helpers/is_any";
 import { simplify } from "../operators/simplify/simplify";
 import { assert_sym } from "../operators/sym/assert_sym";
 import { create_uom, UOM_NAMES } from "../operators/uom/uom";
-import { cs_parse, delegate_parse_script, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";
 import { render_as_infix } from "../print/render_as_infix";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
-import { execute_script, transform_tree } from "../runtime/execute";
+import { transform_tree } from "../runtime/execute";
 import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from "../runtime/ns_script";
 import { env_term, init_env } from "../runtime/script_engine";
-import { visit } from "../visitor/visit";
 import { Visitor } from "../visitor/Visitor";
 
 function shallowCopy<T extends object>(source: T): T {
@@ -40,7 +37,6 @@ export interface ParseConfig {
     explicitAssocAdd: boolean;
     explicitAssocExt: boolean;
     explicitAssocMul: boolean;
-    syntaxKind: SyntaxKind;
 }
 
 /**
@@ -60,7 +56,6 @@ export function stemc_parse_config(options: Partial<ParseConfig>): EmParseOption
         explicitAssocAdd: options.explicitAssocAdd,
         explicitAssocExt: options.explicitAssocExt,
         explicitAssocMul: options.explicitAssocMul,
-        syntaxKind: options.syntaxKind,
         useCaretForExponentiation: reify_boolean(options.useCaretForExponentiation),
         useParenForTensors: reify_boolean(options.useParenForTensors)
     };
@@ -100,13 +95,9 @@ export interface ExprHandlerBuilder<T extends U> {
 export interface ExprEngine extends Pick<ProgramEnv, "clearBindings"> {
     clearBindings(): void;
     executeProlog(prolog: string[]): void;
-    executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[] };
 
     defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void;
     defineFunction(name: Sym, lambda: LambdaExpr): void;
-
-    parse(sourceText: string, options?: Partial<ParseConfig>): { trees: U[]; errors: Error[] };
-    parseModule(sourceText: string, options?: Partial<ParseConfig>): { module: Cons; errors: Error[] };
 
     simplify(expr: U): U;
     valueOf(expr: U): U;
@@ -136,37 +127,27 @@ export interface ExprEngine extends Pick<ProgramEnv, "clearBindings"> {
  * This is an implementation detail.
  */
 enum EngineKind {
-    Micro = 1,
-    ClojureScript = 2
+    Micro = 1
 }
 
 /**
  * Determines the action upon attempts to access an undeclared variable.
  */
 export enum UndeclaredVars {
-    Err = 1, // ClojureScript
-    Nil = 2 // Eigenmath
+    Err = 1,
+    Nil = 2
     // Sym = 3
 }
 
 export interface EngineConfig {
     allowUndeclaredVars: UndeclaredVars;
     prolog: string[];
-    syntaxKind: SyntaxKind;
     useCaretForExponentiation: boolean;
     useDerivativeShorthandLowerD: boolean;
     useIntegersForPredicates: boolean;
 }
 
 function engine_kind_from_engine_options(options: Partial<EngineConfig>): EngineKind {
-    if (options.syntaxKind) {
-        switch (options.syntaxKind) {
-            case SyntaxKind.ClojureScript:
-                return EngineKind.ClojureScript;
-            case SyntaxKind.Eigenmath:
-                return EngineKind.Micro;
-        }
-    }
     return EngineKind.Micro;
 }
 
@@ -345,9 +326,6 @@ class MicroEngine implements ExprEngine {
     executeProlog(prolog: string[]): void {
         this.#env.executeProlog(prolog);
     }
-    executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[] } {
-        return execute_script(sourceText, this.#options, this.#env);
-    }
     hasBinding(opr: Sym, target: Cons): boolean {
         assert_sym(opr);
         return this.#env.hasBinding(opr, target);
@@ -376,26 +354,6 @@ class MicroEngine implements ExprEngine {
         assert_sym(name);
         const match = items_to_cons(name);
         this.#env.defineFunction(match, lambda);
-    }
-    parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[] } {
-        this.#env.buildOperators();
-        const optionsCopy = shallowCopy(options);
-        if (typeof options.syntaxKind === "number") {
-            // The user has specified an override.
-        } else {
-            optionsCopy.syntaxKind = this.#options.syntaxKind;
-        }
-        const { trees, errors } = delegate_parse_script(sourceText, stemc_parse_config(optionsCopy));
-        const visitor = new ExtensionEnvVisitor(this.#env);
-        for (const tree of trees) {
-            visit(tree, visitor);
-        }
-        return { trees, errors };
-    }
-    parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[] } {
-        const { trees, errors } = this.parse(sourceText, options);
-        const module = items_to_cons(create_sym("module"), ...trees);
-        return { module, errors };
     }
     simplify(expr: U): U {
         return simplify(expr, this.#env);
@@ -481,274 +439,11 @@ class MicroEngine implements ExprEngine {
     removeListener(listener: ExprEngineListener): void {}
 }
 
-class ClojureScriptEngine implements ExprEngine {
-    readonly #env: ExtensionEnv;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(options: Partial<EngineConfig>) {
-        // We can wrap #env with a DerivedEnv to evolve to an architecture that supports nested scopes.
-        // Wrapping will reveal where there are holes in the implementation.
-        const allowUndeclaredVars = allow_undeclared_vars(options, UndeclaredVars.Err);
-        const baseEnv = create_env({ allowUndeclaredVars, dependencies: ALL_FEATURES });
-        this.#env = baseEnv;
-        init_env(this.#env, {
-            allowUndeclaredVars,
-            useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
-            prolog: options.prolog
-        });
-    }
-    defineUserSymbol(name: Sym): void {
-        this.#env.defineUserSymbol(name);
-    }
-    handlerFor<T extends U>(expr: T): ExprHandler<T> {
-        return this.#env.handlerFor(expr);
-    }
-    clearBindings(): void {
-        this.#env.clearBindings();
-    }
-    executeProlog(prolog: string[]): void {
-        this.#env.executeProlog(prolog);
-    }
-    executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[] } {
-        return execute_script(sourceText, {}, this.#env);
-    }
-    hasBinding(opr: Sym, target: Cons): boolean {
-        assert_sym(opr);
-        return this.#env.hasBinding(opr, target);
-    }
-    hasUserFunction(sym: Sym): boolean {
-        assert_sym(sym);
-        return this.#env.hasUserFunction(sym);
-    }
-    getUserFunction(sym: Sym): U {
-        assert_sym(sym);
-        return this.#env.getUserFunction(sym);
-    }
-    defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void {
-        const builderX = new AtomExtensionBuilderFromExprHandlerBuilder<T>(builder, type, guard);
-        this.#env.defineExtension(builderX, false);
-    }
-    defineFunction(name: Sym, lambda: LambdaExpr): void {
-        assert_sym(name);
-        const match = items_to_cons(name);
-        this.#env.defineFunction(match, lambda);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[] } {
-        this.#env.buildOperators();
-        const useCaretForExponentiation = reify_boolean(options.useCaretForExponentiation);
-        const caretDecode = useCaretForExponentiation ? native_sym(Native.pow) : native_sym(Native.outer);
-        const { trees, errors } = cs_parse(sourceText, {
-            lexicon: {
-                "^": caretDecode,
-                "|": native_sym(Native.inner),
-                "<<": native_sym(Native.lco),
-                ">>": native_sym(Native.rco)
-            }
-        });
-        const visitor = new ExtensionEnvVisitor(this.#env);
-        for (const tree of trees) {
-            visit(tree, visitor);
-        }
-        return { trees, errors };
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[] } {
-        const { trees, errors } = this.parse(sourceText, options);
-        const module = items_to_cons(create_sym("module"), ...trees);
-        return { module, errors };
-    }
-    getBinding(opr: Sym, target: Cons): U {
-        assert_sym(opr);
-        return this.#env.getBinding(opr, target);
-    }
-    setBinding(opr: Sym, binding: U): void {
-        assert_sym(opr);
-        this.#env.setBinding(opr, binding);
-    }
-    simplify(expr: U): U {
-        return simplify(expr, this.#env);
-    }
-    valueOf(expr: U, stack?: Pick<ProgramStack, "push">): U {
-        const { value } = transform_tree(expr, {}, this.#env);
-        if (stack) {
-            try {
-                stack.push(value);
-                return nil;
-            } finally {
-                value.release();
-            }
-        } else {
-            return value;
-        }
-    }
-    renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
-        assert_U(expr, "ExprEngine.renderAsString(expr, config)", "expr");
-        this.#env.pushDirective(Directive.useCaretForExponentiation, directive_from_flag(config.useCaretForExponentiation));
-        this.#env.pushDirective(Directive.useParenForTensors, directive_from_flag(config.useParenForTensors));
-        try {
-            switch (config.format) {
-                case "Ascii": {
-                    return render_as_ascii(expr, this.#env);
-                }
-                case "Human": {
-                    return render_as_human(expr, this.#env);
-                }
-                case "Infix": {
-                    return render_as_infix(expr, this.#env);
-                }
-                case "LaTeX": {
-                    return render_as_latex(expr, this.#env);
-                }
-                case "SExpr": {
-                    return render_as_sexpr(expr, this.#env);
-                }
-                case "SVG": {
-                    return render_svg(expr, this.#env, { useImaginaryI: false, useImaginaryJ: false });
-                }
-                default: {
-                    return render_as_infix(expr, this.#env);
-                }
-            }
-        } finally {
-            this.#env.popDirective();
-            this.#env.popDirective();
-        }
-    }
-    release(): void {
-        env_term(this.#env);
-    }
-    setUserFunction(name: Sym, userfunc: U): void {
-        assert_sym(name);
-        this.#env.setUserFunction(name, userfunc);
-    }
-    symbol(concept: Concept): Sym {
-        switch (concept) {
-            case Concept.Last: {
-                return RESERVED_KEYWORD_LAST;
-            }
-            case Concept.TTY: {
-                return RESERVED_KEYWORD_TTY;
-            }
-            default: {
-                throw new Error(`symbol(${concept}) not implemented.`);
-            }
-        }
-    }
-    addAtomListener(listener: AtomListener): void {
-        this.#env.addAtomListener(listener);
-    }
-    removeAtomListener(listener: AtomListener): void {
-        this.#env.removeAtomListener(listener);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    addListener(listener: ExprEngineListener): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    removeListener(listener: ExprEngineListener): void {}
-}
-
-class PythonEngine implements ExprEngine {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(options: Partial<EngineConfig>) {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    defineUserSymbol(name: Sym): void {
-        throw new Error("Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handlerFor<T extends U>(expr: T): ExprHandler<T> {
-        throw new Error("Method not implemented.");
-    }
-    clearBindings(): void {
-        throw new Error("clearBindings method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    executeProlog(prolog: string[]): void {
-        throw new Error("executeProlog method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[] } {
-        throw new Error("PythonEngine.executeScript method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    hasBinding(sym: Sym): boolean {
-        throw new Error("hasBinding method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    hasUserFunction(sym: Sym): boolean {
-        throw new Error("hasUserFunction method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getUserFunction(sym: Sym): U {
-        throw new Error("getUserFunction method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void {
-        throw new Error("defineExprHandler method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    defineFunction(name: Sym, lambda: LambdaExpr): void {
-        throw new Error("defineFunction method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    parse(sourceText: string, options?: Partial<ParseConfig>): { trees: U[]; errors: Error[] } {
-        throw new Error("parse method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    parseModule(sourceText: string, options?: Partial<ParseConfig>): { module: Cons; errors: Error[] } {
-        throw new Error("parseModule method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    simplify(expr: U): U {
-        throw new Error("simplify method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    valueOf(expr: U): U {
-        throw new Error("PythonEngine.valueOf method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getBinding(sym: Sym): U {
-        throw new Error("getBinding method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setBinding(sym: Sym, binding: U): void {
-        throw new Error("setSymbol method not implemented.");
-    }
-    release(): void {
-        throw new Error("release method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    renderAsString(expr: U, config?: Partial<RenderConfig>): string {
-        throw new Error("renderAsString method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setUserFunction(name: Sym, usrfunc: U): void {
-        throw new Error("PythonEngine.setUserFunction method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    symbol(concept: Concept): Sym {
-        throw new Error("symbol method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    addAtomListener(listener: AtomListener): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    removeAtomListener(listener: AtomListener): void {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    addListener(listener: ExprEngineListener): void {
-        throw new Error("addListener method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    removeListener(listener: ExprEngineListener): void {
-        throw new Error("removeListener method not implemented.");
-    }
-}
-
 export function create_engine(options: Partial<EngineConfig> = {}): ExprEngine {
     const engineKind = engine_kind_from_engine_options(options);
     switch (engineKind) {
         case EngineKind.Micro: {
             return new MicroEngine(options);
-        }
-        case EngineKind.ClojureScript: {
-            return new ClojureScriptEngine(options);
         }
         default: {
             throw new Error();

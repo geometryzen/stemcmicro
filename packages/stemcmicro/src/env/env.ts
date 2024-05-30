@@ -17,7 +17,6 @@ import { is_poly_expanded_form } from "../is";
 import { algebra } from "../operators/algebra/algebra";
 import { eval_lambda_in_fn_syntax } from "../operators/fn/eval_fn";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
-import { SyntaxKind } from "../parser/parser";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import { FN, FUNCTION } from "../runtime/constants";
 import { execute_definitions } from "../runtime/init";
@@ -103,7 +102,6 @@ export interface EnvOptions {
     useDerivativeShorthandLowerD?: boolean;
     useIntegersForPredicates?: boolean;
     useParenForTensors?: boolean;
-    syntaxKind?: SyntaxKind;
 }
 
 function config_from_options(options: EnvOptions | undefined): EnvConfig {

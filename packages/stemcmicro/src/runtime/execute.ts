@@ -5,14 +5,12 @@ import { ScanOptions } from "../algebrite/scan";
 import { eval_bake } from "../bake";
 import { Directive, directive_from_flag, ExtensionEnv, flag_from_directive } from "../env/ExtensionEnv";
 import { subst } from "../operators/subst/subst";
-import { delegate_parse_script } from "../parser/parser";
-import { TreeTransformer } from "../transform/Transformer";
 import { Box } from "./Box";
 import { BAKE, SYMBOL_I, SYMBOL_J } from "./constants";
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
 import { move_top_of_stack } from "./defs";
 import { RESERVED_KEYWORD_LAST } from "./ns_script";
-import { ExprTransformOptions, ScriptExecuteOptions } from "./script_engine";
+import { ExprTransformOptions } from "./script_engine";
 
 const CIRCEXP = native_sym(Native.circexp);
 const CLOCK = native_sym(Native.clock);
@@ -30,77 +28,6 @@ function scan_options($: ExtensionEnv): ScanOptions {
         explicitAssocMul: false,
         explicitAssocExt: false
     };
-}
-
-/**
- * Scans the sourceText into a tree expression then evaluates the expression.
- * @param sourceText The source text to be scanned.
- * @param options scan_options($)
- * @param $ The environment that defines the operators.
- * @returns The return values, print outputs, and errors.
- */
-export function execute_script(sourceText: string, options: ScriptExecuteOptions, $: ExtensionEnv): { values: U[]; prints: string[]; errors: Error[] } {
-    // console.lg("execute_script", JSON.stringify(sourceText), JSON.stringify(options));
-    const { trees, errors } = delegate_parse_script(sourceText, options);
-    if (errors.length > 0) {
-        return { values: [], prints: [], errors };
-    }
-    const values: U[] = [];
-    const prints: string[] = [];
-    // console.lg(`trees.length = ${trees.length}`);
-    // console.lg("catchExceptions", options.catchExceptions);
-    if (options.catchExceptions) {
-        try {
-            transform_trees(trees, values, prints, errors, options, $);
-        } catch (e) {
-            if (e instanceof Error) {
-                errors.push(e);
-            } else {
-                errors.push(new Error(`${e}`));
-            }
-        }
-    } else {
-        transform_trees(trees, values, prints, errors, options, $);
-    }
-    return { values, prints, errors };
-}
-
-function transform_trees(trees: U[], values: U[], prints: string[], errors: Error[], options: ExprTransformOptions, $: ExtensionEnv) {
-    // console.lg("transform_trees", JSON.stringify(options));
-    for (const tree of trees) {
-        // console.lg("tree", render_as_sexpr(tree, $));
-        // console.lg("tree", $.toInfixString(tree));
-        const data = transform_tree(tree, options, $);
-        if (data.value) {
-            if (!is_nil(data.value)) {
-                // console.lg(`value = ${data.value}`);
-                values.push(data.value);
-            }
-        }
-        for (const p of data.prints) {
-            prints.push(p);
-        }
-        for (const e of data.errors) {
-            errors.push(e);
-        }
-    }
-}
-
-export function transform_script(fileName: string, sourceText: string, transformer: TreeTransformer, $: ExtensionEnv): { values: U[]; prints: string[]; errors: Error[] } {
-    const { trees, errors } = delegate_parse_script(sourceText, scan_options($));
-    if (errors.length > 0) {
-        return { values: [], prints: [], errors };
-    }
-    const values: U[] = [];
-    const prints: string[] = [];
-    // console.lg(`trees.length = ${trees.length}`);
-    for (const tree of trees) {
-        // console.lg(`tree = ${render_as_sexpr(tree, $)}`);
-        values.push(transformer.transform(tree, $));
-        // prints must be collected by setting a PrintHandler.
-        // errors must be collected from exceptions?
-    }
-    return { values, prints, errors };
 }
 
 /**

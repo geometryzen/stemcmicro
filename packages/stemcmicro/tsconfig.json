@@ -17,5 +17,5 @@
         "removeComments": false,
         "resolveJsonModule": true
     },
-    "include": ["index.ts", "src/**/*.ts", "repl.mts", "rollup.config.mts", "../stemcmicro-py-parse/src/py_parse.ts"]
+    "include": ["index.ts", "src/**/*.ts", "repl.mts", "rollup.config.mts"]
 }

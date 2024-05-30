@@ -1,9 +1,8 @@
 // import assert from 'assert';
-import assert from "assert";
 import { is_rat, is_uom } from "@stemcmicro/atoms";
 import { is_nil, U } from "@stemcmicro/tree";
+import assert from "assert";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig } from "../src/api/api";
-import { SyntaxKind } from "../src/parser/parser";
 
 describe("examples", function () {
     it("Eigenmath", function () {
@@ -33,36 +32,9 @@ describe("examples", function () {
         assert.strictEqual(is_rat(values[0]), true);
         engine.release();
     });
-    it("ClojureScript", function () {
-        const lines: string[] = [`(+ 1 2 3 4)`];
-        const engineOptions: Partial<EngineConfig> = {
-            syntaxKind: SyntaxKind.ClojureScript
-        };
-        const engine: ExprEngine = create_engine(engineOptions);
-
-        const parseOptions: Partial<ParseConfig> = {};
-
-        const sourceText = lines.join("\n");
-        const { trees, errors } = engine.parse(sourceText, parseOptions);
-
-        assert.strictEqual(errors.length, 0);
-
-        const values: U[] = [];
-        for (const tree of trees) {
-            const value = engine.valueOf(tree);
-            if (!is_nil(value)) {
-                values.push(value);
-            }
-        }
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: "SExpr" }), `10`);
-        assert.strictEqual(is_rat(values[0]), true);
-        engine.release();
-    });
     it("Eigenmath", function () {
         const lines: string[] = [`1 + 2 + 3 + 4`];
         const engineOptions: Partial<EngineConfig> = {
-            syntaxKind: SyntaxKind.Eigenmath,
             prolog: []
         };
         const engine: ExprEngine = create_engine(engineOptions);

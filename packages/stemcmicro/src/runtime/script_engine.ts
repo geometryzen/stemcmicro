@@ -4,16 +4,15 @@ import { Cons, U } from "@stemcmicro/tree";
 import { define_geometric30_algebra, define_math_constant_pi, define_metric_prefixes_for_si_units, define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api/api";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
-import { ALL_FEATURES, Directive, ExtensionEnv, flag_from_directive, Predicates } from "../env/ExtensionEnv";
+import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
 import { simplify } from "../operators/simplify/simplify";
-import { ParseOptions, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";
 import { render_as_infix } from "../print/render_as_infix";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
 import { move_top_of_stack } from "./defs";
-import { execute_script, transform_tree } from "./execute";
+import { transform_tree } from "./execute";
 import { execute_definitions } from "./init";
 
 export interface ExprTransformOptions {
@@ -35,10 +34,6 @@ export interface ScriptExecuteOptions extends ExprTransformOptions {
      * Determines whether execptions are caught and returned in the errors property.
      */
     catchExceptions?: boolean;
-    /**
-     * Determines what kind of parser is used for the sourceText.
-     */
-    syntaxKind?: SyntaxKind;
 }
 
 export interface ScriptContextOptions extends ScriptExecuteOptions {
@@ -117,7 +112,6 @@ export interface ScriptContext {
     getSymbolsInfo(): { sym: Sym; value: U }[];
     evaluate(tree: U, options?: ExprTransformOptions): { value: U; prints: string[]; errors: Error[] };
     executeProlog(prolog: string[]): void;
-    executeScript(sourceText: string, options?: ScriptExecuteOptions): { values: U[]; prints: string[]; errors: Error[] };
     renderAsAscii(expr: U): string;
     renderAsHuman(expr: U): string;
     renderAsInfix(expr: U): string;
@@ -145,8 +139,7 @@ export function env_options_from_script_context_options(options: ScriptContextOp
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
             useIntegersForPredicates: options.useIntegersForPredicates,
-            useParenForTensors: options.useParenForTensors,
-            syntaxKind: options.syntaxKind
+            useParenForTensors: options.useParenForTensors
         };
         return hook(config, "A");
     } else {
@@ -176,20 +169,11 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
     const envOptions: EnvOptions = env_options_from_script_context_options(contextOptions);
     const $ = create_env(envOptions);
     init_env($, contextOptions);
-    switch (contextOptions.syntaxKind) {
-        case SyntaxKind.ClojureScript:
-        case SyntaxKind.Eigenmath: {
-            break;
-        }
-        default: {
-            define_math_constant_pi($);
-            define_spacetime_algebra($);
-            define_geometric30_algebra($);
-            define_si_units($);
-            define_metric_prefixes_for_si_units($);
-            break;
-        }
-    }
+    define_math_constant_pi($);
+    define_spacetime_algebra($);
+    define_geometric30_algebra($);
+    define_si_units($);
+    define_metric_prefixes_for_si_units($);
     const theEngine: ScriptContext = {
         get $(): ExtensionEnv {
             return $;
@@ -216,35 +200,6 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
         },
         executeProlog(prolog: string[]): void {
             execute_definitions(prolog, $);
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        executeScript(sourceText: string, options: ScriptExecuteOptions): { values: U[]; prints: string[]; errors: Error[] } {
-            // console.lg("executeScript", sourceText);
-            const picks: Pick<ScriptContextOptions, "catchExceptions" | "syntaxKind" | "useIntegersForPredicates"> = {};
-            if (contextOptions) {
-                if (typeof contextOptions.catchExceptions === "boolean") {
-                    picks.catchExceptions = contextOptions.catchExceptions;
-                }
-                if (contextOptions.syntaxKind) {
-                    picks.syntaxKind = contextOptions.syntaxKind;
-                }
-                if (typeof contextOptions.useIntegersForPredicates === "boolean") {
-                    picks.useIntegersForPredicates = contextOptions.useIntegersForPredicates;
-                }
-                contextOptions.disable;
-            }
-            if (options) {
-                if (typeof options.catchExceptions === "boolean") {
-                    picks.catchExceptions = options.catchExceptions;
-                }
-                if (options.syntaxKind) {
-                    picks.syntaxKind = options.syntaxKind;
-                }
-                if (typeof options.useIntegersForPredicates === "boolean") {
-                    picks.useIntegersForPredicates = options.useIntegersForPredicates;
-                }
-            }
-            return execute_script(sourceText, parse_options_from_script_context_options(picks, $), $);
         },
         renderAsAscii(expr: U): string {
             return render_as_ascii(expr, $);
@@ -308,32 +263,4 @@ function merge_options(options: ExprTransformOptions | undefined, contextOptions
         }
     }
     return merged;
-}
-
-/**
- * Makes use of the extension environment because this is called prior to each script execution.
- */
-function parse_options_from_script_context_options(options: Pick<ScriptContextOptions, "catchExceptions" | "syntaxKind" | "useIntegersForPredicates"> | undefined, $: ExtensionEnv): ParseOptions {
-    if (options) {
-        return {
-            catchExceptions: options.catchExceptions,
-            syntaxKind: options.syntaxKind,
-            useCaretForExponentiation: flag_from_directive($.getDirective(Directive.useCaretForExponentiation)),
-            useIntegersForPredicates: !!options.useIntegersForPredicates,
-            useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
-            explicitAssocAdd: false,
-            explicitAssocExt: false,
-            explicitAssocMul: false
-        };
-    } else {
-        return {
-            catchExceptions: false,
-            useCaretForExponentiation: false,
-            useIntegersForPredicates: false,
-            useParenForTensors: false,
-            explicitAssocAdd: false,
-            explicitAssocExt: false,
-            explicitAssocMul: false
-        };
-    }
 }

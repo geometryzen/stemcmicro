@@ -1,6 +1,6 @@
 {
     "name": "math-expression-context",
-    "version": "0.9.29",
+    "version": "0.9.41",
     "description": "",
     "exports": {
         ".": {
@@ -58,7 +58,7 @@
     },
     "homepage": "https://github.com/geometryzen/math-expression-context#readme",
     "peerDependencies": {
-        "math-expression-tree": "file:../math-expression-tree",
-        "math-expression-atoms": "file:../math-expression-atoms"
+        "math-expression-atoms": "file:../math-expression-atoms",
+        "math-expression-tree": "file:../math-expression-tree"
     }
 }

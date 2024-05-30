@@ -1,6 +1,6 @@
 {
     "name": "math-expression-atoms",
-    "version": "0.9.40",
+    "version": "0.9.41",
     "description": "Atoms for constructing math expressions",
     "exports": {
         ".": {

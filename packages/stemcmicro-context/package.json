@@ -60,5 +60,5 @@
         "@stemcmicro/atoms": "file:../stemcmicro-atoms",
         "@stemcmicro/tree": "file:../stemcmicro-tree"
     },
-    "gitHead": "912942167a188ae4dcb9d4490f4dc4367b01c599"
+    "gitHead": "ae954a7abc9e5343109ae6002e86be64d84e2398"
 }

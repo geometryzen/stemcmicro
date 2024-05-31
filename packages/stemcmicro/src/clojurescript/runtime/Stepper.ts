@@ -2,6 +2,7 @@
 import { create_sym, Sym } from "@stemcmicro/atoms";
 import { LambdaExpr } from "@stemcmicro/context";
 import { Native, native_sym } from "@stemcmicro/native";
+import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
 import { Cons, is_atom, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExprEngineListener, UndeclaredVars } from "../../api/api";
 import { create_env, EnvOptions } from "../../env/env";
@@ -9,7 +10,6 @@ import { ALL_FEATURES, ExtensionEnv } from "../../env/ExtensionEnv";
 import { Stack } from "../../env/Stack";
 import { assert_sym } from "../../operators/sym/assert_sym";
 import { is_sym } from "../../operators/sym/is_sym";
-import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { init_env } from "../../runtime/script_engine";
 import { BaseEnv } from "./BaseEnv";
 import { DerivedScope } from "./DerivedEnv";

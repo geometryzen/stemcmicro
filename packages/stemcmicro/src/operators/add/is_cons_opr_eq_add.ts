@@ -1,4 +1,4 @@
-import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
+import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Cons } from "../../tree/tree";
 

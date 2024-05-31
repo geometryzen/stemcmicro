@@ -23,6 +23,7 @@
         "packages/stemcmicro-em-parse",
         "packages/stemcmicro-js-parse",
         "packages/stemcmicro-native",
+        "packages/stemcmicro-predicates",
         "packages/stemcmicro-py-parse",
         "packages/stemcmicro-tree",
         "packages/stemcmicro"
@@ -36,7 +37,7 @@
         "@skypack/package-check": "^0.2.2",
         "@types/jest": "^29.5.12",
         "@types/mocha": "^10.0.6",
-        "@types/node": "^20.12.13",
+        "@types/node": "^20.13.0",
         "@types/rollup-plugin-peer-deps-external": "^2.2.5",
         "@typescript-eslint/eslint-plugin": "7.11.0",
         "@typescript-eslint/parser": "7.11.0",

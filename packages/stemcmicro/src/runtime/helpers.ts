@@ -1,9 +1,9 @@
 import { is_num, is_sym, is_tensor, Num, Sym, Tensor } from "@stemcmicro/atoms";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
 import { Cons, Cons0, is_cons, U } from "@stemcmicro/tree";
 import { is_cons_opr_eq_add } from "../operators/add/is_cons_opr_eq_add";
 import { Cons2 } from "../operators/helpers/Cons2";
-import { is_cons_opr_eq_sym } from "../predicates/is_cons_opr_eq_sym";
 import { DOT, INV, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from "./constants";
 import { MATH_FACTORIAL, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO, MATH_SIN } from "./ns_math";
 

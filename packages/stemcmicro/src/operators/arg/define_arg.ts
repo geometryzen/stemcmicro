@@ -1,5 +1,6 @@
 import { is_flt, is_sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
+import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
 import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { subtract } from "../../calculators/sub/subtract";
 import { stack_arg } from "../../eigenmath/eigenmath";
@@ -8,7 +9,6 @@ import { StackU } from "../../env/StackU";
 import { hook_create_err } from "../../hooks/hook_create_err";
 import { equaln, is_num_and_equal_one_half, is_num_and_gt_zero } from "../../is";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
-import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { is_negative } from "../../predicates/is_negative";
 import { is_num_and_negative } from "../../predicates/is_negative_number";
 import { DynamicConstants } from "../../runtime/defs";

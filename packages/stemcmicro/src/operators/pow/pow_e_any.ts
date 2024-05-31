@@ -1,4 +1,5 @@
 import { is_imu, is_rat, is_sym, negOne, one, Sym } from "@stemcmicro/atoms";
+import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
 import { is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { EnvConfig } from "../../env/EnvConfig";
@@ -9,7 +10,6 @@ import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { divide_by_imu } from "../../optimize/divide_by_imu";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
-import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { MATH_ADD, MATH_MUL, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { MATH_COS } from "../cos/MATH_COS";
 import { MATH_EXP } from "../exp/MATH_EXP";

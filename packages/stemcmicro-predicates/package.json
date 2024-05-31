@@ -1,52 +1,52 @@
 {
-    "name": "@stemcmicro/core",
+    "name": "@stemcmicro/predicates",
     "version": "0.9.51",
-    "description": "Computer Algebra System in TypeScript",
-    "publishConfig": {
-        "access": "public"
-    },
+    "description": "Predicates for math expressions",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
             "system": "./dist/system/index.min.js",
-            "default": "./dist/esm/index.min.js"
+            "default": "./dist/commonjs/index.js"
         }
     },
     "module": "./dist/esm/index.min.js",
     "types": "./dist/index.d.ts",
-    "directories": {
-        "test": "tests"
+    "files": [
+        "dist/commonjs/index.js",
+        "dist/commonjs/index.js.map",
+        "dist/esm/index.min.js",
+        "dist/esm/index.min.js.map",
+        "dist/index.d.ts",
+        "dist/system/index.min.js",
+        "dist/system/index.min.js.map"
+    ],
+    "keywords": [
+        "math",
+        "expression",
+        "atoms",
+        "Boo"
+    ],
+    "publishConfig": {
+        "access": "public"
     },
     "scripts": {
         "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
-        "clean": "rm -rf ./dist",
-        "coverage": "nyc npm run test",
+        "check": "npx package-check",
+        "clean": "rm -rf coverage && rm -rf dist && rm -rf docs && rm -rf es2015 && rm -rf system && rm -rf types && rm -rf build",
+        "coverage": "npm run test -- --coverage",
+        "dev": "rollup -c -w",
         "docs": "npm run docs:typedoc && open-cli docs/index.html",
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
-        "pages": "npm run docs:typedoc && gh-pages --dist docs --dest core",
+        "lint": "eslint . --ext .ts",
+        "pages": "npm run docs:typedoc && gh-pages --dist docs --dest predicates",
         "pretest": "npm run build",
         "release": "release-it",
-        "repl": "npm run build && node repl.mjs",
-        "lint": "eslint . --ext .ts"
+        "test": "jest"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/geometryzen/stemcmicro.git"
     },
-    "keywords": [
-        "algebrite",
-        "algebra",
-        "blade",
-        "cas",
-        "clojurescript",
-        "computer",
-        "eigenmath",
-        "geometric",
-        "math",
-        "multivector",
-        "symbolic",
-        "system"
-    ],
     "author": {
         "name": "David Geo Holmes",
         "email": "david.geo.holmes@gmail.com"
@@ -58,10 +58,7 @@
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "peerDependencies": {
         "@stemcmicro/atoms": "file:../stemcmicro-atoms",
-        "@stemcmicro/context": "file:../stemcmicro-context",
-        "@stemcmicro/em-parse": "file:../stemcmicro-em-parse",
         "@stemcmicro/native": "file:../stemcmicro-native",
-        "@stemcmicro/predicates": "file:../stemcmicro-predicates",
         "@stemcmicro/tree": "file:../stemcmicro-tree"
     },
     "gitHead": "912942167a188ae4dcb9d4490f4dc4367b01c599"

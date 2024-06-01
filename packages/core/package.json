@@ -1,0 +1,69 @@
+{
+    "name": "@stemcmicro/core",
+    "version": "0.9.53",
+    "description": "Computer Algebra System in TypeScript",
+    "publishConfig": {
+        "access": "public"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "system": "./dist/system/index.min.js",
+            "default": "./dist/esm/index.min.js"
+        }
+    },
+    "module": "./dist/esm/index.min.js",
+    "types": "./dist/index.d.ts",
+    "directories": {
+        "test": "tests"
+    },
+    "scripts": {
+        "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
+        "clean": "rm -rf ./dist",
+        "coverage": "nyc npm run test",
+        "docs": "npm run docs:typedoc && open-cli docs/index.html",
+        "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
+        "pages": "npm run docs:typedoc && gh-pages --dist docs --dest core",
+        "pretest": "npm run build",
+        "release": "release-it",
+        "repl": "npm run build && node repl.mjs",
+        "lint": "eslint . --ext .ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/geometryzen/stemcmicro.git"
+    },
+    "keywords": [
+        "algebrite",
+        "algebra",
+        "blade",
+        "cas",
+        "clojurescript",
+        "computer",
+        "eigenmath",
+        "geometric",
+        "math",
+        "multivector",
+        "symbolic",
+        "system"
+    ],
+    "author": {
+        "name": "David Geo Holmes",
+        "email": "david.geo.holmes@gmail.com"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/geometryzen/stemcmicro/issues"
+    },
+    "homepage": "https://github.com/geometryzen/stemcmicro#readme",
+    "peerDependencies": {
+        "@stemcmicro/atoms": "file:../atoms",
+        "@stemcmicro/context": "file:../context",
+        "@stemcmicro/diagnostics": "file:../diagnostics",
+        "@stemcmicro/em-parse": "file:../em-parse",
+        "@stemcmicro/native": "file:../native",
+        "@stemcmicro/predicates": "file:../predicates",
+        "@stemcmicro/tree": "file:../tree"
+    },
+    "gitHead": "ae954a7abc9e5343109ae6002e86be64d84e2398"
+}

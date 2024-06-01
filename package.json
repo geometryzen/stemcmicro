@@ -17,16 +17,17 @@
         "lerna-version": "lerna --version"
     },
     "workspaces": [
-        "packages/stemcmicro-atoms",
-        "packages/stemcmicro-context",
-        "packages/stemcmicro-cs-parse",
-        "packages/stemcmicro-em-parse",
-        "packages/stemcmicro-js-parse",
-        "packages/stemcmicro-native",
-        "packages/stemcmicro-predicates",
-        "packages/stemcmicro-py-parse",
-        "packages/stemcmicro-tree",
-        "packages/stemcmicro"
+        "packages/atoms",
+        "packages/context",
+        "packages/core",
+        "packages/cs-parse",
+        "packages/diagnostics",
+        "packages/em-parse",
+        "packages/js-parse",
+        "packages/native",
+        "packages/predicates",
+        "packages/py-parse",
+        "packages/tree"
     ],
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
@@ -50,7 +51,7 @@
         "lerna": "^999.9.9",
         "mocha": "^10.4.0",
         "open-cli": "^8.0.0",
-        "prettier": "^3.2.5",
+        "prettier": "^3.3.0",
         "release-it": "17.3.0",
         "rollup": "4.18.0",
         "rollup-plugin-dts": "^6.1.1",

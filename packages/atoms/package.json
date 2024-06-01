@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/atoms",
-    "version": "0.9.53",
+    "version": "0.9.54",
     "description": "Atoms for constructing math expressions",
     "exports": {
         ".": {

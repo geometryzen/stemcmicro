@@ -691,7 +691,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 for (const hash in ops) {
                     const candidates: Extension<U>[] = ops[hash];
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    for (const candidate of candidates) {
+                    for (const _candidate of candidates) {
                         // console.lg(`${hash} is implemented by "${candidate.name}" in mode ${JSON.stringify(decodeMode(mode))}.`);
                     }
                 }

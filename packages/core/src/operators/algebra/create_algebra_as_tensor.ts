@@ -16,10 +16,7 @@ function blade_times_weight(blade: Blade, weight: U, $: ExprContext): Cons | Bla
 }
 
 class AlgebraFieldAdapter implements Adapter<U, U> {
-    constructor(
-        private readonly dimensions: number,
-        private readonly $: ExprContext
-    ) {}
+    constructor(private readonly $: ExprContext) {}
     get ε(): U {
         return create_flt(1e-6);
     }
@@ -217,7 +214,7 @@ export function create_algebra_as_tensor<T extends U>(metric: T[], labels: strin
 }
 
 export function create_algebra_as_blades<T extends U>(metric: T[], labels: string[], $: ExprContext): Blade[] {
-    const uFieldAdaptor = new AlgebraFieldAdapter(metric.length, $);
+    const uFieldAdaptor = new AlgebraFieldAdapter($);
     const GA = create_algebra(metric, uFieldAdaptor, labels);
     /**
      * Number of basis vectors in algebra is dimensionality.

@@ -1,5 +1,5 @@
 import { EnvConfig } from "../../env/EnvConfig";
-import { ExtensionEnv, FEATURE, mkbuilder, MODE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
@@ -20,7 +20,7 @@ class Op extends Function1<ARG> {
     constructor(readonly config: Readonly<EnvConfig>) {
         super("abs_any", ABS, is_any);
     }
-    dependencies?: FEATURE[] | undefined;
+    // dependencies?: FEATURE[] | undefined;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     test(expr: EXP, opr: Sym): boolean {
         throw new Error("Method not implemented.");

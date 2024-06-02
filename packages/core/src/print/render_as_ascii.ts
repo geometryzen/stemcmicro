@@ -97,7 +97,7 @@ export function render_as_ascii(expr: U, $: PrintConfig): string {
 
     // if too wide then print flat
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [h, w, y] = get_size(0, yindex);
+    const [_h, w, _y] = get_size(0, yindex);
 
     if (w > 100) {
         return render_using_non_sexpr_print_mode(expr, $);
@@ -826,7 +826,7 @@ function fixup_fraction(x: number, k1: number, k2: number): void {
 
     const [h1, w1, y1] = get_size(k1, k2);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [h2, w2, y2] = get_size(k2, yindex);
+    const [_h2, w2, y2] = get_size(k2, yindex);
 
     if (w2 > w1) {
         dx = (w2 - w1) / 2; // shift numerator right
@@ -870,17 +870,11 @@ function fixup_fraction(x: number, k1: number, k2: number): void {
 
 function fixup_power(k1: number, k2: number) {
     let dy = 0;
-    let h1 = 0;
-    let w1 = 0;
-    let y1 = 0;
-    let h2 = 0;
-    let w2 = 0;
-    let y2 = 0;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    [h1, w1, y1] = get_size(k1, k2);
+    const [_h1, _w1, y1] = get_size(k1, k2);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    [h2, w2, y2] = get_size(k2, yindex);
+    const [h2, _w2, y2] = get_size(k2, yindex);
 
     // move superscript to baseline
     dy = -y2 - h2 + 1;
@@ -931,7 +925,7 @@ function get_size(j: number, k: number): [h: number, w: number, y: number] {
 
 function __emit_char(ch: string): number | undefined {
     if (yindex === YMAX) {
-        return;
+        return void 0;
     }
     chartab[yindex].c = ch;
     chartab[yindex].x = emit_x;

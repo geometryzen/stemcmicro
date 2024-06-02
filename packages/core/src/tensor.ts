@@ -209,7 +209,7 @@ export function promote_tensor(p1: U): U {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const dims = [...p1.copyDimensions(), ...p2.copyDimensions()];
+    // const dims = [...p1.copyDimensions(), ...p2.copyDimensions()];
     throw new Error("TODO: promote_tensor");
     // Not sure why this doesn't compile.
     // TODO: I have since learned that the elements of the tensor are flattened.

@@ -56,7 +56,7 @@ const options: RollupOptions[] = [
             // Allows us to consume the 'big-integer' library, which is CommonJS :(
             commonjs(),
             resolve(),
-            typescript({ tsconfig: './tsconfig.json' })
+            typescript({ tsconfig: './tsconfig.json', noEmitOnError: true })
         ]
     },
     {

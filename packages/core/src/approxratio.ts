@@ -124,8 +124,6 @@ const approx_sine_of_rational = 1;
 const approx_sine_of_pi_times_rational = 2;
 const approx_rationalOfPi = 3;
 const approx_radicalOfRatio = 4;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const approx_nothingUseful = 5;
 const approx_ratioOfRadical = 6;
 const approx_rationalOfE = 7;
 const approx_logarithmsOfRationals = 8;

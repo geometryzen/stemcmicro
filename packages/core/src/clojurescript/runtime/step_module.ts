@@ -27,4 +27,5 @@ export function step_module(expr: Cons, stack: Stack<State>, state: State): Stat
     stack.top.values = state.argValues;
     // Don't pop the stateStack.
     // Leave the root scope on the tree in case the program is appended to.
+    return void 0;
 }

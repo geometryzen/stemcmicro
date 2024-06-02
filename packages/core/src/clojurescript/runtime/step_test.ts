@@ -28,4 +28,5 @@ export function step_test(expr: Cons, stack: Stack<State>, state: State): State 
     stack.pop();
     const value = state.$.valueOf(items_to_cons(expr.opr, ...state.argValues));
     stack.top.value = value;
+    return void 0;
 }

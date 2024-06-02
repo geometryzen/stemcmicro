@@ -5,10 +5,9 @@ import { U } from "@stemcmicro/tree";
 import { power } from "./power";
 
 /**
- * inverse(arg) => (valueOf (pow arg -1))
+ * inverse(arg) => (valueOf (power arg -1))
  */
 export function inverse(arg: U, $: Pick<ExprContext, "valueOf">): U {
-    // console.lg("inverse", `${arg}`);
     const value = $.valueOf(arg);
     try {
         if (is_num(value)) {

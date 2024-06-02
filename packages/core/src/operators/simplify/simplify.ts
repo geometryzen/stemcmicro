@@ -117,7 +117,7 @@ export function simplify(x: U, env: ExprContext): U {
 
             if (do_simplify_nested_radicals) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const [flags, R] = simplify_nested_radicals(I, env);
+                const [_flags, R] = simplify_nested_radicals(I, env);
                 // console.lg(`I ${$.toInfixString(p1)}`);
                 // if there is some de-nesting then
                 // re-run a simplification because
@@ -431,7 +431,7 @@ function simplify_nested_radicals(x: U, $: ExprContext): [TFLAGS, U] {
     // console.lg("simplify_nested_radicals", `${$.toInfixString(x)}`);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [red, red_flags] = take_care_of_nested_radicals(x, $);
+    const [red, _red_flags] = take_care_of_nested_radicals(x, $);
 
     // console.lg("red", `${$.toInfixString(red)}`);
 

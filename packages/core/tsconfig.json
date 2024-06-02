@@ -1,21 +1,7 @@
 {
+    "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "target": "es2020",
-        "module": "esnext",
-        "sourceMap": true,
-        "outDir": "build",
-        "strict": true,
-        "moduleResolution": "node",
-        "noImplicitOverride": false,
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "skipLibCheck": true,
-        "strictNullChecks": true,
-        "declaration": true,
-        "declarationDir": "types",
-        "emitDeclarationOnly": true,
-        "removeComments": false,
-        "resolveJsonModule": true
+        "outDir": "./build"
     },
-    "include": ["index.ts", "src/**/*.ts", "repl.mts", "rollup.config.mts"]
+    "include": ["./src/**/*.ts", "rollup.config.mts"]
 }

@@ -30,7 +30,7 @@ export class ShareableMap<K, V extends Shareable> implements Shareable {
         this.#refCount--;
         if (this.#refCount === 0) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            for (const [key, value] of this.#map.entries()) {
+            for (const [_key, value] of this.#map.entries()) {
                 value.release();
             }
         }

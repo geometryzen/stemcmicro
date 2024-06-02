@@ -35,7 +35,7 @@ import {
     Sym,
     Tensor
 } from "@stemcmicro/atoms";
-import { CompareFn, ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
+import { ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
@@ -403,6 +403,7 @@ function cmp(lhs: U, rhs: U): Sign {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+/*
 function cmp_factors(lhs: U, rhs: U): Sign {
     const a = order_factor(lhs);
     const b = order_factor(rhs);
@@ -440,6 +441,7 @@ function cmp_factors(lhs: U, rhs: U): Sign {
 
     return c;
 }
+*/
 
 function cmp_factors_provisional(p1: U, p2: U): 0 | 1 | -1 {
     if (is_cons(p1) && p1.opr.equals(POWER)) {
@@ -1265,6 +1267,7 @@ function sort_terms(start: number, ctrl: ProgramControl, $: ProgramStack): void 
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+/*
 function make_terms_compare_fn(compareFactors: CompareFn): CompareFn {
     return function (lhs: U, rhs: U): Sign {
         // 1st level: imaginary terms on the right
@@ -1345,6 +1348,7 @@ function make_terms_compare_fn(compareFactors: CompareFn): CompareFn {
         return SIGN_EQ;
     };
 }
+*/
 
 export function simplify_terms(h: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): number {
     let n = 0;
@@ -1366,7 +1370,7 @@ export function simplify_terms(h: number, env: ProgramEnv, ctrl: ProgramControl,
 function isradicalterm(p: U): boolean {
     return car(p).equals(MULTIPLY) && is_num(cadr(p)) && isradical(caddr(p));
 }
-
+/*
 function isimaginaryterm(p: U): 0 | 1 {
     if (isimaginaryfactor(p)) return 1;
     if (car(p).equals(MULTIPLY)) {
@@ -1378,10 +1382,12 @@ function isimaginaryterm(p: U): 0 | 1 {
     }
     return 0;
 }
-
+*/
+/*
 function isimaginaryfactor(p: U): boolean | 0 {
     return car(p).equals(POWER) && isminusone(cadr(p));
 }
+*/
 
 function add_numbers(lhs: Num, rhs: Num, $: Pick<ProgramStack, "push">): void {
     if (is_rat(lhs) && is_rat(rhs)) {
@@ -1479,7 +1485,7 @@ function push_algebra_tensor(metric: Tensor<U>, labels: Tensor<U>, $: ProgramSta
 }
 
 class AlgebraFieldAdapter implements Adapter<U, U> {
-    constructor(private readonly dimensions: number) {}
+    constructor() {}
     get ε(): U {
         return create_flt(1e-6);
     }
@@ -1626,7 +1632,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
 }
 
 function create_algebra_as_tensor<T extends U>(metric: T[], labels: string[]): Tensor<U> {
-    const uFieldAdaptor = new AlgebraFieldAdapter(metric.length);
+    const uFieldAdaptor = new AlgebraFieldAdapter();
     const GA = create_algebra(metric, uFieldAdaptor, labels);
     /**
      * Number of basis vectors in algebra is dimensionality.
@@ -10612,7 +10618,7 @@ function normalize_power_factors(h: number, env: ProgramEnv, ctrl: ProgramContro
         }
     }
 }
-
+/*
 const ORDER_1 = 1;
 const ORDER_2 = 2;
 const ORDER_3 = 3;
@@ -10621,7 +10627,7 @@ const ORDER_5 = 5;
 const ORDER_6 = 6;
 const ORDER_7 = 7;
 const ORDER_8 = 8;
-
+*/
 /**
  *  1   number
  *  2   number to power (root)
@@ -10633,6 +10639,7 @@ const ORDER_8 = 8;
  * @param expr
  * @returns
  */
+/*
 function order_factor(expr: U): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 {
     // console.lg("order_factor", `${ expr } `);
     if (is_atom(expr)) {
@@ -10679,7 +10686,7 @@ function order_factor(expr: U): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 {
 
     return ORDER_6;
 }
-
+*/
 function partition_term($: ProgramStack): void {
     const X = pop($);
     const F = pop($);

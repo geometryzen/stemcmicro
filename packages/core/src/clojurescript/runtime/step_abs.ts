@@ -26,4 +26,5 @@ export function step_abs(expr: Cons, stack: Stack<State>, state: State): State |
     stack.pop();
     const value = state.$.evaluate(Native.abs, ...state.argValues);
     stack.top.value = value;
+    return void 0;
 }

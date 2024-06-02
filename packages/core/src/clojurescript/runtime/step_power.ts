@@ -26,4 +26,5 @@ export function step_power(expr: Cons, stack: Stack<State>, state: State): State
     stack.pop();
     const value = state.$.evaluate(Native.pow, ...state.argValues);
     stack.top.value = value;
+    return void 0;
 }

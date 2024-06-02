@@ -57,7 +57,7 @@ const options: RollupOptions[] = [
             // Allows us to consume libraries that are CommonJS.
             commonjs(),
             resolve(),
-            typescript({ tsconfig: './tsconfig.json' })
+            typescript({ tsconfig: './tsconfig.json', noEmitOnError: true })
         ]
     },
     // Bundle the generated ESM type definitions.

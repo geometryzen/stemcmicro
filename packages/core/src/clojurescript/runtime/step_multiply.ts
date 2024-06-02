@@ -26,4 +26,5 @@ export function step_multiply(expr: Cons, stack: Stack<State>, state: State): St
     stack.pop();
     const value = state.$.evaluate(Native.multiply, ...state.argValues);
     stack.top.value = value;
+    return void 0;
 }

@@ -2,15 +2,15 @@
     "compilerOptions": {
         "target": "esnext",
         "module": "esnext",
-        "moduleResolution": "node",
         "declaration": true,
         "declarationDir": "types",
         "emitDeclarationOnly": true,
         "sourceMap": true,
-        "outDir": "build",
+        "outDir": "./build",
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "strict": true,
+        "moduleResolution": "node",
         "noImplicitAny": true,
         "strictNullChecks": false,
         "noImplicitThis": true,
@@ -21,5 +21,6 @@
         "removeComments": false,
         "resolveJsonModule": true
     },
+    "include": ["./src/**/*.ts", "rollup.config.mts"],
     "exclude": ["node_modules", "**/*.spec.ts"]
 }

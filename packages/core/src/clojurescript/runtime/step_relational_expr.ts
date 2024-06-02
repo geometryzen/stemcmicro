@@ -28,4 +28,5 @@ export function step_relational_expr(expr: Cons, stack: Stack<State>, state: Sta
     stack.pop();
     const value = state.$.valueOf(items_to_cons(expr.opr, ...state.argValues));
     stack.top.value = value;
+    return void 0;
 }

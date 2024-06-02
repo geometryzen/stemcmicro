@@ -104,7 +104,7 @@ function __legendre2(n: number, m: number, X: U, $: ExtensionEnv): U {
 // moveTos tos * (-1)^m * (1-x^2)^(m/2)
 function __legendre3(p1: U, m: number, X: U, $: ExtensionEnv): U | undefined {
     if (m === 0) {
-        return;
+        return void 0;
     }
 
     let base = $.subtract(one, square(X, $));

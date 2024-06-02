@@ -543,7 +543,7 @@ function integral_of_form(F: U, X: U, $: ExprContext): U {
     // console.lg(`tab=${JSON.stringify(tab)}`);
     if (Array.isArray(tab)) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [retval, flag] = transform(F, X, tab, false, $);
+        const [retval, _flag] = transform(F, X, tab, false, $);
         // console.lg("retval", $.toInfixString(retval));
         // console.lg("flag", JSON.stringify(flag));
         if (is_nil(retval)) {

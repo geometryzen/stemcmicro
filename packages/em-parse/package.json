@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/em-parse",
-    "version": "0.9.55",
+    "version": "0.9.56",
     "description": "Eigenmath parser for math expressions",
     "exports": {
         ".": {

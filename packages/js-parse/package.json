@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/js-parse",
-    "version": "0.9.55",
+    "version": "0.9.56",
     "description": "JavaScript parser for math expressions",
     "exports": {
         ".": {

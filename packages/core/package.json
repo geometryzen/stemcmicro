@@ -13,6 +13,7 @@
         }
     },
     "module": "./dist/esm/index.min.js",
+    "type": "module",
     "types": "./dist/index.d.ts",
     "directories": {
         "test": "tests"
@@ -27,7 +28,7 @@
         "pretest": "npm run build",
         "release": "release-it",
         "repl": "npm run build && node repl.mjs",
-        "lint": "eslint . --ext .ts"
+        "lint": "eslint ."
     },
     "repository": {
         "type": "git",

@@ -1,13 +1,14 @@
 // import assert from 'assert';
 import { nil, U } from "@stemcmicro/tree";
-import { ExprEngineListener, UndeclaredVars } from "../src/api/api";
-
+import { UndeclaredVars } from "../src/api/api";
+/*
 class TestListener implements ExprEngineListener {
     readonly outputs: string[] = [];
     output(output: string): void {
         this.outputs.push(output);
     }
 }
+*/
 export interface MungeConfig {
     allowUndeclaredVars: UndeclaredVars;
 }

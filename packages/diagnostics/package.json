@@ -9,6 +9,7 @@
         }
     },
     "module": "./dist/esm/index.min.js",
+    "type": "module",
     "types": "./dist/index.d.ts",
     "files": [
         "dist/commonjs/index.js",
@@ -36,7 +37,7 @@
         "dev": "rollup -c -w",
         "docs": "npm run docs:typedoc && open-cli docs/index.html",
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
-        "lint": "eslint . --ext .ts",
+        "lint": "eslint .",
         "pages": "npm run docs:typedoc && gh-pages --dist docs --dest diagnostics",
         "pretest": "npm run build",
         "release": "release-it",

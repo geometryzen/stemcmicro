@@ -1,11 +1,11 @@
 import { bigInt, create_int, is_flt, is_num, Rat } from "@stemcmicro/atoms";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Native, native_sym } from "@stemcmicro/native";
+import { is_rat_and_integer } from "@stemcmicro/predicates";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { is_rat_and_integer } from "../../is_rat_and_integer";
 import { mmod } from "../../mmul";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { halt } from "../../runtime/defs";
 import { caddr, cadr } from "../../tree/helpers";
 
@@ -27,7 +27,7 @@ function mod(a: U, b: U, $: ExtensionEnv): U {
     }
 
     if (is_flt(a)) {
-        const n = nativeInt(a);
+        const n = num_to_number(a);
         if (isNaN(n)) {
             halt("mod function: cannot convert float value to integer");
         }
@@ -35,7 +35,7 @@ function mod(a: U, b: U, $: ExtensionEnv): U {
     }
 
     if (is_flt(b)) {
-        const n = nativeInt(b);
+        const n = num_to_number(b);
         if (isNaN(n)) {
             halt("mod function: cannot convert float value to integer");
         }

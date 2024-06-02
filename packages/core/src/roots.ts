@@ -1,5 +1,6 @@
 import { create_int, imu, is_rat, negOne, one, Tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, Cons, nil, U } from "@stemcmicro/tree";
 import { rational } from "./bignum";
@@ -12,7 +13,6 @@ import { divide } from "./helpers/divide";
 import { iszero } from "./helpers/iszero";
 import { multiply } from "./helpers/multiply";
 import { negate } from "./helpers/negate";
-import { power } from "./helpers/power";
 import { subtract } from "./helpers/subtract";
 import { is_complex_number, is_poly_expanded_form } from "./is";
 import { coefficients } from "./operators/coeff/coeff";

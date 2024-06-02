@@ -1,9 +1,9 @@
 import { ExprContext } from "@stemcmicro/context";
+import { inverse } from "@stemcmicro/helpers";
 import { add_terms } from "./calculators/add/add_terms";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { add } from "./helpers/add";
 import { equals } from "./helpers/equals";
-import { inverse } from "./helpers/inverse";
 import { isone } from "./helpers/isone";
 import { subtract } from "./helpers/subtract";
 import { equaln, is_num_and_eq_minus_one } from "./is";

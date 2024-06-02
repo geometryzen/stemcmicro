@@ -6,7 +6,7 @@ import { ExprContext } from "@stemcmicro/context";
 import { U } from "@stemcmicro/tree";
 import { multiply } from "./helpers/multiply";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
-import { nativeInt } from "./nativeInt";
+import { num_to_number } from "./nativeInt";
 import { is_num } from "./operators/num/is_num";
 import { is_pi } from "./operators/pi/is_pi";
 import { is_multiply } from "./runtime/helpers";
@@ -22,7 +22,7 @@ export function is_multiple_of_pi(p: U, $: ExprContext): number {
     if (!is_multiply(p) || !is_num(cadr(p)) || !is_pi(caddr(p)) || length_of_cons_otherwise_zero(p) !== 3) {
         return 0;
     }
-    n = nativeInt(multiply($, cadr(p), two));
+    n = num_to_number(multiply($, cadr(p), two));
     if (isNaN(n)) {
         return 0;
     }

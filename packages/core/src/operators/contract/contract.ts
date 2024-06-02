@@ -1,5 +1,5 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { halt } from "../../runtime/defs";
 import { cadddr, caddr, cddr } from "../../tree/helpers";
 import { one, two, zero } from "../../tree/rat/Rat";
@@ -50,8 +50,8 @@ function contract(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
         return zero;
     }
 
-    let l = nativeInt(p2);
-    let m = nativeInt(p3);
+    let l = num_to_number(p2);
+    let m = num_to_number(p3);
 
     const { ndim: ndim } = p1;
 

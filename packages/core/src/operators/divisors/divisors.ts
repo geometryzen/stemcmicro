@@ -1,14 +1,13 @@
 import { create_int, is_num, one, Tensor, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { inverse, power } from "@stemcmicro/helpers";
 import { car, cdr, is_cons, U } from "@stemcmicro/tree";
 import { sort_factors } from "../../calculators/compare/sort_factors";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { add } from "../../helpers/add";
-import { inverse } from "../../helpers/inverse";
 import { isone } from "../../helpers/isone";
 import { multiply } from "../../helpers/multiply";
-import { power } from "../../helpers/power";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { caddr, cadr } from "../../tree/helpers";
 import { factor_small_number } from "../factor/factor";
@@ -43,13 +42,13 @@ export function ydivisors(term: U, $: Pick<ExprContext, "handlerFor" | "pushDire
     const stack: U[] = [];
     // push all of the term's factors
     if (is_num(term)) {
-        stack.push(...factor_small_number(nativeInt(term)));
+        stack.push(...factor_small_number(num_to_number(term)));
     } else if (is_cons(term) && is_add(term)) {
         stack.push(...__factor_add(term, $));
     } else if (is_multiply(term)) {
         let p1 = cdr(term);
         if (is_num(car(p1))) {
-            stack.push(...factor_small_number(nativeInt(car(p1))));
+            stack.push(...factor_small_number(num_to_number(car(p1))));
             p1 = cdr(p1);
         }
         if (is_cons(p1)) {
@@ -109,7 +108,7 @@ function gen(stack: U[], h: number, k: number, _: Pick<ExprContext, "valueOf">):
     const BASE: U = stack[h + 0];
     const EXPO: U = stack[h + 1];
 
-    const expo = nativeInt(EXPO);
+    const expo = num_to_number(EXPO);
     if (!isNaN(expo)) {
         for (let i = 0; i <= Math.abs(expo); i++) {
             stack.push(multiply(_, ACCUM, power(_, BASE, create_int(signum(expo) * i))));
@@ -148,11 +147,11 @@ function __factor_add(p1: U, $: Pick<ExprContext, "handlerFor" | "pushDirective"
 
     // push factored gcd
     if (is_num(p2)) {
-        stack.push(...factor_small_number(nativeInt(p2)));
+        stack.push(...factor_small_number(num_to_number(p2)));
     } else if (is_multiply(p2)) {
         const p3 = cdr(p2);
         if (is_num(car(p3))) {
-            stack.push(...factor_small_number(nativeInt(car(p3))));
+            stack.push(...factor_small_number(num_to_number(car(p3))));
         } else {
             stack.push(car(p3), one);
         }

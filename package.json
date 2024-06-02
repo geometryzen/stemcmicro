@@ -23,6 +23,7 @@
         "packages/cs-parse",
         "packages/diagnostics",
         "packages/em-parse",
+        "packages/helpers",
         "packages/js-parse",
         "packages/native",
         "packages/predicates",

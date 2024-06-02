@@ -2,7 +2,7 @@ import { create_int, one, zero } from "@stemcmicro/atoms";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
 import { items_to_cons } from "../../makeList";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { LAGUERRE, SECRETX } from "../../runtime/constants";
 import { cadddr, caddr, cadr } from "../../tree/helpers";
 import { U } from "../../tree/tree";
@@ -44,7 +44,7 @@ export function eval_laguerre(p1: U, $: ExtensionEnv): U {
 }
 
 function laguerre(X: U, N: U, K: U, $: ExtensionEnv): U {
-    const n = nativeInt(N);
+    const n = num_to_number(N);
     if (n < 0 || isNaN(n)) {
         return items_to_cons(LAGUERRE, X, N, K);
     }

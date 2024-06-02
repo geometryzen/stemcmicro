@@ -18,7 +18,39 @@ export { assert_map, is_map, Map } from "./map/Map";
 export { assert_num, is_num, Num } from "./num/Num";
 export { assert_jsobject, is_jsobject, JsObject } from "./object/JsObject";
 export { bigInt, BigInteger, gcd } from "./rat/big-integer";
-export { assert_rat, create_int, create_rat, is_rat, negOne, one, Rat, zero } from "./rat/Rat";
+export {
+    assert_rat,
+    create_int,
+    create_rat,
+    eight,
+    eleven,
+    five,
+    four,
+    half,
+    is_rat,
+    negEight,
+    negEleven,
+    negFive,
+    negFour,
+    negHalf,
+    negNine,
+    negOne,
+    negSeven,
+    negSix,
+    negTen,
+    negThree,
+    negTwo,
+    nine,
+    one,
+    Rat,
+    seven,
+    six,
+    ten,
+    third,
+    three,
+    two,
+    zero
+} from "./rat/Rat";
 export { assert_set, is_set, Set } from "./set/Set";
 export { assert_str, create_str, emptyStr, is_str, Str as JsString, Str } from "./str/Str";
 export { assert_sym, create_sym, create_sym_ns, is_sym, Sym } from "./sym/Sym";

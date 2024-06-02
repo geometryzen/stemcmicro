@@ -1,13 +1,13 @@
 import { create_flt, create_int, is_flt, negOne, one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { power } from "@stemcmicro/helpers";
 import { car, Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
 import { multiply } from "../../helpers/multiply";
 import { negate } from "../../helpers/negate";
-import { power } from "../../helpers/power";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCTAN, TAN } from "../../runtime/constants";
 import { DynamicConstants } from "../../runtime/defs";
@@ -102,7 +102,7 @@ function radians_to_degrees(radians: U, $: ExprContext): number {
     try {
         const degrees = divide(times_180, DynamicConstants.PI($), $);
         try {
-            return nativeInt(degrees);
+            return num_to_number(degrees);
         } finally {
             degrees.release();
         }

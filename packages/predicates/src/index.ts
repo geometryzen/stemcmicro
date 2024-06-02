@@ -10,5 +10,6 @@ export { is_num_and_eq_minus_one } from "./is_num_and_eq_minus_one";
 export { is_num_and_negative } from "./is_num_and_negative";
 export { is_power } from "./is_power";
 export { is_rat_and_fraction } from "./is_rat_and_fraction";
+export { is_rat_and_integer } from "./is_rat_and_integer";
 export { is_transpose } from "./is_transpose";
 export { is_zero_num } from "./is_zero_num";

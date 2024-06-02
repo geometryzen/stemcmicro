@@ -1,4 +1,4 @@
-import { U } from "@stemcmicro/tree";
+import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { filter } from "./filter";
 import { guess } from "./guess";
@@ -19,10 +19,10 @@ Result
 
 The result is undefined if P is not a polynomial.
 */
-export function eval_leading(p1: U, $: Pick<ExtensionEnv, "add" | "multiply" | "power" | "valueOf">): U {
-    const P = $.valueOf(cadr(p1));
-    p1 = $.valueOf(caddr(p1));
-    const X = p1.isnil ? guess(P) : p1;
+export function eval_leading(arg: Cons, $: Pick<ExtensionEnv, "add" | "multiply" | "power" | "valueOf">): U {
+    const P = $.valueOf(cadr(arg));
+    const V = $.valueOf(caddr(arg));
+    const X = V.isnil ? guess(P) : V;
     return leading(P, X, $);
 }
 

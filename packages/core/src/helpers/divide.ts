@@ -1,10 +1,10 @@
 import { is_flt, is_num, is_rat, is_uom } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { inverse } from "@stemcmicro/helpers";
 import { is_atom, U } from "@stemcmicro/tree";
 import { divide_numbers } from "../bignum";
 import { Directive } from "../env/ExtensionEnv";
 import { float } from "./float";
-import { inverse } from "./inverse";
 import { multiply } from "./multiply";
 
 /**

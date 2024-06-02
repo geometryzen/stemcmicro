@@ -1,7 +1,7 @@
 import { create_flt, is_flt, negOne } from "@stemcmicro/atoms";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { is_negative } from "../../predicates/is_negative";
 import { BESSELY } from "../../runtime/constants";
 import { caddr, cadr } from "../../tree/helpers";
@@ -31,7 +31,7 @@ export function bessely(p1: U, p2: U, $: ExtensionEnv): U {
 }
 
 function yybessely(X: U, N: U, $: ExtensionEnv): U {
-    const n = nativeInt(N);
+    const n = num_to_number(N);
 
     if (is_flt(X) && !isNaN(n)) {
         const d = yn(n, X.d);

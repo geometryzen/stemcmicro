@@ -2,7 +2,7 @@ import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
 import { rational } from "../../bignum";
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCCOS, ARCTAN } from "../../runtime/constants";
 import { DynamicConstants } from "../../runtime/defs";
@@ -54,7 +54,7 @@ export function cosine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] 
 
     const x_times_180 = $.multiply(x, create_int(180));
     const PI = DynamicConstants.PI($);
-    const n = nativeInt(divide(x_times_180, PI, $));
+    const n = num_to_number(divide(x_times_180, PI, $));
 
     // most "good" (i.e. compact) trigonometric results
     // happen for a round number of degrees. There are some exceptions

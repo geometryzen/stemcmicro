@@ -1,5 +1,6 @@
 import { imu, is_imu, is_num, is_rat, is_tensor, one, Tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, is_atom, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { complex_conjugate } from "../../complex_conjugate";
@@ -13,7 +14,6 @@ import { isone } from "../../helpers/isone";
 import { iszero } from "../../helpers/iszero";
 import { multiply } from "../../helpers/multiply";
 import { negate } from "../../helpers/negate";
-import { power } from "../../helpers/power";
 import { real } from "../../helpers/real";
 import { rect } from "../../helpers/rect";
 import { equaln, is_num_and_gt_zero } from "../../is";

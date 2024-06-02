@@ -1,4 +1,4 @@
-import { nativeInt } from "../nativeInt";
+import { num_to_number } from "../nativeInt";
 import { is_tensor } from "../operators/tensor/is_tensor";
 import { defs, halt, move_top_of_stack } from "../runtime/defs";
 import { stack_push } from "../runtime/stack";
@@ -45,7 +45,7 @@ export function set_component(n: number): void {
 
     let k = 0;
     for (let i = 0; i < m; i++) {
-        const t = nativeInt(defs.stack[s + i + 2] as U);
+        const t = num_to_number(defs.stack[s + i + 2] as U);
         if (t < 1 || t > lhs.dim(i)) {
             halt("error in indexed assign\n");
         }

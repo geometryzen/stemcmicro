@@ -1,4 +1,4 @@
-import { nativeInt } from "../nativeInt";
+import { num_to_number } from "../nativeInt";
 import { Tensor } from "../tree/tensor/Tensor";
 import { U } from "../tree/tree";
 
@@ -19,7 +19,7 @@ export function index_function(tensor: Tensor, indices: U[]): U {
     let k = 0;
 
     for (let i = 0; i < m; i++) {
-        const idx = nativeInt(indices[i]);
+        const idx = num_to_number(indices[i]);
         if (idx < 1 || idx > tensor.dim(i)) {
             throw new Error("index out of range");
         }

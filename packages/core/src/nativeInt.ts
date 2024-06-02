@@ -1,7 +1,7 @@
 import { is_flt, is_rat, is_str, Num } from "@stemcmicro/atoms";
+import { is_rat_and_integer } from "@stemcmicro/predicates";
 import { is_atom, U } from "@stemcmicro/tree";
 import { in_safe_integer_range } from "./in_safe_integer_range";
-import { is_rat_and_integer } from "./is_rat_and_integer";
 import { ProgrammingError } from "./programming/ProgrammingError";
 
 /**
@@ -9,7 +9,7 @@ import { ProgrammingError } from "./programming/ProgrammingError";
  * If the expr is a Rat and an integer and in safe range for EcmaScript number then a number is returned.
  * If the expr is a Flt and an integer then the number is returned.
  */
-export function nativeInt(expr: U): number {
+export function num_to_number(expr: U): number {
     if (is_rat(expr)) {
         if (expr.isInteger() && in_safe_integer_range(expr.a)) {
             return expr.a.toJSNumber();

@@ -2,7 +2,7 @@ import { create_int, one, zero } from "@stemcmicro/atoms";
 import { is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { bignum_factorial } from "../../bignum";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { FACTORIAL } from "../../runtime/constants";
 import { defs, move_top_of_stack, noexpand_unary } from "../../runtime/defs";
 import { is_add, is_factorial, is_multiply, is_power } from "../../runtime/helpers";
@@ -11,7 +11,7 @@ import { doexpand_value_of } from "../../scripting/doexpand_eval";
 import { caddr, cadr } from "../../tree/helpers";
 
 export function factorial(p1: U): U {
-    const n = nativeInt(p1);
+    const n = num_to_number(p1);
     if (n < 0 || isNaN(n)) {
         return items_to_cons(FACTORIAL, p1);
     }
@@ -121,14 +121,14 @@ function sfac_product_f(s: number, a: number, b: number, $: ExtensionEnv) {
     }
 
     if (is_factorial(p1) && is_factorial(p2)) {
-        let n = nativeInt(doexpand_value_of($.add(p3, p4), $));
+        let n = num_to_number(doexpand_value_of($.add(p3, p4), $));
         if (n !== 0) {
             return;
         }
 
         // Find the difference between the two factorial args.
         // For example, the difference between (a + 2)! and a! is 2.
-        n = nativeInt(doexpand_value_of($.subtract(cadr(p1), cadr(p2)), $)); // to simplify
+        n = num_to_number(doexpand_value_of($.subtract(cadr(p1), cadr(p2)), $)); // to simplify
         if (n === 0 || isNaN(n)) {
             return;
         }

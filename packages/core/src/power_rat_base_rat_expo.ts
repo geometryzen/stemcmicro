@@ -2,6 +2,7 @@ import { bigInt, BigInteger, imu, negOne, one, Rat, Sym, zero } from "@stemcmicr
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Native, native_sym } from "@stemcmicro/native";
+import { is_rat_and_integer } from "@stemcmicro/predicates";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { bignum_truncate, makePositive, makeSignSameAs } from "./bignum";
 import { Directive } from "./env/ExtensionEnv";
@@ -11,10 +12,9 @@ import { negate } from "./helpers/negate";
 import { subtract } from "./helpers/subtract";
 import { in_safe_integer_range } from "./in_safe_integer_range";
 import { is_num_and_eq_minus_one } from "./is";
-import { is_rat_and_integer } from "./is_rat_and_integer";
 import { mpow } from "./mpow";
 import { mroot } from "./mroot";
-import { nativeInt } from "./nativeInt";
+import { num_to_number } from "./nativeInt";
 import { is_num_and_negative } from "./predicates/is_negative_number";
 import { quickfactor } from "./quickfactor";
 import { half } from "./tree/rat/Rat";
@@ -78,7 +78,7 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExprContext): C
     let y: BigInteger;
     // if exponent is integer then power
     if (is_rat_and_integer(expo)) {
-        expoJs = nativeInt(expo);
+        expoJs = num_to_number(expo);
         if (isNaN(expoJs)) {
             // expo greater than 32 bits
             return hook(items_to_cons(POWER, base, expo), "F");

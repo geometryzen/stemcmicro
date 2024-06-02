@@ -9,7 +9,7 @@ import { imu, is_num } from "@stemcmicro/atoms";
 import { U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
-import { nativeInt } from "./nativeInt";
+import { num_to_number } from "./nativeInt";
 import { is_pi } from "./operators/pi/is_pi";
 import { is_multiply } from "./runtime/helpers";
 import { cadddr, caddr, cadr } from "./tree/helpers";
@@ -51,7 +51,7 @@ export function is_quarter_turn(p: U, $: ExtensionEnv): 0 | 1 | 2 | 3 | 4 {
         return 0;
     }
 
-    let n = nativeInt($.multiply(cadr(p), two));
+    let n = num_to_number($.multiply(cadr(p), two));
     if (isNaN(n)) {
         return 0;
     }

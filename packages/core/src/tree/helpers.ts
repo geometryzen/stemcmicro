@@ -8,7 +8,7 @@ export function cadr(p: U): U {
     return car(cdr(p));
 }
 
-export function cdar(p: U): U {
+export function cdar(p: U): Cons {
     return cdr(car(p));
 }
 
@@ -28,11 +28,11 @@ export function cadar(p: U): U {
     return car(cdr(car(p)));
 }
 
-export function cdadr(p: U): U {
+export function cdadr(p: U): Cons {
     return cdr(car(cdr(p)));
 }
 
-export function cddar(p: U): U {
+export function cddar(p: U): Cons {
     return cdr(cdr(car(p)));
 }
 

@@ -1,8 +1,8 @@
 import { is_rat, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { inverse } from "@stemcmicro/helpers";
 import { is_add, is_multiply, is_negative, is_power } from "@stemcmicro/predicates";
 import { car, is_cons, U } from "@stemcmicro/tree";
-import { inverse } from "../../helpers/inverse";
 import { isone } from "../../helpers/isone";
 import { multiply_items } from "../../multiply";
 import { rationalize_factoring } from "../rationalize/rationalize";

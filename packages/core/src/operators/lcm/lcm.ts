@@ -1,7 +1,7 @@
 import { ExprContext } from "@stemcmicro/context";
+import { inverse } from "@stemcmicro/helpers";
 import { car, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { divide } from "../../helpers/divide";
-import { inverse } from "../../helpers/inverse";
 import { doexpand_binary } from "../../runtime/defs";
 import { gcd } from "../gcd/gcd";
 

@@ -1,9 +1,11 @@
-import { create_int, Sym, Tensor } from "@stemcmicro/atoms";
+import { create_int, Tensor } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { inverse } from "@stemcmicro/helpers";
+import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "./env/ExtensionEnv";
-import { inverse } from "./helpers/inverse";
-import { nativeInt } from "./nativeInt";
-import { HILBERT } from "./runtime/constants";
+import { num_to_number } from "./nativeInt";
+
+const HILBERT = native_sym(Native.hilbert);
 
 /**
  * Hilbert matrix
@@ -16,8 +18,8 @@ import { HILBERT } from "./runtime/constants";
  * @param $
  * @returns
  */
-export function hilbert(N: U, $: Pick<ExtensionEnv, "valueOf">): Cons | Sym | Tensor {
-    const n = nativeInt(N);
+export function hilbert(N: U, $: Pick<ExprContext, "valueOf">): Cons | Tensor {
+    const n = num_to_number(N);
     if (n < 0) {
         return items_to_cons(HILBERT, N);
     }

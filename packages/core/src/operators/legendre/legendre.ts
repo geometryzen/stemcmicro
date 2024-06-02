@@ -2,7 +2,7 @@ import { create_int, one, zero } from "@stemcmicro/atoms";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
 import { items_to_cons } from "../../makeList";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { COS, LEGENDRE, SECRETX, SIN } from "../../runtime/constants";
 import { square } from "../../square";
 import { cadddr, caddr, cadr } from "../../tree/helpers";
@@ -55,8 +55,8 @@ function legendre(X: U, N: U, M: U, $: ExtensionEnv): U {
 }
 
 function __legendre(X: U, N: U, M: U, $: ExtensionEnv): U {
-    const n = nativeInt(N);
-    const m = nativeInt(M);
+    const n = num_to_number(N);
+    const m = num_to_number(M);
 
     if (n < 0 || isNaN(n) || m < 0 || isNaN(m)) {
         return items_to_cons(LEGENDRE, X, N, M);

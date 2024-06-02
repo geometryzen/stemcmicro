@@ -2,7 +2,7 @@ import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
 import { items_to_cons } from "../../makeList";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { is_negative } from "../../predicates/is_negative";
 import { BESSELJ, MEQUAL, MSIGN } from "../../runtime/constants";
 import { MATH_PI } from "../../runtime/ns_math";
@@ -60,7 +60,7 @@ export function besselj(p1: U, p2: U, $: ExtensionEnv): U {
 }
 
 function yybesselj(X: U, N: U, $: ExtensionEnv): U {
-    const n = nativeInt(N);
+    const n = num_to_number(N);
 
     // numerical result
     if (is_flt(X) && !isNaN(n)) {

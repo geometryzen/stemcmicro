@@ -1,17 +1,18 @@
-import { create_flt, create_int, is_flt, is_num } from "@stemcmicro/atoms";
+import { create_flt, create_int, create_sym, is_flt, is_num } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { is_rat_and_integer } from "@stemcmicro/predicates";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { is_rat_and_integer } from "../../is_rat_and_integer";
-import { ROUND } from "../../runtime/constants";
 import { cadr } from "../../tree/helpers";
 import { evaluate_as_float } from "../float/float";
 
-export function eval_round(p1: Cons, $: ExtensionEnv): U {
-    const result = yround($.valueOf(cadr(p1)), $);
+const ROUND = create_sym("round");
+
+export function eval_round(arg: Cons, $: ExprContext): U {
+    const result = yround($.valueOf(cadr(arg)), $);
     return result;
 }
 
-function yround(expr: U, $: ExtensionEnv): U {
+function yround(expr: U, $: ExprContext): U {
     if (!is_num(expr)) {
         return items_to_cons(ROUND, expr);
     }

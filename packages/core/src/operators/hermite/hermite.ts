@@ -1,7 +1,7 @@
 import { create_int, one, zero } from "@stemcmicro/atoms";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { items_to_cons } from "../../makeList";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { HERMITE, SECRETX } from "../../runtime/constants";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -25,7 +25,7 @@ export function hermite(p1: U, p2: U, $: ExtensionEnv): U {
 
 // uses the recurrence relation H(x,n+1)=2*x*H(x,n)-2*n*H(x,n-1) = 2 * (x*H(x,n)-n*H(x,n-1))
 function yyhermite(X: U, N: U, $: ExtensionEnv): U {
-    const n = nativeInt(N);
+    const n = num_to_number(N);
     if (n < 0 || isNaN(n)) {
         return items_to_cons(HERMITE, X, N);
     }

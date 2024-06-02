@@ -1,11 +1,11 @@
 import { is_tensor, one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { inverse } from "@stemcmicro/helpers";
 import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { condense } from "../../condense";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { add } from "../../helpers/add";
 import { divide } from "../../helpers/divide";
-import { inverse } from "../../helpers/inverse";
 import { multiply } from "../../helpers/multiply";
 import { is_num_and_negative } from "../../predicates/is_negative_number";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";

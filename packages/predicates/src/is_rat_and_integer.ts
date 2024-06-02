@@ -1,6 +1,6 @@
-import { is_rat } from "./operators/rat/is_rat";
-import { Rat } from "./tree/rat/Rat";
-import { U } from "./tree/tree";
+import { is_rat } from "@stemcmicro/atoms";
+import { Rat } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 
 /**
  * is_rat(expr) && expr.isInteger

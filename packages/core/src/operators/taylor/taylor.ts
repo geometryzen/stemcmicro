@@ -3,7 +3,7 @@ import { Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { guess } from "../../guess";
 import { divide } from "../../helpers/divide";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { TAYLOR } from "../../runtime/constants";
 import { derivative } from "../derivative/derivative";
 import { factorial } from "../factorial/factorial";
@@ -45,7 +45,7 @@ export function eval_taylor(expr: Cons, $: ExtensionEnv): U {
  * @param A the expansion point.
  */
 function taylor(F: U, X: U, N: U, A: U, $: ExtensionEnv): U {
-    const k = nativeInt(N);
+    const k = num_to_number(N);
     if (isNaN(k)) {
         return items_to_cons(TAYLOR, F, X, N, A);
     }

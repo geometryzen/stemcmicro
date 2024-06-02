@@ -10,7 +10,7 @@ import { iszero } from "../../helpers/iszero";
 import { is_expanding } from "../../helpers/is_expanding";
 import { multiply } from "../../helpers/multiply";
 import { is_num_and_eq_two } from "../../is";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { MAXDIM, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { is_add, is_identity_matrix, is_inner_or_dot, is_multiply, is_transpose } from "../../runtime/helpers";
@@ -120,8 +120,8 @@ export function transpose(p1: U, p2: U, p3: U, $: ExprContext): U {
         return p1;
     }
 
-    let l = nativeInt(p2);
-    let m = nativeInt(p3);
+    let l = num_to_number(p2);
+    let m = num_to_number(p3);
 
     if (l < 1 || l > ndim || m < 1 || m > ndim) {
         halt("transpose: index out of range");

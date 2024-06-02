@@ -3,7 +3,7 @@ import { car, cdr, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { equaln, isminusoneoversqrttwo, isMinusSqrtThreeOverTwo, isoneoversqrttwo, isSqrtThreeOverTwo, is_num_and_equalq } from "../../is";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { ARCSIN, POWER } from "../../runtime/constants";
 import { is_multiply, is_sin } from "../../runtime/helpers";
 import { MATH_PI } from "../../runtime/ns_math";
@@ -61,7 +61,7 @@ export function arcsin(x: U, $: ExtensionEnv): U {
         return items_to_cons(ARCSIN, x);
     }
 
-    const n = nativeInt(x.mul(two));
+    const n = num_to_number(x.mul(two));
     switch (n) {
         case -2:
             return $.getDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 2.0) : $.multiply(rational(-1, 2), MATH_PI);

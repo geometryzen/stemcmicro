@@ -5,7 +5,7 @@ import { multiply } from "./helpers/multiply";
 import { subtract } from "./helpers/subtract";
 import { items_to_cons } from "./makeList";
 import { multiply_items } from "./multiply";
-import { nativeInt } from "./nativeInt";
+import { num_to_number } from "./nativeInt";
 import { factor_small_number } from "./operators/factor/factor";
 import { POWER } from "./runtime/constants";
 import { Rat } from "./tree/rat/Rat";
@@ -22,7 +22,7 @@ import { U } from "./tree/tree";
 //
 //-----------------------------------------------------------------------------
 export function quickfactor(BASE: Rat, EXPO: Rat, $: ExprContext): U {
-    const rats = factor_small_number(nativeInt(BASE));
+    const rats = factor_small_number(num_to_number(BASE));
     const arr: U[] = rats;
     const n = arr.length;
 
@@ -49,7 +49,7 @@ export function quickpower(BASE: Rat, EXPO: Rat, $: ExprContext): [U] | [U, U] {
         fractionalPart = items_to_cons(POWER, BASE, p4);
     }
 
-    const expo = nativeInt(p3);
+    const expo = num_to_number(p3);
     if (isNaN(expo)) {
         const result = items_to_cons(POWER, BASE, p3);
         return fractionalPart ? [fractionalPart, result] : [result];

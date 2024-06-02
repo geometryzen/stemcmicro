@@ -1,11 +1,10 @@
 import { imu, is_imu, is_tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { is_power, is_rat_and_integer } from "@stemcmicro/predicates";
 import { is_cons, U } from "@stemcmicro/tree";
 import { equaln } from "../is";
-import { is_rat_and_integer } from "../is_rat_and_integer";
 import { is_base_of_natural_logarithm } from "../predicates/is_base_of_natural_logarithm";
 import { caddr, cadr } from "../tree/helpers";
-import { is_power } from "./helpers";
 
 /**
  * find stuff like (-1)^(something), but disregard imaginary units which are in the form (-1)^(1/2))

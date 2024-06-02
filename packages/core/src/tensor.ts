@@ -3,7 +3,7 @@ import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { inv } from "./inv";
-import { nativeInt } from "./nativeInt";
+import { num_to_number } from "./nativeInt";
 import { derivative } from "./operators/derivative/derivative";
 import { ProgrammingError } from "./programming/ProgrammingError";
 import { MAXDIM, POWER } from "./runtime/constants";
@@ -152,7 +152,7 @@ export function power_tensor(p1: Tensor, p2: U, $: ExtensionEnv): Cons | Sym | T
         return items_to_cons(POWER, p1, p2);
     }
 
-    let n = nativeInt(p2);
+    let n = num_to_number(p2);
 
     if (isNaN(n)) {
         return items_to_cons(POWER, p1, p2);

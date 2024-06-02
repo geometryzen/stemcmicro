@@ -1,6 +1,7 @@
 import { create_flt, create_sym, imu, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, is_uom, negOne, one, QQ } from "@stemcmicro/atoms";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { is_rat_and_integer } from "@stemcmicro/predicates";
 import { car, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { nativeDouble, rational } from "../../bignum";
 import { complex_conjugate } from "../../complex_conjugate";
@@ -11,9 +12,8 @@ import { divide } from "../../helpers/divide";
 import { isone } from "../../helpers/isone";
 import { iszero } from "../../helpers/iszero";
 import { iscomplexnumberdouble, is_complex_number, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_gt_zero, is_plus_or_minus_one, is_rat_and_even_integer } from "../../is";
-import { is_rat_and_integer } from "../../is_rat_and_integer";
 import { multiply_binary } from "../../multiply";
-import { is_integer_and_in_safe_number_range, nativeInt } from "../../nativeInt";
+import { is_integer_and_in_safe_number_range, num_to_number } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
@@ -296,7 +296,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
             } else if (expo.isPositive()) {
                 const terms = args_to_items(base);
                 if (terms.every((term) => $.isreal(term))) {
-                    const n = nativeInt(expo);
+                    const n = num_to_number(expo);
                     const result = power_sum(n, base, $);
                     return hook(result, "T");
                 } else {
@@ -315,7 +315,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
             } else if (expo.isNegative()) {
                 const terms = args_to_items(base);
                 if (terms.every($.isreal)) {
-                    const n = nativeInt(expo);
+                    const n = num_to_number(expo);
                     const result = $.divide(one, power_sum(-n, base, $));
                     return hook(result, "T");
                 } else {

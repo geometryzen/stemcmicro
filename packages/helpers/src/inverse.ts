@@ -1,12 +1,11 @@
-import { Err, is_flt, is_num, is_rat, Num } from "@stemcmicro/atoms";
+import { Err, is_flt, is_num, is_rat, negOne, Num } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
-import { items_to_cons, U } from "@stemcmicro/tree";
-import { MATH_POW } from "../runtime/ns_math";
-import { negOne } from "../tree/rat/Rat";
+import { U } from "@stemcmicro/tree";
+import { power } from "./power";
 
 /**
- * (inverse arg) => (pow arg -1)
+ * inverse(arg) => (valueOf (pow arg -1))
  */
 export function inverse(arg: U, $: Pick<ExprContext, "valueOf">): U {
     // console.lg("inverse", `${arg}`);
@@ -15,17 +14,14 @@ export function inverse(arg: U, $: Pick<ExprContext, "valueOf">): U {
         if (is_num(value)) {
             return invert_number(value);
         } else {
-            return $.valueOf(items_to_cons(MATH_POW, value, negOne));
+            return power($, value, negOne);
         }
     } finally {
         value.release();
     }
 }
 
-/**
- *
- */
-export function invert_number(num: Num): Num | Err {
+function invert_number(num: Num): Num | Err {
     if (num.isZero()) {
         return diagnostic(Diagnostics.Division_by_zero);
     }

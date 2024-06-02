@@ -8,7 +8,7 @@ import { add } from "../../helpers/add";
 import { exp } from "../../helpers/exp";
 import { multiply } from "../../helpers/multiply";
 import { is_num_and_equalq, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one } from "../../is";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { partition } from "../../partition";
 import { ADD, EXP, INTEGRAL, METAX, MULTIPLY, POWER, SQRT } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
@@ -446,7 +446,7 @@ export function eval_integral(expr: Cons, $: ExtensionEnv): U {
     while (true) {
         // N might be a symbol instead of a number
         if (is_num(N)) {
-            n = nativeInt(N);
+            n = num_to_number(N);
             if (isNaN(n)) {
                 halt("nth integral: check n");
             }

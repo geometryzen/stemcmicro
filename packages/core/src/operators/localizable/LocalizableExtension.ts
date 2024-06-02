@@ -10,7 +10,7 @@ import { nativeStr } from "../../nativeInt";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { create_str } from "../str/create_str";
 
-const greeting = new Localizable(Diagnostics.Hello_World, nil);
+const divisionByZero = new Localizable(Diagnostics.Division_by_zero, nil);
 
 export function formatStringFromArgs(text: string, argList: Cons, env: ExprContext): string {
     return text.replace(/{(\d+)}/g, (_match, index: string) => {
@@ -32,7 +32,7 @@ export function formatStringFromArgs(text: string, argList: Cons, env: ExprConte
 export class LocalizableExtension implements Extension<Localizable> {
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
-    readonly #hash = hash_for_atom(greeting);
+    readonly #hash = hash_for_atom(divisionByZero);
     get hash(): string {
         return this.#hash;
     }

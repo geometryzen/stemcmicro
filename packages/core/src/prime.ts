@@ -1,7 +1,7 @@
 import { create_int, Rat } from "@stemcmicro/atoms";
 import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { nativeInt } from "./nativeInt";
+import { num_to_number } from "./nativeInt";
 import { MAXPRIMETAB, primetab } from "./runtime/constants";
 import { halt } from "./runtime/defs";
 
@@ -19,7 +19,7 @@ export function eval_prime(primeExpr: Cons, $: ExtensionEnv): Rat {
 }
 
 export function prime(p1: U): Rat {
-    const n = nativeInt(p1);
+    const n = num_to_number(p1);
     if (n < 1 || n > MAXPRIMETAB) {
         halt("prime: Argument out of range.");
     }

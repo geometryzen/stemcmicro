@@ -1,16 +1,16 @@
 import { create_int, one, Tensor, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { inverse } from "@stemcmicro/helpers";
 import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { factors } from "./factors";
 import { filter } from "./filter";
 import { guess } from "./guess";
 import { divide_expand } from "./helpers/divide";
-import { inverse } from "./helpers/inverse";
 import { inv } from "./inv";
 import { is_plus_or_minus_one, is_poly_expanded_form } from "./is";
 import { multiply_binary, multiply_items } from "./multiply";
-import { nativeInt } from "./nativeInt";
+import { num_to_number } from "./nativeInt";
 import { degree } from "./operators/degree/degree";
 import { denominator } from "./operators/denominator/denominator";
 import { factorize } from "./operators/factor/factor";
@@ -120,7 +120,7 @@ function remove_negative_exponents(p2: U, p3: U, p9: U, $: ExtensionEnv): [U, U]
         if (!cadr(p1).equals(p9)) {
             continue;
         }
-        const k = nativeInt(caddr(p1));
+        const k = num_to_number(caddr(p1));
         if (isNaN(k)) {
             continue;
         }
@@ -303,14 +303,14 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
     }
     const p8 = doexpand_binary(trivial_divide, p2, p5, $);
     if (is_power(p5)) {
-        n = nativeInt(p5.expo);
+        n = num_to_number(p5.expo);
         p6 = p5.base;
     } else {
         n = 1;
         p6 = p5;
     }
     const stack: U[] = [];
-    const d = nativeInt(degree(p6, p9));
+    const d = num_to_number(degree(p6, p9));
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < d; j++) {
             const arg6 = $.power(p6, create_int(i));
@@ -380,11 +380,11 @@ function expand_get_AF(p5: U, X: U, $: ExtensionEnv): U[] {
         return [];
     }
     if (is_power(p5)) {
-        n = nativeInt(p5.expo);
+        n = num_to_number(p5.expo);
         p5 = p5.base;
     }
     const results: U[] = [];
-    const d = nativeInt(degree(p5, X));
+    const d = num_to_number(degree(p5, X));
     for (let i = n; i > 0; i--) {
         for (let j = 0; j < d; j++) {
             const A = $.power(p5, create_int(i));

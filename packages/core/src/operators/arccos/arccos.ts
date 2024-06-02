@@ -4,7 +4,7 @@ import { equaln, isminusoneoversqrttwo, isMinusSqrtThreeOverTwo, isoneoversqrttw
 import { items_to_cons } from "../../makeList";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { nativeInt } from "../../nativeInt";
+import { num_to_number } from "../../nativeInt";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCCOS, POWER } from "../../runtime/constants";
 import { is_multiply } from "../../runtime/helpers";
@@ -73,7 +73,7 @@ export function arccos(x: U, $: ExtensionEnv): U {
     }
 
     //
-    const n = nativeInt($.multiply(x, two));
+    const n = num_to_number($.multiply(x, two));
     switch (n) {
         case -2:
             return $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : PI;

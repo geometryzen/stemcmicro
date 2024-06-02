@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/core",
-    "version": "0.9.54",
+    "version": "0.9.55",
     "description": "Computer Algebra System in TypeScript",
     "publishConfig": {
         "access": "public"
@@ -60,8 +60,8 @@
         "@stemcmicro/atoms": "file:../atoms",
         "@stemcmicro/context": "file:../context",
         "@stemcmicro/diagnostics": "file:../diagnostics",
-        "@stemcmicro/helpers": "file:../helpers",
         "@stemcmicro/em-parse": "file:../em-parse",
+        "@stemcmicro/helpers": "file:../helpers",
         "@stemcmicro/native": "file:../native",
         "@stemcmicro/predicates": "file:../predicates",
         "@stemcmicro/tree": "file:../tree"

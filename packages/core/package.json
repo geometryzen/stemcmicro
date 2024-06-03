@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/core",
-    "version": "0.9.58",
+    "version": "0.9.59",
     "description": "Computer Algebra System in TypeScript",
     "publishConfig": {
         "access": "public"

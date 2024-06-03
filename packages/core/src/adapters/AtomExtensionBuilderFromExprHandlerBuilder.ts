@@ -4,7 +4,6 @@ import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Atom, Cons, is_atom, is_nil, nil, U } from "@stemcmicro/tree";
-import { ExprHandlerBuilder } from "../api/api";
 import { EnvConfig } from "../env/EnvConfig";
 import { Extension, ExtensionBuilder, ExtensionEnv } from "../env/ExtensionEnv";
 import { nativeStr } from "../nativeInt";
@@ -92,6 +91,9 @@ class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
             throw diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(expr.type));
         }
     }
+}
+export interface ExprHandlerBuilder<T extends U> {
+    create(): ExprHandler<T>;
 }
 
 export class AtomExtensionBuilderFromExprHandlerBuilder<T extends Atom> implements ExtensionBuilder<T> {

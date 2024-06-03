@@ -23,6 +23,7 @@
         "packages/cs-parse",
         "packages/diagnostics",
         "packages/em-parse",
+        "packages/engine",
         "packages/helpers",
         "packages/hilbert",
         "packages/js-parse",
@@ -42,8 +43,8 @@
         "@types/mocha": "^10.0.6",
         "@types/node": "^20.14.0",
         "@types/rollup-plugin-peer-deps-external": "^2.2.5",
-        "@typescript-eslint/eslint-plugin": "7.11.0",
-        "@typescript-eslint/parser": "7.11.0",
+        "@typescript-eslint/eslint-plugin": "7.12.0",
+        "@typescript-eslint/parser": "7.12.0",
         "esbuild": "^0.21.4",
         "esbuild-plugin-tsc": "^0.4.0",
         "eslint": "^8.56.0",
@@ -64,6 +65,6 @@
         "tslib": "^2.6.2",
         "typedoc": "^0.25.13",
         "typescript": "^5.4.5",
-        "typescript-eslint": "7.11.0"
+        "typescript-eslint": "7.12.0"
     }
 }

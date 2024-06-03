@@ -1,8 +1,7 @@
-import { CellHost, Sym, Tensor } from "@stemcmicro/atoms";
+import { Cell, CellHost, Sym, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Cons, U } from "@stemcmicro/tree";
 import { StackFunction } from "../adapters/StackFunction";
-import { AtomListener } from "../api/api";
 import { ProgramControl } from "../eigenmath/ProgramControl";
 import { ProgramEnv } from "../eigenmath/ProgramEnv";
 import { ProgramIO } from "../eigenmath/ProgramIO";
@@ -293,6 +292,10 @@ export interface Predicates {
      */
     transcendental: boolean;
     zero: boolean;
+}
+
+export interface AtomListener {
+    reset(from: U, to: U, source: Cell): void;
 }
 
 /**

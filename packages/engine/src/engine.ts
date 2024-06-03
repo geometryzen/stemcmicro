@@ -1,25 +1,32 @@
-import { Cell, create_int, create_rat, create_sym, Sym } from "@stemcmicro/atoms";
+import { assert_sym, Cell, create_int, create_rat, create_sym, Sym } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
+import {
+    ALL_FEATURES,
+    AtomExtensionBuilderFromExprHandlerBuilder,
+    create_algebra_as_blades,
+    create_env,
+    create_uom,
+    Directive,
+    directive_from_flag,
+    env_term,
+    ExtensionEnv,
+    init_env,
+    ProgramEnv,
+    ProgramStack,
+    render_as_ascii,
+    render_as_human,
+    render_as_infix,
+    render_as_latex,
+    render_as_sexpr,
+    render_svg,
+    RESERVED_KEYWORD_LAST,
+    RESERVED_KEYWORD_TTY,
+    simplify,
+    transform_tree,
+    UOM_NAMES
+} from "@stemcmicro/core";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Atom, Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { AtomExtensionBuilderFromExprHandlerBuilder } from "../adapters/AtomExtensionBuilderFromExprHandlerBuilder";
-import { ProgramEnv } from "../eigenmath/ProgramEnv";
-import { ProgramStack } from "../eigenmath/ProgramStack";
-import { render_svg } from "../eigenmath/render_svg";
-import { create_env } from "../env/env";
-import { ALL_FEATURES, Directive, directive_from_flag, ExtensionEnv } from "../env/ExtensionEnv";
-import { create_algebra_as_blades } from "../operators/algebra/create_algebra_as_tensor";
-import { simplify } from "../operators/simplify/simplify";
-import { assert_sym } from "../operators/sym/assert_sym";
-import { create_uom, UOM_NAMES } from "../operators/uom/uom";
-import { render_as_ascii } from "../print/render_as_ascii";
-import { render_as_human } from "../print/render_as_human";
-import { render_as_infix } from "../print/render_as_infix";
-import { render_as_latex } from "../print/render_as_latex";
-import { render_as_sexpr } from "../print/render_as_sexpr";
-import { transform_tree } from "../runtime/execute";
-import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from "../runtime/ns_script";
-import { env_term, init_env } from "../runtime/script_engine";
 
 export interface ParseConfig {
     useCaretForExponentiation: boolean;
@@ -83,24 +90,16 @@ export interface ExprEngine extends Pick<ProgramEnv, "clearBindings"> {
     release(): void;
 }
 
-/**
- * Determines the action upon attempts to access an undeclared variable.
- */
-export enum UndeclaredVars {
-    Err = 1,
-    Nil = 2
-}
-
 export interface EngineConfig {
-    allowUndeclaredVars: UndeclaredVars;
+    allowUndeclaredVars: "Err" | "Nil";
     prolog: string[];
     useCaretForExponentiation: boolean;
     useDerivativeShorthandLowerD: boolean;
     useIntegersForPredicates: boolean;
 }
 
-function allow_undeclared_vars(options: Partial<EngineConfig>, allowDefault: UndeclaredVars): UndeclaredVars {
-    if (typeof options.allowUndeclaredVars === "number") {
+function allow_undeclared_vars(options: Partial<EngineConfig>, allowDefault: "Err" | "Nil"): "Err" | "Nil" {
+    if (typeof options.allowUndeclaredVars === "string") {
         return options.allowUndeclaredVars;
     } else {
         return allowDefault;
@@ -205,11 +204,11 @@ class MicroEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     constructor(options: Partial<EngineConfig>) {
         this.#env = create_env({
-            allowUndeclaredVars: allow_undeclared_vars(options, UndeclaredVars.Nil),
+            allowUndeclaredVars: allow_undeclared_vars(options, "Nil"),
             dependencies: ALL_FEATURES
         });
         init_env(this.#env, {
-            allowUndeclaredVars: allow_undeclared_vars(options, UndeclaredVars.Nil),
+            allowUndeclaredVars: allow_undeclared_vars(options, "Nil"),
             useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD
         });
         define_math_constant_pi(this.#env);

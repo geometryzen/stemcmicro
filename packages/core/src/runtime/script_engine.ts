@@ -1,7 +1,6 @@
 import { create_sym, Sym } from "@stemcmicro/atoms";
 import { LambdaExpr } from "@stemcmicro/context";
 import { Cons, U } from "@stemcmicro/tree";
-import { UndeclaredVars } from "../api/api";
 import { define_std_operators } from "../env/define_std_operators";
 import { EnvOptions } from "../env/env";
 import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
@@ -32,7 +31,7 @@ export interface ScriptContextOptions extends ScriptExecuteOptions {
     /**
      * The default is ???.
      */
-    allowUndeclaredVars?: UndeclaredVars;
+    allowUndeclaredVars?: "Err" | "Nil";
     /**
      * The assumptions about unbound symbols.
      */
@@ -109,7 +108,7 @@ export function env_options_from_script_context_options(options: ScriptContextOp
     };
     if (options) {
         const config: EnvOptions = {
-            allowUndeclaredVars: typeof options.allowUndeclaredVars === "number" ? options.allowUndeclaredVars : UndeclaredVars.Nil,
+            allowUndeclaredVars: typeof options.allowUndeclaredVars === "string" ? options.allowUndeclaredVars : "Nil",
             assumes: options.assumes,
             dependencies: ALL_FEATURES,
             enable: options.enable,
@@ -123,7 +122,7 @@ export function env_options_from_script_context_options(options: ScriptContextOp
         return hook(config, "A");
     } else {
         const config: EnvOptions = {
-            allowUndeclaredVars: UndeclaredVars.Nil,
+            allowUndeclaredVars: "Nil",
             assumes: {},
             dependencies: ALL_FEATURES,
             enable: [],

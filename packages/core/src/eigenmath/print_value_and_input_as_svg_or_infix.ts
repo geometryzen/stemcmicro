@@ -2,10 +2,10 @@ import { is_sym, Sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
-import { ExprEngineListener } from "../api/api";
 import { infix_config_from_options } from "./format_infix";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
+import { ExprEngineListener } from "./ProgramIO";
 import { render_as_html_infix } from "./render_as_html_infix";
 import { render_svg, SvgRenderConfig } from "./render_svg";
 

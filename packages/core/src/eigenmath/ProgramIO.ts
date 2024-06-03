@@ -1,4 +1,6 @@
-import { ExprEngineListener } from "../api/api";
+export interface ExprEngineListener {
+    output(output: string): void;
+}
 
 export interface ProgramIO {
     get inbuf(): string;

@@ -4,7 +4,7 @@ import { LambdaExpr } from "@stemcmicro/context";
 import { Native, native_sym } from "@stemcmicro/native";
 import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
 import { Cons, is_atom, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { ExprEngineListener, UndeclaredVars } from "../../api/api";
+import { ExprEngineListener } from "../../eigenmath/ProgramIO";
 import { create_env, EnvOptions } from "../../env/env";
 import { ALL_FEATURES, ExtensionEnv } from "../../env/ExtensionEnv";
 import { Stack } from "../../env/Stack";
@@ -159,13 +159,13 @@ export interface StepperConfig {
 function env_options_from_stepper_options(options?: Partial<StepperConfig>): EnvOptions {
     if (options) {
         const config: EnvOptions = {
-            allowUndeclaredVars: typeof options.allowUndeclaredVars === "number" ? options.allowUndeclaredVars : UndeclaredVars.Nil,
+            allowUndeclaredVars: typeof options.allowUndeclaredVars === "string" ? options.allowUndeclaredVars : "Nil",
             dependencies: ALL_FEATURES
         };
         return config;
     } else {
         const config: EnvOptions = {
-            allowUndeclaredVars: UndeclaredVars.Nil,
+            allowUndeclaredVars: "Nil",
             dependencies: ALL_FEATURES
         };
         return config;

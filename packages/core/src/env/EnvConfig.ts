@@ -1,8 +1,7 @@
-import { UndeclaredVars } from "../api/api";
 import { Directive, FEATURE, Predicates } from "./ExtensionEnv";
 
 export interface EnvConfig {
-    allowUndeclaredVars: UndeclaredVars;
+    allowUndeclaredVars: "Err" | "Nil";
     assumes: { [name: string]: Partial<Predicates> };
     dependencies: FEATURE[];
     enable: Directive[];

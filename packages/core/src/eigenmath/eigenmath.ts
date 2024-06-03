@@ -41,7 +41,6 @@ import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
 import { StackFunction } from "../adapters/StackFunction";
-import { ExprEngineListener } from "../api/api";
 import { contains_single_blade } from "../calculators/compare/contains_single_blade";
 import { complex_comparator, complex_to_item, item_to_complex } from "../complex/complex";
 import { prolog_eval_varargs } from "../dispatch/prolog_eval_varargs";
@@ -78,7 +77,7 @@ import { iszero } from "./iszero";
 import { lengthf } from "./lengthf";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
-import { ProgramIO } from "./ProgramIO";
+import { ExprEngineListener, ProgramIO } from "./ProgramIO";
 import { ProgramStack } from "./ProgramStack";
 
 const ABS = native_sym(Native.abs);
@@ -11918,7 +11917,7 @@ class IntegralsProgramIO implements ProgramIO {
         throw new Error("inbuf property not implemented.");
     }
     get listeners(): ExprEngineListener[] {
-        throw new Error("listeners propertynot implemented.");
+        throw new Error("listeners property not implemented.");
     }
     get trace1(): number {
         throw new Error("trace1 property not implemented.");

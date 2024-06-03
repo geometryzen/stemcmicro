@@ -3,11 +3,10 @@ import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_f
 import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
-import { ExprEngineListener } from "../..";
 import { ExtensionEnvFromExprContext } from "../adapters/ExtensionEnvFromExprContext";
 import { make_eval } from "../adapters/make_eval";
 import { StackFunction } from "../adapters/StackFunction";
-import { AtomListener, UndeclaredVars } from "../api/api";
+import { ExprEngineListener } from "../eigenmath/ProgramIO";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { eval_function } from "../eval_function";
 import { yyfactorpoly } from "../factorpoly";
@@ -28,6 +27,7 @@ import { DerivedEnv } from "./DerivedEnv";
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
 import {
+    AtomListener,
     CompareFn,
     Directive,
     directive_from_flag,
@@ -91,7 +91,7 @@ class StableExprComparator implements ExprComparator {
 
 export interface EnvOptions {
     // TODO: Make this optional
-    allowUndeclaredVars: UndeclaredVars;
+    allowUndeclaredVars: "Err" | "Nil";
     assumes?: { [name: string]: Partial<Predicates> };
     dependencies?: FEATURE[];
     enable?: Directive[];
@@ -108,7 +108,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
         // console.lg(`EnvOptions: ${options.allowUndeclaredVars} ${typeof options.allowUndeclaredVars}`);
         const config: EnvConfig = {
             // Be careful here. enum(s) have the 'number' type.
-            allowUndeclaredVars: typeof options.allowUndeclaredVars === "number" ? options.allowUndeclaredVars : UndeclaredVars.Nil,
+            allowUndeclaredVars: typeof options.allowUndeclaredVars === "string" ? options.allowUndeclaredVars : "Nil",
             assumes: options.assumes ? options.assumes : {},
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             enable: Array.isArray(options.enable) ? options.enable : [],
@@ -123,7 +123,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
         return config;
     } else {
         const config: EnvConfig = {
-            allowUndeclaredVars: UndeclaredVars.Nil,
+            allowUndeclaredVars: "Nil",
             assumes: {},
             dependencies: [],
             enable: [],
@@ -433,10 +433,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
                 // console.lg(`config.allowUndeclaredVars => ${config.allowUndeclaredVars}`);
                 switch (config.allowUndeclaredVars) {
-                    case UndeclaredVars.Err: {
+                    case "Err": {
                         return hook_create_err(new Str(`Use of undeclared Var ${name.key()}.`));
                     }
-                    case UndeclaredVars.Nil: {
+                    case "Nil": {
                         return name;
                         // return nil;
                     }

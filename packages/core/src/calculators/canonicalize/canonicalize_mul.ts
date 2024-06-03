@@ -1,6 +1,6 @@
 import { one } from "@stemcmicro/atoms";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
 import { Cons, U } from "@stemcmicro/tree";
-import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 
 /**
  * Converts 0-ary and 1-ary multiplicative expressions to canonical form.
@@ -13,7 +13,7 @@ import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
  */
 export function canonicalize_mul(expr: Cons): U {
     const L0 = expr;
-    if (is_cons_opr_eq_mul(L0)) {
+    if (is_cons_opr_eq_multiply(L0)) {
         const L1 = L0.cdr;
         if (L1.isnil) {
             return one;

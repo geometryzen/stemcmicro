@@ -1,10 +1,10 @@
 import { is_blade, is_boo } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
 import { is_cons, U } from "@stemcmicro/tree";
 import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { is_imu } from "../../operators/imu/is_imu";
-import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { is_num } from "../../operators/num/is_num";
 import { is_str } from "../../operators/str/is_str";
 import { is_tensor } from "../../operators/tensor/is_tensor";
@@ -143,7 +143,7 @@ export function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
 function contains_single_imu(expr: U): boolean {
     if (is_imu(expr)) {
         return true;
-    } else if (is_cons(expr) && is_cons_opr_eq_mul(expr) && count_factors(expr, is_imu) === 1) {
+    } else if (is_cons(expr) && is_cons_opr_eq_multiply(expr) && count_factors(expr, is_imu) === 1) {
         return true;
     } else {
         return false;

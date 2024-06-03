@@ -1,6 +1,6 @@
 import { Blade, is_blade, is_rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { Cons2, is_cons, items_to_cons, U } from "@stemcmicro/tree";
+import { Cons, Cons2, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -14,6 +14,26 @@ import { MATH_VECTOR_CROSS_PRODUCT } from "./MATH_VECTOR_CROSS_PRODUCT";
 class Builder implements ExtensionBuilder<U> {
     create(): Extension<U> {
         return new Op();
+    }
+}
+
+export function eval_cross(expr: Cons, $: ExprContext): U {
+    const argList = expr.argList;
+    try {
+        const bladeL = argList.item0;
+        const bladeR = argList.item1;
+        try {
+            if (is_blade(bladeL) && is_blade(bladeR)) {
+                return cross_blade_blade(bladeL, bladeR, $);
+            } else {
+                throw new Error();
+            }
+        } finally {
+            bladeL.release();
+            bladeR.release();
+        }
+    } finally {
+        argList.release();
     }
 }
 

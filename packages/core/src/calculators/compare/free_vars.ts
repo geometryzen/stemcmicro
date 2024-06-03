@@ -1,11 +1,11 @@
 import { is_blade } from "@stemcmicro/atoms";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { is_flt } from "../../operators/flt/is_flt";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_imu } from "../../operators/imu/is_imu";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
-import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
@@ -58,7 +58,7 @@ export function free_vars(expr: U, $: ExtensionEnv): Sym[] {
             const rvars = free_vars(expr.rhs, $);
             return merge_vars(lvars, rvars);
         }
-        if (is_cons_opr_eq_mul(expr)) {
+        if (is_cons_opr_eq_multiply(expr)) {
             // TODO: We can do better than this.
             return [];
         }

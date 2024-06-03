@@ -1,6 +1,6 @@
-import { is_cons_opr_eq_mul } from "../operators/mul/is_cons_opr_eq_mul";
-import { one } from "../tree/rat/Rat";
-import { cons, Cons, is_cons, U } from "../tree/tree";
+import { one } from "@stemcmicro/atoms";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
+import { cons, Cons, is_cons, U } from "@stemcmicro/tree";
 import { canonicalize_mul } from "./canonicalize/canonicalize_mul";
 
 /**
@@ -9,7 +9,7 @@ import { canonicalize_mul } from "./canonicalize/canonicalize_mul";
  */
 export function remove_factors(expr: U, predicate: (factor: U) => boolean): U {
     if (is_cons(expr)) {
-        if (is_cons_opr_eq_mul(expr)) {
+        if (is_cons_opr_eq_multiply(expr)) {
             return canonicalize_mul(cons(expr.opr, remove_factors_recursive(expr.argList, predicate)));
         } else {
             return expr;

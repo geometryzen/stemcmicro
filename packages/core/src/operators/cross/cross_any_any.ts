@@ -1,14 +1,16 @@
-import { is_blade, Sym } from "@stemcmicro/atoms";
+import { create_sym, is_blade, Sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
 import { Cons2, items_to_cons, U } from "@stemcmicro/tree";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { remove_factors } from "../../calculators/remove_factors";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { MATH_MUL } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
-import { MATH_VECTOR_CROSS_PRODUCT } from "./MATH_VECTOR_CROSS_PRODUCT";
+
+const MATH_MUL = native_sym(Native.multiply);
+const MATH_VECTOR_CROSS_PRODUCT = create_sym("cross");
 
 type LHS = U;
 type RHS = U;

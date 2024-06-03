@@ -1,17 +1,15 @@
-import { is_blade, is_rat, is_sym, one, zero } from "@stemcmicro/atoms";
+import { is_blade, is_imu, is_num, is_rat, is_sym, one, zero } from "@stemcmicro/atoms";
 import { is_native, Native } from "@stemcmicro/native";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
 import { is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { is_unaop } from "../../operators/helpers/is_unaop";
-import { is_imu } from "../../operators/imu/is_imu";
-import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_mul_2_any_blade } from "../../operators/mul/is_mul_2_any_blade";
 import { is_mul_2_num_any } from "../../operators/mul/is_mul_2_num_any";
 import { is_mul_2_sym_sym } from "../../operators/mul/is_mul_2_sym_sym";
-import { is_num } from "../../operators/num/is_num";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_pow_2_sym_rat } from "../../operators/pow/is_pow_2_sym_rat";
 import { canonical_factor_lhs, canonical_factor_rhs } from "../factorize/canonical_factor";
@@ -197,7 +195,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             return hook(SIGN_LT, "MM2");
         }
         case SIGN_EQ: {
-            if (is_cons(lhs) && is_cons_opr_eq_mul(lhs) && is_cons(rhs) && is_cons_opr_eq_mul(rhs)) {
+            if (is_cons(lhs) && is_cons_opr_eq_multiply(lhs) && is_cons(rhs) && is_cons_opr_eq_multiply(rhs)) {
                 const lhsB = canonical_factor_blade_rhs(lhs);
                 const rhsB = canonical_factor_blade_rhs(rhs);
                 switch (compare_terms(lhsB, rhsB, $)) {
@@ -208,7 +206,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                         return hook(SIGN_LT, "MM2");
                     }
                     case SIGN_EQ: {
-                        if (is_cons(lhs) && is_cons_opr_eq_mul(lhs) && is_cons(rhs) && is_cons_opr_eq_mul(rhs)) {
+                        if (is_cons(lhs) && is_cons_opr_eq_multiply(lhs) && is_cons(rhs) && is_cons_opr_eq_multiply(rhs)) {
                             const lhsL = canonical_factor_lhs(lhs);
                             const rhsL = canonical_factor_lhs(rhs);
                             switch (compare_terms(lhsL, rhsL, $)) {

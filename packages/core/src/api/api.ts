@@ -220,6 +220,7 @@ class MicroEngine implements ExprEngine {
     }
     defineEvalFunction(name: Sym, handler: (expr: Cons, $: ExprContext) => U): void {
         this.#env.defineEvalFunction(name, handler);
+        this.#env.buildOperators();
     }
     defineUserSymbol(name: Sym): void {
         this.#env.defineUserSymbol(name);

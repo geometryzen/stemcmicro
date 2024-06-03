@@ -82,7 +82,7 @@ import { condense_varargs } from "../operators/condense/condense_varargs";
 import { cons_extension_builder } from "../operators/cons/cons_extension";
 import { contract_varargs } from "../operators/contract/contract_varargs";
 import { cross_any_any } from "../operators/cross/cross_any_any";
-import { cross_blade_blade_builder } from "../operators/cross/cross_blade_blade";
+import { cross_blade_blade_builder, eval_cross } from "../operators/cross/cross_blade_blade";
 import { MATH_VECTOR_CROSS_PRODUCT } from "../operators/cross/MATH_VECTOR_CROSS_PRODUCT";
 import { def_sym_builder } from "../operators/def/def_sym";
 import { def_sym_doc_init_builder } from "../operators/def/def_sym_doc_init";
@@ -467,6 +467,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(native_sym(Native.cos), stack_cos);
     $.defineStackFunction(native_sym(Native.cosh), stack_cosh);
 
+    $.defineEvalFunction(native_sym(Native.cross), eval_cross);
     $.defineExtension(cross_blade_blade_builder);
     $.defineExtension(make_lhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
     $.defineExtension(make_rhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));

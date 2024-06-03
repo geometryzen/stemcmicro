@@ -1,13 +1,12 @@
 import { is_imu, is_rat, is_sym, negOne, one, Sym } from "@stemcmicro/atoms";
-import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
+import { Native, native_sym } from "@stemcmicro/native";
+import { is_cons_opr_eq_multiply, is_cons_opr_eq_sym } from "@stemcmicro/predicates";
 import { is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
 import { divide_by_imu } from "../../optimize/divide_by_imu";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { MATH_ADD, MATH_MUL, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
@@ -17,7 +16,6 @@ import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
 import { is_opr_2_lhs_any } from "../helpers/is_opr_2_lhs_any";
-import { is_cons_opr_eq_mul } from "../mul/is_cons_opr_eq_mul";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 import { is_pi } from "../pi/is_pi";
 
@@ -134,7 +132,7 @@ function aggressive(expo: RHS, outerExpr: EXP, $: ExtensionEnv) {
                     return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_POW, b, a))];
                 }
             }
-            if (is_cons(expo) && is_cons_opr_eq_mul(expo)) {
+            if (is_cons(expo) && is_cons_opr_eq_multiply(expo)) {
                 const N = count_imu_factors(expo);
                 if (N === 1) {
                     const x = divide_by_imu(expo, $);

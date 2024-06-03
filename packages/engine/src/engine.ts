@@ -1,5 +1,5 @@
 import { assert_sym, Cell, create_int, create_rat, create_sym, Sym } from "@stemcmicro/atoms";
-import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
+import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import {
     ALL_FEATURES,
     AtomExtensionBuilderFromExprHandlerBuilder,
@@ -63,7 +63,6 @@ export interface ExprEngine extends Pick<ProgramEnv, "clearBindings"> {
     clearBindings(): void;
 
     defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void;
-    defineEvalFunction(name: Sym, handler: (expr: Cons, $: ExprContext) => U): void;
     defineFunction(name: Sym, lambda: LambdaExpr): void;
 
     simplify(expr: U): U;
@@ -216,10 +215,6 @@ class MicroEngine implements ExprEngine {
         define_geometric30_algebra(this.#env);
         define_si_units(this.#env);
         define_metric_prefixes_for_si_units(this.#env);
-    }
-    defineEvalFunction(name: Sym, handler: (expr: Cons, $: ExprContext) => U): void {
-        this.#env.defineEvalFunction(name, handler);
-        this.#env.buildOperators();
     }
     defineUserSymbol(name: Sym): void {
         this.#env.defineUserSymbol(name);

@@ -1,14 +1,11 @@
 import { ExprContext } from "@stemcmicro/context";
-import { assert_cons_or_nil } from "@stemcmicro/tree";
+import { assert_cons_or_nil, caddr, cadr, car, cdr, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { add_terms } from "./calculators/add/add_terms";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { guess } from "./guess";
 import { negate } from "./helpers/negate";
-import { items_to_cons } from "./makeList";
 import { multiply_items } from "./multiply";
 import { is_add, is_multiply } from "./runtime/helpers";
-import { caddr, cadr } from "./tree/helpers";
-import { car, cdr, is_cons, nil, U } from "./tree/tree";
 
 // this function extract parts subtrees from a tree.
 // It is used in two

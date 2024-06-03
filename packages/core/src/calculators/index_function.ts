@@ -1,6 +1,6 @@
-import { num_to_number } from "../nativeInt";
-import { Tensor } from "../tree/tensor/Tensor";
-import { U } from "../tree/tree";
+import { Tensor } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
+import { U } from "@stemcmicro/tree";
 
 export function index_function(tensor: Tensor, indices: U[]): U {
     // This implementation makes it clear that we expect that the elements of the tensor are stored

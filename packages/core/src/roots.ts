@@ -22,7 +22,7 @@ import { ASSIGN, SECRETX } from "./runtime/constants";
 import { halt } from "./runtime/defs";
 import { is_multiply, is_power } from "./runtime/helpers";
 import { float_eval_abs_eval } from "./scripting/float_eval_abs_eval";
-import { caddr, cadr } from "./tree/helpers";
+import { caddr, cadr } from "@stemcmicro/tree";
 import { eight, four, half, negFour, nine, third, three, two } from "./tree/rat/Rat";
 
 const testeq = native_sym(Native.testeq);

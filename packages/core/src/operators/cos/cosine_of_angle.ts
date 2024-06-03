@@ -1,16 +1,12 @@
-import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
+import { create_flt, create_int, half, is_flt, negOne, one, three, two, zero } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
+import { cadr, car, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
-import { num_to_number } from "../../nativeInt";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCCOS, ARCTAN } from "../../runtime/constants";
 import { DynamicConstants } from "../../runtime/defs";
-import { create_flt } from "../../tree/flt/Flt";
-import { cadr } from "../../tree/helpers";
-import { half, three, two } from "../../tree/rat/Rat";
-import { car, U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
 
 export function cosine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] {
     // console.lg(`cosine_of_angle arg=${render_as_infix(x, $)}`);

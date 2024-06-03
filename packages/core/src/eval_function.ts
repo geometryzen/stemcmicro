@@ -5,7 +5,7 @@ import { StackU } from "./env/StackU";
 import { eval_derivative } from "./operators/derivative/eval_derivative";
 import { EVAL, FUNCTION, SYMBOL_D } from "./runtime/constants";
 import { halt } from "./runtime/defs";
-import { cadr, cddr } from "./tree/helpers";
+import { cadr, cddr } from "@stemcmicro/tree";
 
 // Evaluate a user defined function
 

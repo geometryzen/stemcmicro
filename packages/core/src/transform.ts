@@ -10,7 +10,7 @@ import { subtract } from "./helpers/subtract";
 import { subst } from "./operators/subst/subst";
 import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from "./runtime/constants";
 import { noexpand_unary } from "./runtime/defs";
-import { cadr, cdddr, cddr } from "./tree/helpers";
+import { cadr, cdddr, cddr } from "@stemcmicro/tree";
 
 /*
 Transform an expression using a pattern. The

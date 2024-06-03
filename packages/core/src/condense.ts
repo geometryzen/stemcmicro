@@ -9,7 +9,7 @@ import { gcd } from "./operators/gcd/gcd";
 import { noexpand_unary } from "./runtime/defs";
 import { is_add } from "./runtime/helpers";
 import { doexpand_value_of } from "./scripting/doexpand_eval";
-import { cadr } from "./tree/helpers";
+import { cadr } from "@stemcmicro/tree";
 
 /**
  * Condense an expression by factoring common terms.

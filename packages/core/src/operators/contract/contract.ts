@@ -1,11 +1,8 @@
+import { is_tensor, one, Tensor, two, zero } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
+import { cadddr, caddr, cddr, Cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { num_to_number } from "../../nativeInt";
 import { halt } from "../../runtime/defs";
-import { cadddr, caddr, cddr } from "../../tree/helpers";
-import { one, two, zero } from "../../tree/rat/Rat";
-import { Tensor } from "../../tree/tensor/Tensor";
-import { Cons, nil, U } from "../../tree/tree";
-import { is_tensor } from "../tensor/is_tensor";
 
 /* contract =====================================================================
 

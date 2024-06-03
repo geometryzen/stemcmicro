@@ -123,7 +123,6 @@ import { gcd_varargs } from "../operators/gcd/gcd_varargs";
 import { eval_grade } from "../operators/grade/grade";
 import { stack_hadamard } from "../operators/hadamard/stack_hadamard";
 import { hermite_varargs } from "../operators/hermite/hermite_varargs";
-import { eval_hilbert } from "../operators/hilbert/hilbert_varargs";
 import { hyp_extension_builder } from "../operators/hyp/hyp_extension";
 import { infinitesimal_1_str } from "../operators/hyp/infinitesimal_1_str";
 import { imu_extension_builder } from "../operators/imu/Imu_extension";
@@ -539,7 +538,6 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineEvalFunction(native_sym(Native.grade), eval_grade);
 
     $.defineStackFunction(native_sym(Native.hadamard), stack_hadamard);
-    $.defineEvalFunction(native_sym(Native.hilbert), eval_hilbert);
     $.defineStackFunction(native_sym(Native.imag), stack_imag);
 
     $.defineStackFunction(native_sym(Native.component), stack_index);

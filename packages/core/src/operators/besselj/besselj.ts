@@ -1,8 +1,8 @@
 import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
 import { items_to_cons } from "../../makeList";
-import { num_to_number } from "../../nativeInt";
 import { is_negative } from "../../predicates/is_negative";
 import { BESSELJ, MEQUAL, MSIGN } from "../../runtime/constants";
 import { MATH_PI } from "../../runtime/ns_math";

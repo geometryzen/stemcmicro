@@ -1,9 +1,8 @@
 import { create_int, Tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { inverse } from "@stemcmicro/helpers";
+import { inverse, num_to_number } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
-import { num_to_number } from "./nativeInt";
 
 const HILBERT = native_sym(Native.hilbert);
 

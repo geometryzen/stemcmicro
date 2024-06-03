@@ -1,9 +1,9 @@
+import { is_num } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
+import { car, cdr, Cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { guess } from "../../guess";
-import { num_to_number } from "../../nativeInt";
-import { car, cdr, Cons, nil, U } from "../../tree/tree";
 import { integral } from "../integral/integral_helpers";
-import { is_num } from "../num/is_num";
 import { derivative } from "./derivative";
 
 export function eval_derivative(expr: Cons, $: ExtensionEnv): U {

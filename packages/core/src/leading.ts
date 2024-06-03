@@ -4,7 +4,7 @@ import { filter } from "./filter";
 import { guess } from "./guess";
 import { divide } from "./helpers/divide";
 import { degree } from "./operators/degree/degree";
-import { caddr, cadr } from "./tree/helpers";
+import { caddr, cadr } from "@stemcmicro/tree";
 
 /*
  Return the leading coefficient of a polynomial.

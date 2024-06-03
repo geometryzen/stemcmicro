@@ -5,7 +5,7 @@ import { ExtensionEnv } from "./env/ExtensionEnv";
 import { is_negative } from "./predicates/is_negative";
 import { DIRAC } from "./runtime/constants";
 import { is_add } from "./runtime/helpers";
-import { cadr } from "./tree/helpers";
+import { cadr } from "@stemcmicro/tree";
 
 export function eval_dirac(expr: Cons, $: ExtensionEnv): U {
     return dirac($.valueOf(cadr(expr)), $);

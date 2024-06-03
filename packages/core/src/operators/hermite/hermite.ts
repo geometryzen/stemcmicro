@@ -1,13 +1,9 @@
-import { create_int, one, zero } from "@stemcmicro/atoms";
+import { create_int, is_sym, one, Sym, two, zero } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
+import { items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { items_to_cons } from "../../makeList";
-import { num_to_number } from "../../nativeInt";
 import { HERMITE, SECRETX } from "../../runtime/constants";
-import { two } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
 import { subst } from "../subst/subst";
-import { is_sym } from "../sym/is_sym";
 
 //-----------------------------------------------------------------------------
 //

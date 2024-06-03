@@ -1,7 +1,7 @@
 import { create_int, Rat } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
 import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { num_to_number } from "./nativeInt";
 import { MAXPRIMETAB, primetab } from "./runtime/constants";
 import { halt } from "./runtime/defs";
 

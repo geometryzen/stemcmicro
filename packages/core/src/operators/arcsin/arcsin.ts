@@ -1,9 +1,9 @@
 import { is_flt, is_rat } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
 import { car, cdr, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { equaln, isminusoneoversqrttwo, isMinusSqrtThreeOverTwo, isoneoversqrttwo, isSqrtThreeOverTwo, is_num_and_equalq } from "../../is";
-import { num_to_number } from "../../nativeInt";
 import { ARCSIN, POWER } from "../../runtime/constants";
 import { is_multiply, is_sin } from "../../runtime/helpers";
 import { MATH_PI } from "../../runtime/ns_math";

@@ -1,7 +1,8 @@
-import { create_int, one, Tensor, zero } from "@stemcmicro/atoms";
+import { create_int, is_tensor, one, Tensor, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { inverse } from "@stemcmicro/helpers";
-import { Cons, U } from "@stemcmicro/tree";
+import { inverse, num_to_number } from "@stemcmicro/helpers";
+import { is_add, is_multiply, is_power } from "@stemcmicro/predicates";
+import { caddr, cadr, Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { factors } from "./factors";
 import { filter } from "./filter";
@@ -10,16 +11,12 @@ import { divide_expand } from "./helpers/divide";
 import { inv } from "./inv";
 import { is_plus_or_minus_one, is_poly_expanded_form } from "./is";
 import { multiply_binary, multiply_items } from "./multiply";
-import { num_to_number } from "./nativeInt";
 import { degree } from "./operators/degree/degree";
 import { denominator } from "./operators/denominator/denominator";
 import { factorize } from "./operators/factor/factor";
 import { numerator } from "./operators/numerator/numerator";
-import { is_tensor } from "./operators/tensor/is_tensor";
 import { quotient } from "./quotient";
 import { doexpand_binary, doexpand_unary } from "./runtime/defs";
-import { is_add, is_multiply, is_power } from "./runtime/helpers";
-import { caddr, cadr } from "./tree/helpers";
 
 // Partial fraction expansion
 //

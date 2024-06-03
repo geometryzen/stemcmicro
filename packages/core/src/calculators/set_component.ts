@@ -1,9 +1,8 @@
-import { num_to_number } from "../nativeInt";
-import { is_tensor } from "../operators/tensor/is_tensor";
+import { is_tensor, Tensor } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
+import { U } from "@stemcmicro/tree";
 import { defs, halt, move_top_of_stack } from "../runtime/defs";
 import { stack_push } from "../runtime/stack";
-import { Tensor } from "../tree/tensor/Tensor";
-import { U } from "../tree/tree";
 
 //-----------------------------------------------------------------------------
 //

@@ -1,18 +1,14 @@
-import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
+import { create_flt, create_int, half, is_flt, negOne, one, three, two, zero } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
+import { is_add } from "@stemcmicro/predicates";
+import { cadr, car, Cons, is_cons, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
 import { is_multiple_of_pi } from "../../is_multiple_of_pi";
-import { num_to_number } from "../../nativeInt";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCSIN, ARCTAN } from "../../runtime/constants";
 import { DynamicConstants } from "../../runtime/defs";
-import { is_add } from "../../runtime/helpers";
-import { create_flt } from "../../tree/flt/Flt";
-import { cadr } from "../../tree/helpers";
-import { half, three, two } from "../../tree/rat/Rat";
-import { car, Cons, is_cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
 
 export function eval_sin(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;

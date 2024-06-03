@@ -1,5 +1,6 @@
-import { Cons0, Cons1, Cons2, Cons3, Cons4 } from "../src/helpers";
-import { Atom, car, cdr, Cons, cons, is_atom, is_cons, is_nil, is_singleton, items_to_cons, nil, U } from "../src/tree";
+import { car, cdr } from "../src/car-cdr-1";
+import { Cons0, Cons1, Cons2, Cons3, Cons4 } from "../src/ConsN";
+import { Atom, Cons, cons, is_atom, is_cons, is_nil, is_singleton, items_to_cons, nil, U } from "../src/tree";
 
 /**
  * This is just a test atom, so we expose the reference count.

@@ -1,8 +1,9 @@
 import { bigInt, BigInteger, imu, negOne, one, Rat, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { num_to_number } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
-import { is_rat_and_integer } from "@stemcmicro/predicates";
+import { is_rat_and_integer, is_safe_integer_range } from "@stemcmicro/predicates";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { bignum_truncate, makePositive, makeSignSameAs } from "./bignum";
 import { Directive } from "./env/ExtensionEnv";
@@ -10,11 +11,9 @@ import { exp } from "./helpers/exp";
 import { multiply } from "./helpers/multiply";
 import { negate } from "./helpers/negate";
 import { subtract } from "./helpers/subtract";
-import { in_safe_integer_range } from "./in_safe_integer_range";
 import { is_num_and_eq_minus_one } from "./is";
 import { mpow } from "./mpow";
 import { mroot } from "./mroot";
-import { num_to_number } from "./nativeInt";
 import { is_num_and_negative } from "./predicates/is_negative_number";
 import { quickfactor } from "./quickfactor";
 import { half } from "./tree/rat/Rat";
@@ -129,7 +128,7 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExprContext): C
     }
 
     // At this point base is a positive integer and EXPO is not an integer.
-    if (!in_safe_integer_range(expo.a) || !in_safe_integer_range(expo.b)) {
+    if (!is_safe_integer_range(expo.a) || !is_safe_integer_range(expo.b)) {
         return hook(items_to_cons(POWER, base, expo), "L");
     }
 
@@ -208,5 +207,5 @@ function normalize_angle(A: Rat, $: ExprContext): U {
 }
 
 function is_small_integer(p: Rat): boolean {
-    return in_safe_integer_range(p.a);
+    return is_safe_integer_range(p.a);
 }

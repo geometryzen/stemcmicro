@@ -1,0 +1,8 @@
+build/
+es2015/
+coverage/
+dist/
+docs/
+node_modules/
+system/
+types/

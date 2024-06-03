@@ -1,16 +1,12 @@
-import { create_int, one, zero } from "@stemcmicro/atoms";
+import { create_int, half, is_sym, one, zero } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
+import { cadddr, caddr, cadr, car, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
-import { items_to_cons } from "../../makeList";
-import { num_to_number } from "../../nativeInt";
 import { COS, LEGENDRE, SECRETX, SIN } from "../../runtime/constants";
 import { square } from "../../square";
-import { cadddr, caddr, cadr } from "../../tree/helpers";
-import { half } from "../../tree/rat/Rat";
-import { car, U } from "../../tree/tree";
 import { derivative } from "../derivative/derivative";
 import { subst } from "../subst/subst";
-import { is_sym } from "../sym/is_sym";
 
 /*
  Legendre function

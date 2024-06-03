@@ -1,11 +1,11 @@
 import { bigInt, create_int, is_flt, is_num, Rat } from "@stemcmicro/atoms";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { num_to_number } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { is_rat_and_integer } from "@stemcmicro/predicates";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { mmod } from "../../mmul";
-import { num_to_number } from "../../nativeInt";
 import { halt } from "../../runtime/defs";
 import { caddr, cadr } from "../../tree/helpers";
 

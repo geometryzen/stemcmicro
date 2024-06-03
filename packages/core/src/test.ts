@@ -12,7 +12,7 @@ import { replace_assign_with_testeq } from "./operators/predicate/replace_assign
 import { is_rat } from "./operators/rat/is_rat";
 import { simplify } from "./operators/simplify/simplify";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "./scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
-import { cadr, cddr } from "./tree/helpers";
+import { cadr, cddr } from "@stemcmicro/tree";
 import { zero } from "./tree/rat/Rat";
 import { car, cdr, cons, Cons, is_cons, items_to_cons, U } from "./tree/tree";
 

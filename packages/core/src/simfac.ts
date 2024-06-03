@@ -1,5 +1,7 @@
+import { negOne, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { inverse } from "@stemcmicro/helpers";
+import { caadr, cadadr, caddr, cadr, U } from "@stemcmicro/tree";
 import { add_terms } from "./calculators/add/add_terms";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { add } from "./helpers/add";
@@ -12,9 +14,6 @@ import { factorial } from "./operators/factorial/factorial";
 import { FACTORIAL } from "./runtime/constants";
 import { is_add, is_factorial, is_multiply, is_power } from "./runtime/helpers";
 import { stack_push } from "./runtime/stack";
-import { caadr, cadadr, caddr, cadr } from "./tree/helpers";
-import { negOne, one } from "./tree/rat/Rat";
-import { U } from "./tree/tree";
 
 /*
  Simplify factorials

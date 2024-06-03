@@ -1,31 +1,7 @@
 import { is_flt, is_rat, is_str, Num } from "@stemcmicro/atoms";
-import { is_rat_and_integer } from "@stemcmicro/predicates";
+import { is_rat_and_integer, is_safe_integer_range } from "@stemcmicro/predicates";
 import { is_atom, U } from "@stemcmicro/tree";
-import { in_safe_integer_range } from "./in_safe_integer_range";
 import { ProgrammingError } from "./programming/ProgrammingError";
-
-/**
- * If the expr is not a Rat or Flt then the result is NaN.
- * If the expr is a Rat and an integer and in safe range for EcmaScript number then a number is returned.
- * If the expr is a Flt and an integer then the number is returned.
- */
-export function num_to_number(expr: U): number {
-    if (is_rat(expr)) {
-        if (expr.isInteger() && in_safe_integer_range(expr.a)) {
-            return expr.a.toJSNumber();
-        } else {
-            return NaN;
-        }
-    } else if (is_flt(expr)) {
-        if (Math.floor(expr.d) === expr.d) {
-            return expr.d;
-        } else {
-            return NaN;
-        }
-    } else {
-        return NaN;
-    }
-}
 
 export function nativeStr(expr: U): string {
     if (is_atom(expr)) {
@@ -42,7 +18,7 @@ export function nativeStr(expr: U): string {
 
 export function is_integer_and_in_safe_number_range(num: Num): boolean {
     if (is_rat(num)) {
-        if (is_rat_and_integer(num) && in_safe_integer_range(num.a)) {
+        if (is_rat_and_integer(num) && is_safe_integer_range(num.a)) {
             return true;
         } else {
             return false;

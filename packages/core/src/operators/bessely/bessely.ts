@@ -1,10 +1,9 @@
 import { create_flt, is_flt, negOne } from "@stemcmicro/atoms";
-import { Cons, items_to_cons, U } from "@stemcmicro/tree";
+import { num_to_number } from "@stemcmicro/helpers";
+import { caddr, cadr, Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { num_to_number } from "../../nativeInt";
 import { is_negative } from "../../predicates/is_negative";
 import { BESSELY } from "../../runtime/constants";
-import { caddr, cadr } from "../../tree/helpers";
 
 /* bessely =====================================================================
 

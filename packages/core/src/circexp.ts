@@ -5,7 +5,7 @@ import { expcos } from "./operators/expcos/expcos";
 import { expsin } from "./operators/expsin/expsin";
 import { is_tensor } from "./operators/tensor/is_tensor";
 import { COS, COSH, SIN, SINH, TAN, TANH } from "./runtime/constants";
-import { cadr } from "./tree/helpers";
+import { cadr } from "@stemcmicro/tree";
 import { half, one, two } from "./tree/rat/Rat";
 import { car, Cons, is_cons, U } from "./tree/tree";
 

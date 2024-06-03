@@ -11,7 +11,7 @@ import { re } from "./operators/real/real";
 import { defs, halt, move_top_of_stack } from "./runtime/defs";
 import { stack_pop, stack_push } from "./runtime/stack";
 import { create_flt } from "./tree/flt/Flt";
-import { caddr, cadr } from "./tree/helpers";
+import { caddr, cadr } from "@stemcmicro/tree";
 import { Tensor } from "./tree/tensor/Tensor";
 import { Cons, U } from "./tree/tree";
 

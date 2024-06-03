@@ -1,13 +1,10 @@
-import { create_int, one, zero } from "@stemcmicro/atoms";
+import { create_int, is_sym, one, zero } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
+import { cadddr, caddr, cadr, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
-import { items_to_cons } from "../../makeList";
-import { num_to_number } from "../../nativeInt";
 import { LAGUERRE, SECRETX } from "../../runtime/constants";
-import { cadddr, caddr, cadr } from "../../tree/helpers";
-import { U } from "../../tree/tree";
 import { subst } from "../subst/subst";
-import { is_sym } from "../sym/is_sym";
 
 /*
  Laguerre function

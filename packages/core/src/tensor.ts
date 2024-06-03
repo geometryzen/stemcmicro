@@ -1,9 +1,9 @@
 import { Err, is_tensor, one, Sym, Tensor, zero } from "@stemcmicro/atoms";
+import { num_to_number } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { inv } from "./inv";
-import { num_to_number } from "./nativeInt";
 import { derivative } from "./operators/derivative/derivative";
 import { ProgrammingError } from "./programming/ProgrammingError";
 import { MAXDIM, POWER } from "./runtime/constants";

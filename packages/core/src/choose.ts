@@ -5,7 +5,7 @@ import { compare_num_num } from "./calculators/compare/compare_num_num";
 import { subtract } from "./calculators/sub/subtract";
 import { divide } from "./helpers/divide";
 import { factorial } from "./operators/factorial/factorial";
-import { cadr } from "./tree/helpers";
+import { cadr } from "@stemcmicro/tree";
 
 /* choose =====================================================================
 

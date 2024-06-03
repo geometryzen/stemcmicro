@@ -1,6 +1,6 @@
 import { ExprContext } from "@stemcmicro/context";
-import { num_to_number } from "../nativeInt";
-import { U } from "../tree/tree";
+import { num_to_number } from "@stemcmicro/helpers";
+import { U } from "@stemcmicro/tree";
 
 /**
  * Evaluates the expression then converts it to a EcmaScript number.

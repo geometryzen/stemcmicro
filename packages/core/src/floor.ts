@@ -4,7 +4,7 @@ import { ExtensionEnv } from "./env/ExtensionEnv";
 import { mdiv } from "./mmul";
 import { is_num_and_negative } from "./predicates/is_negative_number";
 import { FLOOR } from "./runtime/constants";
-import { cadr } from "./tree/helpers";
+import { cadr } from "@stemcmicro/tree";
 
 export function eval_floor(p1: U, $: ExtensionEnv): U {
     const result = yfloor($.valueOf(cadr(p1)), $);

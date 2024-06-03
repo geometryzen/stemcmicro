@@ -1,5 +1,6 @@
 import { create_flt, create_sym, imu, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, is_uom, negOne, one, QQ } from "@stemcmicro/atoms";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { num_to_number } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { is_rat_and_integer } from "@stemcmicro/predicates";
 import { car, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
@@ -13,7 +14,7 @@ import { isone } from "../../helpers/isone";
 import { iszero } from "../../helpers/iszero";
 import { iscomplexnumberdouble, is_complex_number, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_gt_zero, is_plus_or_minus_one, is_rat_and_even_integer } from "../../is";
 import { multiply_binary } from "../../multiply";
-import { is_integer_and_in_safe_number_range, num_to_number } from "../../nativeInt";
+import { is_integer_and_in_safe_number_range } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";

@@ -1,6 +1,5 @@
-import { is_num } from "../operators/num/is_num";
-import { Num } from "../tree/num/Num";
-import { U } from "../tree/tree";
+import { is_num, Num } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 
 /**
  * The expression must be a Rat or Flt, otherwise the return value is false.

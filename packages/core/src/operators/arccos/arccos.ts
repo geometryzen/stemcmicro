@@ -1,10 +1,10 @@
+import { num_to_number } from "@stemcmicro/helpers";
 import { rational } from "../../bignum";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { equaln, isminusoneoversqrttwo, isMinusSqrtThreeOverTwo, isoneoversqrttwo, isSqrtThreeOverTwo, is_num_and_equalq } from "../../is";
 import { items_to_cons } from "../../makeList";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { num_to_number } from "../../nativeInt";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCCOS, POWER } from "../../runtime/constants";
 import { is_multiply } from "../../runtime/helpers";

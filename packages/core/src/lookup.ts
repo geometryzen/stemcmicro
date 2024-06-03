@@ -1,7 +1,7 @@
 import { is_sym } from "@stemcmicro/atoms";
 import { car, Cons, is_cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { cadr } from "./tree/helpers";
+import { cadr } from "@stemcmicro/tree";
 
 // now this might be a little confusing, so a
 // clarification is in order.

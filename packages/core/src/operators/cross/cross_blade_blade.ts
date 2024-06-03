@@ -1,11 +1,11 @@
 import { Blade, is_blade, is_rat } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Cons2, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, items_to_cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_blade_rat } from "../mul/is_mul_2_blade_rat";
 import { is_mul_2_rat_blade } from "../mul/is_mul_2_rat_blade";
@@ -21,7 +21,7 @@ type LHS = Blade;
 type RHS = Blade;
 type EXP = Cons2<Sym, LHS, RHS>;
 
-function eval_cross_blade_blade(expr: EXP, $: ExtensionEnv): U {
+function eval_cross_blade_blade(expr: EXP, $: ExprContext): U {
     const bladeL = expr.lhs;
     const bladeR = expr.rhs;
     try {
@@ -32,7 +32,7 @@ function eval_cross_blade_blade(expr: EXP, $: ExtensionEnv): U {
     }
 }
 
-function cross_blade_blade(lhs: Blade, rhs: Blade, $: ExtensionEnv): U {
+function cross_blade_blade(lhs: Blade, rhs: Blade, $: ExprContext): U {
     const wedge = $.valueOf(lhs.wedge(rhs));
     if (is_blade(wedge)) {
         return $.valueOf(items_to_cons(MATH_MUL, negOne, wedge.dual()));
@@ -54,7 +54,7 @@ function cross_blade_blade(lhs: Blade, rhs: Blade, $: ExtensionEnv): U {
     // Other possibilities...
     // Rat * Blade
     // Num * Blade
-    throw new Error(`${$.toSExprString(wedge)}`);
+    throw new Error();
 }
 
 /**

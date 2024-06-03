@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/diagnostics",
-    "version": "0.9.61",
+    "version": "0.9.62",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",

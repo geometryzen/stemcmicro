@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/cs-parse",
-    "version": "0.9.61",
+    "version": "0.9.62",
     "description": "Python parser for math expressions",
     "exports": {
         ".": {

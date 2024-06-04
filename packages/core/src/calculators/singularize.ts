@@ -1,5 +1,4 @@
-import { is_singleton } from "../predicates/is_singleton";
-import { is_cons, U } from "../tree/tree";
+import { is_cons, is_singleton, U } from "@stemcmicro/tree";
 
 export function singularize(expr: U): U {
     if (is_cons(expr)) {

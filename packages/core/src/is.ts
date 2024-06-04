@@ -1,7 +1,7 @@
 import { is_flt, is_num, is_rat, Num, Rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { is_rat_and_integer } from "@stemcmicro/predicates";
-import { is_cons, U } from "@stemcmicro/tree";
+import { caddr, cadr, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { imu } from "./env/imu";
 import { guess } from "./guess";
@@ -10,7 +10,6 @@ import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
 import { is_num_and_negative } from "./predicates/is_negative_number";
 import { FLOAT, MEQUAL, MSIGN, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from "./runtime/constants";
 import { is_add, is_multiply, is_power } from "./runtime/helpers";
-import { caddr, cadr } from "@stemcmicro/tree";
 
 //
 // TODO: In order not to torture our future selves, these should be documented and have coverage unit testing.

@@ -1,6 +1,6 @@
-import { Cons, is_cons, U } from "../tree/tree";
+import { Cons, is_cons } from "./tree";
 
-export function cdnr(expr: Cons, n: number): U {
+export function cdnr(expr: Cons, n: number): Cons {
     if (n > 0) {
         const argList = expr.argList;
         if (is_cons(argList)) {

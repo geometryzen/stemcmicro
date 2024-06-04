@@ -1,8 +1,9 @@
 import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_keyword, is_num, is_rat, is_str, is_sym, is_uom, one, Rat, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { is_add, is_num_and_negative, is_power } from "@stemcmicro/predicates";
-import { car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
+import { caadr, caar, caddddr, cadddr, caddr, cadnr, cadr, car, cddr, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { lt_num_num } from "../calculators/compare/lt_num_num";
 import { is_localizable } from "../diagnostics/localizable";
 import { isone } from "../helpers/isone";
@@ -54,8 +55,6 @@ import {
     UNIT
 } from "../runtime/constants";
 import { RESERVED_KEYWORD_LAST } from "../runtime/ns_script";
-import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from "../tree/helpers";
-import { Directive } from "./Directive";
 import { mp_denominator } from "./mp_denominator";
 import { mp_numerator } from "./mp_numerator";
 import { PrintMode } from "./PrintMode";
@@ -800,24 +799,24 @@ function print_DEFINT_latex(p: U, $: PrintConfig): string {
     return accumulator;
 }
 
-function print_SUM_latex(p: U, $: PrintConfig): string {
+function print_SUM_latex(p: Cons, $: PrintConfig): string {
     let accumulator = "\\sum_{";
-    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadnr(p, 2), $);
     accumulator += "=";
-    accumulator += render_using_non_sexpr_print_mode(cadddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadnr(p, 3), $);
     accumulator += "}^{";
-    accumulator += render_using_non_sexpr_print_mode(caddddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadnr(p, 4), $);
     accumulator += "}{";
-    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadnr(p, 1), $);
     accumulator += "}";
     return accumulator;
 }
 
-function print_SUM_codegen(p: U, $: PrintConfig): string {
-    const body = cadr(p);
-    const variable = caddr(p);
-    const lowerlimit = cadddr(p);
-    const upperlimit = caddddr(p);
+function print_SUM_codegen(p: Cons, $: PrintConfig): string {
+    const body = cadnr(p, 1);
+    const variable = cadnr(p, 2);
+    const lowerlimit = cadnr(p, 3);
+    const upperlimit = cadnr(p, 4);
 
     const accumulator =
         "(function(){" +
@@ -963,7 +962,7 @@ function print_testeq_latex(expr: Cons, $: PrintConfig): string {
     return (s += "}");
 }
 
-function print_FOR_codegen(p: U, $: PrintConfig): string {
+function print_FOR_codegen(p: Cons, $: PrintConfig): string {
     const body = cadr(p);
     const variable = caddr(p);
     const lowerlimit = cadddr(p);
@@ -1685,7 +1684,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_ARCTAN_codegen(expr, _);
             return str;
         }
-    } else if (car(expr).equals(SUM)) {
+    } else if (is_cons(expr) && car(expr).equals(SUM)) {
         if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = "";
             str += print_SUM_latex(expr, _);
@@ -1709,7 +1708,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_PRODUCT_codegen(expr, _);
             return str;
         }
-    } else if (car(expr).equals(FOR)) {
+    } else if (is_cons(expr) && car(expr).equals(FOR)) {
         if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             let str = "";
             str += print_FOR_codegen(expr, _);

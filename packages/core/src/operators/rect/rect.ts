@@ -1,7 +1,6 @@
 import { imu, is_imu, is_sym, zero } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
-import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
-import { cadnr } from "../../calculators/cadnr";
+import { cadnr, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { count_factors } from "../../calculators/count_factors";
 import { remove_factors } from "../../calculators/remove_factors";
 import { ExtensionEnv } from "../../env/ExtensionEnv";

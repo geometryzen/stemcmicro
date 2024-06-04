@@ -1,15 +1,9 @@
-import { Err } from "@stemcmicro/atoms";
+import { bigInt, BigInteger, create_flt, Err, Flt, is_flt, is_rat, Num, one, Rat } from "@stemcmicro/atoms";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { U } from "@stemcmicro/tree";
 import { mdiv, mmul } from "./mmul";
 import { mpow } from "./mpow";
-import { is_flt } from "./operators/flt/is_flt";
-import { is_rat } from "./operators/rat/is_rat";
 import { ProgrammingError } from "./programming/ProgrammingError";
-import { create_flt, Flt } from "./tree/flt/Flt";
-import { Num } from "./tree/num/Num";
-import { bigInt, BigInteger } from "./tree/rat/big-integer";
-import { one, Rat } from "./tree/rat/Rat";
-import { U } from "./tree/tree";
 
 export function mint(a: number): BigInteger {
     return bigInt(a);

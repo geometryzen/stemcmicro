@@ -1,11 +1,11 @@
 import { Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { Stack } from "../../env/Stack";
+import { Stack } from "../env/Stack";
 import { State } from "./Stepper";
 
 /**
- * (op a1 a2)
+ * (op a1 a2 a3 ... an)
  */
-export function step_2_args(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+export function step_n_args(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {

@@ -4,7 +4,7 @@ import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Native } from "@stemcmicro/native";
 import { Cons, is_atom, is_cons, is_nil, items_to_cons, Shareable, U } from "@stemcmicro/tree";
 import { StackFunction } from "../adapters/StackFunction";
-import { assert_sym_any_any } from "../clojurescript/runtime/step_setq";
+import { assert_sym_any_any } from "../stepper/step_setq";
 import { ExprEngineListener } from "../eigenmath/ProgramIO";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { setq } from "../operators/assign/assign_any_any";

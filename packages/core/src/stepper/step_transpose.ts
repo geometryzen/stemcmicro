@@ -1,9 +1,11 @@
-import { Native } from "@stemcmicro/native";
-import { Cons, nil, U } from "@stemcmicro/tree";
-import { Stack } from "../../env/Stack";
+import { Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
+import { Stack } from "../env/Stack";
 import { State } from "./Stepper";
 
-export function step_add(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+/**
+ * transpose(a: Tensor, i?:Rat, j?:Rat)
+ */
+export function step_transpose(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {
@@ -24,7 +26,7 @@ export function step_add(expr: Cons, stack: Stack<State>, state: State): State |
         state.argValues[n - 1] = state.value;
     }
     stack.pop();
-    const value = state.$.evaluate(Native.add, ...state.argValues);
+    const value = state.$.valueOf(items_to_cons(expr.opr, ...state.argValues));
     stack.top.value = value;
     return void 0;
 }

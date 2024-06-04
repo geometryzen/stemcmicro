@@ -1,6 +1,5 @@
 import { create_int, is_sym, zero } from "@stemcmicro/atoms";
-import { Cons, nil, U } from "@stemcmicro/tree";
-import { cadnr } from "../../calculators/cadnr";
+import { cadnr, Cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { halt } from "../../runtime/defs";
 import { evaluate_integer } from "../../scripting/evaluate_integer";

@@ -1,9 +1,11 @@
-import { Native } from "@stemcmicro/native";
-import { Cons, nil, U } from "@stemcmicro/tree";
-import { Stack } from "../../env/Stack";
+import { Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
+import { Stack } from "../env/Stack";
 import { State } from "./Stepper";
 
-export function step_multiply(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+/**
+ * (op a1 a2 a3 ...)
+ */
+export function step_v_args(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {
@@ -24,7 +26,7 @@ export function step_multiply(expr: Cons, stack: Stack<State>, state: State): St
         state.argValues[n - 1] = state.value;
     }
     stack.pop();
-    const value = state.$.evaluate(Native.multiply, ...state.argValues);
+    const value = state.$.valueOf(items_to_cons(expr.opr, ...state.argValues));
     stack.top.value = value;
     return void 0;
 }

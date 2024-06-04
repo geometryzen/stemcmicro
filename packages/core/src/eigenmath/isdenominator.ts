@@ -1,7 +1,6 @@
 import { is_num, is_rat, is_sym } from "@stemcmicro/atoms";
 import { is_native, Native } from "@stemcmicro/native";
-import { is_cons, U } from "@stemcmicro/tree";
-import { caddr } from "../tree/helpers";
+import { caddr, is_cons, U } from "@stemcmicro/tree";
 import { bignum_equal } from "./bignum_equal";
 import { isnegativenumber } from "./isnegativenumber";
 

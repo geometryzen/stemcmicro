@@ -6427,7 +6427,7 @@ export function stack_noexpand(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, 
 }
 
 /**
- * This isn't actually a function that is matched, hence the ProgramFrame
+ *
  */
 export function evaluate_nonstop(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     if (ctrl.getDirective(Directive.nonstop)) {

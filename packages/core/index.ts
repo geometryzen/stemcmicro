@@ -1,6 +1,6 @@
 export { code_from_native_sym, is_native_sym, Native, NATIVE_MAX, NATIVE_MIN, native_sym } from "@stemcmicro/native";
 export { AtomExtensionBuilderFromExprHandlerBuilder } from "./src/adapters/AtomExtensionBuilderFromExprHandlerBuilder";
-export { Scope, State, Stepper, StepperConfig, StepperHandler, Thing } from "./src/clojurescript/runtime/Stepper";
+export { Scope, State, Stepper, StepperConfig, StepperHandler, Thing } from "./src/stepper/Stepper";
 export { ProgramEnv } from "./src/eigenmath/ProgramEnv";
 export { ProgramStack } from "./src/eigenmath/ProgramStack";
 export { render_svg } from "./src/eigenmath/render_svg";

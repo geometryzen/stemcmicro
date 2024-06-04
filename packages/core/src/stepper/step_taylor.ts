@@ -1,11 +1,11 @@
 import { Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { Stack } from "../../env/Stack";
+import { Stack } from "../env/Stack";
 import { State } from "./Stepper";
 
 /**
- * ==, !=, >, >=, <, <=
+ * taylor(f,x,n,a)
  */
-export function step_relational_expr(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+export function step_taylor(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {

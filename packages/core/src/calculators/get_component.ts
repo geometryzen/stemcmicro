@@ -4,14 +4,10 @@
  * @param expr (component Tensot iList), where iList is not NIL.
  */
 
+import { is_rat, is_tensor, Tensor } from "@stemcmicro/atoms";
+import { cadnr, cdnr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { is_num_and_integer } from "../is";
-import { is_rat } from "../operators/rat/is_rat";
-import { is_tensor } from "../operators/tensor/is_tensor";
-import { Tensor } from "../tree/tensor/Tensor";
-import { Cons, is_cons, U } from "../tree/tree";
-import { cadnr } from "./cadnr";
-import { cdnr } from "./cdnr";
 import { index_function } from "./index_function";
 
 export function eval_index(expr: Cons, $: ExtensionEnv): U {

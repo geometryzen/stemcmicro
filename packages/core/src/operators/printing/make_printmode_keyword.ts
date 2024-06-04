@@ -1,7 +1,8 @@
 import { create_sym, is_sym, Sym } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
 import { nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Directive, Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { render_using_print_mode } from "../../print/render_using_print_mode";
 import { PrintMode } from "../../runtime/defs";

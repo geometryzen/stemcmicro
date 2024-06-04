@@ -1,4 +1,5 @@
 import { create_sym } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
 import { nil } from "@stemcmicro/tree";
 import { eval_approxratio } from "../approxratio";
@@ -262,7 +263,7 @@ import { RESERVED_KEYWORD_LAST } from "../runtime/ns_script";
 import { eval_conjugate } from "../scripting/eval_conjugate";
 import { eval_power } from "../scripting/eval_power";
 import { eval_and, eval_not, eval_test, eval_testeq, eval_testle, eval_testne } from "../test";
-import { Directive, ExtensionEnv } from "./ExtensionEnv";
+import { ExtensionEnv } from "./ExtensionEnv";
 
 export interface DefineStandardOperatorsConfig {
     /**

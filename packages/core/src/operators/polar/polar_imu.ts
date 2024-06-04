@@ -3,7 +3,7 @@ import { Native, native_sym } from "@stemcmicro/native";
 import { Cons1, U } from "@stemcmicro/tree";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
-import { half } from "../../tree/rat/Rat";
+import { half } from "@stemcmicro/atoms";
 import { Function1 } from "../helpers/Function1";
 
 const PI = native_sym(Native.PI);

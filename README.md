@@ -16,6 +16,8 @@ All packages are published together with the same version number.
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
+For a STEMCstudio example (click [here](https://www.stemcstudio.com/gists/615c4d96400a7d18e9741abe9bfc28fa) to try)
+
 ## Packages and API Documentation
 
 ### [@stemcmicro/atoms](https://geometryzen.github.io/stemcmicro/atoms)
@@ -23,7 +25,9 @@ All packages are published together with the same version number.
 ### [@stemcmicro/core](https://geometryzen.github.io/stemcmicro/core)
 ### [@stemcmicro/cs-parse](https://geometryzen.github.io/stemcmicro/cs-parse)
 ### [@stemcmicro/diagnostics](https://geometryzen.github.io/stemcmicro/diagnostics)
+### [@stemcmicro/directive](https://geometryzen.github.io/stemcmicro/directive)
 ### [@stemcmicro/em-parse](https://geometryzen.github.io/stemcmicro/em-parse)
+### [@stemcmicro/engine](https://geometryzen.github.io/stemcmicro/engine)
 ### [@stemcmicro/helpers](https://geometryzen.github.io/stemcmicro/helpers)
 ### [@stemcmicro/hilbert](https://geometryzen.github.io/stemcmicro/hilbert)
 ### [@stemcmicro/js-parse](https://geometryzen.github.io/stemcmicro/js-parse)

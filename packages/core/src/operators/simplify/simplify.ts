@@ -1,5 +1,6 @@
 import { create_int, is_imu, is_num, is_rat, one, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { inverse, power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
@@ -7,7 +8,7 @@ import { nativeDouble } from "../../bignum";
 import { add_terms } from "../../calculators/add/add_terms";
 import { condense, yycondense } from "../../condense";
 import { complexity } from "../../eigenmath/eigenmath";
-import { Directive, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { add } from "../../helpers/add";
 import { clock } from "../../helpers/clock";
 import { divide } from "../../helpers/divide";

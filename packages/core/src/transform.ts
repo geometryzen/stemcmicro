@@ -1,16 +1,15 @@
 import { is_num, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { ScanOptions, scan_meta } from "@stemcmicro/em-parse";
-import { assert_cons, car, cdr, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
+import { assert_cons, cadr, car, cdddr, cddr, cdr, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { polyform } from "./bake";
 import { decomp } from "./decomp";
-import { Directive } from "./env/ExtensionEnv";
 import { iszero } from "./helpers/iszero";
 import { subtract } from "./helpers/subtract";
 import { subst } from "./operators/subst/subst";
 import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from "./runtime/constants";
 import { noexpand_unary } from "./runtime/defs";
-import { cadr, cdddr, cddr } from "@stemcmicro/tree";
 
 /*
 Transform an expression using a pattern. The

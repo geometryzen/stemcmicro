@@ -1,10 +1,10 @@
 import { imu, is_imu, is_num, is_rat, is_tensor, one, Tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, is_atom, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { complex_conjugate } from "../../complex_conjugate";
-import { Directive } from "../../env/ExtensionEnv";
 import { add } from "../../helpers/add";
 import { divide } from "../../helpers/divide";
 import { exp } from "../../helpers/exp";

@@ -1,5 +1,6 @@
+import { Directive } from "@stemcmicro/directive";
 import { Cons, is_cons, U } from "@stemcmicro/tree";
-import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
+import { ExtensionEnv } from "../env/ExtensionEnv";
 import { PrintMode } from "../runtime/defs";
 import { render_using_non_sexpr_print_mode } from "./print";
 import { render_as_ascii } from "./render_as_ascii";

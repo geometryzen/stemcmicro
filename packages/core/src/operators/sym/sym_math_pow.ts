@@ -1,10 +1,11 @@
 import { assert_sym, create_str, create_sym, is_sym, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, cons, nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Directive, Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 
 const POW = native_sym(Native.pow);

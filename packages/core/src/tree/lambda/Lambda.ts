@@ -1,1 +1,1 @@
-export { Lambda } from "@stemcmicro/atoms";
+export { Lambda } from "@stemcmicro/context";

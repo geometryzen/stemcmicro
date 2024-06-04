@@ -1,11 +1,12 @@
 import { is_blade } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { remove_factors } from "../../calculators/remove_factors";
 import { remove_imu_factors } from "../../calculators/remove_imu_factors";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { imu } from "../../tree/imu/Imu";

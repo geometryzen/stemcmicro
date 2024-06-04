@@ -1,9 +1,10 @@
 import { is_tensor, one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { inverse } from "@stemcmicro/helpers";
 import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { condense } from "../../condense";
-import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
+import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { add } from "../../helpers/add";
 import { divide } from "../../helpers/divide";
 import { multiply } from "../../helpers/multiply";

@@ -4,8 +4,9 @@
 //
 import { Flt, negOne, Rat, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { U } from "@stemcmicro/tree";
-import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
+import { ExtensionEnv } from "../env/ExtensionEnv";
 import { negOneAsFlt, piAsFlt } from "../tree/flt/Flt";
 import { MATH_PI } from "./ns_math";
 

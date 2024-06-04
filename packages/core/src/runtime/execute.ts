@@ -1,8 +1,9 @@
 import { imu, is_imu, is_sym, Sym } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { eval_bake } from "../bake";
-import { Directive, directive_from_flag, ExtensionEnv } from "../env/ExtensionEnv";
+import { directive_from_flag, ExtensionEnv } from "../env/ExtensionEnv";
 import { subst } from "../operators/subst/subst";
 import { Box } from "./Box";
 import { BAKE, SYMBOL_I, SYMBOL_J } from "./constants";

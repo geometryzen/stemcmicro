@@ -1,6 +1,6 @@
-import { LambdaExpr } from "@stemcmicro/context";
+import { JsAtom } from "@stemcmicro/atoms";
 import { U } from "@stemcmicro/tree";
-import { JsAtom } from "../atom/JsAtom";
+import { LambdaExpr } from "./LambdaExpr";
 
 export class Lambda extends JsAtom {
     readonly type = "lambda";

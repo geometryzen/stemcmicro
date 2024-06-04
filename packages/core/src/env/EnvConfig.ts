@@ -1,4 +1,5 @@
-import { Directive, FEATURE, Predicates } from "./ExtensionEnv";
+import { Directive } from "@stemcmicro/directive";
+import { FEATURE, Predicates } from "./ExtensionEnv";
 
 export interface EnvConfig {
     allowUndeclaredVars: "Err" | "Nil";

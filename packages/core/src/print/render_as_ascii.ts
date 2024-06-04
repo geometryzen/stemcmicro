@@ -1,11 +1,12 @@
 import { Blade, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, one, Rat, Str, Sym, Tensor, Uom } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { is_rat_and_fraction } from "@stemcmicro/predicates";
 import { Atom, car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { mp_denominator, mp_numerator } from "../bignum";
-import { Directive } from "../env/ExtensionEnv";
 import { isone } from "../helpers/isone";
-import { is_num_and_eq_minus_one, is_rat_and_fraction } from "../is";
+import { is_num_and_eq_minus_one } from "../is";
 import { nativeStr } from "../nativeInt";
 import { str_extension } from "../operators/str/str_extension";
 import { is_base_of_natural_logarithm } from "../predicates/is_base_of_natural_logarithm";

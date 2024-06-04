@@ -1,6 +1,7 @@
 import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
 import { num_to_number } from "@stemcmicro/helpers";
-import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
+import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
 import { items_to_cons } from "../../makeList";
 import { is_negative } from "../../predicates/is_negative";

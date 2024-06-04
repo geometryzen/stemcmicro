@@ -1,4 +1,5 @@
 import { create_flt, create_rat, is_flt, is_sym, is_tensor, Num, Sym } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, Cons, Cons1, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
@@ -7,7 +8,7 @@ import { isdoublez } from "../../eigenmath/isdoublez";
 import { isnegativeterm } from "../../eigenmath/isnegativeterm";
 import { isplusone } from "../../eigenmath/isplusone";
 import { iszero } from "../../eigenmath/iszero";
-import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
+import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";
 import { equaln, is_num_and_equalq } from "../../is";
 import { is_negative } from "../../predicates/is_negative";

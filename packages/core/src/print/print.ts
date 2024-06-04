@@ -1,11 +1,11 @@
 import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_keyword, is_num, is_rat, is_str, is_sym, is_uom, one, Rat, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { is_localizable } from "@stemcmicro/diagnostics";
+import { Directive } from "@stemcmicro/directive";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { mp_denominator, mp_numerator } from "../bignum";
 import { lt_num_num } from "../calculators/compare/lt_num_num";
-import { Directive } from "../env/ExtensionEnv";
 import { isone } from "../helpers/isone";
 import { negate } from "../helpers/negate";
 import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from "../is";

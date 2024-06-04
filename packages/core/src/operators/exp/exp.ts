@@ -1,11 +1,10 @@
+import { Sym } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons1, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
-import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 

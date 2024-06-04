@@ -1,10 +1,11 @@
 import { is_flt, is_sym } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
 import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
 import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { subtract } from "../../calculators/sub/subtract";
 import { stack_arg } from "../../eigenmath/eigenmath";
-import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
+import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";
 import { hook_create_err } from "../../hooks/hook_create_err";
 import { equaln, is_num_and_equal_one_half, is_num_and_gt_zero } from "../../is";

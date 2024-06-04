@@ -1,8 +1,8 @@
 import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_imu, is_num, is_tensor, Sym } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
 import { assert_cons, Cons, nil, U } from "@stemcmicro/tree";
 import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
 import { StackFunction } from "../adapters/StackFunction";
-import { Directive } from "../env/ExtensionEnv";
 import { broadcast, evaluate_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";

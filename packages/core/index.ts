@@ -5,7 +5,7 @@ export { ProgramEnv } from "./src/eigenmath/ProgramEnv";
 export { ProgramStack } from "./src/eigenmath/ProgramStack";
 export { render_svg } from "./src/eigenmath/render_svg";
 export { create_env } from "./src/env/env";
-export { ALL_FEATURES, Directive, directive_from_flag, ExtensionEnv, FEATURE } from "./src/env/ExtensionEnv";
+export { ALL_FEATURES, directive_from_flag, ExtensionEnv, FEATURE } from "./src/env/ExtensionEnv";
 export { Stack } from "./src/env/Stack";
 export { create_algebra_as_blades } from "./src/operators/algebra/create_algebra_as_tensor";
 export { simplify } from "./src/operators/simplify/simplify";

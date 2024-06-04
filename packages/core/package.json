@@ -21,7 +21,6 @@
     "scripts": {
         "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
         "clean": "rm -rf ./dist",
-        "coverage": "nyc npm run test",
         "docs": "npm run docs:typedoc && open-cli docs/index.html",
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
         "pages": "npm run docs:typedoc && gh-pages --dist docs --dest core",
@@ -61,6 +60,7 @@
         "@stemcmicro/atoms": "file:../atoms",
         "@stemcmicro/context": "file:../context",
         "@stemcmicro/diagnostics": "file:../diagnostics",
+        "@stemcmicro/directive": "file:../directive",
         "@stemcmicro/em-parse": "file:../em-parse",
         "@stemcmicro/helpers": "file:../helpers",
         "@stemcmicro/native": "file:../native",

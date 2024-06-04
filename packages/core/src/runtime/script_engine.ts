@@ -1,9 +1,10 @@
 import { create_sym, Sym } from "@stemcmicro/atoms";
 import { LambdaExpr } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { Cons, U } from "@stemcmicro/tree";
 import { define_std_operators } from "../env/define_std_operators";
 import { EnvOptions } from "../env/env";
-import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
+import { ALL_FEATURES, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
 import { move_top_of_stack } from "./defs";
 
 export interface ExprTransformOptions {

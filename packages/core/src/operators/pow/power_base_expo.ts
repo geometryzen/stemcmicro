@@ -1,5 +1,6 @@
 import { create_flt, create_sym, imu, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, is_uom, negOne, one, QQ } from "@stemcmicro/atoms";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { Directive } from "@stemcmicro/directive";
 import { num_to_number } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { is_rat_and_integer } from "@stemcmicro/predicates";
@@ -7,7 +8,7 @@ import { car, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tre
 import { nativeDouble, rational } from "../../bignum";
 import { complex_conjugate } from "../../complex_conjugate";
 import { power_e_expo } from "../../eigenmath/eigenmath";
-import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
+import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";
 import { divide } from "../../helpers/divide";
 import { isone } from "../../helpers/isone";

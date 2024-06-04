@@ -1,6 +1,7 @@
+import { Directive } from "@stemcmicro/directive";
 import { circexp } from "../../circexp";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Directive, ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { CIRCEXP } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";

@@ -1,8 +1,8 @@
 import { negOne } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { power } from "@stemcmicro/helpers";
 import { U } from "@stemcmicro/tree";
-import { Directive } from "../../env/ExtensionEnv";
 import { abs } from "../../helpers/abs";
 import { arg } from "../../helpers/arg";
 import { divide } from "../../helpers/divide";

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_lambda, is_rat, is_sym, Keyword, Lambda, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
-import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
+import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_rat, is_sym, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
+import { ExprContext, ExprHandler, is_lambda, Lambda, LambdaExpr } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
 import { ExtensionEnvFromExprContext } from "../adapters/ExtensionEnvFromExprContext";
@@ -29,7 +30,6 @@ import { EnvConfig } from "./EnvConfig";
 import {
     AtomListener,
     CompareFn,
-    Directive,
     directive_from_flag,
     EvalFunction,
     ExprComparator,

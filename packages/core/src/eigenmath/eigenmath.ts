@@ -19,7 +19,6 @@ import {
     is_err,
     is_flt,
     is_imu,
-    is_lambda,
     is_num,
     is_rat,
     is_str,
@@ -35,8 +34,9 @@ import {
     Sym,
     Tensor
 } from "@stemcmicro/atoms";
-import { ExprContext, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
+import { ExprContext, is_lambda, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { Directive } from "@stemcmicro/directive";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
@@ -44,7 +44,6 @@ import { StackFunction } from "../adapters/StackFunction";
 import { contains_single_blade } from "../calculators/compare/contains_single_blade";
 import { complex_comparator, complex_to_item, item_to_complex } from "../complex/complex";
 import { prolog_eval_varargs } from "../dispatch/prolog_eval_varargs";
-import { Directive } from "../env/ExtensionEnv";
 import { StackU } from "../env/StackU";
 import { guess } from "../guess";
 import { convert_tensor_to_strings } from "../helpers/convert_tensor_to_strings";

@@ -1,9 +1,10 @@
 import { imu, is_imu, is_sym, zero } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
 import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { cadnr } from "../../calculators/cadnr";
 import { count_factors } from "../../calculators/count_factors";
 import { remove_factors } from "../../calculators/remove_factors";
-import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
+import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { COS, RECT } from "../../runtime/constants";
 import { has_clock_form, has_exp_form } from "../../runtime/find";

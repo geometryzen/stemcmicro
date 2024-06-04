@@ -1,8 +1,9 @@
 import { is_rat, one, Sym } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
 import { is_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Directive, ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { negOne, Rat } from "../../tree/rat/Rat";

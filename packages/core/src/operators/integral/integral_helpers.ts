@@ -1,10 +1,11 @@
 import { create_flt, is_num, is_sym, one, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { ScanOptions, scan_meta } from "@stemcmicro/em-parse";
 import { num_to_number } from "@stemcmicro/helpers";
 import { is_add, is_multiply } from "@stemcmicro/predicates";
 import { cadr, car, cdr, Cons, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
+import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { guess } from "../../guess";
 import { add } from "../../helpers/add";
 import { exp } from "../../helpers/exp";

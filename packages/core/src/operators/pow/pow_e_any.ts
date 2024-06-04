@@ -1,10 +1,11 @@
 import { is_imu, is_rat, is_sym, negOne, one, Sym } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
 import { is_cons_opr_eq_multiply, is_cons_opr_eq_sym } from "@stemcmicro/predicates";
 import { is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { divide_by_imu } from "../../optimize/divide_by_imu";

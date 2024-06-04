@@ -5,7 +5,7 @@
 // prints the inverse of the base powered to the unsigned
 
 import { is_flt, is_rat, Num } from "@stemcmicro/atoms";
-import { Directive } from "../env/ExtensionEnv";
+import { Directive } from "@stemcmicro/directive";
 import { PrintMode } from "../runtime/defs";
 import { number_to_floating_point_string } from "../runtime/number_to_floating_point_string";
 import { PrintConfig } from "./print";

@@ -1,9 +1,10 @@
 import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_atom, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { Directive, Extension, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { float } from "../../helpers/float";
 import { iszero } from "../../helpers/iszero";

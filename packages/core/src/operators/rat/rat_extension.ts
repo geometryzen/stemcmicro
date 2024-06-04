@@ -1,10 +1,11 @@
 import { assert_rat, create_flt, create_str, create_sym, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Rat, Str, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Atom, Cons, is_atom, is_cons, is_singleton, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
-import { Directive, Extension, ExtensionBuilder, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionBuilder, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { iszero } from "../../helpers/iszero";
 import { multiply } from "../../helpers/multiply";

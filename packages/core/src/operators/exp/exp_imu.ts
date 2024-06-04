@@ -1,14 +1,11 @@
+import { Imu, is_imu, one, Sym } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
+import { Native, native_sym } from "@stemcmicro/native";
+import { Cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { Imu } from "../../tree/imu/Imu";
-import { one } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { is_imu } from "../imu/is_imu";
 
 export const MATH_EXP = native_sym(Native.exp);
 

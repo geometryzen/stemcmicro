@@ -1,4 +1,5 @@
-import { Directive, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Directive } from "@stemcmicro/directive";
+import { ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { is_multiple_of_pi } from "../../is_multiple_of_pi";
 import { Cons, U } from "../../tree/tree";
 import { cosine_of_angle } from "./cosine_of_angle";

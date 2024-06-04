@@ -1,4 +1,4 @@
-import { create_rat, is_rat, Sym, Tensor } from "@stemcmicro/atoms";
+import { create_rat, is_rat, is_tensor, Sym, Tensor } from "@stemcmicro/atoms";
 import { CompareFn, ExprContext, ExprHandler } from "@stemcmicro/context";
 import { Cons, items_to_cons, Shareable, U } from "@stemcmicro/tree";
 import { hilbert } from "../src/hilbert";
@@ -88,10 +88,43 @@ class MockExprContext implements ExprContext {
 describe("index", () => {
     it("hilbert", () => {
         expect(typeof hilbert === "function").toBe(true);
-        const one = create_rat(1);
-        const argList = items_to_cons(one);
+    });
+    it("hilbert(1)", () => {
+        const argList = items_to_cons(create_rat(1));
         const $ = new MockExprContext();
         const H1 = hilbert(argList, $);
         expect(H1 instanceof Tensor).toBe(true);
+        if (is_tensor(H1)) {
+            expect(H1.dims.length).toBe(2);
+            expect(H1.dims[0]).toBe(1);
+            expect(H1.dims[1]).toBe(1);
+            expect(H1.elems.length).toBe(1);
+            const h11 = H1.elems[0];
+            expect(is_rat(h11)).toBe(true);
+        }
+    });
+    it("hilbert(2)", () => {
+        const argList = items_to_cons(create_rat(2));
+        const $ = new MockExprContext();
+        const H1 = hilbert(argList, $);
+        expect(H1 instanceof Tensor).toBe(true);
+        if (is_tensor(H1)) {
+            expect(H1.dims.length).toBe(2);
+            expect(H1.dims[0]).toBe(2);
+            expect(H1.dims[1]).toBe(2);
+            expect(H1.elems.length).toBe(4);
+            const h11 = H1.elems[0];
+            const h12 = H1.elems[1];
+            const h21 = H1.elems[2];
+            const h22 = H1.elems[3];
+            expect(is_rat(h11)).toBe(true);
+            expect(is_rat(h12)).toBe(true);
+            expect(is_rat(h21)).toBe(true);
+            expect(is_rat(h22)).toBe(true);
+            expect(h11.equals(create_rat(1, 1))).toBe(true);
+            expect(h12.equals(create_rat(1, 2))).toBe(true);
+            expect(h21.equals(create_rat(1, 2))).toBe(true);
+            expect(h22.equals(create_rat(1, 3))).toBe(true);
+        }
     });
 });

@@ -1,8 +1,7 @@
-import { U } from "@stemcmicro/tree";
-import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
-import { imu } from "../../env/imu";
-import { cadr } from "../../tree/helpers";
-import { half } from "../../tree/rat/Rat";
+import { half, imu } from "@stemcmicro/atoms";
+import { Directive } from "@stemcmicro/directive";
+import { cadr, U } from "@stemcmicro/tree";
+import { ExtensionEnv } from "../../env/ExtensionEnv";
 
 // Do the exponential sine function.
 export function eval_expsin(p1: U, $: ExtensionEnv): U {

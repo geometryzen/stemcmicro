@@ -1,5 +1,6 @@
+import { Directive } from "@stemcmicro/directive";
 import { EnvConfig } from "../../env/EnvConfig";
-import { Directive, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { is_multiple_of_pi } from "../../is_multiple_of_pi";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";

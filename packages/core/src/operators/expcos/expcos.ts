@@ -1,5 +1,6 @@
+import { Directive } from "@stemcmicro/directive";
 import { U } from "@stemcmicro/tree";
-import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
+import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { half } from "../../tree/rat/Rat";
 

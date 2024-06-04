@@ -1,12 +1,12 @@
 import { bigInt, BigInteger, imu, negOne, one, Rat, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { Directive } from "@stemcmicro/directive";
 import { num_to_number } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { is_rat_and_integer, is_safe_integer_range } from "@stemcmicro/predicates";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { bignum_truncate, makePositive, makeSignSameAs } from "./bignum";
-import { Directive } from "./env/ExtensionEnv";
 import { exp } from "./helpers/exp";
 import { multiply } from "./helpers/multiply";
 import { negate } from "./helpers/negate";

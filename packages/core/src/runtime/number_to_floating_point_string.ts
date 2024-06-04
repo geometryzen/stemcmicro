@@ -1,4 +1,4 @@
-import { Directive } from "../env/ExtensionEnv";
+import { Directive } from "@stemcmicro/directive";
 import { PrintConfig } from "../print/print";
 import { PrintMode } from "./defs";
 

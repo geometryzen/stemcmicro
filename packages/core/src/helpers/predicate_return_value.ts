@@ -1,4 +1,5 @@
-import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
+import { Directive } from "@stemcmicro/directive";
+import { ExtensionEnv } from "../env/ExtensionEnv";
 import { Boo, booF, booT } from "../tree/boo/Boo";
 import { one, Rat, zero } from "../tree/rat/Rat";
 

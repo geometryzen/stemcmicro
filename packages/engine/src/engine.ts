@@ -6,7 +6,6 @@ import {
     create_algebra_as_blades,
     create_env,
     create_uom,
-    Directive,
     directive_from_flag,
     env_term,
     ExtensionEnv,
@@ -25,6 +24,7 @@ import {
     transform_tree,
     UOM_NAMES
 } from "@stemcmicro/core";
+import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Atom, Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 

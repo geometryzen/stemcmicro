@@ -59,6 +59,7 @@
     "peerDependencies": {
         "@stemcmicro/atoms": "file:../atoms",
         "@stemcmicro/context": "file:../context",
+        "@stemcmicro/directive": "file:../directive",
         "@stemcmicro/native": "file:../native",
         "@stemcmicro/predicates": "file:../predicates",
         "@stemcmicro/tree": "file:../tree"

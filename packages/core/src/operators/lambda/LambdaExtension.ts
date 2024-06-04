@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { create_sym, is_lambda, Lambda, Sym } from "@stemcmicro/atoms";
-import { ExprContext } from "@stemcmicro/context";
+import { create_sym, Sym } from "@stemcmicro/atoms";
+import { ExprContext, is_lambda, Lambda } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";

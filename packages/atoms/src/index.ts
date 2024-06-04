@@ -13,7 +13,6 @@ export { assert_jsfunction, is_jsfunction, JsFunction } from "./function/JsFunct
 export { assert_hyp, create_hyp, delta, epsilon, Hyp, is_hyp } from "./hyp/Hyp";
 export { Imu, imu, is_imu } from "./imu/Imu";
 export { assert_keyword, create_keyword, create_keyword_ns, is_keyword, Keyword } from "./keyword/Keyword";
-export { is_lambda, Lambda } from "./lambda/Lambda";
 export { assert_map, is_map, Map } from "./map/Map";
 export { assert_num, is_num, Num } from "./num/Num";
 export { assert_jsobject, is_jsobject, JsObject } from "./object/JsObject";

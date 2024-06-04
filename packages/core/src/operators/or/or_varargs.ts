@@ -3,7 +3,7 @@ import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { OR } from "../../runtime/constants";
-import { eval_or } from "../../test";
+import { eval_or } from "../../eval_test";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
 class Op extends FunctionVarArgs<Cons> {

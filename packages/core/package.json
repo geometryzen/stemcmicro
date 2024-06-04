@@ -8,16 +8,16 @@
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
+            "import": "./dist/esm/index.min.js",
+            "require": "./dist/commonjs/index.js",
             "system": "./dist/system/index.min.js",
             "default": "./dist/esm/index.min.js"
         }
     },
+    "main": "./dist/commonjs/index.js",
     "module": "./dist/esm/index.min.js",
     "type": "module",
     "types": "./dist/index.d.ts",
-    "directories": {
-        "test": "tests"
-    },
     "scripts": {
         "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
         "clean": "rm -rf ./dist",
@@ -27,6 +27,7 @@
         "pretest": "npm run build",
         "release": "release-it",
         "repl": "npm run build && node repl.mjs",
+        "test": "jest",
         "lint": "eslint ."
     },
     "repository": {

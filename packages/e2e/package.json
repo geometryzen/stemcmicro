@@ -1,0 +1,27 @@
+{
+    "name": "@stemcmicro/e2e",
+    "version": "0.9.64",
+    "description": "end-to-end testing for stemcmicro",
+    "private": true,
+    "scripts": {
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/geometryzen/stemcmicro.git"
+    },
+    "author": {
+        "name": "David Geo Holmes",
+        "email": "david.geo.holmes@gmail.com"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/geometryzen/stemcmicro/issues"
+    },
+    "homepage": "https://github.com/geometryzen/stemcmicro#readme",
+    "peerDependencies": {
+        "@stemcmicro/engind": "file:../engine",
+        "@stemcmicro/em-parse": "file:../em-parse",
+        "@stemcmicro/js-parse": "file:../js-parse"
+    }
+}

@@ -23,6 +23,7 @@
         "packages/cs-parse",
         "packages/diagnostics",
         "packages/directive",
+        "packages/e2e",
         "packages/em-parse",
         "packages/engine",
         "packages/helpers",
@@ -31,7 +32,8 @@
         "packages/native",
         "packages/predicates",
         "packages/py-parse",
-        "packages/tree"
+        "packages/tree",
+        "packages/units"
     ],
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",

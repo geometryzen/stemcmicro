@@ -3,5 +3,5 @@
     "compilerOptions": {
         "outDir": "./build"
     },
-    "include": ["./src/**/*.ts", "rollup.config.mts"]
+    "include": ["./src/**/*.ts", "rollup.config.mts", "rollup-plugin-dts.d.ts"]
 }

@@ -1,7 +1,5 @@
 import { is_boo, is_err } from "@stemcmicro/atoms";
 import { assert_cons_or_nil, car, cdr, cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
-//import { ProgramStack } from "../eigenmath/ProgramStack";
-//import { ProgrammingError } from "../programming/ProgrammingError";
 import { Stack } from "./Stack";
 
 /**

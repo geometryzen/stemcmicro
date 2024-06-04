@@ -21,6 +21,5 @@
         "removeComments": false,
         "resolveJsonModule": true
     },
-    "include": ["./src/**/*.ts", "rollup.config.mts"],
     "exclude": ["node_modules", "**/*.spec.ts"]
 }

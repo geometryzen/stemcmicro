@@ -19,7 +19,7 @@ const banner = `/**
 
 const options: RollupOptions[] = [
     {
-        input: "index.ts",
+        input: "./src/index.ts",
         output: [
             {
                 banner,
@@ -60,7 +60,7 @@ const options: RollupOptions[] = [
         ]
     },
     {
-        input: "./dist/esm/types/index.d.ts",
+        input: "./dist/esm/types/src/index.d.ts",
         output: [{ file: pkg.types, format: "esm" }],
         plugins: [dts()]
     }

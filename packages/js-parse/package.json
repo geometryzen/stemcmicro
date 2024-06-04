@@ -5,10 +5,13 @@
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
+            "import": "./dist/esm/index.min.js",
+            "require": "./dist/commonjs/index.js",
             "system": "./dist/system/index.min.js",
-            "default": "./dist/commonjs/index.js"
+            "default": "./dist/esm/index.min.js"
         }
     },
+    "main": "./dist/commonjs/index.js",
     "module": "./dist/esm/index.min.js",
     "type": "module",
     "types": "./dist/index.d.ts",

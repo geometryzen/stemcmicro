@@ -1,5 +1,3 @@
-// import { ProgrammingError } from "../programming/ProgrammingError";
-
 export class Stack<T> {
     tos = 0;
     readonly #elements: T[] = [];

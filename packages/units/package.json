@@ -1,0 +1,31 @@
+{
+    "name": "@stemcmicro/units",
+    "version": "0.9.64",
+    "description": "unit testing for stemcmicro",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/geometryzen/stemcmicro.git"
+    },
+    "author": {
+        "name": "David Geo Holmes",
+        "email": "david.geo.holmes@gmail.com"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/geometryzen/stemcmicro/issues"
+    },
+    "homepage": "https://github.com/geometryzen/stemcmicro#readme",
+    "peerDependencies": {
+        "@stemcmicro/atoms": "file:../atoms",
+        "@stemcmicro/core": "file:../core",
+        "@stemcmicro/directive": "file:../directive",
+        "@stemcmicro/engine": "file:../engine",
+        "@stemcmicro/js-parse": "file:../js-parse",
+        "@stemcmicro/tree": "file:../tree"
+    }
+}

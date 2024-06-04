@@ -1,14 +1,17 @@
 {
     "name": "@stemcmicro/engine",
     "version": "0.9.64",
-    "description": "JavaScript parser for math expressions",
+    "description": "Engine for stemcmicro",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
+            "import": "./dist/esm/index.min.js",
+            "require": "./dist/commonjs/index.js",
             "system": "./dist/system/index.min.js",
-            "default": "./dist/commonjs/index.js"
+            "default": "./dist/esm/index.min.js"
         }
     },
+    "main": "./dist/commonjs/index.js",
     "module": "./dist/esm/index.min.js",
     "type": "module",
     "types": "./dist/index.d.ts",
@@ -65,6 +68,7 @@
         "@stemcmicro/atoms": "file:../atoms",
         "@stemcmicro/context": "file:../context",
         "@stemcmicro/core": "file:../core",
+        "@stemcmicro/directive": "file:../directive",
         "@stemcmicro/native": "file:../native",
         "@stemcmicro/tree": "file:../tree"
     },

@@ -262,7 +262,7 @@ import { PrintMode } from "../runtime/defs";
 import { RESERVED_KEYWORD_LAST } from "../runtime/ns_script";
 import { eval_conjugate } from "../scripting/eval_conjugate";
 import { eval_power } from "../scripting/eval_power";
-import { eval_and, eval_not, eval_test, eval_testeq, eval_testle, eval_testne } from "../test";
+import { eval_and, eval_not, eval_test, eval_testeq, eval_testle, eval_testne } from "../eval_test";
 import { ExtensionEnv } from "./ExtensionEnv";
 
 export interface DefineStandardOperatorsConfig {

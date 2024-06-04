@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/predicates",
-    "version": "0.9.64",
+    "version": "0.9.65",
     "description": "Predicates for math expressions",
     "exports": {
         ".": {

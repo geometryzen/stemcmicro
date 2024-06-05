@@ -1,6 +1,7 @@
 import { is_blade, is_imu, is_num, is_rat, is_sym, one, zero } from "@stemcmicro/atoms";
+import { compare_num_num } from "@stemcmicro/helpers";
 import { is_native, Native } from "@stemcmicro/native";
-import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
@@ -18,7 +19,6 @@ import { canonical_factor_imu_rhs } from "../factorize/canonical_factor_imu";
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
 import { factorizeL } from "../factorizeL";
 import { compare_cons_cons } from "./compare_cons_cons";
-import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 
 /**

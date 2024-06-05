@@ -1,10 +1,9 @@
 import { create_int, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { power } from "@stemcmicro/helpers";
+import { multiply, power } from "@stemcmicro/helpers";
 import { Cons, U } from "@stemcmicro/tree";
 import { add } from "./helpers/add";
 import { divide } from "./helpers/divide";
-import { multiply } from "./helpers/multiply";
 import { subtract } from "./helpers/subtract";
 import { coefficients } from "./operators/coeff/coeff";
 import { SYMBOL_X } from "./runtime/constants";

@@ -1,8 +1,7 @@
 import { ExprContext } from "@stemcmicro/context";
-import { num_to_number } from "@stemcmicro/helpers";
+import { multiply, num_to_number } from "@stemcmicro/helpers";
 import { bignum_power_number, bignum_truncate } from "./bignum";
 import { iszero } from "./helpers/iszero";
-import { multiply } from "./helpers/multiply";
 import { subtract } from "./helpers/subtract";
 import { items_to_cons } from "./makeList";
 import { multiply_items } from "./multiply";

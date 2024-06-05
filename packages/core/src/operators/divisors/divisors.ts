@@ -1,13 +1,10 @@
 import { create_int, is_num, one, Tensor, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { inverse, num_to_number, power } from "@stemcmicro/helpers";
-import { is_add, is_multiply, is_power } from "@stemcmicro/predicates";
+import { inverse, isone, is_add, is_multiply, is_power, multiply, num_to_number, power } from "@stemcmicro/helpers";
 import { caddr, cadr, car, cdr, is_cons, U } from "@stemcmicro/tree";
 import { sort_factors } from "../../calculators/compare/sort_factors";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { add } from "../../helpers/add";
-import { isone } from "../../helpers/isone";
-import { multiply } from "../../helpers/multiply";
 import { factor_small_number } from "../factor/factor";
 import { gcd } from "../gcd/gcd";
 

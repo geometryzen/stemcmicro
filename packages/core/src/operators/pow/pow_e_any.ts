@@ -1,7 +1,7 @@
 import { is_imu, is_rat, is_sym, negOne, one, Sym } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
-import { is_cons_opr_eq_multiply, is_cons_opr_eq_sym } from "@stemcmicro/predicates";
+import { is_base_of_natural_logarithm, is_cons_opr_eq_multiply, is_cons_opr_eq_sym, is_pi } from "@stemcmicro/helpers";
 import { is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { EnvConfig } from "../../env/EnvConfig";
@@ -9,7 +9,6 @@ import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../e
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { divide_by_imu } from "../../optimize/divide_by_imu";
-import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { MATH_ADD, MATH_MUL, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { MATH_COS } from "../cos/MATH_COS";
 import { MATH_EXP } from "../exp/MATH_EXP";
@@ -18,7 +17,6 @@ import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
 import { is_opr_2_lhs_any } from "../helpers/is_opr_2_lhs_any";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
-import { is_pi } from "../pi/is_pi";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function cross(lhs: Sym, rhs: U): boolean {

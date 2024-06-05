@@ -1,7 +1,7 @@
 import { ExprContext } from "@stemcmicro/context";
+import { str_to_string } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
-import { nativeStr } from "../nativeInt";
 import { PrintConfig } from "./print";
 
 /**
@@ -31,14 +31,14 @@ export function render_as_sexpr(expr: U, $: PrintConfig): string {
         // FIXME: casting
         const retval = handler.dispatch(expr, native_sym(Native.sexpr), nil, $ as unknown as ExprContext);
         try {
-            return nativeStr(retval);
+            return str_to_string(retval);
         } finally {
             retval.release();
         }
     } else if (expr.isnil) {
         const handler = $.handlerFor(expr);
         // FIXME: casting
-        return nativeStr(handler.dispatch(expr, native_sym(Native.sexpr), nil, $ as unknown as ExprContext));
+        return str_to_string(handler.dispatch(expr, native_sym(Native.sexpr), nil, $ as unknown as ExprContext));
     } else {
         throw new Error();
     }

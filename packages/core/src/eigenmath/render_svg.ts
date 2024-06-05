@@ -1,9 +1,9 @@
 import { Blade, Boo, create_flt, create_sym, Flt, Imu, is_blade, is_boo, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, Sym, Tensor, Uom } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler } from "@stemcmicro/context";
+import { str_to_string } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { assert_cons_or_nil, Atom, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { StackU } from "../env/StackU";
-import { nativeStr } from "../nativeInt";
 import { is_imu } from "../operators/imu/is_imu";
 import { str_extension } from "../operators/str/str_extension";
 import { cadddr, caddr, cadr, cddddr, cddr } from "../tree/helpers";
@@ -2086,7 +2086,7 @@ function emit_atom(atom: Atom, env: SvgRenderEnv, $: ProgramStack): void {
     const handler = env.handlerFor(atom);
     const value = handler.dispatch(atom, native_sym(Native.infix), nil, env);
     try {
-        const str = nativeStr(value);
+        const str = str_to_string(value);
         emit_roman_string(str, $);
     } finally {
         value.release();

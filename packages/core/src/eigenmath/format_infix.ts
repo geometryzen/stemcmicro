@@ -1,8 +1,8 @@
 import { Flt, is_err, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, Num, Rat, Tensor } from "@stemcmicro/atoms";
+import { str_to_string } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Atom, car, cdr, Cons, is_atom, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { ExprContextFromProgram } from "../adapters/ExprContextFromProgram";
-import { nativeStr } from "../nativeInt";
 import { is_imu } from "../operators/imu/is_imu";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import { caddr, cadr, cddr } from "../tree/helpers";
@@ -573,7 +573,7 @@ function infix_atom(atom: Atom, env: ProgramEnv, ctrl: ProgramControl, config: I
         const response = handler.dispatch(atom, native_sym(Native.infix), nil, context);
         try {
             if (is_str(response)) {
-                const infix = nativeStr(response);
+                const infix = str_to_string(response);
                 infix_write(infix, config, outbuf);
             } else if (is_err(response)) {
                 throw response;

@@ -1,5 +1,5 @@
 import { is_num, Num, one } from "@stemcmicro/atoms";
-import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { cons, is_cons, is_nil, U } from "@stemcmicro/tree";
 import { canonicalize_mul } from "../canonicalize/canonicalize_mul";
 

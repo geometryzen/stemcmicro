@@ -2,11 +2,11 @@
 import { create_sym, is_boo, Sym } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { str_to_string } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Atom, Cons, is_atom, is_nil, nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../env/EnvConfig";
 import { Extension, ExtensionBuilder, ExtensionEnv } from "../env/ExtensionEnv";
-import { nativeStr } from "../nativeInt";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { ProgrammingError } from "../programming/ProgrammingError";
 
@@ -41,16 +41,16 @@ class AtomExtensionFromExprHandler<T extends Atom> implements Extension<T> {
         }
     }
     toHumanString(expr: T, $: ExprContext): string {
-        return nativeStr(this.handler.dispatch(expr, native_sym(Native.human), nil, $));
+        return str_to_string(this.handler.dispatch(expr, native_sym(Native.human), nil, $));
     }
     toInfixString(expr: T, $: ExprContext): string {
-        return nativeStr(this.handler.dispatch(expr, native_sym(Native.infix), nil, $));
+        return str_to_string(this.handler.dispatch(expr, native_sym(Native.infix), nil, $));
     }
     toLatexString(expr: T, $: ExprContext): string {
-        return nativeStr(this.handler.dispatch(expr, native_sym(Native.latex), nil, $));
+        return str_to_string(this.handler.dispatch(expr, native_sym(Native.latex), nil, $));
     }
     toListString(expr: T, $: ExprContext): string {
-        return nativeStr(this.handler.dispatch(expr, native_sym(Native.sexpr), nil, $));
+        return str_to_string(this.handler.dispatch(expr, native_sym(Native.sexpr), nil, $));
     }
     evaluate(opr: T, argList: Cons, $: ExtensionEnv): [number, U] {
         throw new Error("evaluate method not implemented.");

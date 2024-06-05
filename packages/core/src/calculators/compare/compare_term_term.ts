@@ -1,6 +1,7 @@
 import { is_blade, is_boo } from "@stemcmicro/atoms";
+import { compare_num_num } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
-import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
 import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
@@ -12,7 +13,6 @@ import { count_factors } from "../count_factors";
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
 import { remove_factors } from "../remove_factors";
 import { compare_expr_expr } from "./compare_expr_expr";
-import { compare_num_num } from "./compare_num_num";
 import { contains_single_blade } from "./contains_single_blade";
 import { extract_single_blade } from "./extract_single_blade";
 

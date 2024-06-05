@@ -1,5 +1,5 @@
+import { is_pi } from "@stemcmicro/helpers";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { is_pi } from "../../operators/pi/is_pi";
 import { Sym } from "../../tree/sym/Sym";
 
 /**

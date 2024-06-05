@@ -63,8 +63,8 @@
         "@stemcmicro/atoms": "file:../atoms",
         "@stemcmicro/context": "file:../context",
         "@stemcmicro/directive": "file:../directive",
+        "@stemcmicro/helpers": "file:../helpers",
         "@stemcmicro/native": "file:../native",
-        "@stemcmicro/predicates": "file:../predicates",
         "@stemcmicro/tree": "file:../tree"
     },
     "gitHead": "912942167a188ae4dcb9d4490f4dc4367b01c599"

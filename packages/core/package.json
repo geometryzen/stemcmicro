@@ -65,7 +65,6 @@
         "@stemcmicro/em-parse": "file:../em-parse",
         "@stemcmicro/helpers": "file:../helpers",
         "@stemcmicro/native": "file:../native",
-        "@stemcmicro/predicates": "file:../predicates",
         "@stemcmicro/tree": "file:../tree"
     },
     "gitHead": "ae954a7abc9e5343109ae6002e86be64d84e2398"

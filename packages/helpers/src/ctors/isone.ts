@@ -1,9 +1,7 @@
-import { is_rat } from "@stemcmicro/atoms";
+import { is_boo, is_rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Native, native_sym } from "@stemcmicro/native";
 import { items_to_cons, U } from "@stemcmicro/tree";
-import { is_boo } from "../operators/boo/is_boo";
-import { ProgrammingError } from "../programming/ProgrammingError";
 
 const ISONE = native_sym(Native.isone);
 
@@ -17,7 +15,7 @@ export function isone(arg: U, env: Pick<ExprContext, "valueOf">): boolean {
             } else if (is_rat(retval)) {
                 return retval.isZero() ? false : true;
             } else {
-                throw new ProgrammingError(`${retval}`);
+                throw new Error(`${retval}`);
             }
         } finally {
             retval.release();

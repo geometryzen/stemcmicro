@@ -1,7 +1,7 @@
 import { is_flt, is_sym } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
-import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
+import { is_base_of_natural_logarithm, is_cons_opr_eq_sym, is_pi } from "@stemcmicro/helpers";
 import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { subtract } from "../../calculators/sub/subtract";
 import { stack_arg } from "../../eigenmath/eigenmath";
@@ -9,7 +9,6 @@ import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";
 import { hook_create_err } from "../../hooks/hook_create_err";
 import { equaln, is_num_and_equal_one_half, is_num_and_gt_zero } from "../../is";
-import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { is_negative } from "../../predicates/is_negative";
 import { is_num_and_negative } from "../../predicates/is_negative_number";
 import { DynamicConstants } from "../../runtime/defs";
@@ -22,7 +21,6 @@ import { MATH_EXP } from "../exp/MATH_EXP";
 import { is_unaop } from "../helpers/is_unaop";
 import { im } from "../imag/imag";
 import { is_imu } from "../imu/is_imu";
-import { is_pi } from "../pi/is_pi";
 import { re } from "../real/real";
 
 export const ARG = native_sym(Native.arg);

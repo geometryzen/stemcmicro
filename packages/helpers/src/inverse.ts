@@ -2,18 +2,18 @@ import { Err, is_flt, is_num, is_rat, negOne, Num } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { U } from "@stemcmicro/tree";
-import { power } from "./power";
+import { power } from "./ctors/power";
 
 /**
  * inverse(arg) => (valueOf (power arg -1))
  */
-export function inverse(arg: U, $: Pick<ExprContext, "valueOf">): U {
-    const value = $.valueOf(arg);
+export function inverse(arg: U, env: Pick<ExprContext, "valueOf">): U {
+    const value = env.valueOf(arg);
     try {
         if (is_num(value)) {
             return invert_number(value);
         } else {
-            return power($, value, negOne);
+            return power(env, value, negOne);
         }
     } finally {
         value.release();

@@ -2,18 +2,13 @@ import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_keyword, is_nu
 import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { is_localizable } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
+import { isone, is_base_of_natural_logarithm, is_pi, lt_num_num, negate, str_to_string } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { mp_denominator, mp_numerator } from "../bignum";
-import { lt_num_num } from "../calculators/compare/lt_num_num";
-import { isone } from "../helpers/isone";
-import { negate } from "../helpers/negate";
 import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from "../is";
-import { nativeStr } from "../nativeInt";
 import { denominator } from "../operators/denominator/denominator";
 import { numerator } from "../operators/numerator/numerator";
-import { is_pi } from "../operators/pi/is_pi";
-import { is_base_of_natural_logarithm } from "../predicates/is_base_of_natural_logarithm";
 import { is_negative } from "../predicates/is_negative";
 import { is_num_and_negative } from "../predicates/is_negative_number";
 import { ProgrammingError } from "../programming/ProgrammingError";
@@ -1378,12 +1373,12 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             // Consider replacing printMode with Native.xxx and put in a Directive
             case PrintMode.Human: {
                 // FIXME
-                return nativeStr(handler.dispatch(expr, native_sym(Native.human), nil, _ as unknown as ExprContext));
+                return str_to_string(handler.dispatch(expr, native_sym(Native.human), nil, _ as unknown as ExprContext));
             }
             case PrintMode.Infix: {
                 const response = handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext);
                 if (is_str(response)) {
-                    return nativeStr(response);
+                    return str_to_string(response);
                 } else if (is_err(response)) {
                     throw response;
                 } else {
@@ -1391,10 +1386,10 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                 }
             }
             case PrintMode.LaTeX: {
-                return nativeStr(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
+                return str_to_string(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
             }
             case PrintMode.SExpr: {
-                return nativeStr(handler.dispatch(expr, native_sym(Native.sexpr), nil, _ as unknown as ExprContext));
+                return str_to_string(handler.dispatch(expr, native_sym(Native.sexpr), nil, _ as unknown as ExprContext));
             }
             default: {
                 throw new Error(`${_.getDirective(Directive.printMode)}`);
@@ -1903,11 +1898,11 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
             const handler = _.handlerFor(expr);
             if (_.getDirective(Directive.printMode) === PrintMode.Infix) {
                 // FIXME: casting
-                return nativeStr(handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext));
+                return str_to_string(handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext));
             }
             if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                 // FIXME: casting
-                return nativeStr(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
+                return str_to_string(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
             }
             return expr.key();
         }
@@ -1918,17 +1913,17 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
             const handler = _.handlerFor(expr);
             if (_.getDirective(Directive.printMode) === PrintMode.Infix) {
                 // FIXME: casting
-                return nativeStr(handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext));
+                return str_to_string(handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext));
             }
             if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
                 // FIXME: casting
-                return nativeStr(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
+                return str_to_string(handler.dispatch(expr, native_sym(Native.latex), nil, _ as unknown as ExprContext));
             }
             return expr.key();
         }
         if (is_err(expr)) {
             const handler = _.handlerFor(expr);
-            return nativeStr(handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext));
+            return str_to_string(handler.dispatch(expr, native_sym(Native.infix), nil, _ as unknown as ExprContext));
         }
         if (is_imu(expr)) {
             if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {

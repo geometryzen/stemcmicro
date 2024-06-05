@@ -1,4 +1,4 @@
-import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { Cons, U } from "@stemcmicro/tree";
 
 export function count_factors(expr: Cons, predicate: (factor: U) => boolean): number {

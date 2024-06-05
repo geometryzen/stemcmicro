@@ -1,7 +1,7 @@
 import { is_num, Num, one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { compare_num_num } from "@stemcmicro/helpers";
 import { Cons, is_cons, U } from "@stemcmicro/tree";
-import { compare_num_num } from "../../calculators/compare/compare_num_num";
 import { guess } from "../../guess";
 import { is_power } from "../../runtime/helpers";
 

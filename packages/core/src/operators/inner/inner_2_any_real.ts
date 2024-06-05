@@ -1,9 +1,9 @@
 import { one, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { isone } from "@stemcmicro/helpers";
 import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { isone } from "../../helpers/isone";
 import { isreal } from "../../helpers/isreal";
 import { items_to_cons } from "../../makeList";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";

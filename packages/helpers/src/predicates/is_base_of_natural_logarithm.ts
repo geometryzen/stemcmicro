@@ -1,7 +1,7 @@
 import { is_num, is_sym, Sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
-import { is_power } from "@stemcmicro/predicates";
 import { U } from "@stemcmicro/tree";
+import { is_power } from "./is_power";
 
 const MATH_E = native_sym(Native.E);
 

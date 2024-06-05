@@ -9,7 +9,6 @@ const MULTIPLY = native_sym(Native.multiply);
  */
 export function multiply(env: Pick<ExprContext, "valueOf">, ...values: U[]): U {
     const raw = items_to_cons(MULTIPLY, ...values);
-    // console.lg("multiply", `${raw}`);
     try {
         return env.valueOf(raw);
     } finally {

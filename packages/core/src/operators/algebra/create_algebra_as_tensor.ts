@@ -1,9 +1,8 @@
 import { Adapter, Blade, create_algebra, create_flt, create_int, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, one, SumTerm, Tensor, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { isone, multiply } from "@stemcmicro/helpers";
 import { cons, Cons, items_to_cons, U } from "@stemcmicro/tree";
-import { isone } from "../../helpers/isone";
 import { iszero } from "../../helpers/iszero";
-import { multiply } from "../../helpers/multiply";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { extract_grade } from "./extract_grade";
 

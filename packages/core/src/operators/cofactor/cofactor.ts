@@ -1,6 +1,6 @@
 import { is_tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { negate } from "../../helpers/negate";
+import { negate } from "@stemcmicro/helpers";
 import { halt } from "../../runtime/defs";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { is_square_matrix } from "../../tensor";

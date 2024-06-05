@@ -1,8 +1,8 @@
 import { is_rat } from "@stemcmicro/atoms";
+import { is_base_of_natural_logarithm } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
-import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";

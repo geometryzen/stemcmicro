@@ -1,6 +1,6 @@
 import { create_flt, create_int, create_sym, is_flt, is_num } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { is_rat_and_integer } from "@stemcmicro/predicates";
+import { is_rat_and_integer } from "@stemcmicro/helpers";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { cadr } from "../../tree/helpers";
 import { evaluate_as_float } from "../float/float";

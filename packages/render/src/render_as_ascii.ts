@@ -1,16 +1,11 @@
 import { Blade, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, one, Rat, Str, Sym, Tensor, Uom } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
+import { isone, is_add, is_base_of_natural_logarithm, is_factorial, is_multiply, is_num_and_eq_minus_one, is_num_and_negative, is_power, is_rat_and_fraction, str_to_string } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
-import { Atom, car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
-import { is_num_and_eq_minus_one, is_num_and_negative, is_rat_and_fraction } from "@stemcmicro/predicates";
-import { isone } from "../helpers/isone";
-import { nativeStr } from "../nativeInt";
+import { Atom, caar, caddr, cadr, car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { str_extension } from "../operators/str/str_extension";
-import { is_base_of_natural_logarithm } from "../predicates/is_base_of_natural_logarithm";
 import { ADD, ASSIGN, FACTORIAL, MULTIPLY, POWER } from "../runtime/constants";
-import { is_add, is_factorial, is_multiply, is_power } from "@stemcmicro/predicates";
-import { caar, caddr, cadr } from "../tree/helpers";
-import { Directive } from "./Directive";
 import { mp_denominator } from "./mp_denominator";
 import { mp_numerator } from "./mp_numerator";
 import { number_to_floating_point_string } from "./number_to_floating_point_string";
@@ -540,7 +535,7 @@ type Emitter = (ch: string) => number | undefined;
  */
 function emit_atom(atom: Atom, emitter: Emitter, $: PrintConfig): void {
     const handler = $.handlerFor(atom);
-    const representation = nativeStr(handler.dispatch(atom, native_sym(Native.ascii), nil, $ as unknown as ExprContext));
+    const representation = str_to_string(handler.dispatch(atom, native_sym(Native.ascii), nil, $ as unknown as ExprContext));
     for (let i = 0; i < representation.length; i++) {
         emitter(representation[i]);
     }

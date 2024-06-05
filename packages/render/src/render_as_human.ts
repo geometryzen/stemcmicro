@@ -1,5 +1,5 @@
+import { Directive } from "@stemcmicro/directive";
 import { U } from "@stemcmicro/tree";
-import { Directive } from "./Directive";
 import { PrintConfig, render_using_non_sexpr_print_mode } from "./print";
 import { PrintMode } from "./PrintMode";
 

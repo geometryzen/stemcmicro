@@ -1,4 +1,4 @@
-import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { cons, is_cons, U } from "@stemcmicro/tree";
 import { canonicalize_mul } from "../canonicalize/canonicalize_mul";
 

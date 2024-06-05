@@ -1,5 +1,5 @@
 import { is_sym } from "@stemcmicro/atoms";
-import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
 import { count_factors } from "../count_factors";
 

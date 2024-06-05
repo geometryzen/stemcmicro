@@ -1,12 +1,10 @@
 import { create_flt, create_int, half, is_flt, negOne, one, third, three, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { num_to_number, power } from "@stemcmicro/helpers";
+import { multiply, negate, num_to_number, power } from "@stemcmicro/helpers";
 import { cadr, car, Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
-import { multiply } from "../../helpers/multiply";
-import { negate } from "../../helpers/negate";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCTAN, TAN } from "../../runtime/constants";
 import { DynamicConstants } from "../../runtime/defs";

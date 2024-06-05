@@ -1,9 +1,9 @@
 import { create_int, is_blade, is_flt, is_rat, is_sym, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { is_atom, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { isscalar } from "../../helpers/isscalar";
-import { multiply } from "../../helpers/multiply";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 
 const GRADE = native_sym(Native.grade);

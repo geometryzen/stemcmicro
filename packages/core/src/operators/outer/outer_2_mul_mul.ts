@@ -1,12 +1,12 @@
 import { is_blade, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { multiply } from "@stemcmicro/helpers";
 import { Cons0, Cons2, U } from "@stemcmicro/tree";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { remove_factors } from "../../calculators/remove_factors";
 import { mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, hash_nonop_cons } from "../../hashing/hash_info";
-import { multiply } from "../../helpers/multiply";
 import { is_multiply } from "../../runtime/helpers";
 import { MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";

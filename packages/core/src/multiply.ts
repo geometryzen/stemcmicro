@@ -1,11 +1,10 @@
 import { one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
+import { multiply, negate } from "@stemcmicro/helpers";
 import { U } from "@stemcmicro/tree";
 import { binop } from "./calculators/binop";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { multiply } from "./helpers/multiply";
-import { negate } from "./helpers/negate";
 import { noexpand_binary, noexpand_unary } from "./runtime/defs";
 import { MATH_MUL } from "./runtime/ns_math";
 

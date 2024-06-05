@@ -1,11 +1,11 @@
 import { Blade, create_str, create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_atom, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { Extension, FEATURE, mkbuilder, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
-import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { power_blade_rat } from "../pow/power_blade_int";

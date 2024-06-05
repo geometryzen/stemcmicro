@@ -1,6 +1,6 @@
 import { create_flt, create_int, half, is_flt, negOne, one, three, two, zero } from "@stemcmicro/atoms";
 import { num_to_number } from "@stemcmicro/helpers";
-import { is_add } from "@stemcmicro/predicates";
+import { is_add } from "@stemcmicro/helpers";
 import { cadr, car, Cons, is_cons, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";

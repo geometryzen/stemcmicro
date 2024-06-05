@@ -1,10 +1,10 @@
 import { assert_sym, is_sym, Sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
+import { is_base_of_natural_logarithm } from "@stemcmicro/helpers";
 import { Cons, Cons1, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { predicate_return_value } from "../../helpers/predicate_return_value";
-import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const POW = native_sym(Native.pow);

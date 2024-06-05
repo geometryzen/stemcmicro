@@ -1,6 +1,6 @@
 import { Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_sym } from "@stemcmicro/helpers";
 import { cons, Cons, Cons2, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { MODE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";

@@ -1,9 +1,9 @@
 import { create_flt, imu } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { multiply } from "@stemcmicro/helpers";
 import { U } from "@stemcmicro/tree";
 import { add } from "../../helpers/add";
-import { multiply } from "../../helpers/multiply";
 
 // power function for double precision floating point
 

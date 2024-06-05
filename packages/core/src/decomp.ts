@@ -1,9 +1,9 @@
 import { ExprContext } from "@stemcmicro/context";
+import { negate } from "@stemcmicro/helpers";
 import { assert_cons_or_nil, caddr, cadr, car, cdr, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { add_terms } from "./calculators/add/add_terms";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { guess } from "./guess";
-import { negate } from "./helpers/negate";
 import { multiply_items } from "./multiply";
 import { is_add, is_multiply } from "./runtime/helpers";
 

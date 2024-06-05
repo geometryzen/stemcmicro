@@ -1,5 +1,5 @@
 import { is_flt, is_rat, Num } from "@stemcmicro/atoms";
-import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 
 export function compare_num_num(lhs: Num, rhs: Num): Sign {
     // console.lg("compare_num_num", `${lhs}`, `${rhs}`);

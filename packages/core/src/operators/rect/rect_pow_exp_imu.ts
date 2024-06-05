@@ -1,9 +1,9 @@
+import { is_base_of_natural_logarithm } from "@stemcmicro/helpers";
 import { count_factors } from "../../calculators/count_factors";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../helpers/CompositeOperator";

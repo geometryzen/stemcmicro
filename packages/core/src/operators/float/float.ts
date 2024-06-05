@@ -1,11 +1,10 @@
 import { is_rat, is_tensor, Tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
+import { is_base_of_natural_logarithm, is_pi } from "@stemcmicro/helpers";
 import { cadr, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { rat_to_flt } from "../../bignum";
-import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { eAsFlt, Flt, piAsFlt } from "../../tree/flt/Flt";
-import { is_pi } from "../pi/is_pi";
 
 export function eval_float(expr: Cons, $: ExprContext): U {
     // console.lg("eval_float", $.toInfixString(expr));

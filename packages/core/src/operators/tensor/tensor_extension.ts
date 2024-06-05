@@ -2,15 +2,14 @@ import { create_str, create_sym, is_tensor, is_uom, Sym, Tensor } from "@stemcmi
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
+import { isone, multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { conjfunc, inner, power, push_rational } from "../../eigenmath/eigenmath";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";
 import { HASH_TENSOR } from "../../hashing/hash_info";
-import { isone } from "../../helpers/isone";
 import { iszero } from "../../helpers/iszero";
-import { multiply } from "../../helpers/multiply";
 import { simplify } from "../../helpers/simplify";
 import { PrintConfig, print_str, render_using_non_sexpr_print_mode } from "../../print/print";
 import { ProgrammingError } from "../../programming/ProgrammingError";

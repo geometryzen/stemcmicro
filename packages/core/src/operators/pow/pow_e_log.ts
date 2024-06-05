@@ -1,10 +1,10 @@
 import { is_sym, Sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
+import { is_base_of_natural_logarithm } from "@stemcmicro/helpers";
 import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
-import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 

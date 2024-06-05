@@ -1,9 +1,9 @@
 import { is_blade, is_imu, is_num, is_str, is_sym, is_tensor, is_uom } from "@stemcmicro/atoms";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
+import { compare_num_num } from "@stemcmicro/helpers";
 import { car, cdr, is_cons, U } from "@stemcmicro/tree";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { strcmp } from "../../operators/str/str_extension";
-import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { compare_tensors } from "./compare_tensors";
 

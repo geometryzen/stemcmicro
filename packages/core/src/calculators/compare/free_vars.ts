@@ -1,5 +1,5 @@
 import { is_blade } from "@stemcmicro/atoms";
-import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { is_flt } from "../../operators/flt/is_flt";

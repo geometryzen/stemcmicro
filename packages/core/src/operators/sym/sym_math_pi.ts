@@ -1,14 +1,13 @@
 import { assert_sym, create_flt, create_str, create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { is_pi, multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
-import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { MATH_PI } from "../../runtime/ns_math";
-import { is_pi } from "../pi/is_pi";
 
 const ISZERO = native_sym(Native.iszero);
 const MUL = native_sym(Native.multiply);

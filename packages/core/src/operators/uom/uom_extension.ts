@@ -1,11 +1,11 @@
 import { create_int, create_str, create_sym, is_hyp, is_rat, is_tensor, is_uom, QQ, Sym, Uom } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_atom, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
-import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { two } from "../../tree/rat/Rat";

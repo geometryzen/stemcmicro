@@ -1,9 +1,9 @@
 import { imu, is_imu, is_tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { is_power, is_rat_and_integer } from "@stemcmicro/predicates";
+import { is_power, is_rat_and_integer } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
 import { equaln } from "../is";
-import { is_base_of_natural_logarithm } from "../predicates/is_base_of_natural_logarithm";
+import { is_base_of_natural_logarithm } from "@stemcmicro/helpers";
 import { caddr, cadr } from "../tree/helpers";
 
 /**

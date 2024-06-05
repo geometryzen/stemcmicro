@@ -1,7 +1,7 @@
 import { imu } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { negate } from "@stemcmicro/helpers";
 import { U } from "@stemcmicro/tree";
-import { negate } from "./helpers/negate";
 import { subst } from "./operators/subst/subst";
 
 export function complex_conjugate(expr: U, _: Pick<ExprContext, "handlerFor" | "valueOf">): U {

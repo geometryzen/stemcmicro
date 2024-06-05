@@ -2,13 +2,13 @@
 import { CellHost, create_int, is_boo, is_rat, Sym, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
+import { str_to_string } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_atom, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
 import { ExprEngineListener } from "../eigenmath/ProgramIO";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { AtomListener, CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
 import { ExtensionFromExprHandler } from "../env/ExtensionFromExprHandler";
-import { nativeStr } from "../nativeInt";
 import { render_as_infix } from "../print/render_as_infix";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import { StackFunction } from "./StackFunction";
@@ -568,7 +568,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     toInfixString(expr: U): string {
         if (is_atom(expr)) {
             const handler = this.context.handlerFor(expr);
-            return nativeStr(handler.dispatch(expr, native_sym(Native.infix), nil, this.context));
+            return str_to_string(handler.dispatch(expr, native_sym(Native.infix), nil, this.context));
         } else {
             return render_as_infix(expr, this.context);
         }

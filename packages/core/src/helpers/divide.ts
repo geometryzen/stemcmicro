@@ -1,11 +1,10 @@
 import { is_flt, is_num, is_rat, is_uom } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { inverse } from "@stemcmicro/helpers";
+import { inverse, multiply } from "@stemcmicro/helpers";
 import { is_atom, U } from "@stemcmicro/tree";
 import { divide_numbers } from "../bignum";
 import { float } from "./float";
-import { multiply } from "./multiply";
 
 /**
  * Convenience function for dividing lhs by rhs.

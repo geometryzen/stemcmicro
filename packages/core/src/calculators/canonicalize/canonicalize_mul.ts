@@ -1,5 +1,5 @@
 import { one } from "@stemcmicro/atoms";
-import { is_cons_opr_eq_multiply } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { Cons, U } from "@stemcmicro/tree";
 
 /**

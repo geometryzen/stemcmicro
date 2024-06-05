@@ -2,7 +2,7 @@
 import { assert_sym, create_sym, is_sym, Sym } from "@stemcmicro/atoms";
 import { LambdaExpr } from "@stemcmicro/context";
 import { Native, native_sym } from "@stemcmicro/native";
-import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_sym } from "@stemcmicro/helpers";
 import { Cons, is_atom, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExprEngineListener } from "../eigenmath/ProgramIO";
 import { create_env, EnvOptions } from "../env/env";

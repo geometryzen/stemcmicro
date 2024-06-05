@@ -1,6 +1,6 @@
 import { is_num, is_sym, is_tensor, Num, Sym, Tensor } from "@stemcmicro/atoms";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
-import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_sym } from "@stemcmicro/helpers";
 import { Cons, Cons0, is_cons, U } from "@stemcmicro/tree";
 import { is_cons_opr_eq_add } from "../operators/add/is_cons_opr_eq_add";
 import { Cons2 } from "../operators/helpers/Cons2";

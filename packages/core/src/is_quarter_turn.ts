@@ -7,11 +7,10 @@
 
 import { imu, is_num, two } from "@stemcmicro/atoms";
 import { num_to_number } from "@stemcmicro/helpers";
-import { is_multiply } from "@stemcmicro/predicates";
+import { is_multiply, is_pi } from "@stemcmicro/helpers";
 import { cadddr, caddr, cadr, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
-import { is_pi } from "./operators/pi/is_pi";
 
 //  4  -i
 export function is_quarter_turn(p: U, $: ExtensionEnv): 0 | 1 | 2 | 3 | 4 {

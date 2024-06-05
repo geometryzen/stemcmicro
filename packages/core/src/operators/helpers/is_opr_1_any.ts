@@ -1,5 +1,5 @@
 import { Sym } from "@stemcmicro/atoms";
-import { is_cons_opr_eq_sym } from "@stemcmicro/predicates";
+import { is_cons_opr_eq_sym } from "@stemcmicro/helpers";
 import { Cons, Cons1, U } from "@stemcmicro/tree";
 import { is_unaop } from "./is_unaop";
 

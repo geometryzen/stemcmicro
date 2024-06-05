@@ -1,6 +1,7 @@
 import { create_sym, is_blade, is_flt, is_num, is_tensor, Num, one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { assert_cons_or_nil, car, cdr, cons, Cons, is_atom, is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { add_num_num } from "../../calculators/add/add_num_num";
@@ -11,7 +12,6 @@ import { remove_factors } from "../../calculators/remove_factors";
 import { prolog_eval_varargs } from "../../dispatch/prolog_eval_varargs";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { float } from "../../helpers/float";
-import { multiply } from "../../helpers/multiply";
 import { is_add, is_multiply } from "../../runtime/helpers";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { compare_blade_blade } from "../blade/blade_extension";

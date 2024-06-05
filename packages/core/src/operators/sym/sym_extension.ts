@@ -2,17 +2,16 @@ import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, i
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
+import { is_pi, multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_atom, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { float } from "../../helpers/float";
 import { iszero } from "../../helpers/iszero";
-import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { piAsFlt } from "../../tree/flt/Flt";
-import { is_pi } from "../pi/is_pi";
 import { create_str } from "../str/create_str";
 import { get_binding } from "./get_binding";
 

@@ -1,11 +1,9 @@
-import { lt_num_num } from "../../calculators/compare/lt_num_num";
-import { divide } from "../../helpers/divide";
+import { is_num, zero } from "@stemcmicro/atoms";
+import { lt_num_num } from "@stemcmicro/helpers";
+import { caddr, cadr, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { caddr, cadr } from "../../tree/helpers";
-import { zero } from "../../tree/rat/Rat";
-import { U } from "../../tree/tree";
+import { divide } from "../../helpers/divide";
 import { factorial } from "../factorial/factorial";
-import { is_num } from "../num/is_num";
 
 //  Binomial coefficient
 //

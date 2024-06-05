@@ -1,12 +1,11 @@
 import { negOne, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { inverse } from "@stemcmicro/helpers";
+import { inverse, isone } from "@stemcmicro/helpers";
 import { caadr, cadadr, caddr, cadr, U } from "@stemcmicro/tree";
 import { add_terms } from "./calculators/add/add_terms";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { add } from "./helpers/add";
 import { equals } from "./helpers/equals";
-import { isone } from "./helpers/isone";
 import { subtract } from "./helpers/subtract";
 import { equaln, is_num_and_eq_minus_one } from "./is";
 import { multiply_items_factoring } from "./multiply";

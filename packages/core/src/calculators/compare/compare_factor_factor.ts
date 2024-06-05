@@ -1,11 +1,11 @@
 import { is_blade, is_hyp, is_num, is_str, is_sym, is_tensor, is_uom } from "@stemcmicro/atoms";
+import { compare_num_num } from "@stemcmicro/helpers";
 import { car, cdr, is_cons, is_nil, U } from "@stemcmicro/tree";
 import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_imu } from "../../operators/imu/is_imu";
 import { strcmp } from "../../operators/str/str_extension";
 import { is_power } from "../../runtime/helpers";
 import { compare_expr_expr } from "./compare_expr_expr";
-import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { compare_tensors } from "./compare_tensors";
 

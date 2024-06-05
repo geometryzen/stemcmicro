@@ -1,7 +1,7 @@
 import { create_int, is_tensor, one, Tensor, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { inverse, num_to_number } from "@stemcmicro/helpers";
-import { is_add, is_multiply, is_power } from "@stemcmicro/predicates";
+import { is_add, is_multiply, is_power } from "@stemcmicro/helpers";
 import { caddr, cadr, Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { factors } from "./factors";

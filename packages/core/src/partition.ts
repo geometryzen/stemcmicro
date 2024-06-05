@@ -1,7 +1,7 @@
 import { one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { multiply } from "@stemcmicro/helpers";
 import { cdr, is_cons, U } from "@stemcmicro/tree";
-import { multiply } from "./helpers/multiply";
 
 /*
  Partition a term

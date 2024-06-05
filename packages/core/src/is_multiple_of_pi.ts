@@ -4,11 +4,9 @@
 
 import { is_num, two } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { num_to_number } from "@stemcmicro/helpers";
+import { is_pi, multiply, num_to_number } from "@stemcmicro/helpers";
 import { caddr, cadr, U } from "@stemcmicro/tree";
-import { multiply } from "./helpers/multiply";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
-import { is_pi } from "./operators/pi/is_pi";
 import { is_multiply } from "./runtime/helpers";
 
 //  4  1  2  3  1  2  3  4

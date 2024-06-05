@@ -1,11 +1,10 @@
 import { is_num, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { car, Cons, U } from "@stemcmicro/tree";
-import { compare_num_num } from "./calculators/compare/compare_num_num";
+import { compare_num_num } from "@stemcmicro/helpers";
+import { cadr, car, Cons, U } from "@stemcmicro/tree";
 import { subtract } from "./calculators/sub/subtract";
 import { divide } from "./helpers/divide";
 import { factorial } from "./operators/factorial/factorial";
-import { cadr } from "@stemcmicro/tree";
 
 /* choose =====================================================================
 

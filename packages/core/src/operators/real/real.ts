@@ -1,18 +1,17 @@
+import { is_rat, is_sym } from "@stemcmicro/atoms";
 import { ExprContext, LambdaExpr } from "@stemcmicro/context";
+import { multiply } from "@stemcmicro/helpers";
 import { complex_conjugate } from "../../complex_conjugate";
 import { imu } from "../../env/imu";
 import { conj } from "../../helpers/conj";
 import { cos } from "../../helpers/cos";
 import { divide } from "../../helpers/divide";
 import { isreal } from "../../helpers/isreal";
-import { multiply } from "../../helpers/multiply";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { negOne, one, zero } from "../../tree/rat/Rat";
 import { cons, Cons, is_cons, items_to_cons, U } from "../../tree/tree";
-import { is_rat } from "../rat/is_rat";
-import { is_sym } from "../sym/is_sym";
 import { compute_r_from_base_and_expo } from "./compute_r_from_base_and_expo";
 import { compute_theta_from_base_and_expo } from "./compute_theta_from_base_and_expo";
 

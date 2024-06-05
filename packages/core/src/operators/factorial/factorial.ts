@@ -1,6 +1,6 @@
 import { create_int, one, zero } from "@stemcmicro/atoms";
 import { num_to_number } from "@stemcmicro/helpers";
-import { is_add, is_factorial, is_multiply, is_power } from "@stemcmicro/predicates";
+import { is_add, is_factorial, is_multiply, is_power } from "@stemcmicro/helpers";
 import { caddr, cadr, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { bignum_factorial } from "../../bignum";
 import { ExtensionEnv } from "../../env/ExtensionEnv";

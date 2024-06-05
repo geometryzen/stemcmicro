@@ -1,8 +1,8 @@
 import { create_int, imu, is_rat, negOne, one, Tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { power } from "@stemcmicro/helpers";
+import { multiply, negate, power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
-import { car, Cons, nil, U } from "@stemcmicro/tree";
+import { caddr, cadr, car, Cons, nil, U } from "@stemcmicro/tree";
 import { rational } from "./bignum";
 import { add_terms } from "./calculators/add/add_terms";
 import { compare_expr_expr } from "./calculators/compare/compare_expr_expr";
@@ -11,8 +11,6 @@ import { guess } from "./guess";
 import { add } from "./helpers/add";
 import { divide } from "./helpers/divide";
 import { iszero } from "./helpers/iszero";
-import { multiply } from "./helpers/multiply";
-import { negate } from "./helpers/negate";
 import { subtract } from "./helpers/subtract";
 import { is_complex_number, is_poly_expanded_form } from "./is";
 import { coefficients } from "./operators/coeff/coeff";
@@ -22,7 +20,6 @@ import { ASSIGN, SECRETX } from "./runtime/constants";
 import { halt } from "./runtime/defs";
 import { is_multiply, is_power } from "./runtime/helpers";
 import { float_eval_abs_eval } from "./scripting/float_eval_abs_eval";
-import { caddr, cadr } from "@stemcmicro/tree";
 import { eight, four, half, negFour, nine, third, three, two } from "./tree/rat/Rat";
 
 const testeq = native_sym(Native.testeq);

@@ -2,11 +2,11 @@
 import { create_sym, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics, is_localizable, Localizable } from "@stemcmicro/diagnostics";
+import { str_to_string } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, mkbuilder } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
-import { nativeStr } from "../../nativeInt";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { create_str } from "../str/create_str";
 
@@ -19,7 +19,7 @@ export function formatStringFromArgs(text: string, argList: Cons, env: ExprConte
             const handler = env.handlerFor(arg);
             const value = handler.dispatch(arg, native_sym(Native.infix), nil, env);
             try {
-                return nativeStr(value);
+                return str_to_string(value);
             } finally {
                 value.release();
             }

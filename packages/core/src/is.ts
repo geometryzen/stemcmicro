@@ -1,11 +1,10 @@
 import { is_flt, is_num, is_rat, Num, Rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { is_rat_and_integer } from "@stemcmicro/predicates";
+import { isone, is_rat_and_integer } from "@stemcmicro/helpers";
 import { caddr, cadr, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { imu } from "./env/imu";
 import { guess } from "./guess";
-import { isone } from "./helpers/isone";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
 import { is_num_and_negative } from "./predicates/is_negative_number";
 import { FLOAT, MEQUAL, MSIGN, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from "./runtime/constants";

@@ -1,11 +1,11 @@
 import { create_str, create_sym, epsilon, Hyp, is_hyp, is_tensor, is_uom, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
-import { multiply } from "../../helpers/multiply";
 import { order_binary } from "../../helpers/order_binary";
 
 const MUL = native_sym(Native.multiply);

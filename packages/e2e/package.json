@@ -20,8 +20,10 @@
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "peerDependencies": {
-        "@stemcmicro/engind": "file:../engine",
+        "@stemcmicro/atoms": "file:../atoms",
+        "@stemcmicro/engine": "file:../engine",
         "@stemcmicro/em-parse": "file:../em-parse",
+        "@stemcmicro/hilbert": "file:../hilbert",
         "@stemcmicro/js-parse": "file:../js-parse"
     }
 }

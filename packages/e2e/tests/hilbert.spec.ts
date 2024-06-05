@@ -1,7 +1,7 @@
 import { check } from "./check";
 
 describe("hilbert", function () {
-    xit("001", function () {
+    it("001", function () {
         check("hilbert(0)", "[]");
         check("hilbert(1)", "[[1]]");
         check("hilbert(2)", "[[1,1/2],[1/2,1/3]]");

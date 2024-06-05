@@ -13,5 +13,5 @@ git commit -m "'$message'"
 git push origin main
 npm run version
 npm run publish
-# npm run docs
-# npm run pages
+npm run docs
+npm run pages

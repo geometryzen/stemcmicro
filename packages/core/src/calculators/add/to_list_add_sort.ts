@@ -1,8 +1,7 @@
 import { is_num, is_tensor, Num, one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { multiply } from "@stemcmicro/helpers";
+import { add, multiply } from "@stemcmicro/helpers";
 import { assert_cons_or_nil, car, cdr, cons, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { add } from "../../helpers/add";
 import { iszero } from "../../helpers/iszero";
 import { is_multiply } from "../../runtime/helpers";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";

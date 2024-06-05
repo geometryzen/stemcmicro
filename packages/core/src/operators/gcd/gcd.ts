@@ -1,13 +1,11 @@
 import { is_num, is_rat, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { compare_num_num, multiply, power } from "@stemcmicro/helpers";
+import { compare_num_num, is_num_and_negative, multiply, power, subtract } from "@stemcmicro/helpers";
 import { car, cdr, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { divide } from "../../helpers/divide";
-import { subtract } from "../../helpers/subtract";
 import { isunivarpolyfactoredorexpandedform } from "../../is";
 import { length_of_cons_otherwise_zero } from "../../length_of_cons_or_zero";
-import { is_num_and_negative } from "../../predicates/is_negative_number";
 import { MULTIPLY } from "../../runtime/constants";
 import { doexpand_binary } from "../../runtime/defs";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";

@@ -1,9 +1,8 @@
 import { assert_tensor, create_int, is_num, one, Tensor, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { multiply, negate } from "@stemcmicro/helpers";
+import { add, multiply, negate } from "@stemcmicro/helpers";
 import { items_to_cons, U } from "@stemcmicro/tree";
 import { Sign } from "../../env/ExtensionEnv";
-import { add } from "../../helpers/add";
 import { divide } from "../../helpers/divide";
 import { equals } from "../../helpers/equals";
 import { DET } from "../../runtime/constants";

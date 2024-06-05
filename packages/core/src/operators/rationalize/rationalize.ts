@@ -1,13 +1,11 @@
 import { is_tensor, one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { inverse, is_add, is_multiply, is_power, multiply } from "@stemcmicro/helpers";
+import { add, inverse, is_add, is_multiply, is_num_and_negative, is_power, multiply } from "@stemcmicro/helpers";
 import { caddr, cadr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { condense } from "../../condense";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { add } from "../../helpers/add";
 import { divide } from "../../helpers/divide";
-import { is_num_and_negative } from "../../predicates/is_negative_number";
 import { gcd } from "../gcd/gcd";
 
 export function eval_rationalize(expr: Cons, $: ExtensionEnv): U {

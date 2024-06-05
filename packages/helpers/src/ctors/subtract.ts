@@ -1,7 +1,7 @@
 import { ExprContext } from "@stemcmicro/context";
-import { negate } from "@stemcmicro/helpers";
 import { U } from "@stemcmicro/tree";
 import { add } from "./add";
+import { negate } from "./negate";
 
 export function subtract(_: Pick<ExprContext, "valueOf">, lhs: U, rhs: U): U {
     const negRhs = negate(_, rhs);

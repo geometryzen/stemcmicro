@@ -1,15 +1,13 @@
 import { zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { inverse } from "@stemcmicro/helpers";
-import { U } from "@stemcmicro/tree";
-import { add } from "./helpers/add";
+import { add, inverse } from "@stemcmicro/helpers";
+import { cadr, U } from "@stemcmicro/tree";
 import { divide } from "./helpers/divide";
 import { multiply_noexpand } from "./multiply";
 import { gcd } from "./operators/gcd/gcd";
 import { noexpand_unary } from "./runtime/defs";
 import { is_add } from "./runtime/helpers";
 import { doexpand_value_of } from "./scripting/doexpand_eval";
-import { cadr } from "@stemcmicro/tree";
 
 /**
  * Condense an expression by factoring common terms.

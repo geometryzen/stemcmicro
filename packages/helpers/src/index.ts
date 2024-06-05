@@ -1,7 +1,9 @@
+export { add } from "./ctors/add";
 export { isone } from "./ctors/isone";
 export { multiply } from "./ctors/multiply";
 export { negate } from "./ctors/negate";
 export { power } from "./ctors/power";
+export { subtract } from "./ctors/subtract";
 export { inverse } from "./inverse";
 export { num_to_number } from "./num_to_number";
 export { compare_num_num } from "./ordering/compare_num_num";

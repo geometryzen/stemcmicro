@@ -1,21 +1,20 @@
 import { bigInt, create_flt, is_flt, is_num, is_rat, negOne, Rat } from "@stemcmicro/atoms";
-import { items_to_cons, U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "./env/ExtensionEnv";
+import { ExprContext } from "@stemcmicro/context";
+import { add, is_num_and_negative } from "@stemcmicro/helpers";
+import { cadr, items_to_cons, U } from "@stemcmicro/tree";
 import { mdiv } from "./mmul";
-import { is_num_and_negative } from "./predicates/is_negative_number";
 import { FLOOR } from "./runtime/constants";
-import { cadr } from "@stemcmicro/tree";
 
-export function eval_floor(p1: U, $: ExtensionEnv): U {
+export function eval_floor(p1: U, $: ExprContext): U {
     const result = yfloor($.valueOf(cadr(p1)), $);
     return result;
 }
 
-function yfloor(p1: U, $: ExtensionEnv): U {
+function yfloor(p1: U, $: ExprContext): U {
     return yyfloor(p1, $);
 }
 
-function yyfloor(x: U, $: ExtensionEnv): U {
+function yyfloor(x: U, $: ExprContext): U {
     if (!is_num(x)) {
         return items_to_cons(FLOOR, x);
     }
@@ -31,7 +30,7 @@ function yyfloor(x: U, $: ExtensionEnv): U {
     const p3: U = new Rat(mdiv(x.a, x.b), bigInt.one);
 
     if (is_num_and_negative(x)) {
-        return $.add(p3, negOne);
+        return add($, p3, negOne);
     } else {
         return p3;
     }

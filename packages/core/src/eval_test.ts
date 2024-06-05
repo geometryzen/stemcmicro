@@ -1,9 +1,10 @@
 import { booU } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { subtract } from "@stemcmicro/helpers";
+import { cadr, cddr } from "@stemcmicro/tree";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "./env/ExtensionEnv";
 import { iszero } from "./helpers/iszero";
 import { predicate_return_value } from "./helpers/predicate_return_value";
-import { subtract } from "./helpers/subtract";
 import { Native } from "./native/Native";
 import { native_sym } from "./native/native_sym";
 import { evaluate_as_float } from "./operators/float/float";
@@ -12,7 +13,6 @@ import { replace_assign_with_testeq } from "./operators/predicate/replace_assign
 import { is_rat } from "./operators/rat/is_rat";
 import { simplify } from "./operators/simplify/simplify";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "./scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
-import { cadr, cddr } from "@stemcmicro/tree";
 import { zero } from "./tree/rat/Rat";
 import { car, cdr, cons, Cons, is_cons, items_to_cons, U } from "./tree/tree";
 

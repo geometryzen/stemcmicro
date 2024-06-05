@@ -2,7 +2,7 @@ import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_keyword, is_nu
 import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { is_localizable } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
-import { isone, is_base_of_natural_logarithm, is_pi, lt_num_num, negate, str_to_string } from "@stemcmicro/helpers";
+import { isone, is_base_of_natural_logarithm, is_num_and_negative, is_pi, lt_num_num, negate, str_to_string } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { mp_denominator, mp_numerator } from "../bignum";
@@ -10,7 +10,6 @@ import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and
 import { denominator } from "../operators/denominator/denominator";
 import { numerator } from "../operators/numerator/numerator";
 import { is_negative } from "../predicates/is_negative";
-import { is_num_and_negative } from "../predicates/is_negative_number";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import {
     ADD,

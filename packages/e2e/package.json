@@ -3,6 +3,7 @@
     "version": "0.9.64",
     "description": "end-to-end testing for stemcmicro",
     "private": true,
+    "type": "module",
     "scripts": {
         "test": "jest"
     },
@@ -21,9 +22,10 @@
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "peerDependencies": {
         "@stemcmicro/atoms": "file:../atoms",
+        "@stemcmicro/core": "file:../core",
+        "@stemcmicro/directive": "file:../directive",
         "@stemcmicro/engine": "file:../engine",
-        "@stemcmicro/em-parse": "file:../em-parse",
-        "@stemcmicro/hilbert": "file:../hilbert",
-        "@stemcmicro/js-parse": "file:../js-parse"
+        "@stemcmicro/js-parse": "file:../js-parse",
+        "@stemcmicro/tree": "file:../tree"
     }
 }

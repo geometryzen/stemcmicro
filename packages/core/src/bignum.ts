@@ -2,7 +2,6 @@ import { bigInt, BigInteger, create_flt, Err, Flt, is_flt, is_rat, Num, Rat } fr
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { U } from "@stemcmicro/tree";
 import { mdiv, mmul } from "./mmul";
-import { mpow } from "./mpow";
 import { ProgrammingError } from "./programming/ProgrammingError";
 
 export function mint(a: number): BigInteger {
@@ -70,8 +69,9 @@ export function bignum_truncate(p1: Rat): Rat {
 
 // expo is an integer
 export function bignum_power_number(base: Rat, expo: number): Rat {
-    let a = mpow(base.a, Math.abs(expo));
-    let b = mpow(base.b, Math.abs(expo));
+    const abs_expo = Math.abs(expo);
+    let a = base.a.pow(abs_expo);
+    let b = base.b.pow(abs_expo);
 
     if (expo < 0) {
         // swap a and b

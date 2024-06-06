@@ -1,5 +1,4 @@
 import { mint } from "./bignum";
-import { mpow } from "./mpow";
 import { halt } from "./runtime/defs";
 import { mcmp } from "./runtime/mcmp";
 import { bigInt, BigInteger } from "./tree/rat/big-integer";
@@ -45,7 +44,7 @@ export function mroot(n: BigInteger, index: number) {
         // set the kth bit
         x = x.or(bigInt(1).shiftLeft(k));
 
-        const y = mpow(x, index);
+        const y = x.pow(index);
         switch (mcmp(y, n)) {
             case 0:
                 return x;

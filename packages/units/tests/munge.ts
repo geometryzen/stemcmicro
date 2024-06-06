@@ -15,13 +15,23 @@ class TestListener implements ExprEngineListener {
 */
 export interface MungeConfig {
     allowUndeclaredVars: "Err" | "Nil";
+    useCaretForExponentiation?: boolean;
+    useDerivativeShorthandLowerD?: boolean;
+    useIntegersForPredicates?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function munge(sourceText: string, options: Partial<MungeConfig>): U {
+/**
+ * Parse and evaluate the sourceText using the specified options.
+ */
+export function munge(sourceText: string, options: Partial<MungeConfig> = {}): U {
     const { trees, errors } = em_parse(sourceText);
     if (errors.length === 0) {
-        const engine = create_engine();
+        const engine = create_engine({
+            allowUndeclaredVars: options.allowUndeclaredVars,
+            useCaretForExponentiation: options.useCaretForExponentiation,
+            useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
+            useIntegersForPredicates: options.useIntegersForPredicates
+        });
         engine.defineFunction(create_sym("hilbert"), hilbert);
         return engine.valueOf(trees[0]);
     } else {

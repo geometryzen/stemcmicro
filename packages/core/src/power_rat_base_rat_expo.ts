@@ -8,7 +8,6 @@ import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { bignum_truncate, makePositive, makeSignSameAs } from "./bignum";
 import { exp } from "./helpers/exp";
 import { is_num_and_eq_minus_one } from "./is";
-import { mpow } from "./mpow";
 import { mroot } from "./mroot";
 import { quickfactor } from "./quickfactor";
 import { half } from "./tree/rat/Rat";
@@ -78,8 +77,8 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExprContext): C
             return hook(items_to_cons(POWER, base, expo), "F");
         }
 
-        x = mpow(base.a, Math.abs(expoJs));
-        y = mpow(base.b, Math.abs(expoJs));
+        x = base.a.pow(Math.abs(expoJs));
+        y = base.b.pow(Math.abs(expoJs));
         if (expoJs < 0) {
             const t = x;
             x = y;
@@ -135,7 +134,7 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExprContext): C
         return hook(items_to_cons(POWER, base, expo), "M");
     }
 
-    y = mpow(x, a);
+    y = x.pow(a);
 
     return hook(expo.a.isNegative() ? new Rat(bigInt.one, y) : new Rat(y, bigInt.one), "N");
 }

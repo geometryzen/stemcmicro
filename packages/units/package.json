@@ -1,9 +1,8 @@
 {
     "name": "@stemcmicro/units",
     "version": "0.9.64",
-    "description": "unit testing for stemcmicro",
+    "description": "Lightweight testing for stemcmicro",
     "private": true,
-    "type": "module",
     "scripts": {
         "test": "jest"
     },
@@ -22,10 +21,9 @@
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "peerDependencies": {
         "@stemcmicro/atoms": "file:../atoms",
-        "@stemcmicro/core": "file:../core",
-        "@stemcmicro/directive": "file:../directive",
         "@stemcmicro/engine": "file:../engine",
-        "@stemcmicro/js-parse": "file:../js-parse",
-        "@stemcmicro/tree": "file:../tree"
+        "@stemcmicro/em-parse": "file:../em-parse",
+        "@stemcmicro/hilbert": "file:../hilbert",
+        "@stemcmicro/js-parse": "file:../js-parse"
     }
 }

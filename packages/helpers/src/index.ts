@@ -47,4 +47,3 @@ export { is_safe_integer_range } from "./predicates/is_safe_integer_range";
 export { is_transpose } from "./predicates/is_transpose";
 export { is_zero_num } from "./predicates/is_zero_num";
 export { str_to_string } from "./str_to_string";
-

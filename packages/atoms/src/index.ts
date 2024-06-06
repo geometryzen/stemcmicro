@@ -62,4 +62,3 @@ export { Dimensions } from "./uom/Dimensions";
 export { QQ } from "./uom/QQ";
 export { assert_uom, is_uom, Uom } from "./uom/Uom";
 export { assert_uuid, is_uuid, Uuid } from "./uuid/Uuid";
-

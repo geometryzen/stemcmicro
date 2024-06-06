@@ -181,14 +181,14 @@ function gcd_sum_sum(p1: Cons, p2: Cons, $: Pick<ExprContext, "handlerFor" | "va
 
     const p3 = is_cons(p1)
         ? p1.tail().reduce(function (x, y) {
-            return gcd(x, y, $);
-        })
+              return gcd(x, y, $);
+          })
         : car(cdr(p1));
 
     const p4 = is_cons(p2)
         ? p2.tail().reduce(function (x, y) {
-            return gcd(x, y, $);
-        })
+              return gcd(x, y, $);
+          })
         : car(cdr(p2));
 
     const p5 = divide(p1, p3, $);

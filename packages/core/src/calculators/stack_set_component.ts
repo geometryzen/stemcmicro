@@ -23,13 +23,13 @@ import { stack_push } from "../runtime/stack";
 //  Output:    Result on stack
 //
 //-----------------------------------------------------------------------------
-export function set_component(n: number): void {
+export function stack_set_component(n: number): void {
     if (n < 3) {
         halt("error in indexed assign");
     }
 
     const s = defs.tos - n;
-    const RVALUE = defs.stack[s] as U;
+    const rhs = defs.stack[s] as U;
     const lhs: Tensor = defs.stack[s + 1] as Tensor;
 
     if (!is_tensor(lhs)) {
@@ -59,10 +59,10 @@ export function set_component(n: number): void {
     const elems = lhs.copyElements();
 
     if (lhs.ndim === m) {
-        if (is_tensor(RVALUE)) {
+        if (is_tensor(rhs)) {
             halt("error in indexed assign");
         }
-        elems[k] = RVALUE as U;
+        elems[k] = rhs as U;
 
         move_top_of_stack(defs.tos - n);
         stack_push(new Tensor(dims, elems));
@@ -70,23 +70,23 @@ export function set_component(n: number): void {
     }
 
     // see if the rvalue matches
-    if (!is_tensor(RVALUE)) {
+    if (!is_tensor(rhs)) {
         halt("error in indexed assign");
     }
 
-    if (lhs.ndim - m !== RVALUE.ndim) {
+    if (lhs.ndim - m !== rhs.ndim) {
         halt("error in indexed assign");
     }
 
-    for (let i = 0; i < RVALUE.ndim; i++) {
-        if (dims[m + i] !== RVALUE.dim(i)) {
+    for (let i = 0; i < rhs.ndim; i++) {
+        if (dims[m + i] !== rhs.dim(i)) {
             halt("error in indexed assign");
         }
     }
 
     // copy rvalue
-    for (let i = 0; i < RVALUE.nelem; i++) {
-        elems[k + i] = RVALUE.elem(i);
+    for (let i = 0; i < rhs.nelem; i++) {
+        elems[k + i] = rhs.elem(i);
     }
 
     move_top_of_stack(defs.tos - n);

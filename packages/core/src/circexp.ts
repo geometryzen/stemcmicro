@@ -1,13 +1,10 @@
+import { half, imu, is_tensor, one, two } from "@stemcmicro/atoms";
+import { divide } from "@stemcmicro/helpers";
+import { cadr, car, Cons, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { imu } from "./env/imu";
-import { divide } from "./helpers/divide";
 import { expcos } from "./operators/expcos/expcos";
 import { expsin } from "./operators/expsin/expsin";
-import { is_tensor } from "./operators/tensor/is_tensor";
 import { COS, COSH, SIN, SINH, TAN, TANH } from "./runtime/constants";
-import { cadr } from "@stemcmicro/tree";
-import { half, one, two } from "./tree/rat/Rat";
-import { car, Cons, is_cons, U } from "./tree/tree";
 
 /* circexp =====================================================================
 

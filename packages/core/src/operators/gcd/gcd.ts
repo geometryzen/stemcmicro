@@ -1,23 +1,18 @@
 import { is_num, is_rat, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { compare_num_num, is_num_and_negative, multiply, power, subtract } from "@stemcmicro/helpers";
-import { car, cdr, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { divide } from "../../helpers/divide";
+import { compare_num_num, divide, is_add, is_multiply, is_num_and_negative, is_power, multiply, power, subtract } from "@stemcmicro/helpers";
+import { assert_cons, caddr, cadr, car, cdr, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { isunivarpolyfactoredorexpandedform } from "../../is";
 import { length_of_cons_otherwise_zero } from "../../length_of_cons_or_zero";
 import { MULTIPLY } from "../../runtime/constants";
 import { doexpand_binary } from "../../runtime/defs";
-import { is_add, is_multiply, is_power } from "../../runtime/helpers";
-import { assert_cons } from "../../tree/cons/assert_cons";
-import { caddr, cadr } from "../../tree/helpers";
 import { factorize } from "../factor/factor";
 
 // Greatest common denominator
 // can also be run on polynomials, however
 // it works only on the integers and it works
 // by factoring the polynomials (not Euclidean algorithm)
-export function eval_gcd(p1: U, $: ExtensionEnv): U {
+export function eval_gcd(p1: U, $: ExprContext): U {
     p1 = cdr(p1);
     let result = $.valueOf(car(p1));
 
@@ -186,14 +181,14 @@ function gcd_sum_sum(p1: Cons, p2: Cons, $: Pick<ExprContext, "handlerFor" | "va
 
     const p3 = is_cons(p1)
         ? p1.tail().reduce(function (x, y) {
-              return gcd(x, y, $);
-          })
+            return gcd(x, y, $);
+        })
         : car(cdr(p1));
 
     const p4 = is_cons(p2)
         ? p2.tail().reduce(function (x, y) {
-              return gcd(x, y, $);
-          })
+            return gcd(x, y, $);
+        })
         : car(cdr(p2));
 
     const p5 = divide(p1, p3, $);

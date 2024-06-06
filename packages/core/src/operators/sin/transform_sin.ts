@@ -1,10 +1,8 @@
 import { create_flt, create_int, half, is_flt, negOne, one, three, two, zero } from "@stemcmicro/atoms";
-import { num_to_number } from "@stemcmicro/helpers";
-import { is_add } from "@stemcmicro/helpers";
+import { divide, is_add, num_to_number } from "@stemcmicro/helpers";
 import { cadr, car, Cons, is_cons, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { divide } from "../../helpers/divide";
 import { is_multiple_of_pi } from "../../is_multiple_of_pi";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCSIN, ARCTAN } from "../../runtime/constants";

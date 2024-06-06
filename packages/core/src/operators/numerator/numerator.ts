@@ -1,9 +1,7 @@
 import { is_rat, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { isone, is_add, is_multiply, is_negative, is_power } from "@stemcmicro/helpers";
-import { caddr, car, cdr, Cons, U } from "@stemcmicro/tree";
-import { mp_numerator } from "../../bignum";
-import { multiply_items } from "../../multiply";
+import { isone, is_add, is_cons_opr_eq_power, is_multiply, is_negative, multiply_items } from "@stemcmicro/helpers";
+import { car, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { rationalize_factoring } from "../rationalize/rationalize";
 
 export function eval_numerator(expr: Cons, $: ExprContext): U {
@@ -49,10 +47,10 @@ export function numerator(p1: U, $: Pick<ExprContext, "handlerFor" | "pushDirect
     }
 
     if (is_rat(p1)) {
-        return mp_numerator(p1);
+        return p1.numer();
     }
 
-    if (is_power(p1) && is_negative(caddr(p1))) {
+    if (is_cons(p1) && is_cons_opr_eq_power(p1) && is_negative(p1.expo)) {
         return one;
     }
 

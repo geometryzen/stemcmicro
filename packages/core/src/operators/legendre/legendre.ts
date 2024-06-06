@@ -1,8 +1,7 @@
 import { create_int, half, is_sym, one, zero } from "@stemcmicro/atoms";
-import { num_to_number } from "@stemcmicro/helpers";
+import { divide, num_to_number } from "@stemcmicro/helpers";
 import { cadddr, caddr, cadr, car, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { divide } from "../../helpers/divide";
 import { COS, LEGENDRE, SECRETX, SIN } from "../../runtime/constants";
 import { square } from "../../square";
 import { derivative } from "../derivative/derivative";

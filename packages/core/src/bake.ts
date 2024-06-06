@@ -2,7 +2,6 @@ import { create_int } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { is_add, is_multiply, is_num_and_eq_number } from "@stemcmicro/helpers";
 import { car, cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "./env/ExtensionEnv";
 import { iszero } from "./helpers/iszero";
 import { is_poly_expanded_form } from "./is";
 import { coefficients } from "./operators/coeff/coeff";
@@ -16,11 +15,11 @@ import { SystemError } from "./runtime/SystemError";
  * @param $
  * @returns
  */
-export function eval_bake(expr: U, $: ExtensionEnv): U {
+export function eval_bake(expr: U, $: ExprContext): U {
     return doexpand_unary(bake_internal, expr, $);
 }
 
-export function bake_internal(expr: U, $: ExtensionEnv): U {
+export function bake_internal(expr: U, $: ExprContext): U {
     // console.lg(`bake_internal ${print_expr(expr, $)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {

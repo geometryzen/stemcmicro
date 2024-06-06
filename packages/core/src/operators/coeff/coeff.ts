@@ -1,11 +1,12 @@
 import { one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { divide } from "@stemcmicro/helpers";
 import { Cons, is_cons, nil, U } from "@stemcmicro/tree";
 import { subtract } from "../../calculators/sub/subtract";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { Vector } from "../../env/Vector";
 import { filter } from "../../filter";
-import { divide, divide_expand } from "../../helpers/divide";
+import { divide_expand } from "../../helpers/divide";
 import { SYMBOL_X } from "../../runtime/constants";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 import { subst } from "../subst/subst";

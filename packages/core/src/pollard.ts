@@ -3,7 +3,6 @@ import { cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { mint, setSignTo } from "./bignum";
 import { mgcd } from "./mgcd";
 import { mdiv, mdivrem, mmod, mmul } from "./mmul";
-import { mprime } from "./operators/isprime/mprime";
 import { MULTIPLY, POWER, primetab } from "./runtime/constants";
 import { mcmp } from "./runtime/mcmp";
 
@@ -106,7 +105,7 @@ function factor_b(): U[] {
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
-        if (mprime(n_factor_number)) {
+        if (n_factor_number.isProbablePrime()) {
             result.push(_factor(n_factor_number, 1));
             return result;
         }

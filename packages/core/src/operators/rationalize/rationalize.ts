@@ -1,14 +1,12 @@
 import { is_tensor, one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { add, inverse, is_add, is_multiply, is_num_and_negative, is_power, multiply } from "@stemcmicro/helpers";
+import { add, divide, inverse, is_add, is_multiply, is_num_and_negative, is_power, multiply } from "@stemcmicro/helpers";
 import { caddr, cadr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { condense } from "../../condense";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { divide } from "../../helpers/divide";
 import { gcd } from "../gcd/gcd";
 
-export function eval_rationalize(expr: Cons, $: ExtensionEnv): U {
+export function eval_rationalize(expr: Cons, $: ExprContext): U {
     // const infix = render_as_infix(expr, $);
     // console.lg("infix", infix);
     const arg = cadr(expr);

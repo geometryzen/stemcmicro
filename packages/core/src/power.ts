@@ -1,7 +1,7 @@
 import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
+import { divide } from "@stemcmicro/helpers";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { imu } from "./env/imu";
-import { divide } from "./helpers/divide";
 import { is_quarter_turn } from "./is_quarter_turn";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
 import { factorial } from "./operators/factorial/factorial";

@@ -1,16 +1,13 @@
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { cadr } from "../../tree/helpers";
-import { one, zero } from "../../tree/rat/Rat";
-import { Cons, U } from "../../tree/tree";
-import { is_rat } from "../rat/is_rat";
-import { mprime } from "./mprime";
+import { is_rat, one, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { cadr, Cons, U } from "@stemcmicro/tree";
 
-export function eval_isprime(expr: Cons, $: ExtensionEnv): U {
+export function eval_isprime(expr: Cons, $: ExprContext): U {
     return isprime($.valueOf(cadr(expr)));
 }
 
 function isprime(x: U): U {
-    if (is_rat(x) && x.isNonNegativeInteger() && mprime(x.a)) {
+    if (is_rat(x) && x.isNonNegativeInteger() && x.a.isProbablePrime()) {
         return one;
     }
     return zero;

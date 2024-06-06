@@ -1,9 +1,8 @@
-import { is_flt, is_num, is_rat, Num, Rat } from "@stemcmicro/atoms";
+import { imu, is_flt, is_num, is_rat, Num, Rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { isone, is_add, is_multiply, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_eq_rational, is_num_and_negative, is_power, is_rat_and_integer } from "@stemcmicro/helpers";
-import { caddr, cadr, is_cons, U } from "@stemcmicro/tree";
+import { caddr, cadnr, cadr, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { imu } from "./env/imu";
 import { guess } from "./guess";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
 import { FLOAT, MEQUAL, MSIGN, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from "./runtime/constants";
@@ -65,7 +64,7 @@ export function isunivarpolyfactoredorexpandedform(p: U, x: U | null): U | false
         x = guess(p);
     }
 
-    if (ispolyfactoredorexpandedform(p, x) && countTrue(p.contains(SYMBOL_X), p.contains(SYMBOL_Y), p.contains(SYMBOL_Z)) === 1) {
+    if (is_poly_factored_or_expanded_form(p, x) && countTrue(p.contains(SYMBOL_X), p.contains(SYMBOL_Y), p.contains(SYMBOL_Z)) === 1) {
         return x;
     } else {
         return false;
@@ -82,22 +81,22 @@ function countTrue(...a: boolean[]): number {
 // hands, however it's in factored form and we don't
 // want to expand it.
 
-function ispolyfactoredorexpandedform(p: U, x: U): boolean {
-    return ispolyfactoredorexpandedform_factor(p, x);
+function is_poly_factored_or_expanded_form(p: U, x: U): boolean {
+    return is_poly_factored_or_expanded_form_factor(p, x);
 }
 
-function ispolyfactoredorexpandedform_factor(p: U, x: U): boolean {
+function is_poly_factored_or_expanded_form_factor(p: U, x: U): boolean {
     if (is_multiply(p)) {
         return p.tail().every((el) => {
-            const bool = ispolyfactoredorexpandedform_power(el, x);
+            const bool = is_poly_factored_or_expanded_form_power(el, x);
             return bool;
         });
     } else {
-        return ispolyfactoredorexpandedform_power(p, x);
+        return is_poly_factored_or_expanded_form_power(p, x);
     }
 }
 
-function ispolyfactoredorexpandedform_power(p: U, x: U): boolean {
+function is_poly_factored_or_expanded_form_power(p: U, x: U): boolean {
     if (is_power(p)) {
         const base = p.base;
         const expo = p.expo;
@@ -170,7 +169,7 @@ function is_power_and_has_rational_exponent_and_negative_base(expr: U): boolean 
 }
 
 function isimaginarynumberdouble(p: U, $: ExtensionEnv): boolean {
-    return (is_multiply(p) && length_of_cons_otherwise_zero(p) === 3 && is_flt(cadr(p)) && is_power_and_has_rational_exponent_and_negative_base(caddr(p))) || $.equals(p, imu);
+    return (is_multiply(p) && length_of_cons_otherwise_zero(p) === 3 && is_flt(cadnr(p, 1)) && is_power_and_has_rational_exponent_and_negative_base(cadnr(p, 2))) || $.equals(p, imu);
 }
 
 /**

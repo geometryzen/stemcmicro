@@ -1,8 +1,7 @@
 import { zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { add, inverse, is_add } from "@stemcmicro/helpers";
+import { add, divide, inverse, is_add } from "@stemcmicro/helpers";
 import { cadr, U } from "@stemcmicro/tree";
-import { divide } from "./helpers/divide";
 import { multiply_noexpand } from "./multiply";
 import { gcd } from "./operators/gcd/gcd";
 import { noexpand_unary } from "./runtime/defs";

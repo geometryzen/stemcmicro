@@ -1,7 +1,6 @@
 import { create_int, is_tensor, one, Tensor, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { inverse, num_to_number } from "@stemcmicro/helpers";
-import { is_add, is_multiply, is_power } from "@stemcmicro/helpers";
+import { inverse, is_add, is_multiply, is_power, multiply_items, num_to_number } from "@stemcmicro/helpers";
 import { caddr, cadr, Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { factors } from "./factors";
@@ -10,7 +9,7 @@ import { guess } from "./guess";
 import { divide_expand } from "./helpers/divide";
 import { inv } from "./inv";
 import { is_plus_or_minus_one, is_poly_expanded_form } from "./is";
-import { multiply_binary, multiply_items } from "./multiply";
+import { multiply_binary } from "./multiply";
 import { degree } from "./operators/degree/degree";
 import { denominator } from "./operators/denominator/denominator";
 import { factorize } from "./operators/factor/factor";

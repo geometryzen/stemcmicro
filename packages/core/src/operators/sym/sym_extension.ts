@@ -1,18 +1,16 @@
-import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Sym, zero } from "@stemcmicro/atoms";
+import { create_str, create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
-import { is_pi, multiply } from "@stemcmicro/helpers";
+import { float, is_pi, multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_atom, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
-import { float } from "../../helpers/float";
 import { iszero } from "../../helpers/iszero";
 import { order_binary } from "../../helpers/order_binary";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { piAsFlt } from "../../tree/flt/Flt";
-import { create_str } from "../str/create_str";
 import { get_binding } from "./get_binding";
 
 const ABS = native_sym(Native.abs);

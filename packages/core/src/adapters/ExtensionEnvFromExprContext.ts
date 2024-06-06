@@ -29,6 +29,9 @@ function predicate_to_boolean(expr: U): boolean {
     }
 }
 
+/**
+ * A sanity check to ensure that `this` is correct, then returns the inner expression context. 
+ */
 function checkThis(arg: ExtensionEnvFromExprContext): ExprContext {
     if (arg instanceof ExtensionEnvFromExprContext) {
         return arg.context;

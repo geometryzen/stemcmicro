@@ -8,7 +8,7 @@ import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/Ext
 import { HASH_IMU } from "../../hashing/hash_info";
 import { order_binary } from "../../helpers/order_binary";
 import { MATH_IMU } from "../../runtime/ns_math";
-import { half, two } from "../../tree/rat/Rat";
+import { half, two } from "@stemcmicro/atoms";
 
 const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
@@ -17,6 +17,7 @@ const PI = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
 const negImu = items_to_cons(MUL, negOne, imu);
 
+// FIXME: JUst use the helpers implementation?
 function divide(numer: U, denom: U, env: ExprContext): U {
     const rhs = items_to_cons(POW, denom, negOne);
     const ratio = items_to_cons(MUL, numer, rhs);

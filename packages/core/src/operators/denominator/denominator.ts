@@ -1,8 +1,7 @@
 import { is_rat, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { inverse, isone, is_add, is_multiply, is_negative, is_power } from "@stemcmicro/helpers";
+import { inverse, isone, is_add, is_multiply, is_negative, is_power, multiply_items } from "@stemcmicro/helpers";
 import { car, is_cons, U } from "@stemcmicro/tree";
-import { multiply_items } from "../../multiply";
 import { rationalize_factoring } from "../rationalize/rationalize";
 
 export function denominator(expr: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {

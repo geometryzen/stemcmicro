@@ -1,11 +1,10 @@
 import { is_rat, is_sym } from "@stemcmicro/atoms";
 import { ExprContext, LambdaExpr } from "@stemcmicro/context";
-import { multiply } from "@stemcmicro/helpers";
+import { divide, multiply } from "@stemcmicro/helpers";
 import { complex_conjugate } from "../../complex_conjugate";
 import { imu } from "../../env/imu";
 import { conj } from "../../helpers/conj";
 import { cos } from "../../helpers/cos";
-import { divide } from "../../helpers/divide";
 import { isreal } from "../../helpers/isreal";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";

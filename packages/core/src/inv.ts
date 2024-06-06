@@ -1,8 +1,7 @@
 import { Err, is_tensor, one, Sym, Tensor, zero } from "@stemcmicro/atoms";
-import { is_cons_opr_eq_inv, is_inner_or_dot } from "@stemcmicro/helpers";
+import { divide, is_cons_opr_eq_inv, is_inner_or_dot } from "@stemcmicro/helpers";
 import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { divide } from "./helpers/divide";
 import { det } from "./operators/det/det";
 import { adj } from "./operators/tensor/tensor_extension";
 import { INV, INVG } from "./runtime/constants";

@@ -1,10 +1,9 @@
-import { Cons, U } from "@stemcmicro/tree";
+import { divide } from "@stemcmicro/helpers";
+import { caddr, cadr, Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { filter } from "./filter";
 import { guess } from "./guess";
-import { divide } from "./helpers/divide";
 import { degree } from "./operators/degree/degree";
-import { caddr, cadr } from "@stemcmicro/tree";
 
 /*
  Return the leading coefficient of a polynomial.

@@ -8,7 +8,7 @@ export { assert_boo, Boo, booF, booT, booU, create_boo, is_boo } from "./boo/Boo
 export { assert_cell, Cell, CellHost, is_cell } from "./cell/Cell";
 export { assert_char, Char, is_char } from "./char/Char";
 export { assert_err, create_err, Err, is_err } from "./err/Err";
-export { assert_flt, create_flt, Flt, is_flt } from "./flt/Flt";
+export { assert_flt, create_flt, eAsFlt, Flt, is_flt, negOneAsFlt, negTwoAsFlt, oneAsFlt, piAsFlt, twoAsFlt, zeroAsFlt, εAsFlt } from "./flt/Flt";
 export { assert_jsfunction, is_jsfunction, JsFunction } from "./function/JsFunction";
 export { assert_hyp, create_hyp, delta, epsilon, Hyp, is_hyp } from "./hyp/Hyp";
 export { Imu, imu, is_imu } from "./imu/Imu";
@@ -62,3 +62,4 @@ export { Dimensions } from "./uom/Dimensions";
 export { QQ } from "./uom/QQ";
 export { assert_uom, is_uom, Uom } from "./uom/Uom";
 export { assert_uuid, is_uuid, Uuid } from "./uuid/Uuid";
+

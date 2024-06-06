@@ -4,7 +4,6 @@ import { Directive } from "@stemcmicro/directive";
 import { isone, is_base_of_natural_logarithm, is_num_and_negative, is_rat_and_fraction, str_to_string } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { Atom, car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
-import { mp_denominator, mp_numerator } from "../bignum";
 import { is_num_and_eq_minus_one } from "../is";
 import { str_extension } from "../operators/str/str_extension";
 import { ADD, ASSIGN, FACTORIAL, MULTIPLY, POWER } from "../runtime/constants";
@@ -296,8 +295,8 @@ function emit_fraction(p: U, d: number, $: PrintConfig) {
     // handle numerical coefficient
     const coeff = cadr(p);
     if (is_rat(coeff)) {
-        A = mp_numerator(coeff).abs();
-        B = mp_denominator(coeff);
+        A = coeff.numer().abs();
+        B = coeff.denom();
     }
 
     if (is_flt(coeff)) {
@@ -399,7 +398,7 @@ function emit_numerators(p: Cons, $: PrintConfig) {
 
     const head = p.head;
     if (is_rat(head)) {
-        p1 = mp_numerator(head).abs();
+        p1 = head.numer().abs();
         p = cdr(p);
     } else if (is_flt(head)) {
         p1 = head.abs();

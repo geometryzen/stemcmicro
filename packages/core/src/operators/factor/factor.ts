@@ -1,17 +1,16 @@
 import { create_int, is_rat, is_sym, one, Rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
+import { is_cons, U } from "@stemcmicro/tree";
 import { yyfactorpoly } from "../../factorpoly";
 import { is_poly_expanded_form } from "../../is";
 import { multiply_items_factoring } from "../../multiply";
 import { factor_rat } from "../../pollard";
 import { MAXPRIMETAB, primetab } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
-import { is_multiply } from "../../runtime/helpers";
 
-export function factor_again(p1: U, p2: U, $: ExtensionEnv): U {
-    if (is_multiply(p1)) {
+export function factor_again(p1: U, p2: U, $: ExprContext): U {
+    if (is_cons(p1) && is_cons_opr_eq_multiply(p1)) {
         const arr: U[] = [];
         p1.tail().forEach((el) => factor_term(arr, el, p2, $));
         return multiply_items_factoring(arr, $);
@@ -24,7 +23,7 @@ export function factor_again(p1: U, p2: U, $: ExtensionEnv): U {
 
 function factor_term(arr: U[], arg1: U, arg2: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): void {
     const p1 = factorize(arg1, arg2, $);
-    if (is_multiply(p1)) {
+    if (is_cons(p1) && is_cons_opr_eq_multiply(p1)) {
         arr.push(...p1.tail());
         return;
     }

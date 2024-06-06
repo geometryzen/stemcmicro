@@ -1,12 +1,11 @@
 /* eslint-disable no-console */
 import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
-import { inverse } from "@stemcmicro/helpers";
+import { divide, inverse } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { rational } from "../../../bignum";
 import { add_terms } from "../../../calculators/add/add_terms";
 import { dirac } from "../../../dirac";
 import { ExtensionEnv } from "../../../env/ExtensionEnv";
-import { divide } from "../../../helpers/divide";
 import { ARCCOS, ARCCOSH, ARCSIN, ARCSINH, ARCTAN, ARCTANH, BESSELJ, BESSELY, COSH, ERF, ERFC, HERMITE, INTEGRAL, SECRETX, SGN, SINH, TANH } from "../../../runtime/constants";
 import { DynamicConstants } from "../../../runtime/defs";
 import { is_abs, is_add } from "../../../runtime/helpers";

@@ -1,8 +1,8 @@
+import { multiply_items } from "@stemcmicro/helpers";
 import { car, cdr, U } from "@stemcmicro/tree";
 import { add_terms } from "../../../calculators/add/add_terms";
 import { ExtensionEnv } from "../../../env/ExtensionEnv";
 import { length_of_cons_otherwise_zero } from "../../../length_of_cons_or_zero";
-import { multiply_items } from "../../../multiply";
 import { derivative } from "../derivative";
 
 /**

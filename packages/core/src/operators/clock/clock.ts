@@ -1,11 +1,10 @@
 import { negOne } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { multiply, power } from "@stemcmicro/helpers";
+import { divide, multiply, power } from "@stemcmicro/helpers";
 import { U } from "@stemcmicro/tree";
 import { abs } from "../../helpers/abs";
 import { arg } from "../../helpers/arg";
-import { divide } from "../../helpers/divide";
 import { DynamicConstants } from "../../runtime/defs";
 
 /*

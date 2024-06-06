@@ -1,6 +1,10 @@
 export { add } from "./ctors/add";
+export { divide } from "./ctors/divide";
+export { divide_num_num } from "./ctors/divide_num_num";
+export { float } from "./ctors/float";
 export { isone } from "./ctors/isone";
 export { multiply } from "./ctors/multiply";
+export { multiply_items } from "./ctors/multiply_items";
 export { negate } from "./ctors/negate";
 export { power } from "./ctors/power";
 export { subtract } from "./ctors/subtract";
@@ -43,3 +47,4 @@ export { is_safe_integer_range } from "./predicates/is_safe_integer_range";
 export { is_transpose } from "./predicates/is_transpose";
 export { is_zero_num } from "./predicates/is_zero_num";
 export { str_to_string } from "./str_to_string";
+

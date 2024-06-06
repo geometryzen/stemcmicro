@@ -1,4 +1,4 @@
-import { bigInt, BigInteger, create_flt, Err, Flt, is_flt, is_rat, Num, one, Rat } from "@stemcmicro/atoms";
+import { bigInt, BigInteger, create_flt, Err, Flt, is_flt, is_rat, Num, Rat } from "@stemcmicro/atoms";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { U } from "@stemcmicro/tree";
 import { mdiv, mmul } from "./mmul";
@@ -45,24 +45,6 @@ export function setSignTo(a: BigInteger, b: 1 | -1 | 0): BigInteger {
 }
 
 /**
- * TODO: Move to the NumExtension
- */
-export function divide_numbers(lhs: Num, rhs: Num): Num | Err {
-    if (is_rat(lhs) && is_rat(rhs)) {
-        return lhs.div(rhs);
-    }
-
-    if (rhs.isZero()) {
-        return diagnostic(Diagnostics.Division_by_zero);
-    }
-
-    const a = is_flt(lhs) ? lhs.d : lhs.toNumber();
-    const b = is_flt(rhs) ? rhs.d : rhs.toNumber();
-
-    return create_flt(a / b);
-}
-
-/**
  * Move to NumExtension
  */
 export function invert_number(x: Num): Num | Err {
@@ -84,28 +66,6 @@ export function invert_number(x: Num): Num | Err {
 export function bignum_truncate(p1: Rat): Rat {
     const a = mdiv(p1.a, p1.b);
     return new Rat(a, bigInt.one);
-}
-
-/**
- * @deprecated If p1 is a Rat, call p1.numer()
- */
-export function mp_numerator(x: Rat): Rat {
-    if (is_rat(x)) {
-        return x.numer();
-    } else {
-        return one;
-    }
-}
-
-/**
- * @deprecated If p1 is a Rat, call p1.denom()
- */
-export function mp_denominator(x: U): Rat {
-    if (is_rat(x)) {
-        return x.denom();
-    } else {
-        return one;
-    }
 }
 
 // expo is an integer

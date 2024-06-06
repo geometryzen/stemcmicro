@@ -5,7 +5,6 @@ import { Directive } from "@stemcmicro/directive";
 import { isone, is_base_of_natural_logarithm, is_cons_opr_eq_inv, is_inner_or_dot, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_eq_two, is_num_and_negative, is_outer, is_pi, lt_num_num, negate, str_to_string } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
-import { mp_denominator, mp_numerator } from "../bignum";
 import { isNumberOneOverSomething, is_num_and_eq_minus_one, is_rat_and_fraction } from "../is";
 import { denominator } from "../operators/denominator/denominator";
 import { numerator } from "../operators/numerator/numerator";
@@ -191,8 +190,8 @@ function print_a_over_b(p: Cons, _: PrintConfig): string {
     let p2 = car(p1);
 
     if (is_rat(p2)) {
-        A = mp_numerator(p2).abs();
-        B = mp_denominator(p2);
+        A = p2.numer().abs();
+        B = p2.denom();
         if (!isone(A, _)) {
             n++;
         }

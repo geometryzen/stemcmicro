@@ -21,6 +21,7 @@
     "scripts": {
         "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
         "clean": "rm -rf ./dist",
+        "coverage": "npm run test -- --coverage",
         "docs": "npm run docs:typedoc && open-cli docs/index.html",
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
         "pages": "npm run docs:typedoc && gh-pages --dist docs --dest core",

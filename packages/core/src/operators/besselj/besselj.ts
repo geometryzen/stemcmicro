@@ -1,18 +1,10 @@
-import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
+import { create_flt, create_int, half, is_flt, is_rat, negOne, one, two, zero } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
-import { num_to_number } from "@stemcmicro/helpers";
+import { divide, is_negative, num_to_number } from "@stemcmicro/helpers";
+import { caddr, cadr, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { divide } from "../../helpers/divide";
-import { items_to_cons } from "../../makeList";
-import { is_negative } from "../../predicates/is_negative";
 import { BESSELJ, MEQUAL, MSIGN } from "../../runtime/constants";
 import { MATH_PI } from "../../runtime/ns_math";
-import { create_flt } from "../../tree/flt/Flt";
-import { caddr, cadr } from "../../tree/helpers";
-import { half, two } from "../../tree/rat/Rat";
-import { U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
-import { is_rat } from "../rat/is_rat";
 
 /* besselj =====================================================================
 

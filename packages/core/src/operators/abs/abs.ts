@@ -1,11 +1,10 @@
 import { imu, is_imu, is_num, is_rat, is_tensor, one, Tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { add, isone, is_base_of_natural_logarithm, is_cons_opr_eq_power, is_num_and_eq_number, is_pi, multiply, negate, power } from "@stemcmicro/helpers";
+import { add, divide, isone, is_base_of_natural_logarithm, is_cons_opr_eq_power, is_num_and_eq_number, is_pi, multiply, negate, power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, is_atom, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { complex_conjugate } from "../../complex_conjugate";
-import { divide } from "../../helpers/divide";
 import { exp } from "../../helpers/exp";
 import { imag } from "../../helpers/imag";
 import { inner } from "../../helpers/inner";

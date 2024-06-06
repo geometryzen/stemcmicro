@@ -1,5 +1,5 @@
+import { divide } from "@stemcmicro/helpers";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { divide } from "../../helpers/divide";
 import { is_negative } from "../../predicates/is_negative";
 import { GAMMA, MEQUAL } from "../../runtime/constants";
 import { DynamicConstants } from "../../runtime/defs";

@@ -1,8 +1,7 @@
 import { is_num, zero } from "@stemcmicro/atoms";
-import { lt_num_num } from "@stemcmicro/helpers";
+import { divide, lt_num_num } from "@stemcmicro/helpers";
 import { caddr, cadr, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { divide } from "../../helpers/divide";
 import { factorial } from "../factorial/factorial";
 
 //  Binomial coefficient

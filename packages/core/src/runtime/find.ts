@@ -1,10 +1,7 @@
 import { imu, is_imu, is_tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { is_power, is_rat_and_integer } from "@stemcmicro/helpers";
-import { is_cons, U } from "@stemcmicro/tree";
-import { equaln } from "../is";
-import { is_base_of_natural_logarithm } from "@stemcmicro/helpers";
-import { caddr, cadr } from "../tree/helpers";
+import { is_base_of_natural_logarithm, is_num_and_eq_number, is_power, is_rat_and_integer } from "@stemcmicro/helpers";
+import { caddr, cadr, is_cons, U } from "@stemcmicro/tree";
 
 /**
  * find stuff like (-1)^(something), but disregard imaginary units which are in the form (-1)^(1/2))
@@ -23,7 +20,7 @@ export function has_clock_form(expr: U, mysteryArg: U, $: ExprContext): boolean 
         }
     }
 
-    if (is_power(expr) && equaln(cadr(expr), -1) && !is_rat_and_integer(rhs)) {
+    if (is_power(expr) && is_num_and_eq_number(cadr(expr), -1) && !is_rat_and_integer(rhs)) {
         // console.lg "found -1^fraction in " + p
         return true;
     }

@@ -1,13 +1,13 @@
 import { create_int } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { is_add, is_multiply, is_num_and_eq_number } from "@stemcmicro/helpers";
 import { car, cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { iszero } from "./helpers/iszero";
-import { equaln, is_poly_expanded_form } from "./is";
+import { is_poly_expanded_form } from "./is";
 import { coefficients } from "./operators/coeff/coeff";
 import { ADD, FOR, MULTIPLY, POWER, SYMBOL_S, SYMBOL_T, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from "./runtime/constants";
 import { doexpand_unary } from "./runtime/defs";
-import { is_add, is_multiply } from "./runtime/helpers";
 import { SystemError } from "./runtime/SystemError";
 
 /**
@@ -130,7 +130,7 @@ function bake_poly_term(k: number, coefficient: U, term: U, $: Pick<ExprContext,
     // coefficient
     if (is_multiply(coefficient)) {
         result.push(...coefficient.tail());
-    } else if (!equaln(coefficient, 1)) {
+    } else if (!is_num_and_eq_number(coefficient, 1)) {
         result.push(coefficient);
     }
 

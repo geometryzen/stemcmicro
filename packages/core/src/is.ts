@@ -1,13 +1,12 @@
 import { is_flt, is_num, is_rat, Num, Rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { isone, is_num_and_negative, is_rat_and_integer } from "@stemcmicro/helpers";
+import { isone, is_add, is_multiply, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_eq_rational, is_num_and_negative, is_power, is_rat_and_integer } from "@stemcmicro/helpers";
 import { caddr, cadr, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { imu } from "./env/imu";
 import { guess } from "./guess";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
 import { FLOAT, MEQUAL, MSIGN, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from "./runtime/constants";
-import { is_add, is_multiply, is_power } from "./runtime/helpers";
 
 //
 // TODO: In order not to torture our future selves, these should be documented and have coverage unit testing.
@@ -25,16 +24,6 @@ export function is_num_and_gt_zero(expr: U): expr is Num & { __ts_sign: 1 } {
         return MSIGN(expr.a) === 1;
     } else if (is_flt(expr)) {
         return expr.d > 0.0;
-    } else {
-        return false;
-    }
-}
-
-export function is_num_and_eq_two(p: U): p is Num & { __ts_sign: 1; __ts_integer: true; __ts_special: 2 } {
-    if (is_rat(p)) {
-        return MEQUAL(p.a, 2) && MEQUAL(p.b, 1);
-    } else if (is_flt(p)) {
-        return p.d === 2.0;
     } else {
         return false;
     }
@@ -262,61 +251,24 @@ export function is_rat_and_fraction(p: U): p is Rat {
     return is_rat(p) && p.isFraction();
 }
 
-// n an int
-/**
- * Returns true if the expr is the specified number.
- * TODO: This only handles Rat and Flt. Everything else returns false.
- * @param expr The expresson being tested.
- * @param n The value that the expression must match.
- */
-export function equaln(expr: U, n: number): boolean {
-    if (expr !== null) {
-        if (is_rat(expr)) {
-            return MEQUAL(expr.a, n) && MEQUAL(expr.b, 1);
-        } else if (is_flt(expr)) {
-            return expr.d === n;
-        } else {
-            return false;
-        }
-    } else {
-        return false;
-    }
-}
-
-// a and b ints
-export function is_num_and_equalq(expr: U, a: number, b: number): boolean {
-    if (is_rat(expr)) {
-        return expr.numer().isIntegerNumber(a) && expr.denom().isIntegerNumber(b);
-    } else if (is_flt(expr)) {
-        return expr.d === a / b;
-    } else {
-        return false;
-    }
-}
-
-// p == 1/2 ?
-export function is_num_and_equal_one_half(p: U): boolean {
-    return is_num_and_equalq(p, 1, 2);
-}
-
 // p == -1/2 ?
 export function is_num_and_equal_minus_half(p: U): boolean {
-    return is_num_and_equalq(p, -1, 2);
+    return is_num_and_eq_rational(p, -1, 2);
 }
 
 // p == 1/sqrt(2) ?
 export function isoneoversqrttwo(p: U): boolean {
-    return is_power(p) && equaln(cadr(p), 2) && is_num_and_equalq(caddr(p), -1, 2);
+    return is_power(p) && is_num_and_eq_number(cadr(p), 2) && is_num_and_eq_rational(caddr(p), -1, 2);
 }
 
 // p == -1/sqrt(2) ?
 export function isminusoneoversqrttwo(p: U): boolean {
-    return is_multiply(p) && equaln(cadr(p), -1) && isoneoversqrttwo(caddr(p)) && length_of_cons_otherwise_zero(p) === 3;
+    return is_multiply(p) && is_num_and_eq_number(cadr(p), -1) && isoneoversqrttwo(caddr(p)) && length_of_cons_otherwise_zero(p) === 3;
 }
 
 // Check if the value is sqrt(3)/2
 export function isSqrtThreeOverTwo(p: U): boolean {
-    return is_multiply(p) && is_num_and_equal_one_half(cadr(p)) && isSqrtThree(caddr(p)) && length_of_cons_otherwise_zero(p) === 3;
+    return is_multiply(p) && is_num_and_eq_one_half(cadr(p)) && isSqrtThree(caddr(p)) && length_of_cons_otherwise_zero(p) === 3;
 }
 
 // Check if the value is -sqrt(3)/2
@@ -326,7 +278,7 @@ export function isMinusSqrtThreeOverTwo(p: U): boolean {
 
 // Check if value is sqrt(3)
 function isSqrtThree(p: U): boolean {
-    return is_power(p) && equaln(cadr(p), 3) && is_num_and_equal_one_half(caddr(p));
+    return is_power(p) && is_num_and_eq_number(cadr(p), 3) && is_num_and_eq_one_half(caddr(p));
 }
 
 export function contains_floating_values_or_floatf(expr: U): boolean {

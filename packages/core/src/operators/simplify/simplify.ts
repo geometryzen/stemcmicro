@@ -1,7 +1,7 @@
 import { create_int, is_imu, is_num, is_rat, one, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { add, inverse, is_num_and_negative, multiply, negate, power } from "@stemcmicro/helpers";
+import { add, inverse, is_add, is_inner_or_dot, is_multiply, is_num_and_eq_rational, is_num_and_negative, is_power, multiply, negate, power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { nativeDouble } from "../../bignum";
@@ -16,14 +16,13 @@ import { inner } from "../../helpers/inner";
 import { iszero } from "../../helpers/iszero";
 import { polar } from "../../helpers/polar";
 import { rect } from "../../helpers/rect";
-import { is_num_and_equalq, is_num_and_eq_minus_one, is_plus_or_minus_one } from "../../is";
+import { is_num_and_eq_minus_one, is_plus_or_minus_one } from "../../is";
 import { length_of_cons_otherwise_zero } from "../../length_of_cons_or_zero";
 import { multiply_noexpand } from "../../multiply";
 import { roots } from "../../roots";
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from "../../runtime/constants";
 import { count, countOccurrencesOfSymbol } from "../../runtime/count";
 import { noexpand_unary } from "../../runtime/defs";
-import { is_add, is_inner_or_dot, is_multiply, is_power } from "../../runtime/helpers";
 import { stack_pop } from "../../runtime/stack";
 import { ShareableStack } from "../../shareable/ShareableStack";
 import { simfac } from "../../simfac";
@@ -483,7 +482,7 @@ function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExprContext): [U, TFLAGS] {
     // console.lg("possible double radical base: " + base)
     // console.lg("possible double radical exponent: " + exponent)
 
-    if ((is_num(expo) && expo.isMinusOne()) || !car(base).equals(ADD) || !(is_rat(expo) && expo.isFraction()) || (!is_num_and_equalq(expo, 1, 3) && !is_num_and_equalq(expo, 1, 2))) {
+    if ((is_num(expo) && expo.isMinusOne()) || !car(base).equals(ADD) || !(is_rat(expo) && expo.isFraction()) || (!is_num_and_eq_rational(expo, 1, 3) && !is_num_and_eq_rational(expo, 1, 2))) {
         return [p1, TFLAG_NONE];
     }
 
@@ -516,7 +515,7 @@ function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExprContext): [U, TFLAGS] {
     const B = termsThatAreNotPowers.reduce(binary_multiply, one);
 
     let temp: U = nil;
-    if (is_num_and_equalq(expo, 1, 3)) {
+    if (is_num_and_eq_rational(expo, 1, 3)) {
         const checkSize1 = divide(multiply($, negate($, A), C), B, $); // 4th coeff
         const result1 = nativeDouble(evaluate_as_float(re(checkSize1, $), $));
         if (Math.abs(result1) > Math.pow(2, 32)) {
@@ -538,7 +537,7 @@ function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExprContext): [U, TFLAGS] {
 
         const result = add_terms([checkSize1, arg1b, multiply($, checkSize3, power($, SECRETX, two)), multiply($, one, power($, SECRETX, three))], $);
         temp = result;
-    } else if (is_num_and_equalq(expo, 1, 2)) {
+    } else if (is_num_and_eq_rational(expo, 1, 2)) {
         const result1 = nativeDouble(evaluate_as_float(re(C, $), $));
         if (Math.abs(result1) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
@@ -579,18 +578,18 @@ function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExprContext): [U, TFLAGS] {
     );
     const SOLUTION = possibleRationalSolutions[whichRationalSolution];
 
-    if (!is_num_and_equalq(expo, 1, 3) && !is_num_and_equalq(expo, 1, 2)) {
+    if (!is_num_and_eq_rational(expo, 1, 3) && !is_num_and_eq_rational(expo, 1, 2)) {
         return [p1, TFLAG_NONE];
     }
 
-    if (is_num_and_equalq(expo, 1, 3)) {
+    if (is_num_and_eq_rational(expo, 1, 3)) {
         const lowercase_b = power($, divide(A, add($, power($, SOLUTION, three), multiply($, multiply($, three, C), SOLUTION)), $), third);
         const lowercase_a = multiply($, lowercase_b, SOLUTION);
         const result = simplify(add($, multiply($, lowercase_b, power($, C, half)), lowercase_a), $);
         return [result, TFLAG_DIFF];
     }
 
-    if (is_num_and_equalq(expo, 1, 2)) {
+    if (is_num_and_eq_rational(expo, 1, 2)) {
         const lowercase_b = power($, divide(A, add($, power($, SOLUTION, two), C), $), half);
         const lowercase_a = multiply($, lowercase_b, SOLUTION);
         const possibleNewExpression = simplify(add($, multiply($, lowercase_b, power($, C, half)), lowercase_a), $);
@@ -620,7 +619,7 @@ function _listAll(secondTerm: U, $: ExprContext): { commonBases: U[]; termsThatA
                 if (is_power(potentialPower)) {
                     const innerbase = cadr(potentialPower);
                     const innerexponent = caddr(potentialPower);
-                    if (is_num_and_equalq(innerexponent, 1, 2)) {
+                    if (is_num_and_eq_rational(innerexponent, 1, 2)) {
                         if (commonInnerExponent == null) {
                             commonInnerExponent = innerexponent;
                             commonBases.push(innerbase);
@@ -637,7 +636,7 @@ function _listAll(secondTerm: U, $: ExprContext): { commonBases: U[]; termsThatA
     } else if (is_power(secondTerm)) {
         const innerbase = cadr(secondTerm);
         const innerexponent = caddr(secondTerm);
-        if (commonInnerExponent == null && is_num_and_equalq(innerexponent, 1, 2)) {
+        if (commonInnerExponent == null && is_num_and_eq_rational(innerexponent, 1, 2)) {
             commonInnerExponent = innerexponent;
             commonBases.push(innerbase);
         }

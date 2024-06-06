@@ -3,11 +3,10 @@ import { ExprContext } from "@stemcmicro/context";
 import { isone, is_add, is_multiply, is_negative, is_power } from "@stemcmicro/helpers";
 import { caddr, car, cdr, Cons, U } from "@stemcmicro/tree";
 import { mp_numerator } from "../../bignum";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { multiply_items } from "../../multiply";
 import { rationalize_factoring } from "../rationalize/rationalize";
 
-export function eval_numerator(expr: Cons, $: ExtensionEnv): U {
+export function eval_numerator(expr: Cons, $: ExprContext): U {
     const argList = expr.argList;
     try {
         const head = argList.head;

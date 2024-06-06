@@ -1,9 +1,10 @@
+import { is_inner_or_dot } from "@stemcmicro/helpers";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { inv } from "../../inv";
 import { items_to_cons } from "../../makeList";
 import { SYMBOL_IDENTITY_MATRIX } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
-import { is_inner_or_dot, is_num_or_tensor_or_identity_matrix } from "../../runtime/helpers";
+import { is_num_or_tensor_or_identity_matrix } from "../../runtime/helpers";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { car, cdr, Cons, is_cons, nil, U } from "../../tree/tree";
 

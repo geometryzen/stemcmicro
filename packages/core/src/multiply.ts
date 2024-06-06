@@ -4,11 +4,10 @@ import { Directive } from "@stemcmicro/directive";
 import { multiply, negate } from "@stemcmicro/helpers";
 import { U } from "@stemcmicro/tree";
 import { binop } from "./calculators/binop";
-import { ExtensionEnv } from "./env/ExtensionEnv";
 import { noexpand_binary, noexpand_unary } from "./runtime/defs";
 import { MATH_MUL } from "./runtime/ns_math";
 
-export function multiply_binary(lhs: U, rhs: U, _: Pick<ExtensionEnv, "valueOf">): U {
+export function multiply_binary(lhs: U, rhs: U, _: Pick<ExprContext, "valueOf">): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         return retval;

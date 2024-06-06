@@ -1,7 +1,7 @@
 import { create_flt, create_sym, imu, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, is_uom, negOne, one, QQ } from "@stemcmicro/atoms";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
-import { isone, is_base_of_natural_logarithm, is_rat_and_integer, num_to_number } from "@stemcmicro/helpers";
+import { isone, is_base_of_natural_logarithm, is_num_and_eq_one_half, is_rat_and_integer, num_to_number } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { car, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { nativeDouble, rational } from "../../bignum";
@@ -11,7 +11,7 @@ import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";
 import { divide } from "../../helpers/divide";
 import { iszero } from "../../helpers/iszero";
-import { iscomplexnumberdouble, is_complex_number, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_gt_zero, is_plus_or_minus_one, is_rat_and_even_integer } from "../../is";
+import { iscomplexnumberdouble, is_complex_number, is_num_and_equal_minus_half, is_num_and_eq_minus_one, is_num_and_gt_zero, is_plus_or_minus_one, is_rat_and_even_integer } from "../../is";
 import { multiply_binary } from "../../multiply";
 import { is_integer_and_in_safe_number_range } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
@@ -105,7 +105,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
     }
 
     //   -1 ^ 1/2  ->  i
-    if (is_num_and_eq_minus_one(base) && is_num_and_equal_one_half(expo)) {
+    if (is_num_and_eq_minus_one(base) && is_num_and_eq_one_half(expo)) {
         if ($.getDirective(Directive.complexAsClock)) {
             return items_to_cons(POW, base, expo);
         } else {

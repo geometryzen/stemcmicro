@@ -2,64 +2,84 @@ import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_keyword, is_nu
 import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { is_localizable } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
-import { isone, is_add, is_base_of_natural_logarithm, is_num_and_negative, is_pi, is_power, lt_num_num, negate, str_to_string } from "@stemcmicro/helpers";
+import {
+    isone,
+    is_add,
+    is_base_of_natural_logarithm,
+    is_cons_opr_eq_abs,
+    is_cons_opr_eq_fn,
+    is_cons_opr_eq_inv,
+    is_cons_opr_eq_lco,
+    is_cons_opr_eq_outer,
+    is_cons_opr_eq_rco,
+    is_factorial,
+    is_inner_or_dot,
+    is_multiply,
+    is_negative,
+    is_num_and_eq_minus_one,
+    is_num_and_eq_number,
+    is_num_and_eq_one_half,
+    is_num_and_eq_two,
+    is_num_and_negative,
+    is_pi,
+    is_power,
+    is_rat_and_fraction,
+    is_rat_one_over_something,
+    is_transpose,
+    lt_num_num,
+    negate,
+    str_to_string
+} from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { caadr, caar, cadddr, caddr, cadnr, cadr, car, cddr, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
-import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from "../is";
-import { denominator } from "../operators/denominator/denominator";
-import { numerator } from "../operators/numerator/numerator";
-import { ProgrammingError } from "../programming/ProgrammingError";
-import {
-    ADD,
-    ARCCOS,
-    ARCSIN,
-    ARCTAN,
-    ASSIGN,
-    BINOMIAL,
-    CEILING,
-    COS,
-    DEFINT,
-    DO,
-    FACTORIAL,
-    FLOOR,
-    FN,
-    FOR,
-    FUNCTION,
-    LAST_ASCII_PRINT,
-    LAST_HUMAN_PRINT,
-    LAST_INFIX_PRINT,
-    LAST_LATEX_PRINT,
-    LAST_SEXPR_PRINT,
-    MULTIPLY,
-    PATTERN,
-    POWER,
-    PRINT_LEAVE_E_ALONE,
-    PRINT_LEAVE_X_ALONE,
-    PRODUCT,
-    ROUND,
-    SIN,
-    SQRT,
-    SUM,
-    TAN,
-    TEST,
-    TESTGE,
-    TESTGT,
-    TESTLE,
-    TESTLT,
-    UNIT
-} from "../runtime/constants";
-import { RESERVED_KEYWORD_LAST } from "../runtime/ns_script";
 import { mp_denominator } from "./mp_denominator";
 import { mp_numerator } from "./mp_numerator";
 import { PrintMode } from "./PrintMode";
 import { print_number } from "./print_number";
 import { render_as_sexpr } from "./render_as_sexpr";
 
+const ADD = native_sym(Native.add);
+const ARCCOS = native_sym(Native.arccos);
+const ARCSIN = native_sym(Native.arcsin);
+const ARCTAN = native_sym(Native.arctan);
+const ASSIGN = native_sym(Native.assign);
+const BINOMIAL = native_sym(Native.binomial);
+const CEILING = native_sym(Native.ceiling);
+const COMPONENT = native_sym(Native.component);
+const COS = native_sym(Native.cos);
+const DEFINT = native_sym(Native.defint);
+const DO = native_sym(Native.do);
+const FACTORIAL = native_sym(Native.factorial);
+const FLOOR = native_sym(Native.floor);
+const FOR = native_sym(Native.for);
+const FUNCTION = native_sym(Native.function);
+const LAST_ASCII_PRINT = create_sym("lastAsciiPrint");
+const LAST_INFIX_PRINT = create_sym("lastInfixPrint");
+const LAST_LATEX_PRINT = create_sym("lastLatexPrint");
+const LAST_SEXPR_PRINT = create_sym("lastSexprPrint");
+const LAST_HUMAN_PRINT = create_sym("lastHumanPrint");
 const MATH_E = native_sym(Native.E);
 const MATH_IMU = native_sym(Native.IMU);
 const MATH_PI = native_sym(Native.PI);
+const MULTIPLY = native_sym(Native.multiply);
+const PATTERN = native_sym(Native.pattern);
+const POWER = native_sym(Native.pow);
+const PRINT_LEAVE_E_ALONE = create_sym("printLeaveEAlone");
+const PRINT_LEAVE_X_ALONE = create_sym("printLeaveXAlone");
+const PRODUCT = native_sym(Native.product);
+const RESERVED_KEYWORD_LAST = native_sym(Native.last);
+const ROUND = native_sym(Native.round);
+const SIN = native_sym(Native.sin);
+const SQRT = native_sym(Native.sqrt);
+const SUM = native_sym(Native.sum);
+const TAN = native_sym(Native.tan);
+const TEST = native_sym(Native.test);
 const TESTEQ = native_sym(Native.testeq);
-const COMPONENT = native_sym(Native.component);
+const TESTGE = native_sym(Native.testge);
+const TESTGT = native_sym(Native.testgt);
+const TESTLE = native_sym(Native.testle);
+const TESTLT = native_sym(Native.testlt);
+const UNIT = native_sym(Native.unit);
 
 /**
  *
@@ -91,7 +111,7 @@ export function get_last_print_mode_symbol(printMode: PrintMode): Sym {
         case PrintMode.SExpr:
             return LAST_SEXPR_PRINT;
         default:
-            throw new ProgrammingError();
+            throw new Error();
     }
 }
 
@@ -400,7 +420,7 @@ function print_multiply_when_no_denominators(expr: Cons, _: PrintConfig): string
     // the variable, but we'll see when we'll
     // come to it if it's an issue.
     let numberOneOverSomething = false;
-    if (_.getDirective(Directive.printMode) === PrintMode.LaTeX && is_cons(cdr(p)) && isNumberOneOverSomething(car(p))) {
+    if (_.getDirective(Directive.printMode) === PrintMode.LaTeX && is_cons(cdr(p)) && is_rat_one_over_something(car(p))) {
         numberOneOverSomething = true;
         denom = (car(p) as Rat).b.toString();
     }
@@ -470,7 +490,7 @@ export function print_multiplicative_expr(expr: U, $: PrintConfig): string {
 }
 
 export function print_outer_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, _: PrintConfig): string {
-    if (is_cons(expr) && is_outer(expr)) {
+    if (is_cons(expr) && is_cons_opr_eq_outer(expr)) {
         let argList = expr.argList;
         if (is_cons(argList)) {
             let str = print_inner_expr(argList.car, false, false, _);
@@ -517,7 +537,7 @@ export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: 
         } else {
             throw new Error();
         }
-    } else if (is_cons(expr) && is_lco(expr)) {
+    } else if (is_cons(expr) && is_cons_opr_eq_lco(expr)) {
         let argList = expr.argList;
         if (is_cons(argList)) {
             let str = print_factor(argList.car, false, false, _);
@@ -531,7 +551,7 @@ export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: 
         } else {
             throw new Error();
         }
-    } else if (is_cons(expr) && is_rco(expr)) {
+    } else if (is_cons(expr) && is_cons_opr_eq_rco(expr)) {
         let argList = expr.argList;
         if (is_cons(argList)) {
             let str = print_factor(argList.car, false, false, _);
@@ -1009,24 +1029,24 @@ function print_SETQ_codegen(p: U, $: PrintConfig): string {
     return accumulator;
 }
 
-function print_PRODUCT_latex(p: U, $: PrintConfig): string {
+function print_PRODUCT_latex(p: Cons, $: PrintConfig): string {
     let accumulator = "\\prod_{";
     accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     accumulator += "=";
     accumulator += render_using_non_sexpr_print_mode(cadddr(p), $);
     accumulator += "}^{";
-    accumulator += render_using_non_sexpr_print_mode(caddddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadnr(p, 4), $);
     accumulator += "}{";
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += "}";
     return accumulator;
 }
 
-function print_PRODUCT_codegen(p: U, $: PrintConfig): string {
+function print_PRODUCT_codegen(p: Cons, $: PrintConfig): string {
     const body = cadr(p);
     const variable = caddr(p);
     const lowerlimit = cadddr(p);
-    const upperlimit = caddddr(p);
+    const upperlimit = cadnr(p, 4);
 
     const accumulator =
         "(function(){" +
@@ -1066,7 +1086,7 @@ function should_tweak_exponent_syntax(base: U, $: PrintConfig): boolean {
                 // There is no override, therefore tweak!
                 return true;
             } else {
-                return !equaln(binding, 1);
+                return !is_num_and_eq_number(binding, 1);
             }
         } else {
             // base symbols that don't have the printname 'x' can have their power expressions tweaked.
@@ -1082,8 +1102,8 @@ function print_power(base: U, expo: U, _: PrintConfig) {
     let str = "";
 
     // quick check this is actually a square root.
-    if (is_num_and_equal_one_half(expo)) {
-        if (equaln(base, 2)) {
+    if (is_num_and_eq_one_half(expo)) {
+        if (is_num_and_eq_number(base, 2)) {
             if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
                 str += print_str("Math.SQRT2");
                 return str;
@@ -1103,7 +1123,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
         }
     }
 
-    if (equaln(_.getBinding(PRINT_LEAVE_E_ALONE, nil), 1) && is_base_of_natural_logarithm(base)) {
+    if (is_num_and_eq_number(_.getBinding(PRINT_LEAVE_E_ALONE, nil), 1) && is_base_of_natural_logarithm(base)) {
         if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             str += print_str("Math.exp(");
             str += print_expo_of_denom(expo, _);
@@ -1253,7 +1273,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
             } else {
                 str += print_factor(base, true, false, _);
             }
-        } else if (is_outer(base)) {
+        } else if (is_cons(base) && is_cons_opr_eq_outer(base)) {
             // Outer product has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str("(");
             str += render_using_non_sexpr_print_mode(base, _);
@@ -1379,7 +1399,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
                 } else if (is_err(response)) {
                     throw response;
                 } else {
-                    throw new ProgrammingError();
+                    throw new Error();
                 }
             }
             case PrintMode.LaTeX: {
@@ -1504,7 +1524,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         const opr = expr.opr;
         const argList = expr.argList;
         try {
-            if (opr.equals(FN)) {
+            if (is_cons_opr_eq_fn(expr)) {
                 let str = "";
                 const body = argList.item(1);
                 try {
@@ -1578,7 +1598,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
     // based upon _.getDirective(Directive.printMode), _.getDirective(Directive.printMode)===PrintMode.EcmaScript
     if (is_cons(expr) && is_factorial(expr)) {
         return print_factorial_function(expr, _);
-    } else if (is_cons(expr) && is_abs(expr)) {
+    } else if (is_cons(expr) && is_cons_opr_eq_abs(expr)) {
         // console.lg(`print_factor ${expr} omitParens => ${omitParens} pastFirstFactor => ${false} printMode: ${_.getDirective(Directive.printMode)}`);
         switch (_.getDirective(Directive.printMode)) {
             case PrintMode.Human:
@@ -1590,7 +1610,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             }
             default: {
                 // PrintMode.Ascii and PrintMode.SExpr is the other mode but that doesn't use this function.
-                throw new ProgrammingError();
+                throw new Error();
             }
         }
     } else if (car(expr).equals(SQRT) && _.getDirective(Directive.printMode) === PrintMode.LaTeX) {
@@ -1614,7 +1634,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_UNIT_codegen(expr, _);
             return str;
         }
-    } else if (is_cons(expr) && is_opr_eq_inv(expr)) {
+    } else if (is_cons(expr) && is_cons_opr_eq_inv(expr)) {
         if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = "";
             str += print_INV_latex(expr, _);
@@ -1692,7 +1712,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
         //  if printMode == PrintMode.LaTeX
         //    print_expr(cadr(p),$)
         //    return accumulator
-    } else if (car(expr).equals(PRODUCT)) {
+    } else if (is_cons(expr) && car(expr).equals(PRODUCT)) {
         if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = "";
             str += print_PRODUCT_latex(expr, _);
@@ -1856,7 +1876,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
             // const handler = _.handlerFor(expr);
             // Ignore
         } else {
-            throw new ProgrammingError(`${expr}`);
+            throw new Error(`${expr}`);
         }
     }
 
@@ -1938,14 +1958,14 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
                 case PrintMode.LaTeX:
                 case PrintMode.SExpr:
                 default: {
-                    throw new ProgrammingError(`${expr}: ${expr.type}`);
+                    throw new Error(`${expr}: ${expr.type}`);
                 }
             }
         }
         if (expr.isnil) {
             return print_str(_.getSymbolPrintName(native_sym(Native.NIL)));
         }
-        throw new ProgrammingError(`${expr} ???`);
+        throw new Error(`${expr} ???`);
     }
 }
 

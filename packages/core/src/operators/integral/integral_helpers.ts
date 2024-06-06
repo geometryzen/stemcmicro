@@ -2,12 +2,12 @@ import { create_flt, is_num, is_sym, one, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
 import { ScanOptions, scan_meta } from "@stemcmicro/em-parse";
-import { add, is_add, is_multiply, multiply, num_to_number } from "@stemcmicro/helpers";
+import { add, is_add, is_multiply, is_num_and_eq_one_half, is_num_and_eq_rational, multiply, num_to_number } from "@stemcmicro/helpers";
 import { cadr, car, cdr, Cons, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { guess } from "../../guess";
 import { exp } from "../../helpers/exp";
-import { is_num_and_equalq, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one } from "../../is";
+import { is_num_and_equal_minus_half, is_num_and_eq_minus_one } from "../../is";
 import { partition } from "../../partition";
 import { ADD, EXP, INTEGRAL, METAX, MULTIPLY, POWER, SQRT } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
@@ -690,13 +690,13 @@ function hash_power(base: U, expo: U, x: U, $: ExprContext): number {
         }
         if (is_num_and_eq_minus_one(expo)) {
             exp_hash = -1;
-        } else if (is_num_and_equal_one_half(expo)) {
+        } else if (is_num_and_eq_one_half(expo)) {
             exp_hash = 0.5;
         } else if (is_num_and_equal_minus_half(expo)) {
             exp_hash = -0.5;
-        } else if (is_num_and_equalq(expo, 2, 1)) {
+        } else if (is_num_and_eq_rational(expo, 2, 1)) {
             exp_hash = 2;
-        } else if (is_num_and_equalq(expo, -2, 1)) {
+        } else if (is_num_and_eq_rational(expo, -2, 1)) {
             exp_hash = -2;
         }
     }

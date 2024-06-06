@@ -2,11 +2,11 @@ import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_keyword, is_nu
 import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { is_localizable } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
-import { isone, is_base_of_natural_logarithm, is_num_and_negative, is_pi, lt_num_num, negate, str_to_string } from "@stemcmicro/helpers";
+import { isone, is_base_of_natural_logarithm, is_cons_opr_eq_inv, is_inner_or_dot, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_eq_two, is_num_and_negative, is_outer, is_pi, lt_num_num, negate, str_to_string } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { mp_denominator, mp_numerator } from "../bignum";
-import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from "../is";
+import { isNumberOneOverSomething, is_num_and_eq_minus_one, is_rat_and_fraction } from "../is";
 import { denominator } from "../operators/denominator/denominator";
 import { numerator } from "../operators/numerator/numerator";
 import { is_negative } from "../predicates/is_negative";
@@ -51,7 +51,7 @@ import {
     UNIT
 } from "../runtime/constants";
 import { PrintMode } from "../runtime/defs";
-import { is_abs, is_add, is_factorial, is_inner_or_dot, is_lco, is_multiply, is_opr_eq_inv, is_outer, is_power, is_rco, is_transpose } from "../runtime/helpers";
+import { is_abs, is_add, is_factorial, is_lco, is_multiply, is_power, is_rco, is_transpose } from "../runtime/helpers";
 import { RESERVED_KEYWORD_LAST } from "../runtime/ns_script";
 import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from "../tree/helpers";
 import { print_number } from "./print_number";
@@ -1068,7 +1068,7 @@ function should_tweak_exponent_syntax(base: U, $: PrintConfig): boolean {
                 // There is no override, therefore tweak!
                 return true;
             } else {
-                return !equaln(binding, 1);
+                return !is_num_and_eq_number(binding, 1);
             }
         } else {
             // base symbols that don't have the printname 'x' can have their power expressions tweaked.
@@ -1084,8 +1084,8 @@ function print_power(base: U, expo: U, _: PrintConfig) {
     let str = "";
 
     // quick check this is actually a square root.
-    if (is_num_and_equal_one_half(expo)) {
-        if (equaln(base, 2)) {
+    if (is_num_and_eq_one_half(expo)) {
+        if (is_num_and_eq_number(base, 2)) {
             if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
                 str += print_str("Math.SQRT2");
                 return str;
@@ -1105,7 +1105,7 @@ function print_power(base: U, expo: U, _: PrintConfig) {
         }
     }
 
-    if (equaln(_.getBinding(PRINT_LEAVE_E_ALONE, nil), 1) && is_base_of_natural_logarithm(base)) {
+    if (is_num_and_eq_number(_.getBinding(PRINT_LEAVE_E_ALONE, nil), 1) && is_base_of_natural_logarithm(base)) {
         if (_.getDirective(Directive.printMode) === PrintMode.EcmaScript) {
             str += print_str("Math.exp(");
             str += print_expo_of_denom(expo, _);
@@ -1616,7 +1616,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
             str += print_UNIT_codegen(expr, _);
             return str;
         }
-    } else if (is_cons(expr) && is_opr_eq_inv(expr)) {
+    } else if (is_cons(expr) && is_cons_opr_eq_inv(expr)) {
         if (_.getDirective(Directive.printMode) === PrintMode.LaTeX) {
             let str = "";
             str += print_INV_latex(expr, _);

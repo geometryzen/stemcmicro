@@ -1,15 +1,14 @@
 import { negOne, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { add, inverse, isone, subtract } from "@stemcmicro/helpers";
+import { add, inverse, isone, is_add, is_factorial, is_multiply, is_num_and_eq_number, is_power, subtract } from "@stemcmicro/helpers";
 import { caadr, cadadr, caddr, cadr, U } from "@stemcmicro/tree";
 import { add_terms } from "./calculators/add/add_terms";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { equals } from "./helpers/equals";
-import { equaln, is_num_and_eq_minus_one } from "./is";
+import { is_num_and_eq_minus_one } from "./is";
 import { multiply_items_factoring } from "./multiply";
 import { factorial } from "./operators/factorial/factorial";
 import { FACTORIAL } from "./runtime/constants";
-import { is_add, is_factorial, is_multiply, is_power } from "./runtime/helpers";
 import { stack_push } from "./runtime/stack";
 
 /*
@@ -131,12 +130,12 @@ function yysimfac(stack: U[], _: ExprContext): boolean {
                     stack[j] = one;
                     return true;
                 }
-                if (equaln(p3, 2)) {
+                if (is_num_and_eq_number(p3, 2)) {
                     stack[i] = cadr(p1);
                     stack[j] = add(_, cadr(p1), negOne);
                     return true;
                 }
-                if (equaln(p3, -2)) {
+                if (is_num_and_eq_number(p3, -2)) {
                     stack[i] = inverse(cadr(cadr(p2)), _);
                     stack[j] = inverse(add(_, cadr(cadr(p2)), negOne), _);
                     return true;

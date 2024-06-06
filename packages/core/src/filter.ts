@@ -1,7 +1,7 @@
 import { is_tensor, Tensor, zero } from "@stemcmicro/atoms";
+import { is_add } from "@stemcmicro/helpers";
 import { car, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { is_add } from "./runtime/helpers";
 
 /*
 Remove terms that involve a given symbol or expression. For example...

@@ -1,7 +1,7 @@
 import { imu, is_imu, is_num, is_rat, is_tensor, one, Tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { add, isone, is_base_of_natural_logarithm, is_pi, multiply, negate, power } from "@stemcmicro/helpers";
+import { add, isone, is_base_of_natural_logarithm, is_cons_opr_eq_power, is_num_and_eq_number, is_pi, multiply, negate, power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, is_atom, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { complex_conjugate } from "../../complex_conjugate";
@@ -12,7 +12,7 @@ import { inner } from "../../helpers/inner";
 import { iszero } from "../../helpers/iszero";
 import { real } from "../../helpers/real";
 import { rect } from "../../helpers/rect";
-import { equaln, is_num_and_gt_zero } from "../../is";
+import { is_num_and_gt_zero } from "../../is";
 import { is_negative } from "../../predicates/is_negative";
 import { has_clock_form, has_exp_form } from "../../runtime/find";
 import { is_abs, is_add, is_multiply, is_power } from "../../runtime/helpers";
@@ -118,7 +118,7 @@ export function absval(expr: U, $: ExprContext): U {
         }
     }
 
-    if (is_cons(expr) && is_power(expr) && equaln(car(expr.cdr), -1)) {
+    if (is_cons(expr) && is_cons_opr_eq_power(expr) && is_num_and_eq_number(car(expr.cdr), -1)) {
         // -1 to any power
         // abs( (-1)^x ) = sqrt( (-1)^x * (-1)^x ) = sqrt( 1^x ) = 1
         return hook($.getDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one, "G");

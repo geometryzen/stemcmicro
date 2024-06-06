@@ -1,10 +1,10 @@
 import { is_flt, is_rat } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
-import { num_to_number } from "@stemcmicro/helpers";
+import { is_num_and_eq_number, is_num_and_eq_rational, num_to_number } from "@stemcmicro/helpers";
 import { car, cdr, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { equaln, isminusoneoversqrttwo, isMinusSqrtThreeOverTwo, isoneoversqrttwo, isSqrtThreeOverTwo, is_num_and_equalq } from "../../is";
+import { isminusoneoversqrttwo, isMinusSqrtThreeOverTwo, isoneoversqrttwo, isSqrtThreeOverTwo } from "../../is";
 import { ARCSIN, POWER } from "../../runtime/constants";
 import { is_multiply, is_sin } from "../../runtime/helpers";
 import { MATH_PI } from "../../runtime/ns_math";
@@ -38,13 +38,16 @@ export function arcsin(x: U, $: ExtensionEnv): U {
 
     // if x == 1/sqrt(2) then return 1/4*pi (45 degrees)
     // second if catches the other way of saying it, sqrt(2)/2
-    if (isoneoversqrttwo(x) || (is_multiply(x) && is_num_and_equalq(car(cdr(x)), 1, 2) && car(car(cdr(cdr(x)))).equals(POWER) && equaln(car(cdr(car(cdr(cdr(x))))), 2) && is_num_and_equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))) {
+    if (isoneoversqrttwo(x) || (is_multiply(x) && is_num_and_eq_rational(car(cdr(x)), 1, 2) && car(car(cdr(cdr(x)))).equals(POWER) && is_num_and_eq_number(car(cdr(car(cdr(cdr(x))))), 2) && is_num_and_eq_rational(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))) {
         return $.multiply(rational(1, 4), MATH_PI);
     }
 
     // if x == -1/sqrt(2) then return -1/4*pi (-45 degrees)
     // second if catches the other way of saying it, -sqrt(2)/2
-    if (isminusoneoversqrttwo(x) || (is_multiply(x) && is_num_and_equalq(car(cdr(x)), -1, 2) && car(car(cdr(cdr(x)))).equals(POWER) && equaln(car(cdr(car(cdr(cdr(x))))), 2) && is_num_and_equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))) {
+    if (
+        isminusoneoversqrttwo(x) ||
+        (is_multiply(x) && is_num_and_eq_rational(car(cdr(x)), -1, 2) && car(car(cdr(cdr(x)))).equals(POWER) && is_num_and_eq_number(car(cdr(car(cdr(cdr(x))))), 2) && is_num_and_eq_rational(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
+    ) {
         return $.getDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 4.0) : $.multiply(rational(-1, 4), MATH_PI);
     }
 

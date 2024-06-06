@@ -1,21 +1,18 @@
+import { bigInt, BigInteger, negOne, Rat } from "@stemcmicro/atoms";
+import { cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { mint, setSignTo } from "./bignum";
-import { equaln } from "./is";
 import { mgcd } from "./mgcd";
 import { mdiv, mdivrem, mmod, mmul } from "./mmul";
 import { mprime } from "./operators/isprime/mprime";
 import { MULTIPLY, POWER, primetab } from "./runtime/constants";
 import { mcmp } from "./runtime/mcmp";
-import { bigInt, BigInteger } from "./tree/rat/big-integer";
-import { negOne, Rat } from "./tree/rat/Rat";
-import { cons, items_to_cons, nil, U } from "./tree/tree";
 
 // Factor using the Pollard rho method
 
 let n_factor_number = bigInt(0);
 
 export function factor_rat(q: Rat): U {
-    // 0 or 1?
-    if (equaln(q, 0) || equaln(q, 1) || equaln(q, -1)) {
+    if (q.isZero() || q.isOne() || q.isMinusOne()) {
         return q;
     }
     n_factor_number = q.a;

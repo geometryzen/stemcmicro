@@ -1,10 +1,11 @@
 import { is_blade, is_tensor } from "@stemcmicro/atoms";
+import { is_inner_or_dot } from "@stemcmicro/helpers";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { inv } from "../../inv";
 import { items_to_cons } from "../../makeList";
 import { is_negative } from "../../predicates/is_negative";
 import { SYMBOL_IDENTITY_MATRIX } from "../../runtime/constants";
-import { is_add, is_inner_or_dot, is_num_or_tensor_or_identity_matrix } from "../../runtime/helpers";
+import { is_add, is_num_or_tensor_or_identity_matrix } from "../../runtime/helpers";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { other_x_tensor, tensor_x_other } from "../../tensor";
 import { zero } from "../../tree/rat/Rat";

@@ -4,12 +4,16 @@ import { Directive } from "@stemcmicro/directive";
 import { isone, is_add, is_base_of_natural_logarithm, is_factorial, is_multiply, is_num_and_eq_minus_one, is_num_and_negative, is_power, is_rat_and_fraction, str_to_string } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { Atom, caar, caddr, cadr, car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
-import { str_extension } from "../operators/str/str_extension";
-import { ADD, ASSIGN, FACTORIAL, MULTIPLY, POWER } from "../runtime/constants";
 import { mp_denominator } from "./mp_denominator";
 import { mp_numerator } from "./mp_numerator";
 import { number_to_floating_point_string } from "./number_to_floating_point_string";
 import { PrintConfig, render_using_non_sexpr_print_mode } from "./print";
+
+const ADD = native_sym(Native.add);
+const ASSIGN = native_sym(Native.assign);
+const FACTORIAL = native_sym(Native.factorial);
+const MULTIPLY = native_sym(Native.multiply);
+const POWER = native_sym(Native.pow);
 
 /*
 
@@ -809,7 +813,7 @@ function emit_symbol(sym: Sym, $: PrintConfig): void {
 
 function emit_string(str: Str): void {
     // We know that the Ascii representation will add double-quote delimiters. These should be included.
-    const chars = str_extension.toAsciiString(str);
+    const chars = JSON.stringify(str.str);
     for (let i = 0; i < chars.length; i++) {
         __emit_char(chars[i]);
     }
@@ -920,7 +924,7 @@ function get_size(j: number, k: number): [h: number, w: number, y: number] {
 
 function __emit_char(ch: string): number | undefined {
     if (yindex === YMAX) {
-        return;
+        return void 0;
     }
     chartab[yindex].c = ch;
     chartab[yindex].x = emit_x;

@@ -1,6 +1,7 @@
 import { is_flt, is_sym } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
-import { is_base_of_natural_logarithm, is_cons_opr_eq_sym, is_num_and_negative, is_pi } from "@stemcmicro/helpers";
+import { is_num_and_eq_one_half } from "@stemcmicro/helpers";
+import { is_add, is_base_of_natural_logarithm, is_cons_opr_eq_sym, is_multiply, is_num_and_eq_number, is_num_and_negative, is_pi, is_power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { subtract } from "../../calculators/sub/subtract";
@@ -8,10 +9,9 @@ import { stack_arg } from "../../eigenmath/eigenmath";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";
 import { hook_create_err } from "../../hooks/hook_create_err";
-import { equaln, is_num_and_equal_one_half, is_num_and_gt_zero } from "../../is";
+import { is_num_and_gt_zero } from "../../is";
 import { is_negative } from "../../predicates/is_negative";
 import { DynamicConstants } from "../../runtime/defs";
-import { is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_PI } from "../../runtime/ns_math";
 import { piAsFlt, zeroAsFlt } from "../../tree/flt/Flt";
 import { caddr, cadr } from "../../tree/helpers";
@@ -119,7 +119,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     if (is_power(expr)) {
         const base = expr.base;
         // Implementation in which imaginary unit is (pow -1 1/2).
-        if (equaln(base, -1)) {
+        if (is_num_and_eq_number(base, -1)) {
             // -1 to a power
             return $.multiply(DynamicConstants.PI($), expr.expo);
         }
@@ -139,7 +139,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
         return arg;
     }
 
-    if (is_power(expr) && is_num_and_equal_one_half(caddr(expr))) {
+    if (is_power(expr) && is_num_and_eq_one_half(caddr(expr))) {
         const arg1 = $.arg(cadr(expr));
         return $.multiply(arg1, caddr(expr));
     }

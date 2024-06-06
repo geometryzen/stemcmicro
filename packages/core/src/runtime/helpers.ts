@@ -1,11 +1,11 @@
 import { is_num, is_sym, is_tensor, Num, Sym, Tensor } from "@stemcmicro/atoms";
-import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { is_cons_opr_eq_sym } from "@stemcmicro/helpers";
+import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { Cons, Cons0, is_cons, U } from "@stemcmicro/tree";
 import { is_cons_opr_eq_add } from "../operators/add/is_cons_opr_eq_add";
 import { Cons2 } from "../operators/helpers/Cons2";
-import { DOT, INV, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from "./constants";
-import { MATH_FACTORIAL, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO, MATH_SIN } from "./ns_math";
+import { SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from "./constants";
+import { MATH_FACTORIAL, MATH_LCO, MATH_MUL, MATH_RCO, MATH_SIN } from "./ns_math";
 
 export const ABS = native_sym(Native.abs);
 
@@ -36,10 +36,6 @@ export function is_factorial(expr: U): expr is Cons & { __ts_sym: "MATH_FACTORIA
     return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_FACTORIAL);
 }
 
-export function is_outer(expr: U): expr is Cons & { __ts_sym: "MATH_OUTER" } {
-    return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_OUTER);
-}
-
 export function is_lco(expr: U): expr is Cons & { __ts_sym: "MATH_LCO" } {
     return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_LCO);
 }
@@ -48,26 +44,8 @@ export function is_rco(expr: U): expr is Cons & { __ts_sym: "MATH_RCO" } {
     return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_RCO);
 }
 
-export function is_inner_or_dot(expr: U): boolean {
-    if (is_cons(expr)) {
-        if (is_cons_opr_eq_sym(expr, MATH_INNER)) {
-            return true;
-        }
-        if (is_cons_opr_eq_sym(expr, DOT)) {
-            return true;
-        }
-        return false;
-    } else {
-        return false;
-    }
-}
-
 export function is_transpose(expr: U): boolean {
     return is_cons(expr) && is_cons_opr_eq_sym(expr, TRANSPOSE);
-}
-
-export function is_opr_eq_inv(expr: Cons): boolean {
-    return is_cons(expr) && is_cons_opr_eq_sym(expr, INV);
 }
 
 /**

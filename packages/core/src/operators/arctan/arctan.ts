@@ -1,5 +1,6 @@
 import { create_flt, create_rat, is_flt, is_sym, is_tensor, Num, Sym } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
+import { is_num_and_eq_number, is_num_and_eq_rational } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, Cons, Cons1, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
@@ -10,7 +11,6 @@ import { isplusone } from "../../eigenmath/isplusone";
 import { iszero } from "../../eigenmath/iszero";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { StackU } from "../../env/StackU";
-import { equaln, is_num_and_equalq } from "../../is";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCTAN, COS, POWER, SIN, TAN } from "../../runtime/constants";
 import { DynamicConstants } from "../../runtime/defs";
@@ -152,19 +152,19 @@ function arctan(x: U, $: ExtensionEnv): U {
     // arctan(1/sqrt(3)) -> pi/6
     // second if catches the other way of saying it, sqrt(3)/3
     if (
-        (is_power(x) && equaln(cadr(x), 3) && is_num_and_equalq(caddr(x), -1, 2)) ||
-        (is_multiply(x) && is_num_and_equalq(car(cdr(x)), 1, 3) && car(car(cdr(cdr(x)))).equals(POWER) && equaln(car(cdr(car(cdr(cdr(x))))), 3) && is_num_and_equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
+        (is_power(x) && is_num_and_eq_number(cadr(x), 3) && is_num_and_eq_rational(caddr(x), -1, 2)) ||
+        (is_multiply(x) && is_num_and_eq_rational(car(cdr(x)), 1, 3) && car(car(cdr(cdr(x)))).equals(POWER) && is_num_and_eq_number(car(cdr(car(cdr(cdr(x))))), 3) && is_num_and_eq_rational(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
         return $.multiply(rational(1, 6), $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : MATH_PI);
     }
 
     // arctan(1) -> pi/4
-    if (equaln(x, 1)) {
+    if (is_num_and_eq_number(x, 1)) {
         return $.multiply(rational(1, 4), DynamicConstants.PI($));
     }
 
     // arctan(sqrt(3)) -> pi/3
-    if (is_power(x) && equaln(cadr(x), 3) && is_num_and_equalq(caddr(x), 1, 2)) {
+    if (is_power(x) && is_num_and_eq_number(cadr(x), 3) && is_num_and_eq_rational(caddr(x), 1, 2)) {
         return $.multiply(third, DynamicConstants.PI($));
     }
 

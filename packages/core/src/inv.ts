@@ -1,4 +1,5 @@
 import { Err, is_tensor, one, Sym, Tensor, zero } from "@stemcmicro/atoms";
+import { is_cons_opr_eq_inv, is_inner_or_dot } from "@stemcmicro/helpers";
 import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { divide } from "./helpers/divide";
@@ -6,7 +7,7 @@ import { det } from "./operators/det/det";
 import { adj } from "./operators/tensor/tensor_extension";
 import { INV, INVG } from "./runtime/constants";
 import { halt } from "./runtime/defs";
-import { is_identity_matrix, is_inner_or_dot, is_num_or_tensor_or_identity_matrix, is_opr_eq_inv } from "./runtime/helpers";
+import { is_identity_matrix, is_num_or_tensor_or_identity_matrix } from "./runtime/helpers";
 import { is_square_matrix } from "./tensor";
 
 //-----------------------------------------------------------------------------
@@ -36,7 +37,7 @@ export function inv(expr: U, $: ExtensionEnv): Cons | Sym | Tensor | Err {
     };
 
     // an inv just goes away when applied to another inv
-    if (is_cons(expr) && is_opr_eq_inv(expr)) {
+    if (is_cons(expr) && is_cons_opr_eq_inv(expr)) {
         return expr.argList;
     }
 

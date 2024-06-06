@@ -1,5 +1,5 @@
-import { is_add, is_multiply } from "./runtime/helpers";
-import { U } from "./tree/tree";
+import { is_add, is_multiply } from "@stemcmicro/helpers";
+import { U } from "@stemcmicro/tree";
 
 // Push expression factors onto the stack. For example...
 //

@@ -1,6 +1,5 @@
+import { is_add, is_negative_term } from "@stemcmicro/helpers";
 import { U } from "@stemcmicro/tree";
-import { is_add } from "../runtime/helpers";
-import { is_negative_term } from "./is_negative_term";
 
 /**
  *

@@ -19,19 +19,8 @@ import { lcm } from "./operators/lcm/lcm";
 import { is_negative } from "./predicates/is_negative";
 import { ProgrammingError } from "./programming/ProgrammingError";
 import { quotient } from "./quotient";
-import { defs, halt, move_top_of_stack, noexpand_unary } from "./runtime/defs";
+import { defs, move_top_of_stack, noexpand_unary } from "./runtime/defs";
 import { stack_pop, stack_push, stack_push_items } from "./runtime/stack";
-
-// Factor a polynomial
-
-//define POLY p1
-//define X p2
-//define Z p3
-//define A p4
-//define B p5
-//define Q p6
-//define RESULT p7
-//define FACTOR p8
 
 /**
  *
@@ -40,7 +29,7 @@ import { stack_pop, stack_push, stack_push_items } from "./runtime/stack";
  * @param $
  * @returns factored polynomial
  */
-export function yyfactorpoly(P: U, X: Sym, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+export function factor_polynomial(P: U, X: Sym, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     // console.lg("yyfactorpoly", `${($ as ExtensionEnv).toInfixString(P)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
@@ -48,7 +37,7 @@ export function yyfactorpoly(P: U, X: Sym, $: Pick<ExprContext, "handlerFor" | "
         return retval;
     };
     if (contains_floating_values_or_floatf(P)) {
-        halt("floating point numbers in polynomial");
+        throw new Error("floating point numbers in polynomial");
     }
 
     const cs: U[] = coefficients(P, X, $);

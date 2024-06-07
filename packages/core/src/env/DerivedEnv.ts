@@ -4,7 +4,6 @@ import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Native } from "@stemcmicro/native";
 import { Cons, is_atom, is_cons, is_nil, items_to_cons, Shareable, U } from "@stemcmicro/tree";
 import { StackFunction } from "../adapters/StackFunction";
-import { assert_sym_any_any } from "../stepper/step_setq";
 import { ExprEngineListener } from "../eigenmath/ProgramIO";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { setq } from "../operators/assign/assign_any_any";
@@ -13,8 +12,9 @@ import { JsObjectExtension } from "../operators/jsobject/JsObjectExtension";
 import { eval_let } from "../operators/let/eval_let";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import { ASSIGN, COMPONENT, LET } from "../runtime/constants";
+import { assert_sym_any_any } from "../stepper/step_setq";
 import { EnvConfig } from "./EnvConfig";
-import { AtomListener, CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { AtomListener, CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 /**
  * Evaluates each item in the `argList` and returns (opr ...),
  */
@@ -139,9 +139,6 @@ export class DerivedEnv implements ExtensionEnv {
     }
     defineStackFunction(opr: Sym, stackFunction: StackFunction): void {
         this.#baseEnv.defineStackFunction(opr, stackFunction);
-    }
-    defineKeyword(sym: Sym, runner: KeywordRunner): void {
-        this.#baseEnv.defineKeyword(sym, runner);
     }
     defineExtension(builder: ExtensionBuilder<U>, immediate: boolean): void {
         this.#baseEnv.defineExtension(builder, immediate);

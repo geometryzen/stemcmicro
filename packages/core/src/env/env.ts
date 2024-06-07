@@ -10,7 +10,7 @@ import { StackFunction } from "../adapters/StackFunction";
 import { ExprEngineListener } from "../eigenmath/ProgramIO";
 import { ProgramStack } from "../eigenmath/ProgramStack";
 import { eval_function } from "../eval_function";
-import { yyfactorpoly } from "../factorpoly";
+import { factor_polynomial } from "../factorpoly";
 import { hash_for_atom, hash_info, hash_nonop_cons, hash_target } from "../hashing/hash_info";
 import { hook_create_err } from "../hooks/hook_create_err";
 import { is_poly_expanded_form } from "../is";
@@ -37,7 +37,6 @@ import {
     ExtensionBuilder,
     ExtensionEnv,
     FEATURE,
-    KeywordRunner,
     MODE_EXPANDING,
     MODE_FACTORING,
     MODE_FLAGS_ALL,
@@ -50,7 +49,6 @@ import {
     TFLAG_NONE
 } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
-import { extension_builder_from_keyword_runner } from "./operator_from_keyword_runner";
 import { extension_builder_from_cons_expression, hash_from_match, opr_from_match } from "./operator_from_legacy_transformer";
 import { UnknownAtomExtension } from "./UnknownAtomExtension";
 import { UnknownConsExtension } from "./UnknownConsExtension";
@@ -66,17 +64,6 @@ const ISNEGATIVE = native_sym(Native.isnegative);
 const ISPOSITIVE = native_sym(Native.ispositive);
 const ISREAL = native_sym(Native.isreal);
 const ISZERO = native_sym(Native.iszero);
-
-function make_user_symbol_runner(sym: Sym) {
-    return ($: ExtensionEnv) => {
-        const binding = $.getBinding(sym, nil);
-        if (is_nil(binding) || sym.equals(binding)) {
-            return sym;
-        } else {
-            return $.valueOf(binding);
-        }
-    };
-}
 
 class StableExprComparator implements ExprComparator {
     constructor(private readonly opr: Sym) {
@@ -528,22 +515,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         defineStackFunction(opr: Sym, stackFunction: StackFunction): void {
             $.defineExtension(extension_builder_from_cons_expression(opr, make_eval(stackFunction)), false);
         },
-        defineKeyword(sym: Sym, runner: KeywordRunner): void {
-            $.defineExtension(extension_builder_from_keyword_runner(sym, runner), false);
-        },
         defineUserSymbol(name: Sym, immediate = false): void {
             // The most important thing to do is to keep track of which symbols are user symbols.
             // This will allow us to report back correctly later in hasUserFunction(sym), which is used for SVG rendering.
             userSymbols.set(name.key(), name);
-
-            // Given that we already have an Extension for Sym installed,
-            // which has the same (standard) implementation of valueOf as the user symbol runner,
-            // there's really no value in adding the following operator.
-            // Leaving it for now as it does no harm and may have utility later.
-            $.defineKeyword(name, make_user_symbol_runner(name));
-            if (immediate) {
-                $.buildOperators();
-            }
         },
         defineExtension(builder: ExtensionBuilder<U>, immediate = false): void {
             builders.push(builder);
@@ -801,7 +776,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
 
             if (is_sym(x)) {
-                return yyfactorpoly(p, x, $);
+                return factor_polynomial(p, x, $);
             } else {
                 // console.lg(`Giving up b/c the variable is not a symbol.`);
                 return p;

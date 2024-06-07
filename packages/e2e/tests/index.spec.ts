@@ -1,7 +1,7 @@
 import { create_engine, ExprEngine } from "@stemcmicro/engine";
 import { js_parse } from "@stemcmicro/js-parse";
 
-describe("units", () => {
+describe("e2e", () => {
     it("create_engine", () => {
         const engine: ExprEngine = create_engine();
         try {
@@ -39,6 +39,28 @@ describe("units", () => {
                     expect(s).toBe("M");
                     const t = engine.renderAsString(engine.simplify(value));
                     expect(t).toBe("[[a,b],[c,d]]");
+                }
+                value.release();
+            }
+        } finally {
+            engine.release();
+        }
+    });
+    it("factor", () => {
+        const engine: ExprEngine = create_engine();
+        try {
+            const sourceText = [`factor(56)`].join("\n");
+            const { trees, errors } = js_parse(sourceText);
+            if (errors.length > 0) {
+            }
+            for (let i = 0; i < trees.length; i++) {
+                const tree = trees[i];
+                const value = engine.valueOf(tree);
+                if (!value.isnil) {
+                    const s = engine.renderAsString(tree);
+                    expect(s).toBe("factor(56)");
+                    const t = engine.renderAsString(value);
+                    expect(t).toBe("2**3*7");
                 }
                 value.release();
             }

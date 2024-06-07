@@ -211,10 +211,6 @@ export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, P
     defineEvalFunction(opr: Sym, evalFunction: EvalFunction): void;
     defineFunction(match: U, lambda: LambdaExpr): void;
     defineStackFunction(opr: Sym, stackFunction: StackFunction): void;
-    /**
-     * e.g. clearall
-     */
-    defineKeyword(sym: Sym, runner: KeywordRunner): void;
     defineExtension(builder: ExtensionBuilder<U>, immediate?: boolean): void;
     defineUserSymbol(name: Sym): void;
     derivedEnv(): ExtensionEnv;

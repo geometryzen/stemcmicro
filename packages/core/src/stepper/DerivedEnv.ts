@@ -4,7 +4,7 @@ import { LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
 import { Native } from "@stemcmicro/native";
 import { Cons, U } from "@stemcmicro/tree";
-import { CompareFn, EvalFunction, ExprComparator, KeywordRunner, Predicates, PrintHandler } from "../env/ExtensionEnv";
+import { CompareFn, EvalFunction, ExprComparator, Predicates, PrintHandler } from "../env/ExtensionEnv";
 import { Scope, Thing } from "./Stepper";
 
 export class DerivedScope implements Scope {
@@ -77,9 +77,6 @@ export class DerivedScope implements Scope {
         throw new Error("Method not implemented.");
     }
     defineFunction(match: U, lambda: LambdaExpr): void {
-        throw new Error("Method not implemented.");
-    }
-    defineKeyword(sym: Sym, runner: KeywordRunner): void {
         throw new Error("Method not implemented.");
     }
     divide(lhs: U, rhs: U): U {

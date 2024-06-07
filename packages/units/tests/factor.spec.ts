@@ -1,7 +1,12 @@
 import { check } from "./check";
 
 describe("factor", function () {
-    xit("001", function () {
-        check("factor(a*x**2+b*x+c,x)", "c");
+    it("001", function () {
+        check("factor(x**2-1, x)", "(1+x)*(-1+x)");
+        check("factor(x^2-1, x)", "(1+x)*(-1+x)", { useCaretForExponentiation: true });
+        check("factor(27)", "3**3");
+        check("factor(56)", "2**3*7");
+        check("factor(56)", "2**3*7", { language: "javascript" });
+        check("factor(56)", "2**3*7", { language: "python" });
     });
 });

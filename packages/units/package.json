@@ -24,6 +24,7 @@
         "@stemcmicro/engine": "file:../engine",
         "@stemcmicro/em-parse": "file:../em-parse",
         "@stemcmicro/hilbert": "file:../hilbert",
-        "@stemcmicro/js-parse": "file:../js-parse"
+        "@stemcmicro/js-parse": "file:../js-parse",
+        "@stemcmicro/ps-parse": "file:../py-parse"
     }
 }

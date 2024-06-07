@@ -1,12 +1,11 @@
 import { create_sym } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
 import { Native, native_sym } from "@stemcmicro/native";
-import { nil } from "@stemcmicro/tree";
 import { eval_approxratio } from "../approxratio";
 import { MulComparator } from "../calculators/compare/compare_factor_factor";
 import { AddComparator } from "../calculators/compare/compare_term_term";
 import { eval_choose } from "../choose";
-import { eval_clear, eval_clearall } from "../clear";
+import { eval_clear } from "../clear";
 import {
     stack_arccos,
     stack_arccosh,
@@ -54,6 +53,7 @@ import {
     stack_unit
 } from "../eigenmath/eigenmath";
 import { stack_infix } from "../eigenmath/stack_infix";
+import { eval_and, eval_not, eval_test, eval_testeq, eval_testle, eval_testne } from "../eval_test";
 import { eval_filter } from "../filter";
 import { eval_leading } from "../leading";
 import { eval_lookup } from "../lookup";
@@ -254,15 +254,12 @@ import { stack_uom } from "../operators/uom/stack_uom";
 import { uom_extension_builder } from "../operators/uom/uom_extension";
 import { eval_zero } from "../operators/zero/zero";
 import { eval_prime } from "../prime";
-import { render_using_print_mode } from "../print/render_using_print_mode";
 import { eval_quotient } from "../quotient";
 import { eval_roots } from "../roots";
-import { AND, APPROXRATIO, CHECK, CHOOSE, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, QUOTE, RANK, UOM } from "../runtime/constants";
+import { AND, APPROXRATIO, CHECK, CHOOSE, CLEAR, DOT, ISREAL, QUOTE, RANK, UOM } from "../runtime/constants";
 import { PrintMode } from "../runtime/defs";
-import { RESERVED_KEYWORD_LAST } from "../runtime/ns_script";
 import { eval_conjugate } from "../scripting/eval_conjugate";
 import { eval_power } from "../scripting/eval_power";
-import { eval_and, eval_not, eval_test, eval_testeq, eval_testle, eval_testne } from "../eval_test";
 import { ExtensionEnv } from "./ExtensionEnv";
 
 export interface DefineStandardOperatorsConfig {
@@ -318,23 +315,10 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineEvalFunction(CHOOSE, eval_choose);
 
     $.defineEvalFunction(CLEAR, eval_clear);
-    $.defineKeyword(CLEARALL, eval_clearall);
 
     $.defineEvalFunction(native_sym(Native.conj), eval_conjugate);
 
     $.defineEvalFunction(native_sym(Native.deg), eval_deg);
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // TODO: I don't think we should be using defineKeyword for (factor n) and factor(p, x)
-    $.defineKeyword(FACTOR, function ($: ExtensionEnv): void {
-        const last = $.getBinding(RESERVED_KEYWORD_LAST, nil);
-        const factored = $.factor(last);
-        $.setBinding(RESERVED_KEYWORD_LAST, factored);
-
-        const str = render_using_print_mode(factored, $.getDirective(Directive.printMode), $);
-        const printHandler = $.getPrintHandler();
-        printHandler.print(str);
-    });
 
     $.defineEvalFunction(FILTER, eval_filter);
 

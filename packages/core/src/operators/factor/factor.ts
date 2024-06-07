@@ -2,12 +2,11 @@ import { create_int, is_rat, is_sym, one, Rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
-import { yyfactorpoly } from "../../factorpoly";
+import { factor_polynomial } from "../../factorpoly";
 import { is_poly_expanded_form } from "../../is";
 import { multiply_items_factoring } from "../../multiply";
 import { factor_rat } from "../../pollard";
 import { MAXPRIMETAB, primetab } from "../../runtime/constants";
-import { halt } from "../../runtime/defs";
 
 export function factor_again(p1: U, p2: U, $: ExprContext): U {
     if (is_cons(p1) && is_cons_opr_eq_multiply(p1)) {
@@ -52,7 +51,7 @@ export function factorize(p: U, x: U, $: Pick<ExprContext, "handlerFor" | "pushD
     }
 
     if (is_sym(x)) {
-        return yyfactorpoly(p, x, $);
+        return factor_polynomial(p, x, $);
     } else {
         // console.lg(`Giving up b/c the variable is not a symbol.`);
         return p;
@@ -62,7 +61,7 @@ export function factorize(p: U, x: U, $: Pick<ExprContext, "handlerFor" | "pushD
 // for factoring small integers (2^32 or less)
 export function factor_small_number(n: number): Rat[] {
     if (isNaN(n)) {
-        halt("number too big to factor");
+        throw new Error("number too big to factor");
     }
     const arr: Rat[] = [];
     if (n < 0) {

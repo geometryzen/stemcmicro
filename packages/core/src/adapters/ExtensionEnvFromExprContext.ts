@@ -7,7 +7,7 @@ import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_atom, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
 import { ExprEngineListener } from "../eigenmath/ProgramIO";
 import { ProgramStack } from "../eigenmath/ProgramStack";
-import { AtomListener, CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, KeywordRunner, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
+import { AtomListener, CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
 import { ExtensionFromExprHandler } from "../env/ExtensionFromExprHandler";
 import { render_as_infix } from "../print/render_as_infix";
 import { ProgrammingError } from "../programming/ProgrammingError";
@@ -192,9 +192,6 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
         throw new Error("Method not implemented.");
     }
     defineStackFunction(opr: Sym, stackFunction: StackFunction): void {
-        throw new Error("Method not implemented.");
-    }
-    defineKeyword(sym: Sym, runner: KeywordRunner): void {
         throw new Error("Method not implemented.");
     }
     defineExtension(builder: ExtensionBuilder<U>): void {

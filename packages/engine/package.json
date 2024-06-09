@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/engine",
-    "version": "0.9.71",
+    "version": "0.9.72",
     "description": "Engine for stemcmicro",
     "exports": {
         ".": {
@@ -60,7 +60,6 @@
         "url": "https://github.com/geometryzen/stemcmicro/issues"
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
-    "dependencies": {},
     "peerDependencies": {
         "@stemcmicro/atoms": "workspace:*",
         "@stemcmicro/context": "workspace:*",

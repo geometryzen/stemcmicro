@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/engine",
-    "version": "0.9.73",
+    "version": "0.9.74",
     "description": "Engine for stemcmicro",
     "exports": {
         ".": {

@@ -64,7 +64,7 @@
         "generic-rbtree": "^1.1.2"
     },
     "peerDependencies": {
-        "@stemcmicro/tree": "file:../tree"
+        "@stemcmicro/tree": "workspace:*"
     },
     "gitHead": "ae954a7abc9e5343109ae6002e86be64d84e2398"
 }

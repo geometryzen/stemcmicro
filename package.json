@@ -1,21 +1,7 @@
 {
-    "name": "root",
     "private": true,
-    "scripts": {
-        "build": "lerna run build",
-        "check": "lerna run check",
-        "clean": "lerna run clean",
-        "format:check": "prettier --check '**/*.{js,ts,tsx,css,yml,json,mts}'",
-        "format:write": "prettier --write '**/*.{js,ts,tsx,css,yml,json,mts}'",
-        "lint": "lerna run lint",
-        "test": "lerna run test",
-        "coverage": "lerna run coverage",
-        "docs": "lerna run docs",
-        "pages": "lerna run pages --concurrency=1",
-        "publish": "lerna publish from-package --exact",
-        "version": "lerna version --no-private --force-publish",
-        "lerna-version": "lerna --version"
-    },
+    "name": "stemcmicro",
+    "packageManager": "pnpm@9.2.0",
     "workspaces": [
         "packages/atoms",
         "packages/context",
@@ -35,6 +21,21 @@
         "packages/tree",
         "packages/units"
     ],
+    "scripts": {
+        "build": "lerna run build",
+        "check": "lerna run check",
+        "clean": "lerna run clean",
+        "format:check": "prettier --check '**/*.{js,ts,tsx,css,yml,json,mts}'",
+        "format:write": "prettier --write '**/*.{js,ts,tsx,css,yml,json,mts}'",
+        "lint": "lerna run lint",
+        "test": "lerna run test",
+        "coverage": "lerna run coverage",
+        "docs": "lerna run docs",
+        "pages": "lerna run pages --concurrency=1",
+        "publish": "lerna publish from-package --exact",
+        "version": "lerna version --no-private --force-publish",
+        "lerna-version": "lerna --version"
+    },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
         "@rollup/plugin-commonjs": "^26.0.1",
@@ -53,6 +54,7 @@
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "gh-pages": "^6.1.1",
+        "globals": "^15.4.0",
         "jest": "^29.7.0",
         "lerna": "^999.9.9",
         "mocha": "^10.4.0",

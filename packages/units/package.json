@@ -20,11 +20,12 @@
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "peerDependencies": {
-        "@stemcmicro/atoms": "file:../atoms",
-        "@stemcmicro/engine": "file:../engine",
-        "@stemcmicro/em-parse": "file:../em-parse",
-        "@stemcmicro/hilbert": "file:../hilbert",
-        "@stemcmicro/js-parse": "file:../js-parse",
-        "@stemcmicro/ps-parse": "file:../py-parse"
+        "@stemcmicro/atoms": "workspace:*",
+        "@stemcmicro/engine": "workspace:*",
+        "@stemcmicro/em-parse": "workspace:*",
+        "@stemcmicro/hilbert": "workspace:*",
+        "@stemcmicro/js-parse": "workspace:*",
+        "@stemcmicro/py-parse": "workspace:*",
+        "@stemcmicro/tree": "workspace:*"
     }
 }

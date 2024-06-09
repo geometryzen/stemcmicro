@@ -61,9 +61,9 @@
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "peerDependencies": {
-        "@stemcmicro/atoms": "file:../atoms",
-        "@stemcmicro/native": "file:../native",
-        "@stemcmicro/tree": "file:../tree"
+        "@stemcmicro/atoms": "workspace:*",
+        "@stemcmicro/native": "workspace:*",
+        "@stemcmicro/tree": "workspace:*"
     },
     "gitHead": "ae954a7abc9e5343109ae6002e86be64d84e2398"
 }

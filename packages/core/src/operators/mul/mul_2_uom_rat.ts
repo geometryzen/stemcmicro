@@ -1,7 +1,7 @@
 import { Uom } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_RAT, HASH_UOM } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, hash_for_atom, HASH_RAT } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat, zero } from "../../tree/rat/Rat";
@@ -11,6 +11,9 @@ import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_rat } from "../rat/is_rat";
 import { is_uom } from "../uom/is_uom";
+import { create_uom } from "../uom/uom";
+
+const HASH_UOM = hash_for_atom(create_uom("kilogram"));
 
 type LHS = Uom;
 type RHS = Rat;

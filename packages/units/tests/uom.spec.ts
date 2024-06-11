@@ -31,4 +31,7 @@ describe("uom", function () {
     it("division", function () {
         check("joule / coulomb", "V");
     });
+    it("constructor", function () {
+        check('uom("second")', "s");
+    });
 });

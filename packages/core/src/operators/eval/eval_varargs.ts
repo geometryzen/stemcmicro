@@ -1,11 +1,11 @@
 import { ExprContext } from "@stemcmicro/context";
+import { subst } from "@stemcmicro/helpers";
 import { Cons, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { EVAL } from "../../runtime/constants";
 import { cddr } from "../../tree/helpers";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { subst } from "../subst/subst";
 
 /**
  * eval(f, x1, a1, x2, a2, ...)

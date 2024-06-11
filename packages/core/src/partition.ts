@@ -18,8 +18,6 @@ import { cdr, is_cons, U } from "@stemcmicro/tree";
  * Partition a term into constant and variable expressions.
  * @param term the term (factor or product of factors)
  * @param X the free variable
- * @param $
- * @returns
  */
 export function partition(term: U, X: U, $: Pick<ExprContext, "valueOf">): [k: U, v: U] {
     const p1 = cdr(term);

@@ -2,9 +2,12 @@ import { Flt, is_flt, is_uom, Sym, Uom } from "@stemcmicro/atoms";
 import { Cons2, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_FLT, HASH_UOM } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_FLT, hash_for_atom } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
+import { create_uom } from "../uom/uom";
+
+const HASH_UOM = hash_for_atom(create_uom("kilogram"));
 
 /**
  * Flt * Uom

@@ -58,7 +58,6 @@ import { isminusone } from "./isminusone";
 import { isnegativenumber } from "./isnegativenumber";
 import { isnegativeterm } from "./isnegativeterm";
 import { isplusone } from "./isplusone";
-import { isposint } from "./isposint";
 import { iszero } from "./iszero";
 import { lengthf } from "./lengthf";
 import { ProgramControl } from "./ProgramControl";
@@ -4355,10 +4354,10 @@ export function stack_factorial(p1: Cons, env: ProgramEnv, ctrl: ProgramControl,
 }
 
 function factorial(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const N = pop($);
 
-    if (is_rat(p1) && isposint(p1)) {
-        push(p1, $);
+    if (is_rat(N) && N.isPositiveInteger()) {
+        $.push(N);
         const n = pop_integer($);
         push_integer(1, $);
         for (let i = 2; i <= n; i++) {
@@ -4368,8 +4367,8 @@ function factorial(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
         return;
     }
 
-    if (is_flt(p1) && p1.d >= 0 && Math.floor(p1.d) === p1.d) {
-        push(p1, $);
+    if (is_flt(N) && N.d >= 0 && Math.floor(N.d) === N.d) {
+        push(N, $);
         const n = pop_integer($);
         let m = 1.0;
         for (let i = 2; i <= n; i++) m *= i;
@@ -4377,8 +4376,8 @@ function factorial(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
         return;
     }
 
-    push(FACTORIAL, $);
-    push(p1, $);
+    $.push(FACTORIAL);
+    $.push(N);
     list(2, $);
 }
 
@@ -10037,7 +10036,7 @@ function isradical(p: U): boolean {
     if (car(p).equals(POWER)) {
         const base = cadr(p);
         const expo = caddr(p);
-        return is_rat(base) && isposint(base) && is_rat(expo) && isfraction(expo);
+        return is_rat(base) && base.isPositiveInteger() && is_rat(expo) && expo.isFraction();
     } else {
         return false;
     }

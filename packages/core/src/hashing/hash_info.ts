@@ -2,7 +2,6 @@ import { booT, Cell, CellHost, create_flt, create_int, create_str, create_sym, c
 import { Lambda } from "@stemcmicro/context";
 import { Atom, Cons, is_atom, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { hook_create_err } from "../hooks/hook_create_err";
-import { create_uom } from "../operators/uom/uom";
 
 const KIND_NIL = 0;
 const KIND_CONS = 1;
@@ -58,7 +57,6 @@ export const HASH_RAT = hash_for_atom(create_int(1));
 export const HASH_STR = hash_for_atom(create_str("") as Atom); // JsString is currently an alias for Str.
 export const HASH_SYM = hash_for_atom(create_sym("x"));
 export const HASH_TENSOR = hash_for_atom(create_tensor([]));
-export const HASH_UOM = hash_for_atom(create_uom("kilogram"));
 /**
  * A special wildcard hash that matches any item.
  */

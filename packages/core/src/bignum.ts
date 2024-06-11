@@ -1,4 +1,4 @@
-import { bigInt, BigInteger, create_flt, Err, Flt, is_flt, is_rat, Num, Rat } from "@stemcmicro/atoms";
+import { bigInt, BigInteger, Err, is_flt, is_rat, Num, Rat } from "@stemcmicro/atoms";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { U } from "@stemcmicro/tree";
 import { mdiv, mmul } from "./mmul";
@@ -106,11 +106,6 @@ export function nativeDouble(p1: U): number {
     } else {
         return 0;
     }
-}
-
-export function rat_to_flt(n: Rat): Flt {
-    const d = n.toNumber();
-    return create_flt(d);
 }
 
 // n is an int

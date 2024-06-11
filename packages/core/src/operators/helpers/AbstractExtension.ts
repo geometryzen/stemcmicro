@@ -1,5 +1,6 @@
 import { is_sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { subst } from "@stemcmicro/helpers";
 import { is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, Sign } from "../../env/ExtensionEnv";
 import { render_as_ascii } from "../../print/render_as_ascii";
@@ -8,7 +9,6 @@ import { render_as_infix } from "../../print/render_as_infix";
 import { render_as_latex } from "../../print/render_as_latex";
 import { render_as_sexpr } from "../../print/render_as_sexpr";
 import { SystemError } from "../../runtime/SystemError";
-import { subst } from "../subst/subst";
 
 /**
  * Provides a base implementation of an operator.

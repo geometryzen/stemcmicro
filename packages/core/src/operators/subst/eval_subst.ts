@@ -1,11 +1,11 @@
+import { ExprContext } from "@stemcmicro/context";
+import { subst } from "@stemcmicro/helpers";
 import { Cons, U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { subst } from "./subst";
 
 /**
  * subst(newExpr, oldExpr, expr)
  */
-export function eval_subst(x: Cons, $: ExtensionEnv): U {
+export function eval_subst(x: Cons, $: ExprContext): U {
     const args = x.argList;
     const newExpr = $.valueOf(args.item(0));
     const oldExpr = $.valueOf(args.item(1));

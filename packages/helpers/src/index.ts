@@ -61,4 +61,5 @@ export { power } from "./power";
 export { predicate_return_value } from "./predicate_return_value";
 export { prolog_eval_varargs } from "./prolog_eval_varargs";
 export { str_to_string } from "./str_to_string";
+export { subst } from "./subst";
 export { subtract } from "./subtract";

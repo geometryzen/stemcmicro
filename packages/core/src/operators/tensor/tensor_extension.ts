@@ -3,7 +3,7 @@ import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
 import { conjfunc, inner, power, push_rational } from "@stemcmicro/eigenmath";
-import { isone, iszero, multiply } from "@stemcmicro/helpers";
+import { isone, iszero, multiply, subst } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { StackU } from "@stemcmicro/stack";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "@stemcmicro/tree";
@@ -17,7 +17,6 @@ import { PrintMode } from "../../runtime/defs";
 import { assert_square_matrix_tensor, is_line_matrix, is_square_matrix } from "../../tensor";
 import { cofactor } from "../cofactor/cofactor";
 import { is_hyp } from "../hyp/is_hyp";
-import { subst } from "../subst/subst";
 
 const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);

@@ -24,22 +24,15 @@ class PluggableExtension extends FunctionVarArgs<Cons> {
         private readonly evaluator: EvalFunction
     ) {
         super(opr.key(), opr);
-        // console.lg("constructor PluggableOperator", "opr", `${opr}`, "hash", `${hash}`);
         this.#hash = hash;
     }
     get hash(): string {
         return this.#hash;
     }
     transform(expr: Cons, $: ExtensionEnv): [number, U] {
-        // console.lg("PluggableOperator.transform", "name:", JSON.stringify(this.name), "expr:", render_as_sexpr(expr, $));
-        const hook = (where: string, retval: U): U => {
-            // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
-            // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
-            return retval;
-        };
         const retval = this.evaluator(expr, $);
         const flags = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
-        return [flags, hook("", retval)];
+        return [flags, retval];
     }
 }
 

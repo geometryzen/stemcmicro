@@ -86,14 +86,15 @@ For a STEMCstudio example (click [here](https://www.stemcstudio.com/gists/615c4d
 ### [@stemcmicro/cs-parse](https://geometryzen.github.io/stemcmicro/cs-parse)
 ### [@stemcmicro/diagnostics](https://geometryzen.github.io/stemcmicro/diagnostics)
 ### [@stemcmicro/directive](https://geometryzen.github.io/stemcmicro/directive)
+### [@stemcmicro/eigenmath](https://geometryzen.github.io/stemcmicro/eigenmath)
 ### [@stemcmicro/em-parse](https://geometryzen.github.io/stemcmicro/em-parse)
 ### [@stemcmicro/engine](https://geometryzen.github.io/stemcmicro/engine)
 ### [@stemcmicro/helpers](https://geometryzen.github.io/stemcmicro/helpers)
 ### [@stemcmicro/hilbert](https://geometryzen.github.io/stemcmicro/hilbert)
 ### [@stemcmicro/js-parse](https://geometryzen.github.io/stemcmicro/js-parse)
 ### [@stemcmicro/native](https://geometryzen.github.io/stemcmicro/native)
-### [@stemcmicro/predicates](https://geometryzen.github.io/stemcmicro/predicates)
 ### [@stemcmicro/py-parse](https://geometryzen.github.io/stemcmicro/py-parse)
+### [@stemcmicro/stack](https://geometryzen.github.io/stemcmicro/stack)
 ### [@stemcmicro/tree](https://geometryzen.github.io/stemcmicro/tree)
 
 ## Contributing

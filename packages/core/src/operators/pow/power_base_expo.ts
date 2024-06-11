@@ -1,11 +1,11 @@
-import { create_flt, create_sym, imu, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, is_uom, negOne, one, QQ } from "@stemcmicro/atoms";
+import { create_flt, create_sym, half, imu, is_blade, is_flt, is_num, is_rat, is_sym, is_tensor, is_uom, negOne, one, oneAsFlt, QQ, two } from "@stemcmicro/atoms";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
 import { power_e_expo } from "@stemcmicro/eigenmath";
 import { divide, isone, iszero, is_base_of_natural_logarithm, is_num_and_eq_one_half, is_rat_and_integer, num_to_number } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { StackU } from "@stemcmicro/stack";
-import { car, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
+import { cadr, car, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { nativeDouble, rational } from "../../bignum";
 import { complex_conjugate } from "../../complex_conjugate";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
@@ -21,9 +21,6 @@ import { doexpand_binary } from "../../runtime/defs";
 import { is_abs, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_PI } from "../../runtime/ns_math";
 import { power_tensor } from "../../tensor";
-import { oneAsFlt } from "../../tree/flt/Flt";
-import { cadr } from "../../tree/helpers";
-import { half, two } from "../../tree/rat/Rat";
 import { dpow } from "./dpow";
 import { pow } from "./pow";
 

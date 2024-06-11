@@ -1,9 +1,8 @@
 import { create_int, is_sym, one, zero } from "@stemcmicro/atoms";
-import { divide, num_to_number } from "@stemcmicro/helpers";
+import { divide, num_to_number, subst } from "@stemcmicro/helpers";
 import { cadddr, caddr, cadr, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { LAGUERRE, SECRETX } from "../../runtime/constants";
-import { subst } from "../subst/subst";
 
 /*
  Laguerre function

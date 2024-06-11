@@ -3,16 +3,16 @@ import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
 import { ScanOptions, scan_meta } from "@stemcmicro/em-parse";
 import { add, guess, is_add, is_multiply, is_num_and_eq_one_half, is_num_and_eq_rational, multiply, num_to_number } from "@stemcmicro/helpers";
+import { Native, native_sym } from "@stemcmicro/native";
 import { cadr, car, cdr, Cons, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { exp } from "../../helpers/exp";
 import { is_num_and_equal_minus_half, is_num_and_eq_minus_one } from "../../is";
 import { partition } from "../../partition";
 import { ADD, EXP, INTEGRAL, METAX, MULTIPLY, POWER, SQRT } from "../../runtime/constants";
-import { halt } from "../../runtime/defs";
 import { transform } from "../../transform";
-import { derivative } from "../derivative/derivative";
 import { simplify } from "../simplify/simplify";
+
+const DERIVATIVE = native_sym(Native.derivative);
 
 /*
  Table of integrals
@@ -373,7 +373,7 @@ const itab: string[] = [
  * A special implementation of evaluation that keeps the integrand simple by not expanding power sums
  * that could throw off symbolic integration.
  */
-function value_of_integrand(expr: U, $: ExtensionEnv): U {
+function value_of_integrand(expr: U, $: ExprContext): U {
     $.pushDirective(Directive.expandPowSum, 0);
     try {
         return $.valueOf(expr);
@@ -385,7 +385,7 @@ function value_of_integrand(expr: U, $: ExtensionEnv): U {
 /**
  * (integral f x)
  */
-export function eval_integral(expr: Cons, $: ExtensionEnv): U {
+export function eval_integral(expr: Cons, $: ExprContext): U {
     // console.lg("eval_integral", $.toInfixString(expr));
 
     let n = 0;
@@ -442,7 +442,7 @@ export function eval_integral(expr: Cons, $: ExtensionEnv): U {
         if (is_num(N)) {
             n = num_to_number(N);
             if (isNaN(n)) {
-                halt("nth integral: check n");
+                throw new Error("nth integral: check n");
             }
         } else {
             n = 1;
@@ -458,7 +458,7 @@ export function eval_integral(expr: Cons, $: ExtensionEnv): U {
         } else {
             n = -n;
             for (let i = 0; i < n; i++) {
-                temp = derivative(temp, X, $);
+                temp = $.valueOf(items_to_cons(DERIVATIVE, temp, X));
             }
         }
 
@@ -510,7 +510,7 @@ export function integral(F: U, X: U, $: ExprContext): U {
         integ = integral_of_form(F, X, $);
     }
     if (integ.contains(INTEGRAL)) {
-        halt("integral: sorry, could not find a solution");
+        throw new Error("integral: sorry, could not find a solution");
     }
     // polish then normalize
     return $.valueOf(simplify(integ, $));
@@ -706,7 +706,7 @@ function hash_power(base: U, expo: U, x: U, $: ExprContext): number {
  * This function is not currently used directly.
  * However, its purpose is to build the hash table.
  */
-export function make_hashed_itab($: ExtensionEnv): { [index: string]: string[] } {
+export function make_hashed_itab($: ExprContext): { [index: string]: string[] } {
     const tab: { [key: string]: string[] } = {};
     for (const s of Array.from(itab)) {
         const options: ScanOptions = {

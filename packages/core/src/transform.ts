@@ -2,11 +2,10 @@ import { is_num, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
 import { ScanOptions, scan_meta } from "@stemcmicro/em-parse";
-import { iszero, subtract } from "@stemcmicro/helpers";
+import { iszero, subst, subtract } from "@stemcmicro/helpers";
 import { assert_cons, cadr, car, cdddr, cddr, cdr, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { polyform } from "./bake";
 import { decomp } from "./decomp";
-import { subst } from "./operators/subst/subst";
 import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from "./runtime/constants";
 import { noexpand_unary } from "./runtime/defs";
 

@@ -1,9 +1,8 @@
 import { create_int, is_sym, one, Sym, two, zero } from "@stemcmicro/atoms";
-import { num_to_number } from "@stemcmicro/helpers";
+import { num_to_number, subst } from "@stemcmicro/helpers";
 import { items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { HERMITE, SECRETX } from "../../runtime/constants";
-import { subst } from "../subst/subst";
 
 //-----------------------------------------------------------------------------
 //

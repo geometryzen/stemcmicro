@@ -1,6 +1,6 @@
 import { one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { divide, is_mul_2_any_any } from "@stemcmicro/helpers";
+import { divide, is_mul_2_any_any, subst } from "@stemcmicro/helpers";
 import { Cons, is_cons, nil, U } from "@stemcmicro/tree";
 import { subtract } from "../../calculators/sub/subtract";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
@@ -8,7 +8,6 @@ import { Vector } from "../../env/Vector";
 import { filter } from "../../filter";
 import { divide_expand } from "../../helpers/divide";
 import { SYMBOL_X } from "../../runtime/constants";
-import { subst } from "../subst/subst";
 
 /**
  * (coeff p x n)

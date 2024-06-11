@@ -15,7 +15,6 @@ import { isminusone } from "./isminusone";
 import { isnegativenumber } from "./isnegativenumber";
 import { isnegativeterm } from "./isnegativeterm";
 import { isnumerator } from "./isnumerator";
-import { isposint } from "./isposint";
 import { printname_from_symbol } from "./printname_from_symbol";
 
 const ADD = native_sym(Native.add);
@@ -1623,7 +1622,7 @@ function emit_function(expr: Cons, env: SvgRenderEnv, $: ProgramStack, ec: SvgRe
 
     if (car(expr).equals(FACTORIAL)) {
         const p = cadr(expr);
-        if ((is_rat(p) && isposint(p)) || is_sym(p)) {
+        if ((is_rat(p) && p.isPositiveInteger()) || is_sym(p)) {
             emit_expr(p, env, $, ec);
         } else {
             emit_subexpr(p, env, $, ec);

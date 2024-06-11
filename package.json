@@ -19,6 +19,7 @@
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
+        "@nx/jest": "^19.2.3",
         "@rollup/plugin-commonjs": "^26.0.1",
         "@rollup/plugin-node-resolve": "^15.2.3",
         "@rollup/plugin-terser": "^0.4.4",
@@ -39,6 +40,7 @@
         "jest": "^29.7.0",
         "lerna": "^999.9.9",
         "mocha": "^10.4.0",
+        "nx": "^19.2.3",
         "open-cli": "^8.0.0",
         "prettier": "^3.3.2",
         "release-it": "17.3.0",

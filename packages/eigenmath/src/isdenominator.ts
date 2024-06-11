@@ -1,20 +1,19 @@
-import { is_num, is_rat, is_sym } from "@stemcmicro/atoms";
-import { is_native, Native } from "@stemcmicro/native";
+import { is_num, is_rat } from "@stemcmicro/atoms";
+import { is_cons_opr_eq_power } from "@stemcmicro/helpers";
 import { caddr, is_cons, U } from "@stemcmicro/tree";
 import { bignum_equal } from "./bignum_equal";
-import { isnegativenumber } from "./isnegativenumber";
 
-export function isdenominator(p: U) {
-    if (is_cons(p) && is_sym(p.opr) && is_native(p.opr, Native.pow)) {
-        const expo = caddr(p);
-        if (is_num(expo) && isnegativenumber(expo)) {
-            return 1;
+export function isdenominator(expr: U): boolean {
+    if (is_cons(expr) && is_cons_opr_eq_power(expr)) {
+        const expo = caddr(expr);
+        if (is_num(expo) && expo.isNegative()) {
+            return true;
         }
     }
 
-    if (is_rat(p) && !bignum_equal(p.b, 1)) {
-        return 1;
+    if (is_rat(expr) && !bignum_equal(expr.b, 1)) {
+        return true;
     }
 
-    return 0;
+    return false;
 }

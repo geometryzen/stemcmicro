@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
-import { divide, inverse } from "@stemcmicro/helpers";
+import { divide, inverse, subst } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { rational } from "../../../bignum";
 import { add_terms } from "../../../calculators/add/add_terms";
@@ -21,7 +21,6 @@ import { hermite } from "../../hermite/hermite";
 import { sgn } from "../../sgn/sgn_any";
 import { simplify } from "../../simplify/simplify";
 import { sinh } from "../../sinh/sinh";
-import { subst } from "../../subst/subst";
 import { is_sym } from "../../sym/is_sym";
 import { derivative } from "../derivative";
 import { dpower } from "./dpower";

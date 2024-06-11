@@ -1,7 +1,7 @@
 import { Uom } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { hash_unaop_atom, HASH_UOM } from "../../hashing/hash_info";
+import { hash_for_atom, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
@@ -10,7 +10,10 @@ import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
 import { GUARD } from "../helpers/GUARD";
 import { is_uom } from "../uom/is_uom";
+import { create_uom } from "../uom/uom";
 import { wrap_as_transform } from "../wrap_as_transform";
+
+const HASH_UOM = hash_for_atom(create_uom("kilogram"));
 
 class Builder implements ExtensionBuilder<U> {
     create(config: Readonly<EnvConfig>): Extension<U> {

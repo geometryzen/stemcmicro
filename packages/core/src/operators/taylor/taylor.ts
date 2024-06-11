@@ -1,11 +1,10 @@
 import { create_int, one, zero } from "@stemcmicro/atoms";
-import { divide, guess, num_to_number } from "@stemcmicro/helpers";
+import { divide, guess, num_to_number, subst } from "@stemcmicro/helpers";
 import { Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { TAYLOR } from "../../runtime/constants";
 import { derivative } from "../derivative/derivative";
 import { factorial } from "../factorial/factorial";
-import { subst } from "../subst/subst";
 
 /**
  * (taylor F X N A)

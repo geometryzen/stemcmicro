@@ -250,7 +250,7 @@ import { tau_builder } from "../operators/tau/tau";
 import { eval_taylor } from "../operators/taylor/taylor";
 import { tensor_extension_builder } from "../operators/tensor/tensor_extension";
 import { eval_typeof } from "../operators/typeof/eval_typeof";
-import { stack_uom } from "../operators/uom/stack_uom";
+import { eval_uom } from "../operators/uom/stack_uom";
 import { uom_extension_builder } from "../operators/uom/uom_extension";
 import { eval_zero } from "../operators/zero/zero";
 import { eval_prime } from "../prime";
@@ -692,7 +692,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(map_extension_builder);
 
     $.defineStackFunction(native_sym(Native.unit), stack_unit);
-    $.defineStackFunction(UOM, stack_uom);
+    // $.defineStackFunction(UOM, stack_uom);
+    $.defineEvalFunction(UOM, eval_uom);
 
     $.defineEvalFunction(native_sym(Native.zero), eval_zero);
 

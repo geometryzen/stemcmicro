@@ -13,7 +13,6 @@ import { isminusone } from "./isminusone";
 import { isnegativenumber } from "./isnegativenumber";
 import { isnegativeterm } from "./isnegativeterm";
 import { isnumerator } from "./isnumerator";
-import { isposint } from "./isposint";
 import { printname_from_symbol } from "./printname_from_symbol";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
@@ -499,8 +498,11 @@ function infix_base(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixCo
 }
 
 function infix_numeric_base(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig, outbuf: string[]): void {
-    if (is_rat(p) && isposint(p)) infix_rational(p, config, outbuf);
-    else infix_subexpr(p, env, ctrl, config, outbuf);
+    if (is_rat(p) && p.isPositiveInteger()) {
+        infix_rational(p, config, outbuf);
+    } else {
+        infix_subexpr(p, env, ctrl, config, outbuf);
+    }
 }
 
 // sign is not emitted

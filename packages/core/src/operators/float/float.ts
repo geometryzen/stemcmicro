@@ -1,21 +1,14 @@
-import { is_rat, is_tensor, Tensor } from "@stemcmicro/atoms";
+import { create_flt, eAsFlt, Flt, is_rat, is_tensor, piAsFlt, Tensor } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
 import { is_base_of_natural_logarithm, is_pi } from "@stemcmicro/helpers";
 import { cadr, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
-import { rat_to_flt } from "../../bignum";
-import { eAsFlt, Flt, piAsFlt } from "../../tree/flt/Flt";
 
 export function eval_float(expr: Cons, $: ExprContext): U {
-    // console.lg("eval_float", $.toInfixString(expr));
     const A = cadr(expr);
-    // console.lg("A", $.toInfixString(A));
     const B = $.valueOf(A);
-    // console.lg("B", $.toInfixString(B));
     const C = evaluate_as_float(B, $);
-    // console.lg("C", $.toInfixString(C));
     const D = $.valueOf(C);
-    // console.lg("D", $.toInfixString(D));
     return D;
 }
 
@@ -50,7 +43,7 @@ function yyfloat_(expr: U, $: Pick<ExprContext, "valueOf">): Flt | Cons | Tensor
         });
     }
     if (is_rat(expr)) {
-        return rat_to_flt(expr);
+        return create_flt(expr.toNumber());
     }
     if (is_pi(expr)) {
         return piAsFlt;

@@ -4,6 +4,5 @@ export function bignum_itoa(u: BigInteger): string {
     if (u.isNegative()) {
         return u.negate().toString();
     }
-    const str = u.toString();
-    return str;
+    return u.toString();
 }

@@ -1,8 +1,7 @@
-import { car, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { cadr, cddr } from "../../tree/helpers";
+import { ExprContext } from "@stemcmicro/context";
+import { subst, subtract } from "@stemcmicro/helpers";
+import { cadr, car, cddr, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { integral } from "../integral/integral_helpers";
-import { subst } from "../subst/subst";
 
 /* defint =====================================================================
 
@@ -29,7 +28,7 @@ example, defint(f,x,a,b,y,c,d).
  * @param $
  * @returns
  */
-export function eval_defint(expr: Cons, $: ExtensionEnv): U {
+export function eval_defint(expr: Cons, $: ExprContext): U {
     let F = $.valueOf(cadr(expr));
 
     // console.lg(`F=${print_expr(F, $)}`);
@@ -74,7 +73,7 @@ export function eval_defint(expr: Cons, $: ExtensionEnv): U {
         // number/function again doing the while
         // loop again if this is a multiple
         // integral.
-        F = $.subtract(arg1, arg2);
+        F = subtract($, arg1, arg2);
     }
     return F;
 }

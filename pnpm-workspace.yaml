@@ -14,5 +14,6 @@ packages:
   - "packages/js-parse"
   - "packages/native"
   - "packages/py-parse"
+  - "packages/stack"
   - "packages/tree"
   - "packages/units"

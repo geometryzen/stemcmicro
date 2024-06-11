@@ -1,5 +1,6 @@
 import { is_str } from "@stemcmicro/atoms";
-import { pop, ProgramControl, ProgramEnv, ProgramStack, push, stopf, value_of } from "@stemcmicro/eigenmath";
+import { pop, ProgramControl, ProgramEnv, push, stopf, value_of } from "@stemcmicro/eigenmath";
+import { ProgramStack } from "@stemcmicro/stack";
 import { Cons } from "@stemcmicro/tree";
 import { cadr } from "../../tree/helpers";
 import { create_uom, is_uom_name } from "./uom";

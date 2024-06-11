@@ -1,5 +1,6 @@
 import { is_hyp, zero } from "@stemcmicro/atoms";
-import { ProgramControl, ProgramEnv, ProgramStack, value_of } from "@stemcmicro/eigenmath";
+import { ProgramControl, ProgramEnv, value_of } from "@stemcmicro/eigenmath";
+import { ProgramStack } from "@stemcmicro/stack";
 import { Cons, is_atom } from "@stemcmicro/tree";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 

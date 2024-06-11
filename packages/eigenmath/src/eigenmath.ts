@@ -36,11 +36,12 @@ import {
     Tensor,
     two
 } from "@stemcmicro/atoms";
-import { ExprContext, is_lambda, LambdaExpr, prolog_eval_varargs, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
+import { ExprContext, is_lambda, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
-import { complex_comparator, complex_to_item, contains_single_blade, convertMetricToNative, convert_tensor_to_strings, guess, handle_atom_atom_binop, is_power, item_to_complex, predicate_return_value } from "@stemcmicro/helpers";
+import { complex_comparator, complex_to_item, contains_single_blade, convertMetricToNative, convert_tensor_to_strings, guess, handle_atom_atom_binop, is_power, item_to_complex, predicate_return_value, prolog_eval_varargs } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { ProgramStack, StackU } from "@stemcmicro/stack";
 import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, Cons2, is_atom, is_cons, is_cons2, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { bignum_equal } from "./bignum_equal";
 import { bignum_itoa } from "./bignum_itoa";
@@ -63,9 +64,7 @@ import { lengthf } from "./lengthf";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
 import { ExprEngineListener, ProgramIO } from "./ProgramIO";
-import { ProgramStack } from "./ProgramStack";
 import { StackFunction } from "./StackFunction";
-import { StackU } from "./StackU";
 import { hadamard } from "./stack_hadamard";
 import { mag } from "./stack_mag";
 
@@ -219,7 +218,7 @@ function push_bignum(sign: 1 | -1, a: BigInteger, b: BigInteger, $: ProgramStack
 
     const X: Rat = sign > 0 ? new Rat(a, b) : new Rat(a.negate(), b);
 
-    push(X, $);
+    $.push(X);
 }
 
 // convert string to bignum (7 decimal digits fits in 24 bits)
@@ -294,8 +293,8 @@ function cancel_factor(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
         const h = $.length;
         p2 = cdr(p2);
         while (is_cons(p2)) {
-            push(p1, $);
-            push(car(p2), $);
+            $.push(p1);
+            $.push(car(p2));
             multiply(env, ctrl, $);
             p2 = cdr(p2);
         }

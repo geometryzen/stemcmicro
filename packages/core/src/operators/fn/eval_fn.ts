@@ -1,5 +1,5 @@
 import { assert_tensor, is_num, is_str, is_sym, is_tensor, Tensor } from "@stemcmicro/atoms";
-import { StackU } from "@stemcmicro/eigenmath";
+import { StackU } from "@stemcmicro/stack";
 import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { zip } from "../../functional/zip";

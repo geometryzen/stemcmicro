@@ -1,4 +1,4 @@
-import { Stack } from "@stemcmicro/eigenmath";
+import { Stack } from "@stemcmicro/stack";
 import { Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { State } from "./Stepper";
 

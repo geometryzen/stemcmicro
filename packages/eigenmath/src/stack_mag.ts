@@ -1,12 +1,12 @@
 import { is_imu, is_num, is_sym, is_tensor, is_uom, one } from "@stemcmicro/atoms";
 import { is_cons_opr_eq_add, is_cons_opr_eq_multiply, is_cons_opr_eq_power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
+import { ProgramStack } from "@stemcmicro/stack";
 import { caddr, cadr, car, cdr, Cons, is_atom, is_cons } from "@stemcmicro/tree";
 import { absfunc, add, denominator, divide, elementwise, expfunc, imag, multiply, multiply_factors, numerator, pop, power, push, push_integer, push_rational, real, rect, value_of } from "./eigenmath";
 import { isminusone } from "./isminusone";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
-import { ProgramStack } from "./ProgramStack";
 
 export function stack_mag(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     $.push(expr); //  [expr]

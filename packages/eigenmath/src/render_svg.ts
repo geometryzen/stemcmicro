@@ -2,6 +2,7 @@ import { Blade, Boo, create_flt, create_sym, Flt, Imu, is_blade, is_boo, is_flt,
 import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { str_to_string } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
+import { ProgramStack, StackU } from "@stemcmicro/stack";
 import { assert_cons, assert_cons_or_nil, Atom, cadddr, caddr, cadr, car, cddr, cdnr, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { bignum_itoa } from "./bignum_itoa";
 import { count_denominators } from "./count_denominators";
@@ -16,8 +17,6 @@ import { isnegativeterm } from "./isnegativeterm";
 import { isnumerator } from "./isnumerator";
 import { isposint } from "./isposint";
 import { printname_from_symbol } from "./printname_from_symbol";
-import { ProgramStack } from "./ProgramStack";
-import { StackU } from "./StackU";
 
 const ADD = native_sym(Native.add);
 const ASSIGN = native_sym(Native.assign);

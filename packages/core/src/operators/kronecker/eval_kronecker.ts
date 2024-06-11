@@ -1,5 +1,6 @@
 import { ExprContext } from "@stemcmicro/context";
-import { kronecker, StackU } from "@stemcmicro/eigenmath";
+import { kronecker } from "@stemcmicro/eigenmath";
+import { StackU } from "@stemcmicro/stack";
 import { Cons, is_cons, U } from "@stemcmicro/tree";
 
 /**

@@ -1,7 +1,7 @@
 import { create_sym, is_blade, is_flt, is_num, is_rat, is_tensor, is_uom, Num, one, zero } from "@stemcmicro/atoms";
-import { ExprContext, prolog_eval_varargs } from "@stemcmicro/context";
+import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
-import { add, contains_single_blade, multiply, power } from "@stemcmicro/helpers";
+import { add, contains_single_blade, multiply, power, prolog_eval_varargs } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { contains_single_uom } from "../../calculators/compare/contains_single_uom";
@@ -22,7 +22,7 @@ export function eval_multiply(expr: Cons, env: ExprContext): U {
     return prolog_eval_varargs(expr, multiply_values, env);
 }
 
-function multiply_values(values: Cons, $: ExprContext) {
+function multiply_values(values: Cons, $: ExprContext): U {
     // For multiplication, the expression (*) evaluates to 1.
     if (values.isnil) {
         return one;

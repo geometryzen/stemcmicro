@@ -1,7 +1,7 @@
 import { is_sym, Sym } from "@stemcmicro/atoms";
+import { ProgramStack } from "@stemcmicro/stack";
 import { is_atom, is_cons, U } from "@stemcmicro/tree";
 import { list } from "./eigenmath";
-import { ProgramStack } from "./ProgramStack";
 
 /**
  * [..., v1, v2, ..., vn] => [..., x1, x2, ..., xm]

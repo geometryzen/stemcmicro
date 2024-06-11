@@ -22,8 +22,9 @@ import {
     UOM_NAMES
 } from "@stemcmicro/core";
 import { Directive } from "@stemcmicro/directive";
-import { ProgramEnv, ProgramStack, render_svg } from "@stemcmicro/eigenmath";
+import { ProgramEnv, render_svg } from "@stemcmicro/eigenmath";
 import { Native, native_sym } from "@stemcmicro/native";
+import { ProgramStack } from "@stemcmicro/stack";
 import { assert_U, Atom, Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 
 export interface ParseConfig {

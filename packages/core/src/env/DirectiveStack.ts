@@ -1,5 +1,5 @@
 import { Directive } from "@stemcmicro/directive";
-import { Stack } from "@stemcmicro/eigenmath";
+import { Stack } from "@stemcmicro/stack";
 import { PrintMode } from "../runtime/defs";
 
 type Directives = { [directive: number]: number };

@@ -1,8 +1,9 @@
 import { is_flt, is_sym } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
-import { StackU, stack_arg } from "@stemcmicro/eigenmath";
+import { stack_arg } from "@stemcmicro/eigenmath";
 import { is_add, is_base_of_natural_logarithm, is_cons_opr_eq_sym, is_multiply, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_negative, is_pi, is_power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
+import { StackU } from "@stemcmicro/stack";
 import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { subtract } from "../../calculators/sub/subtract";
 import { ExtensionEnv } from "../../env/ExtensionEnv";

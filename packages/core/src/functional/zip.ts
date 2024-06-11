@@ -1,4 +1,4 @@
-import { StackU } from "@stemcmicro/eigenmath";
+import { StackU } from "@stemcmicro/stack";
 import { Cons, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { ProgrammingError } from "../programming/ProgrammingError";
 

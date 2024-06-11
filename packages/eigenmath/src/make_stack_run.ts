@@ -1,4 +1,5 @@
 import { create_sym, is_imu, is_str } from "@stemcmicro/atoms";
+import { ProgramStack } from "@stemcmicro/stack";
 import { cadr, is_nil, nil, U } from "@stemcmicro/tree";
 import { EigenmathParseConfig, evaluate_expression, get_binding, scan_inbuf, set_symbol, stopf, value_of } from "./eigenmath";
 import { make_should_annotate } from "./make_should_annotate";
@@ -6,7 +7,6 @@ import { print_value_and_input_as_svg_or_infix } from "./print_value_and_input_a
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
 import { ProgramIO } from "./ProgramIO";
-import { ProgramStack } from "./ProgramStack";
 import { SvgRenderConfig } from "./render_svg";
 import { should_render_svg } from "./should_eigenmath_render_svg";
 /**

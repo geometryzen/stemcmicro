@@ -1,11 +1,5 @@
 import { create_sym } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
-import { Native, native_sym } from "@stemcmicro/native";
-import { eval_approxratio } from "../approxratio";
-import { MulComparator } from "../calculators/compare/compare_factor_factor";
-import { AddComparator } from "../calculators/compare/compare_term_term";
-import { eval_choose } from "../choose";
-import { eval_clear } from "../clear";
 import {
     stack_arccos,
     stack_arccosh,
@@ -27,11 +21,14 @@ import {
     stack_exptan,
     stack_exptanh,
     stack_floor,
+    stack_hadamard,
     stack_imag,
     stack_index,
+    stack_infix,
     stack_inv,
     stack_kronecker,
     stack_log,
+    stack_mag,
     stack_minor,
     stack_minormatrix,
     stack_mod,
@@ -52,7 +49,12 @@ import {
     stack_transpose,
     stack_unit
 } from "@stemcmicro/eigenmath";
-import { stack_infix } from "@stemcmicro/eigenmath";
+import { Native, native_sym } from "@stemcmicro/native";
+import { eval_approxratio } from "../approxratio";
+import { MulComparator } from "../calculators/compare/compare_factor_factor";
+import { AddComparator } from "../calculators/compare/compare_term_term";
+import { eval_choose } from "../choose";
+import { eval_clear } from "../clear";
 import { eval_and, eval_not, eval_test, eval_testeq, eval_testle, eval_testne } from "../eval_test";
 import { eval_filter } from "../filter";
 import { eval_leading } from "../leading";
@@ -122,7 +124,6 @@ import { for_varargs } from "../operators/for/for_varargs";
 import { gamma_varargs } from "../operators/gamma/gamma_varargs";
 import { gcd_varargs } from "../operators/gcd/gcd_varargs";
 import { eval_grade } from "../operators/grade/grade";
-import { stack_hadamard } from "@stemcmicro/eigenmath";
 import { hermite_varargs } from "../operators/hermite/hermite_varargs";
 import { hyp_extension_builder } from "../operators/hyp/hyp_extension";
 import { infinitesimal_1_str } from "../operators/hyp/infinitesimal_1_str";
@@ -192,7 +193,6 @@ import { lco_2_blade_blade } from "../operators/lco/lco_2_blade_blade";
 import { legendre_varargs } from "../operators/legendre/legendre_varargs";
 import { let_varargs } from "../operators/let/let_varargs";
 import { localizable_extension_builder } from "../operators/localizable/LocalizableExtension";
-import { stack_mag } from "@stemcmicro/eigenmath";
 import { eval_multiply } from "../operators/mul/eval_multiply";
 import { mul_2_blade_blade } from "../operators/mul/mul_2_blade_blade";
 import { mul_2_tensor_tensor } from "../operators/mul/mul_2_tensor_tensor";

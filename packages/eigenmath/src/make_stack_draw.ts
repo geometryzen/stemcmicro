@@ -1,12 +1,12 @@
 import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_imu, is_num, is_tensor, Sym } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
+import { ProgramStack } from "@stemcmicro/stack";
 import { assert_cons, Cons, nil, U } from "@stemcmicro/tree";
 import { broadcast, evaluate_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
 import { ExprContextFromProgram } from "./ExprContextFromProgram";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
 import { ProgramIO } from "./ProgramIO";
-import { ProgramStack } from "./ProgramStack";
 import { draw_formula, emit_list, height, set_emit_small_font, SvgRenderConfig, SvgRenderEnv, width } from "./render_svg";
 import { StackFunction } from "./StackFunction";
 

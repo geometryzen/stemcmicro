@@ -10,8 +10,8 @@ describe("broken", function () {
     });
 });
 
-xdescribe("e2e", () => {
-    xit("create_engine", () => {
+describe("e2e", () => {
+    it("create_engine", () => {
         const engine: ExprEngine = create_engine();
         try {
             const sourceText = [`G20 = algebra([1, 1, 1], ["ex", "ey", "ez"])`, `ex = G20[1]`, `ey = G20[2]`, `cross(ex,ey)`].join("\n");
@@ -33,7 +33,7 @@ xdescribe("e2e", () => {
             engine.release();
         }
     });
-    xit("tensor component assignment", () => {
+    it("tensor component assignment", () => {
         const engine: ExprEngine = create_engine();
         try {
             const sourceText = [`M=zero(2,2)`, `M[1,1]=a`, `M[1,2]=b`, `M[2,1]=c`, `M[2,2]=d`, `M`].join("\n");
@@ -55,7 +55,7 @@ xdescribe("e2e", () => {
             engine.release();
         }
     });
-    xit("factor", () => {
+    it("factor", () => {
         const engine: ExprEngine = create_engine();
         try {
             const sourceText = [`factor(56)`].join("\n");
@@ -77,7 +77,7 @@ xdescribe("e2e", () => {
             engine.release();
         }
     });
-    xit("Uom ** 2", () => {
+    it("Uom ** 2", () => {
         const engine: ExprEngine = create_engine();
         try {
             const sourceText = [`m ** 2`].join("\n");
@@ -110,13 +110,12 @@ xdescribe("e2e", () => {
                 const tree = trees[i];
                 assert_U(tree);
                 assert_cons(tree);
-                // expect(`${tree}`).toBe("(* (1 ((pow (4 (-1 ()))) ())))");
                 const value = engine.valueOf(tree);
                 if (!value.isnil) {
-                    // const s = engine.renderAsString(tree);
-                    // expect(s).toBe("1/4");
+                    const s = engine.renderAsString(tree);
+                    expect(s).toBe("1/4");
                     const t = engine.renderAsString(value);
-                    expect(t).toBe("m**2");
+                    expect(t).toBe("1/4");
                 }
                 value.release();
             }

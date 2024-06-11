@@ -1,6 +1,7 @@
 import { create_int, is_tensor, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { ProgramStack, StackU, value_of } from "@stemcmicro/eigenmath";
+import { value_of } from "@stemcmicro/eigenmath";
+import { ProgramStack, StackU } from "@stemcmicro/stack";
 import { Cons, U } from "@stemcmicro/tree";
 
 function rank($: ProgramStack): void {

@@ -28,7 +28,7 @@
     "scripts": {
         "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
         "clean": "rm -rf coverage && rm -rf dist && rm -rf docs && rm -rf es2015 && rm -rf system && rm -rf types && rm -rf build",
-        "testXXX": "jest"
+        "test": "jest"
     },
     "repository": {
         "type": "git",

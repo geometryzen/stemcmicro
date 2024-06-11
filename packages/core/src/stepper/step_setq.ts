@@ -1,5 +1,5 @@
 import { is_sym, Sym } from "@stemcmicro/atoms";
-import { Stack } from "@stemcmicro/eigenmath";
+import { Stack } from "@stemcmicro/stack";
 import { Cons, is_cons, is_cons2, nil, U } from "@stemcmicro/tree";
 import { define_function } from "../operators/assign/define_function";
 import { setq_indexed } from "../operators/assign/setq_indexed";

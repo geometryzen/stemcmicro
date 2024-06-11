@@ -1,7 +1,7 @@
 import { Sym } from "@stemcmicro/atoms";
 import { ExprHandler } from "@stemcmicro/context";
+import { ProgramStack } from "@stemcmicro/stack";
 import { Cons, Shareable, U } from "@stemcmicro/tree";
-import { ProgramStack } from "./ProgramStack";
 
 export interface ProgramEnv extends Shareable {
     clearBindings(): void;

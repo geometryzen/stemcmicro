@@ -1,4 +1,4 @@
-import { StackU } from "@stemcmicro/eigenmath";
+import { StackU } from "@stemcmicro/stack";
 import { U } from "@stemcmicro/tree";
 
 /**

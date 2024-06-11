@@ -1,5 +1,5 @@
+import { ExprContext } from "@stemcmicro/context";
 import { Cons, cons, U } from "@stemcmicro/tree";
-import { ExprContext } from "./ExprContext";
 
 /**
  * The correct way to handle eval functions that respects the overloading of operators mechanism.

@@ -1,10 +1,10 @@
 import { Sym } from "@stemcmicro/atoms";
 import { CompareFn, ExprContext, ExprHandler } from "@stemcmicro/context";
+import { StackU } from "@stemcmicro/stack";
 import { Cons, Shareable, U } from "@stemcmicro/tree";
 import { value_of } from "./eigenmath";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
-import { StackU } from "./StackU";
 
 /**
  * @deprecated Move away from this once ProgramEnv becomes the same as ExprContext.

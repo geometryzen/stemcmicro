@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/hilbert",
-    "version": "0.9.74",
+    "version": "0.9.75",
     "description": "hilbert function for stemcmicro",
     "exports": {
         ".": {

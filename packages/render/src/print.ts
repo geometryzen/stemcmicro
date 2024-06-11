@@ -318,6 +318,7 @@ function print_a_over_b(p: Cons, _: PrintConfig): string {
  * @returns
  */
 export function render_using_non_sexpr_print_mode(expr: U, $: PrintConfig): string {
+    assert_U(expr);
     return print_additive_expr(expr, $);
 }
 

@@ -1,8 +1,5 @@
+import { pop, ProgramControl, ProgramEnv, ProgramStack, value_of } from "@stemcmicro/eigenmath";
 import { U } from "@stemcmicro/tree";
-import { pop, value_of } from "../../eigenmath/eigenmath";
-import { ProgramControl } from "../../eigenmath/ProgramControl";
-import { ProgramEnv } from "../../eigenmath/ProgramEnv";
-import { ProgramStack } from "../../eigenmath/ProgramStack";
 import { hook_create_err } from "../../hooks/hook_create_err";
 
 export function stack_error(expr: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {

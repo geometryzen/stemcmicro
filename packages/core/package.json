@@ -63,6 +63,7 @@
         "@stemcmicro/context": "workspace:*",
         "@stemcmicro/diagnostics": "workspace:*",
         "@stemcmicro/directive": "workspace:*",
+        "@stemcmicro/eigenmath": "workspace:*",
         "@stemcmicro/em-parse": "workspace:*",
         "@stemcmicro/helpers": "workspace:*",
         "@stemcmicro/native": "workspace:*",

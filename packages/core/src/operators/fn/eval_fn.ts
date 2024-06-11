@@ -1,12 +1,12 @@
 import { assert_tensor, is_num, is_str, is_sym, is_tensor, Tensor } from "@stemcmicro/atoms";
+import { StackU } from "@stemcmicro/eigenmath";
 import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { StackU } from "../../env/StackU";
 import { zip } from "../../functional/zip";
-import { eval_derivative } from "../derivative/eval_derivative";
 import { EVAL, FN, SYMBOL_D } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { cadr, cddr } from "../../tree/helpers";
+import { eval_derivative } from "../derivative/eval_derivative";
 
 function validate_fn_expr(expr: U): Cons {
     if (is_num(expr)) {

@@ -1,9 +1,8 @@
 import { imu, is_flt, is_num, is_rat, Num, Rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { isone, is_add, is_multiply, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_eq_rational, is_num_and_negative, is_power, is_rat_and_integer } from "@stemcmicro/helpers";
+import { guess, isone, is_add, is_multiply, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_eq_rational, is_num_and_negative, is_power, is_rat_and_integer } from "@stemcmicro/helpers";
 import { caddr, cadnr, cadr, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { guess } from "./guess";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
 import { FLOAT, MEQUAL, MSIGN, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from "./runtime/constants";
 

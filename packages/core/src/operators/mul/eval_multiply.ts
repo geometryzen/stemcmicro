@@ -1,16 +1,14 @@
 import { create_sym, is_blade, is_flt, is_num, is_rat, is_tensor, is_uom, Num, one, zero } from "@stemcmicro/atoms";
-import { ExprContext } from "@stemcmicro/context";
+import { ExprContext, prolog_eval_varargs } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
-import { add, multiply, power } from "@stemcmicro/helpers";
+import { add, contains_single_blade, multiply, power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
-import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { contains_single_uom } from "../../calculators/compare/contains_single_uom";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { extract_single_uom } from "../../calculators/compare/extract_single_uom";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { remove_factors } from "../../calculators/remove_factors";
-import { prolog_eval_varargs } from "../../dispatch/prolog_eval_varargs";
 import { SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_expanding } from "../../helpers/is_expanding";
 import { OPERATOR } from "../../runtime/constants";

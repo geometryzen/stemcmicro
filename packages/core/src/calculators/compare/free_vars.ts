@@ -6,7 +6,7 @@ import { is_flt } from "../../operators/flt/is_flt";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_imu } from "../../operators/imu/is_imu";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
-import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
+import { is_mul_2_any_any } from "@stemcmicro/helpers";
 import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_rat } from "../../operators/rat/is_rat";

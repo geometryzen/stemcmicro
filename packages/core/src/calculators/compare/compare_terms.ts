@@ -1,13 +1,10 @@
-import { is_blade, is_imu, is_num, is_rat, is_sym, one, zero } from "@stemcmicro/atoms";
-import { compare_num_num } from "@stemcmicro/helpers";
+import { imu, is_blade, is_imu, is_num, is_rat, is_sym, one, zero } from "@stemcmicro/atoms";
+import { compare_num_num, is_cons_opr_eq_multiply, is_mul_2_any_any } from "@stemcmicro/helpers";
 import { is_native, Native } from "@stemcmicro/native";
-import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { imu } from "../../env/imu";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { is_unaop } from "../../operators/helpers/is_unaop";
-import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_mul_2_any_blade } from "../../operators/mul/is_mul_2_any_blade";
 import { is_mul_2_num_any } from "../../operators/mul/is_mul_2_num_any";
 import { is_mul_2_sym_sym } from "../../operators/mul/is_mul_2_sym_sym";

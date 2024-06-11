@@ -1,11 +1,7 @@
 import { create_sym, imu, Tensor } from "@stemcmicro/atoms";
+import { add, expfunc, istensor, multiply, multiply_factors, negate, pop, pop_integer, power, ProgramControl, ProgramEnv, ProgramStack, push, push_integer, push_rational, sqrtfunc, stopf, subtract, value_of } from "@stemcmicro/eigenmath";
 import { Native, native_sym } from "@stemcmicro/native";
-import { car, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
-import { add, expfunc, istensor, multiply, multiply_factors, negate, pop, pop_integer, power, push, push_integer, push_rational, sqrtfunc, stopf, subtract, value_of } from "../../eigenmath/eigenmath";
-import { ProgramControl } from "../../eigenmath/ProgramControl";
-import { ProgramEnv } from "../../eigenmath/ProgramEnv";
-import { ProgramStack } from "../../eigenmath/ProgramStack";
-import { cadr, cddr } from "../../tree/helpers";
+import { cadr, car, cddr, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 
 const PI = native_sym(Native.PI);
 

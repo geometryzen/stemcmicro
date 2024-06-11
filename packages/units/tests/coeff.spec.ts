@@ -1,4 +1,4 @@
-import { check } from "./check";
+import { check } from "../src/check";
 
 describe("coeff", function () {
     it("001", function () {

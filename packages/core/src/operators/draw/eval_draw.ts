@@ -1,9 +1,9 @@
 import { Cons, U } from "@stemcmicro/tree";
-import { StackFunction } from "../../adapters/StackFunction";
-import { make_stack_draw } from "../../eigenmath/make_stack_draw";
-import { ProgramIO } from "../../eigenmath/ProgramIO";
+import { StackFunction } from "@stemcmicro/eigenmath";
+import { make_stack_draw } from "@stemcmicro/eigenmath";
+import { ProgramIO } from "@stemcmicro/eigenmath";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { StackU } from "../../env/StackU";
+import { StackU } from "@stemcmicro/eigenmath";
 
 export function eval_draw(expr: Cons, env: ExtensionEnv): U {
     const io: Pick<ProgramIO, "listeners"> = env;

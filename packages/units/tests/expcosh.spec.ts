@@ -1,4 +1,4 @@
-import { check } from "./check";
+import { check } from "../src/check";
 
 describe("expcosh", function () {
     it("001", function () {

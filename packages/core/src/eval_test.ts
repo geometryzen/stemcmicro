@@ -1,10 +1,8 @@
 import { booU } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { subtract } from "@stemcmicro/helpers";
+import { iszero, predicate_return_value, subtract } from "@stemcmicro/helpers";
 import { cadr, cddr } from "@stemcmicro/tree";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "./env/ExtensionEnv";
-import { iszero } from "./helpers/iszero";
-import { predicate_return_value } from "./helpers/predicate_return_value";
 import { Native } from "./native/Native";
 import { native_sym } from "./native/native_sym";
 import { evaluate_as_float } from "./operators/float/float";

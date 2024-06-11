@@ -1,4 +1,4 @@
-import { check } from "./check";
+import { check } from "../src/check";
 
 xdescribe("infix", function () {
     it("Boo", function () {

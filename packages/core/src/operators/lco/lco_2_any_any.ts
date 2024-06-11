@@ -1,5 +1,5 @@
 import { is_blade } from "@stemcmicro/atoms";
-import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
+import { contains_single_blade } from "@stemcmicro/helpers";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { remove_factors } from "../../calculators/remove_factors";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";

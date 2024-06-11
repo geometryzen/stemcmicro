@@ -1,4 +1,4 @@
-import { check } from "./check";
+import { check } from "../src/index";
 
 describe("add", function () {
     it("Blade, Blade", function () {

@@ -1,4 +1,4 @@
-import { check } from "./check";
+import { check } from "../src/check";
 
 describe("exp", function () {
     it("exp(i*pi)", function () {

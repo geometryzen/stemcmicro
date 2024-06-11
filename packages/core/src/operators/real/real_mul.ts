@@ -1,5 +1,5 @@
 import { imu, is_blade, is_uom } from "@stemcmicro/atoms";
-import { count_factors } from "../../calculators/count_factors";
+import { count_factors } from "@stemcmicro/helpers";
 import { remove_factors } from "../../calculators/remove_factors";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";

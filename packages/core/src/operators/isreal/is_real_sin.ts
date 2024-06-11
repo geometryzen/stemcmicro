@@ -1,9 +1,9 @@
 import { Sym } from "@stemcmicro/atoms";
+import { predicate_return_value } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { predicate_return_value } from "../../helpers/predicate_return_value";
 import { ISREAL } from "../../runtime/constants";
 import { CompositeOperator } from "../helpers/CompositeOperator";
 

@@ -1,12 +1,11 @@
 import { assert_flt, create_str, create_sym, Flt, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
-import { multiply } from "@stemcmicro/helpers";
+import { iszero, multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { Extension, FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
-import { iszero } from "../../helpers/iszero";
 import { order_binary } from "../../helpers/order_binary";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
 import { create_flt, oneAsFlt, zeroAsFlt } from "../../tree/flt/Flt";

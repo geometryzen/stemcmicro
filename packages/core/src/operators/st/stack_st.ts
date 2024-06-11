@@ -1,9 +1,6 @@
 import { is_hyp, zero } from "@stemcmicro/atoms";
+import { ProgramControl, ProgramEnv, ProgramStack, value_of } from "@stemcmicro/eigenmath";
 import { Cons, is_atom } from "@stemcmicro/tree";
-import { value_of } from "../../eigenmath/eigenmath";
-import { ProgramControl } from "../../eigenmath/ProgramControl";
-import { ProgramEnv } from "../../eigenmath/ProgramEnv";
-import { ProgramStack } from "../../eigenmath/ProgramStack";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
 export function stack_st(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {

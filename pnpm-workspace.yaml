@@ -6,6 +6,7 @@ packages:
   - "packages/diagnostics"
   - "packages/directive"
   - "packages/e2e"
+  - "packages/eigenmath"
   - "packages/em-parse"
   - "packages/engine"
   - "packages/helpers"

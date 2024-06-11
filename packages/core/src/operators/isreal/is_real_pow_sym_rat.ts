@@ -1,9 +1,9 @@
 import { assert_rat, assert_sym, is_rat, is_sym, Sym } from "@stemcmicro/atoms";
+import { predicate_return_value } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, Cons1, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { predicate_return_value } from "../../helpers/predicate_return_value";
 import { two } from "../../tree/rat/Rat";
 import { CompositeOperator } from "../helpers/CompositeOperator";
 

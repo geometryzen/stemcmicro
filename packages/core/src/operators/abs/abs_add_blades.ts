@@ -1,4 +1,4 @@
-import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
+import { contains_single_blade } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";

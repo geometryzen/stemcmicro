@@ -1,11 +1,8 @@
 import { Cell, CellHost, Sym, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
+import { ProgramControl, ProgramEnv, ProgramIO, StackFunction } from "@stemcmicro/eigenmath";
+import { Native } from "@stemcmicro/native";
 import { Cons, U } from "@stemcmicro/tree";
-import { StackFunction } from "../adapters/StackFunction";
-import { ProgramControl } from "../eigenmath/ProgramControl";
-import { ProgramEnv } from "../eigenmath/ProgramEnv";
-import { ProgramIO } from "../eigenmath/ProgramIO";
-import { Native } from "../native/Native";
 import { EnvConfig } from "./EnvConfig";
 
 export type Sign = -1 | 0 | 1;

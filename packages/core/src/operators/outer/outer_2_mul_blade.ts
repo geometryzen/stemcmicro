@@ -1,8 +1,7 @@
 import { Blade, is_blade, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { multiply } from "@stemcmicro/helpers";
+import { contains_single_blade, multiply } from "@stemcmicro/helpers";
 import { Cons0, Cons2, U } from "@stemcmicro/tree";
-import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { remove_factors } from "../../calculators/remove_factors";
 import { mkbuilder, TFLAGS } from "../../env/ExtensionEnv";

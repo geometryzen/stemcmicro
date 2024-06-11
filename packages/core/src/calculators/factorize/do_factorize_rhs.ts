@@ -1,9 +1,9 @@
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, TFLAGS } from "../../env/ExtensionEnv";
-import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
+import { one, two } from "@stemcmicro/atoms";
+import { is_mul_2_any_any } from "@stemcmicro/helpers";
+import { is_cons, items_to_cons, U } from "@stemcmicro/tree";
+import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { is_num } from "../../operators/num/is_num";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
-import { one, two } from "../../tree/rat/Rat";
-import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { add_num_num } from "../add/add_num_num";
 
 export function do_factorize_rhs(lhs: U, rhs: U, prod: U, orig: U, $: ExtensionEnv): [changed: TFLAGS, expr: U] {

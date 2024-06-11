@@ -1,6 +1,5 @@
-import { ExprContext } from "@stemcmicro/context";
+import { ExprContext, prolog_eval_varargs } from "@stemcmicro/context";
 import { Cons, U } from "@stemcmicro/tree";
-import { prolog_eval_varargs } from "./prolog_eval_varargs";
 
 export function prolog_eval_1_arg(expr: Cons, handler: (x: U, env: ExprContext) => U, env: ExprContext): U {
     return prolog_eval_varargs(

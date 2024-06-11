@@ -1,4 +1,4 @@
-import { check } from "./check";
+import { check } from "../src/check";
 
 describe("differential", function () {
     it("differential(x) +> dx", function () {

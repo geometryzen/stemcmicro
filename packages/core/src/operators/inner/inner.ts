@@ -1,6 +1,6 @@
 import { is_blade, Sym } from "@stemcmicro/atoms";
+import { contains_single_blade } from "@stemcmicro/helpers";
 import { Cons2, items_to_cons, U } from "@stemcmicro/tree";
-import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { remove_factors } from "../../calculators/remove_factors";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";

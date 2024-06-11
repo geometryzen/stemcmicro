@@ -1,8 +1,7 @@
 import { create_int, one, zero } from "@stemcmicro/atoms";
-import { divide, num_to_number } from "@stemcmicro/helpers";
+import { divide, guess, num_to_number } from "@stemcmicro/helpers";
 import { Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { guess } from "../../guess";
 import { TAYLOR } from "../../runtime/constants";
 import { derivative } from "../derivative/derivative";
 import { factorial } from "../factorial/factorial";

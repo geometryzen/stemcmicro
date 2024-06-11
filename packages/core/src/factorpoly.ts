@@ -1,6 +1,6 @@
 import { create_int, imu, negOne, one, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { add, divide, inverse, multiply, negate, power, subtract } from "@stemcmicro/helpers";
+import { add, divide, inverse, iszero, multiply, negate, power, subtract } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "./bignum";
@@ -8,7 +8,6 @@ import { complex_conjugate } from "./complex_conjugate";
 import { yycondense } from "./condense";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { equals } from "./helpers/equals";
-import { iszero } from "./helpers/iszero";
 import { rect } from "./helpers/rect";
 import { contains_floating_values_or_floatf } from "./is";
 import { multiply_noexpand, negate_noexpand } from "./multiply";

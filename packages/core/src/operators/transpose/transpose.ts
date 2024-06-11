@@ -1,22 +1,19 @@
-import { is_num, is_tensor, one, Tensor, zero } from "@stemcmicro/atoms";
+import { is_num, is_tensor, one, Tensor, two, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { add, isone, is_inner_or_dot, is_num_and_eq_two, multiply, num_to_number } from "@stemcmicro/helpers";
+import { add, isone, iszero, is_inner_or_dot, is_num_and_eq_two, multiply, num_to_number } from "@stemcmicro/helpers";
 import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { equals } from "../../helpers/equals";
 import { inner } from "../../helpers/inner";
-import { iszero } from "../../helpers/iszero";
 import { is_expanding } from "../../helpers/is_expanding";
 import { MAXDIM, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { is_add, is_identity_matrix, is_multiply, is_transpose } from "../../runtime/helpers";
-import { two } from "../../tree/rat/Rat";
 
 /**
  * (transpose a i j)
  */
-export function eval_transpose(expr: Cons, $: ExtensionEnv): U {
+export function eval_transpose(expr: Cons, $: ExprContext): U {
     const argList = expr.argList;
     try {
         const A = $.valueOf(argList.head);

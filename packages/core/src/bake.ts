@@ -1,8 +1,7 @@
 import { create_int } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { is_add, is_multiply, is_num_and_eq_number } from "@stemcmicro/helpers";
+import { iszero, is_add, is_multiply, is_num_and_eq_number } from "@stemcmicro/helpers";
 import { car, cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
-import { iszero } from "./helpers/iszero";
 import { is_poly_expanded_form } from "./is";
 import { coefficients } from "./operators/coeff/coeff";
 import { ADD, FOR, MULTIPLY, POWER, SYMBOL_S, SYMBOL_T, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from "./runtime/constants";

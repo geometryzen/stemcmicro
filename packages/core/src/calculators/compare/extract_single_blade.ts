@@ -1,7 +1,6 @@
 import { Blade, is_blade } from "@stemcmicro/atoms";
-import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
+import { count_factors, is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
-import { count_factors } from "../count_factors";
 import { remove_factors } from "../remove_factors";
 import { not_is_blade } from "./not_is_blade";
 

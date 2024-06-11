@@ -1,6 +1,6 @@
 import { is_flt, is_rat } from "@stemcmicro/atoms";
 import { U } from "@stemcmicro/tree";
-import { is_safe_integer_range } from "./predicates/is_safe_integer_range";
+import { is_safe_integer_range } from "./is_safe_integer_range";
 
 /**
  * If the expr is not a Rat or Flt then the result is NaN.

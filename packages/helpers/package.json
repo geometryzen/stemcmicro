@@ -64,6 +64,7 @@
         "@stemcmicro/atoms": "workspace:*",
         "@stemcmicro/context": "workspace:*",
         "@stemcmicro/diagnostics": "workspace:*",
+        "@stemcmicro/directive": "workspace:*",
         "@stemcmicro/native": "workspace:*",
         "@stemcmicro/tree": "workspace:*"
     },

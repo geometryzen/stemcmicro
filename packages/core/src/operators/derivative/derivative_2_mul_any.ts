@@ -1,3 +1,4 @@
+import { is_opr_2_any_any } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
@@ -9,7 +10,6 @@ import { is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-import { is_opr_2_any_any } from "../helpers/is_opr_2_any_any";
 import { is_sym } from "../sym/is_sym";
 import { dproduct } from "./helpers/dproduct";
 

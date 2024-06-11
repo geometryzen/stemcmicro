@@ -1,4 +1,4 @@
-import { check } from "./check";
+import { check } from "../src/check";
 
 describe("subtraction", function () {
     it("Blade, Blade", function () {

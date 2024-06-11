@@ -1,5 +1,5 @@
+import { StackU } from "@stemcmicro/eigenmath";
 import { U } from "@stemcmicro/tree";
-import { StackU } from "../env/StackU";
 
 /**
  * A box that contains something, or not.

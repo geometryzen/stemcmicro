@@ -10,14 +10,11 @@ import {
     env_term,
     ExtensionEnv,
     init_env,
-    ProgramEnv,
-    ProgramStack,
     render_as_ascii,
     render_as_human,
     render_as_infix,
     render_as_latex,
     render_as_sexpr,
-    render_svg,
     RESERVED_KEYWORD_LAST,
     RESERVED_KEYWORD_TTY,
     simplify,
@@ -25,8 +22,9 @@ import {
     UOM_NAMES
 } from "@stemcmicro/core";
 import { Directive } from "@stemcmicro/directive";
+import { ProgramEnv, ProgramStack, render_svg } from "@stemcmicro/eigenmath";
 import { Native, native_sym } from "@stemcmicro/native";
-import { Atom, Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
+import { assert_U, Atom, Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 
 export interface ParseConfig {
     useCaretForExponentiation: boolean;
@@ -273,6 +271,7 @@ class MicroEngine implements ExprEngine {
         }
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
+        assert_U(expr);
         // console.lg("MicroEngine.renderAsString", `${expr}`);
         this.#env.pushDirective(Directive.useCaretForExponentiation, directive_from_flag(config.useCaretForExponentiation));
         this.#env.pushDirective(Directive.useParenForTensors, directive_from_flag(config.useParenForTensors));

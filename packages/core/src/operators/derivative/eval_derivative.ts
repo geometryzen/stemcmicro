@@ -1,8 +1,7 @@
 import { is_num } from "@stemcmicro/atoms";
-import { num_to_number } from "@stemcmicro/helpers";
+import { guess, num_to_number } from "@stemcmicro/helpers";
 import { car, cdr, Cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { guess } from "../../guess";
 import { integral } from "../integral/integral_helpers";
 import { derivative } from "./derivative";
 

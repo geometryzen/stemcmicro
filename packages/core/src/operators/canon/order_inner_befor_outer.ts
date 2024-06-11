@@ -1,3 +1,4 @@
+import { is_mul_2_any_any } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { items_to_cons } from "../../makeList";
@@ -9,7 +10,6 @@ import { is_add_2_any_any } from "../add/is_add_2_any_any";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 
 type LL = U;
 type LRL = Cons2<Sym, Sym, Sym>;

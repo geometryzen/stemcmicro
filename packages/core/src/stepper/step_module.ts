@@ -1,5 +1,5 @@
+import { Stack } from "@stemcmicro/eigenmath";
 import { Cons, nil, U } from "@stemcmicro/tree";
-import { Stack } from "../env/Stack";
 import { State } from "./Stepper";
 
 export function step_module(expr: Cons, stack: Stack<State>, state: State): State | undefined {

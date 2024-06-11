@@ -1,9 +1,7 @@
 import { create_int, is_tensor, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { ProgramStack, StackU, value_of } from "@stemcmicro/eigenmath";
 import { Cons, U } from "@stemcmicro/tree";
-import { value_of } from "../../eigenmath/eigenmath";
-import { ProgramStack } from "../../eigenmath/ProgramStack";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { StackU } from "../../env/StackU";
 
 function rank($: ProgramStack): void {
     const value = $.pop();
@@ -19,7 +17,7 @@ function rank($: ProgramStack): void {
     }
 }
 
-export function eval_rank(expr: Cons, env: ExtensionEnv): U {
+export function eval_rank(expr: Cons, env: ExprContext): U {
     const $ = new StackU(); // ()
     $.push(expr); // (expr)
     $.rest(); // (argList)

@@ -1,5 +1,5 @@
-import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
-import { is_cons, U } from "../../tree/tree";
+import { is_mul_2_any_any } from "@stemcmicro/helpers";
+import { is_cons, U } from "@stemcmicro/tree";
 
 /**
  * WARNING: Only works when expr is binary multiplication.

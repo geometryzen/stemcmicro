@@ -1,8 +1,7 @@
-import { divide } from "@stemcmicro/helpers";
+import { divide, guess } from "@stemcmicro/helpers";
 import { caddr, cadr, Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { filter } from "./filter";
-import { guess } from "./guess";
 import { degree } from "./operators/degree/degree";
 
 /*

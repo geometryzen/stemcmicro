@@ -1,8 +1,7 @@
-import { count_factors } from "../../calculators/count_factors";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { zeroAsFlt } from "../../tree/flt/Flt";
-import { Cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
+import { is_flt, zeroAsFlt } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { count_factors } from "@stemcmicro/helpers";
+import { Cons, U } from "@stemcmicro/tree";
 
 const is_flt_and_zero = (expr: U) => is_flt(expr) && expr.isZero();
 
@@ -13,7 +12,7 @@ const is_flt_and_zero = (expr: U) => is_flt(expr) && expr.isZero();
  * @returns
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function transform_mul_flt(expr: Cons, $: ExtensionEnv): U {
+export function transform_mul_flt(expr: Cons, $: ExprContext): U {
     // console.lg("transform_mul_flt");
     // TODO: This works even though I am not evaluating the arguments.
     // Do the factors need to be evaluated for this to do its job?

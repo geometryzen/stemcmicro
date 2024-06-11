@@ -2,13 +2,11 @@
 import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_rat, is_sym, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, is_lambda, Lambda, LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
+import { ExprEngineListener, ProgramStack, StackFunction } from "@stemcmicro/eigenmath";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
-import { Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
+import { assert_U, Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
 import { ExtensionEnvFromExprContext } from "../adapters/ExtensionEnvFromExprContext";
 import { make_eval } from "../adapters/make_eval";
-import { StackFunction } from "../adapters/StackFunction";
-import { ExprEngineListener } from "../eigenmath/ProgramIO";
-import { ProgramStack } from "../eigenmath/ProgramStack";
 import { eval_function } from "../eval_function";
 import { factor_polynomial } from "../factorpoly";
 import { hash_for_atom, hash_info, hash_nonop_cons, hash_target } from "../hashing/hash_info";
@@ -826,6 +824,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         extensionFor(expr: U): Extension<U> | undefined {
+            assert_U(expr);
             if (is_cons(expr)) {
                 const head = expr.head;
                 try {
@@ -862,7 +861,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             } else if (is_nil(expr)) {
                 return select_nil_extension();
             } else {
-                throw new ProgrammingError();
+                throw new ProgrammingError(JSON.stringify(expr));
             }
         },
         outer(...args: U[]): U {
@@ -953,7 +952,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         transform(expr: U): [TFLAGS, U] {
-            // console.lg("ExtensionEnv.trnsfrm", `${expr}`);
+            assert_U(expr);
+            // console.lg("ExtensionEnv.transform", `${expr}`);
             // We short-circuit some expressions in order to improve performance.
             if (is_cons(expr)) {
                 // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
@@ -977,6 +977,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         head_opr.release();
                     }
                 } else if (is_sym(opr)) {
+                    // console.lg("Checking for binding", `${expr}`, `${opr}`)
                     // We're handling the case here of an operator that is shadowed by a binding.
                     // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
                     if (symTab.hasBinding(opr)) {
@@ -1018,7 +1019,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         const op = unambiguous_extension(expr, ops, $);
                         if (op) {
                             const composite = op.transform(expr, $);
-                            // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite[1])} flags: ${composite[0]}`);
+                            // console.lg(`${op.name} ${expr} => ${composite[1]} flags: ${composite[0]}`);
                             // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
                             return composite;
                         }
@@ -1080,12 +1081,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         valueOf(expr: U, stack?: Pick<ProgramStack, "push">): U {
+            assert_U(expr);
             // console.lg("ExtensionEnv.valueOf", `${expr}`);
             // TOOD: We'd like to do this the newWay = !oldWay.
             // This flag makes it easier to switch back and forth.
             const oldWay = true;
             if (oldWay) {
                 const retval = $.transform(expr)[1];
+                assert_U(retval);
                 if (stack) {
                     try {
                         stack.push(retval);

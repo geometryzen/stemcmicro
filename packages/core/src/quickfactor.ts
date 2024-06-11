@@ -1,12 +1,10 @@
+import { Rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { multiply, multiply_items, num_to_number, subtract } from "@stemcmicro/helpers";
+import { iszero, multiply, multiply_items, num_to_number, subtract } from "@stemcmicro/helpers";
+import { items_to_cons, U } from "@stemcmicro/tree";
 import { bignum_power_number, bignum_truncate } from "./bignum";
-import { iszero } from "./helpers/iszero";
-import { items_to_cons } from "./makeList";
 import { factor_small_number } from "./operators/factor/factor";
 import { POWER } from "./runtime/constants";
-import { Rat } from "./tree/rat/Rat";
-import { U } from "./tree/tree";
 
 //-----------------------------------------------------------------------------
 //

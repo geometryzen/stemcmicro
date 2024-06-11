@@ -1,4 +1,4 @@
-import { check } from "./check";
+import { check } from "../src/check";
 
 const svg = [
     `<svg height='36'width='119'>`,

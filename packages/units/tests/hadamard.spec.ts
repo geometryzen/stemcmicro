@@ -1,4 +1,4 @@
-import { check } from "./check";
+import { check } from "../src/check";
 
 describe("hadamard", function () {
     it("is the element-wise product", function () {

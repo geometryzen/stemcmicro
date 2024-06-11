@@ -1,3 +1,4 @@
+import { is_opr_2_any_any } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
@@ -9,7 +10,6 @@ import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { GUARD } from "../helpers/GUARD";
-import { is_opr_2_any_any } from "../helpers/is_opr_2_any_any";
 import { is_opr_2_any_rhs } from "../helpers/is_opr_2_any_rhs";
 import { is_rat } from "../rat/is_rat";
 

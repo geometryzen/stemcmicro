@@ -1,19 +1,12 @@
-import { is_blade, is_boo } from "@stemcmicro/atoms";
-import { compare_num_num } from "@stemcmicro/helpers";
+import { is_blade, is_boo, is_imu, is_num, is_str, is_tensor } from "@stemcmicro/atoms";
+import { compare_num_num, contains_single_blade, count_factors, is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
-import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
 import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
-import { is_imu } from "../../operators/imu/is_imu";
-import { is_num } from "../../operators/num/is_num";
-import { is_str } from "../../operators/str/is_str";
-import { is_tensor } from "../../operators/tensor/is_tensor";
-import { count_factors } from "../count_factors";
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
 import { remove_factors } from "../remove_factors";
 import { compare_expr_expr } from "./compare_expr_expr";
-import { contains_single_blade } from "./contains_single_blade";
 import { extract_single_blade } from "./extract_single_blade";
 
 export class AddComparator implements ExprComparator {

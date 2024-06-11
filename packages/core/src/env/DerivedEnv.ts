@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CellHost, create_sym, is_boo, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor, Sym, Tensor } from "@stemcmicro/atoms";
 import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
+import { ExprEngineListener, ProgramStack, StackFunction } from "@stemcmicro/eigenmath";
 import { Native } from "@stemcmicro/native";
 import { Cons, is_atom, is_cons, is_nil, items_to_cons, Shareable, U } from "@stemcmicro/tree";
-import { StackFunction } from "../adapters/StackFunction";
-import { ExprEngineListener } from "../eigenmath/ProgramIO";
-import { ProgramStack } from "../eigenmath/ProgramStack";
 import { setq } from "../operators/assign/assign_any_any";
 import { eval_dotdot } from "../operators/dotdot/eval_dotdot";
 import { JsObjectExtension } from "../operators/jsobject/JsObjectExtension";

@@ -403,9 +403,7 @@ export function items_to_cons(...items: U[]): Cons {
 export const nil = new Cons(void 0, void 0, void 0, void 0);
 
 export function is_atom(expr: U): expr is Atom {
-    if (is_cons(expr)) {
-        return false;
-    } else if (expr.isnil) {
+    if (is_cons_or_nil(expr)) {
         return false;
     } else {
         // eslint-disable-next-line no-prototype-builtins
@@ -413,7 +411,23 @@ export function is_atom(expr: U): expr is Atom {
     }
 }
 
+export function assert_atom(expr: U): Atom {
+    if (is_atom(expr)) {
+        return expr;
+    } else {
+        throw new Error();
+    }
+}
+
 export function is_cons_or_nil(expr: U): expr is Cons {
+    /*
+    if (expr.hasOwnProperty("iscons") && expr.hasOwnProperty("isnil")) {
+        return expr.iscons || expr.isnil;
+    }
+    else {
+        return false;
+    }
+    */
     return expr instanceof Cons;
 }
 
@@ -442,6 +456,14 @@ export function is_cons(expr: U): expr is Cons {
         return !expr.isnil;
     } else {
         return false;
+    }
+}
+
+export function assert_U(expr: U): U {
+    if (is_cons_or_nil(expr) || is_atom(expr)) {
+        return expr;
+    } else {
+        throw new Error(`${expr} ${expr.name} ${expr.iscons}`);
     }
 }
 

@@ -2,16 +2,14 @@
 import { CellHost, create_int, is_boo, is_rat, Sym, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
+import { ExprEngineListener, ProgramStack, StackFunction } from "@stemcmicro/eigenmath";
 import { str_to_string } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_atom, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
-import { ExprEngineListener } from "../eigenmath/ProgramIO";
-import { ProgramStack } from "../eigenmath/ProgramStack";
 import { AtomListener, CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
 import { ExtensionFromExprHandler } from "../env/ExtensionFromExprHandler";
 import { render_as_infix } from "../print/render_as_infix";
 import { ProgrammingError } from "../programming/ProgrammingError";
-import { StackFunction } from "./StackFunction";
 
 function predicate_to_boolean(expr: U): boolean {
     if (is_boo(expr)) {

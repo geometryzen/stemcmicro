@@ -1,6 +1,7 @@
+import { guess } from "@stemcmicro/helpers";
+import { caddr, cadr } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { imu } from "./env/imu";
-import { guess } from "./guess";
 import { is_poly_expanded_form } from "./is";
 import { sort_stack } from "./misc";
 import { coefficients } from "./operators/coeff/coeff";
@@ -11,7 +12,6 @@ import { re } from "./operators/real/real";
 import { defs, halt, move_top_of_stack } from "./runtime/defs";
 import { stack_pop, stack_push } from "./runtime/stack";
 import { create_flt } from "./tree/flt/Flt";
-import { caddr, cadr } from "@stemcmicro/tree";
 import { Tensor } from "./tree/tensor/Tensor";
 import { Cons, U } from "./tree/tree";
 

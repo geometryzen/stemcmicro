@@ -1,12 +1,11 @@
+import { ExprContext } from "@stemcmicro/context";
+import { kronecker, StackU } from "@stemcmicro/eigenmath";
 import { Cons, is_cons, U } from "@stemcmicro/tree";
-import { kronecker } from "../../eigenmath/eigenmath";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { StackU } from "../../env/StackU";
 
 /**
  * (kronecker a b ...)
  */
-export function eval_kronecker(expr: Cons, env: ExtensionEnv): U {
+export function eval_kronecker(expr: Cons, env: ExprContext): U {
     const stack = new StackU();
     const argList = expr.argList;
     try {

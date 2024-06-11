@@ -2,7 +2,7 @@ import { Err, is_flt, is_num, is_rat, negOne, Num } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { U } from "@stemcmicro/tree";
-import { power } from "./ctors/power";
+import { power } from "./power";
 
 /**
  * inverse(arg) => (valueOf (power arg -1))

@@ -1,9 +1,8 @@
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { is_add } from "@stemcmicro/helpers";
+import { iszero, is_add } from "@stemcmicro/helpers";
+import { is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { iszero } from "../../helpers/iszero";
-import { is_cons, U } from "../../tree/tree";
 import { to_list_add_sort } from "./to_list_add_sort";
 
 /**

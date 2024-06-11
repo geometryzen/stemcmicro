@@ -1,5 +1,5 @@
+import { StackU } from "@stemcmicro/eigenmath";
 import { Cons, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
-import { StackU } from "../env/StackU";
 import { ProgrammingError } from "../programming/ProgrammingError";
 
 function assert_cons_or_nil(expr: U): Cons {

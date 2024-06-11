@@ -1,12 +1,10 @@
-import { is_blade, is_flt, is_rat, is_sym } from "@stemcmicro/atoms";
+import { is_blade, is_flt, is_hyp, is_imu, is_rat, is_sym } from "@stemcmicro/atoms";
+import { is_mul_2_any_any } from "@stemcmicro/helpers";
+import { is_cons, U } from "@stemcmicro/tree";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { is_hyp } from "../../operators/hyp/is_hyp";
-import { is_imu } from "../../operators/imu/is_imu";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
-import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
-import { is_cons, U } from "../../tree/tree";
 import { compare_factorizable } from "./compare_factorizable";
 import { compare_opr_opr } from "./compare_opr_opr";
 import { compare_sym_sym } from "./compare_sym_sym";

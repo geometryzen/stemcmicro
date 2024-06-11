@@ -1,9 +1,8 @@
 import { ExprContext } from "@stemcmicro/context";
-import { is_add, is_multiply, multiply_items, negate } from "@stemcmicro/helpers";
+import { guess, is_add, is_multiply, multiply_items, negate } from "@stemcmicro/helpers";
 import { assert_cons_or_nil, caddr, cadr, car, cdr, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { add_terms } from "./calculators/add/add_terms";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { guess } from "./guess";
 
 // this function extract parts subtrees from a tree.
 // It is used in two

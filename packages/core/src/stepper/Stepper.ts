@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { assert_sym, create_sym, is_sym, Sym } from "@stemcmicro/atoms";
 import { LambdaExpr } from "@stemcmicro/context";
-import { Native, native_sym } from "@stemcmicro/native";
+import { ExprEngineListener, Stack } from "@stemcmicro/eigenmath";
 import { is_cons_opr_eq_sym } from "@stemcmicro/helpers";
+import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_atom, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { ExprEngineListener } from "../eigenmath/ProgramIO";
 import { create_env, EnvOptions } from "../env/env";
 import { ALL_FEATURES, ExtensionEnv } from "../env/ExtensionEnv";
-import { Stack } from "../env/Stack";
 import { init_env } from "../runtime/script_engine";
 import { BaseEnv } from "./BaseEnv";
 import { DerivedScope } from "./DerivedEnv";

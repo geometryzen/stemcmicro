@@ -4,7 +4,7 @@ import { is_localizable } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
 import { isone, is_base_of_natural_logarithm, is_cons_opr_eq_inv, is_inner_or_dot, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_eq_two, is_num_and_negative, is_outer, is_pi, lt_num_num, negate, str_to_string } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
-import { car, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
+import { assert_U, car, cdr, Cons, is_atom, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { isNumberOneOverSomething, is_num_and_eq_minus_one, is_rat_and_fraction } from "../is";
 import { denominator } from "../operators/denominator/denominator";
 import { numerator } from "../operators/numerator/numerator";
@@ -299,10 +299,12 @@ function print_a_over_b(p: Cons, _: PrintConfig): string {
  * @returns
  */
 export function render_using_non_sexpr_print_mode(expr: U, $: PrintConfig): string {
+    assert_U(expr);
     return print_additive_expr(expr, $);
 }
 
 export function print_additive_expr(p: U, _: PrintConfig): string {
+    assert_U(p);
     let str = "";
     if (is_add(p)) {
         p = cdr(p);
@@ -458,7 +460,7 @@ function print_multiply_when_no_denominators(expr: Cons, _: PrintConfig): string
 }
 
 export function print_multiplicative_expr(expr: U, $: PrintConfig): string {
-    // console.lg("print_multiplicative_expr", `${expr}`);
+    assert_U(expr);
     if (is_cons(expr) && is_multiply(expr)) {
         if (any_denominators(expr)) {
             return print_a_over_b(expr, $);
@@ -471,6 +473,7 @@ export function print_multiplicative_expr(expr: U, $: PrintConfig): string {
 }
 
 export function print_outer_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, _: PrintConfig): string {
+    assert_U(expr);
     if (is_cons(expr) && is_outer(expr)) {
         let argList = expr.argList;
         if (is_cons(argList)) {
@@ -504,6 +507,7 @@ function print_outer_operator(_: PrintConfig): string {
 }
 
 export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, _: PrintConfig): string {
+    assert_U(expr);
     if (is_cons(expr) && is_inner_or_dot(expr)) {
         let argList = expr.argList;
         if (is_cons(argList)) {
@@ -1339,6 +1343,7 @@ function print_index_function(p: U, $: PrintConfig): string {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: PrintConfig): string {
+    assert_U(expr);
     // console.lg(`print_factor expr = ${expr} omitParens = ${omitParens}`);
     const omtPrns = omitParens;
     // console.lg(`print_factor ${expr} omitParens => ${omitParens} pastFirstFactor => ${false}`);
@@ -1826,6 +1831,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, _: P
 }
 
 function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
+    assert_U(expr);
     if (is_cons(expr)) {
         let str = "";
         str += print_factor(expr.car, false, false, _);
@@ -1946,7 +1952,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, _: PrintConfig) {
         if (expr.isnil) {
             return print_str(_.getSymbolPrintName(native_sym(Native.NIL)));
         }
-        throw new ProgrammingError(`${expr} ???`);
+        throw new ProgrammingError(`${expr} ??? is_cons: ${is_cons(expr)} is_atom: ${is_atom(expr)} is_nil: ${is_nil(expr)}`);
     }
 }
 

@@ -1,4 +1,4 @@
-import { count_factors } from "../../calculators/count_factors";
+import { count_factors } from "@stemcmicro/helpers";
 import { remove_factors } from "../../calculators/remove_factors";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";

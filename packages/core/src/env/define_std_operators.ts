@@ -51,8 +51,8 @@ import {
     stack_testlt,
     stack_transpose,
     stack_unit
-} from "../eigenmath/eigenmath";
-import { stack_infix } from "../eigenmath/stack_infix";
+} from "@stemcmicro/eigenmath";
+import { stack_infix } from "@stemcmicro/eigenmath";
 import { eval_and, eval_not, eval_test, eval_testeq, eval_testle, eval_testne } from "../eval_test";
 import { eval_filter } from "../filter";
 import { eval_leading } from "../leading";
@@ -122,7 +122,7 @@ import { for_varargs } from "../operators/for/for_varargs";
 import { gamma_varargs } from "../operators/gamma/gamma_varargs";
 import { gcd_varargs } from "../operators/gcd/gcd_varargs";
 import { eval_grade } from "../operators/grade/grade";
-import { stack_hadamard } from "../operators/hadamard/stack_hadamard";
+import { stack_hadamard } from "@stemcmicro/eigenmath";
 import { hermite_varargs } from "../operators/hermite/hermite_varargs";
 import { hyp_extension_builder } from "../operators/hyp/hyp_extension";
 import { infinitesimal_1_str } from "../operators/hyp/infinitesimal_1_str";
@@ -192,7 +192,7 @@ import { lco_2_blade_blade } from "../operators/lco/lco_2_blade_blade";
 import { legendre_varargs } from "../operators/legendre/legendre_varargs";
 import { let_varargs } from "../operators/let/let_varargs";
 import { localizable_extension_builder } from "../operators/localizable/LocalizableExtension";
-import { stack_mag } from "../operators/mag/stack_mag";
+import { stack_mag } from "@stemcmicro/eigenmath";
 import { eval_multiply } from "../operators/mul/eval_multiply";
 import { mul_2_blade_blade } from "../operators/mul/mul_2_blade_blade";
 import { mul_2_tensor_tensor } from "../operators/mul/mul_2_tensor_tensor";

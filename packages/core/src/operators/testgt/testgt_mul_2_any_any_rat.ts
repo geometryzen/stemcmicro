@@ -1,3 +1,4 @@
+import { is_mul_2_any_any } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
@@ -10,7 +11,6 @@ import { is_boo } from "../boo/is_boo";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 import { is_rat } from "../rat/is_rat";
 
 type LL = U;

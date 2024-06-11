@@ -65,6 +65,7 @@
         "@stemcmicro/context": "workspace:*",
         "@stemcmicro/core": "workspace:*",
         "@stemcmicro/directive": "workspace:*",
+        "@stemcmicro/eigenmath": "workspace:*",
         "@stemcmicro/native": "workspace:*",
         "@stemcmicro/tree": "workspace:*"
     },

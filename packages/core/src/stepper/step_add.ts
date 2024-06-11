@@ -1,6 +1,6 @@
+import { Stack } from "@stemcmicro/eigenmath";
 import { Native } from "@stemcmicro/native";
 import { Cons, nil, U } from "@stemcmicro/tree";
-import { Stack } from "../env/Stack";
 import { State } from "./Stepper";
 
 export function step_add(expr: Cons, stack: Stack<State>, state: State): State | undefined {

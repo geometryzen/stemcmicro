@@ -3,8 +3,32 @@
     "version": "0.9.64",
     "description": "Lightweight testing for stemcmicro",
     "private": true,
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/esm/index.min.js",
+            "require": "./dist/commonjs/index.js",
+            "system": "./dist/system/index.min.js",
+            "default": "./dist/esm/index.min.js"
+        }
+    },
+    "main": "./dist/commonjs/index.js",
+    "module": "./dist/esm/index.min.js",
+    "type": "module",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist/commonjs/index.js",
+        "dist/commonjs/index.js.map",
+        "dist/esm/index.min.js",
+        "dist/esm/index.min.js.map",
+        "dist/index.d.ts",
+        "dist/system/index.min.js",
+        "dist/system/index.min.js.map"
+    ],
     "scripts": {
-        "test": "jest"
+        "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
+        "clean": "rm -rf coverage && rm -rf dist && rm -rf docs && rm -rf es2015 && rm -rf system && rm -rf types && rm -rf build",
+        "testXXX": "jest"
     },
     "repository": {
         "type": "git",
@@ -21,8 +45,9 @@
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "peerDependencies": {
         "@stemcmicro/atoms": "workspace:*",
-        "@stemcmicro/engine": "workspace:*",
+        "@stemcmicro/cs-parse": "workspace:*",
         "@stemcmicro/em-parse": "workspace:*",
+        "@stemcmicro/engine": "workspace:*",
         "@stemcmicro/hilbert": "workspace:*",
         "@stemcmicro/js-parse": "workspace:*",
         "@stemcmicro/py-parse": "workspace:*",

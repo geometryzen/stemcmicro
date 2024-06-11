@@ -1,17 +1,16 @@
 import { is_sym, Sym } from "@stemcmicro/atoms";
-import { Cons, is_cons, nil, U } from "@stemcmicro/tree";
-import { Stack } from "../env/Stack";
+import { Stack } from "@stemcmicro/eigenmath";
+import { Cons, is_cons, is_cons2, nil, U } from "@stemcmicro/tree";
 import { define_function } from "../operators/assign/define_function";
 import { setq_indexed } from "../operators/assign/setq_indexed";
 import { Cons2 } from "../operators/helpers/Cons2";
-import { is_binop } from "../operators/helpers/is_binop";
 import { COMPONENT } from "../runtime/constants";
 import { halt } from "../runtime/defs";
 import { State } from "./Stepper";
 
 function is_sym_any_any(expr: Cons): expr is Cons2<Sym, U, U> {
     const opr = expr.car;
-    if (is_sym(opr) && is_binop(expr)) {
+    if (is_sym(opr) && is_cons2(expr)) {
         return true;
     } else {
         return false;

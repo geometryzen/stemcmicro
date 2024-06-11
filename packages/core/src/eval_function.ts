@@ -1,11 +1,10 @@
 import { is_num, is_str, is_sym, is_tensor, Tensor } from "@stemcmicro/atoms";
-import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
+import { StackU } from "@stemcmicro/eigenmath";
+import { cadr, car, cddr, cdr, Cons, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { StackU } from "./env/StackU";
 import { eval_derivative } from "./operators/derivative/eval_derivative";
 import { EVAL, FUNCTION, SYMBOL_D } from "./runtime/constants";
 import { halt } from "./runtime/defs";
-import { cadr, cddr } from "@stemcmicro/tree";
 
 // Evaluate a user defined function
 

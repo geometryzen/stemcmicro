@@ -1,6 +1,6 @@
 import { is_blade } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
-import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
+import { contains_single_blade } from "@stemcmicro/helpers";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { remove_factors } from "../../calculators/remove_factors";

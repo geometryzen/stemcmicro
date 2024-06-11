@@ -1,8 +1,7 @@
 import { imu, is_imu, is_sym, zero } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
-import { is_base_of_natural_logarithm } from "@stemcmicro/helpers";
+import { count_factors, is_base_of_natural_logarithm } from "@stemcmicro/helpers";
 import { cadnr, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
-import { count_factors } from "../../calculators/count_factors";
 import { remove_factors } from "../../calculators/remove_factors";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { COS, RECT } from "../../runtime/constants";

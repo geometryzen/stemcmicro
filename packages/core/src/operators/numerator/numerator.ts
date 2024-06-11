@@ -1,6 +1,6 @@
 import { is_rat, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { isone, is_add, is_cons_opr_eq_power, is_multiply, is_negative, multiply_items } from "@stemcmicro/helpers";
+import { isone, is_cons_opr_eq_add, is_cons_opr_eq_multiply, is_cons_opr_eq_power, is_negative, multiply_items } from "@stemcmicro/helpers";
 import { car, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 import { rationalize_factoring } from "../rationalize/rationalize";
 
@@ -27,7 +27,7 @@ export function eval_numerator(expr: Cons, $: ExprContext): U {
 
 export function numerator(p1: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     // console.lg("numerator", `${p1}`);
-    if (is_add(p1)) {
+    if (is_cons(p1) && is_cons_opr_eq_add(p1)) {
         //console.trace "rationalising "
         p1 = rationalize_factoring(p1, $);
         // console.lg("rationalized", `${p1}`);
@@ -35,7 +35,7 @@ export function numerator(p1: U, $: Pick<ExprContext, "handlerFor" | "pushDirect
     // console.lg(`rationalized=${$.toInfixString(p1)}`);
     // console.lg(`rationalized=${$.toSExprString(p1)}`);
 
-    if (is_multiply(p1) && !isone(car(cdr(p1)), $)) {
+    if (is_cons(p1) && is_cons_opr_eq_multiply(p1) && !isone(car(cdr(p1)), $)) {
         // console.lg "p1 inside multiply: " + p1
         // console.lg "first term: " + car(p1)
         return multiply_items(

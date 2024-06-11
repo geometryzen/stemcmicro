@@ -7,12 +7,12 @@ import { car, cdr, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from
 import { nativeDouble } from "../../bignum";
 import { add_terms } from "../../calculators/add/add_terms";
 import { condense, yycondense } from "../../condense";
-import { complexity } from "../../eigenmath/eigenmath";
+import { complexity } from "@stemcmicro/eigenmath";
 import { TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { clock } from "../../helpers/clock";
 import { equals } from "../../helpers/equals";
 import { inner } from "../../helpers/inner";
-import { iszero } from "../../helpers/iszero";
+import { iszero } from "@stemcmicro/helpers";
 import { polar } from "../../helpers/polar";
 import { rect } from "../../helpers/rect";
 import { is_num_and_eq_minus_one, is_plus_or_minus_one } from "../../is";

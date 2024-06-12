@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CellHost, create_sym, is_boo, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor, Sym, Tensor } from "@stemcmicro/atoms";
 import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
-import { ExprEngineListener, StackFunction } from "@stemcmicro/eigenmath";
+import { ProgramIOListener, StackFunction } from "@stemcmicro/eigenmath";
 import { Native } from "@stemcmicro/native";
 import { ProgramStack } from "@stemcmicro/stack";
 import { Cons, is_atom, is_cons, is_nil, items_to_cons, Shareable, U } from "@stemcmicro/tree";
@@ -35,7 +35,7 @@ export class DerivedEnv implements ExtensionEnv {
     readonly #config: Readonly<EnvConfig>;
     readonly #bindings: Map<string, U> = new Map();
     readonly #userfunc: Map<string, U> = new Map();
-    readonly listeners: ExprEngineListener[] = [];
+    readonly listeners: ProgramIOListener[] = [];
     #refCount = 1;
     constructor(baseEnv: ExtensionEnv, config: Readonly<EnvConfig>) {
         this.#baseEnv = baseEnv;

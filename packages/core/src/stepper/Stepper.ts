@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { assert_sym, create_sym, is_sym, Sym } from "@stemcmicro/atoms";
 import { LambdaExpr } from "@stemcmicro/context";
-import { ExprEngineListener } from "@stemcmicro/eigenmath";
+import { ProgramIOListener } from "@stemcmicro/eigenmath";
 import { is_cons_opr_eq_sym } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Stack } from "@stemcmicro/stack";
@@ -329,8 +329,8 @@ export class Stepper {
     get stack(): Stack<State> {
         return this.#stack;
     }
-    addListener(listener: ExprEngineListener): void {}
-    removeListener(listener: ExprEngineListener): void {}
+    addListener(listener: ProgramIOListener): void {}
+    removeListener(listener: ProgramIOListener): void {}
     #nextTask(): State | null {
         // console.lg(`Interpreter.#nextTask()`);
         const task = this.#tasks[0];

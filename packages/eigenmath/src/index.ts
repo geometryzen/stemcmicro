@@ -172,7 +172,7 @@ export { isplusone } from "./isplusone";
 export { make_stack_draw } from "./make_stack_draw";
 export { ProgramControl } from "./ProgramControl";
 export { ProgramEnv } from "./ProgramEnv";
-export { ExprEngineListener, ProgramIO } from "./ProgramIO";
+export { ProgramIO, ProgramIOListener } from "./ProgramIO";
 export { render_svg, SvgRenderConfig, SvgRenderEnv } from "./render_svg";
 export { StackFunction } from "./StackFunction";
 export { stack_hadamard } from "./stack_hadamard";

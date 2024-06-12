@@ -2,7 +2,7 @@
 import { CellHost, create_int, is_boo, is_rat, Sym, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { ExprEngineListener, StackFunction } from "@stemcmicro/eigenmath";
+import { ProgramIOListener, StackFunction } from "@stemcmicro/eigenmath";
 import { str_to_string } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { ProgramStack } from "@stemcmicro/stack";
@@ -617,7 +617,7 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     setUserFunction(name: Sym, usrfunc: U): void {
         throw new Error("Method not implemented.");
     }
-    get listeners(): ExprEngineListener[] {
+    get listeners(): ProgramIOListener[] {
         throw new Error("Method not implemented.");
     }
 }

@@ -1,9 +1,9 @@
 import { create_sym, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
 import { Cons, is_atom, is_cons } from "@stemcmicro/tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
-export function eval_typeof(expr: Cons, $: Pick<ExtensionEnv, "valueOf">): Sym {
+export function eval_typeof(expr: Cons, $: Pick<ExprContext, "valueOf">): Sym {
     const argList = expr.argList;
     try {
         const head = argList.head;

@@ -1,39 +1,39 @@
 import { is_flt, is_rat, one, zero } from "@stemcmicro/atoms";
-import { is_add, is_negative, is_power } from "@stemcmicro/helpers";
+import { ExprContext } from "@stemcmicro/context";
+import { is_cons_opr_eq_add, is_cons_opr_eq_power, is_negative, negate } from "@stemcmicro/helpers";
 import { cadr, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "./env/ExtensionEnv";
 import { DIRAC } from "./runtime/constants";
 
-export function eval_dirac(expr: Cons, $: ExtensionEnv): U {
+export function eval_dirac(expr: Cons, $: ExprContext): U {
     return dirac($.valueOf(cadr(expr)), $);
 }
 
-export function dirac(p1: U, $: ExtensionEnv): U {
-    if (is_flt(p1)) {
-        if ($.iszero(p1)) {
+export function dirac(x: U, $: ExprContext): U {
+    if (is_flt(x)) {
+        if (x.isZero()) {
             return one;
         }
         return zero;
     }
 
-    if (is_rat(p1)) {
-        if ($.iszero(p1)) {
+    if (is_rat(x)) {
+        if (x.isZero()) {
             return one;
         }
         return zero;
     }
 
-    if (is_power(p1)) {
-        return items_to_cons(DIRAC, p1.base);
+    if (is_cons(x) && is_cons_opr_eq_power(x)) {
+        return items_to_cons(DIRAC, x.base);
     }
 
-    if (is_negative(p1)) {
-        return items_to_cons(DIRAC, $.negate(p1));
+    if (is_negative(x)) {
+        return items_to_cons(DIRAC, negate($, x));
     }
 
-    if (is_negative(p1) || (is_cons(p1) && is_add(p1) && is_negative(cadr(p1)))) {
-        p1 = $.negate(p1);
+    if (is_negative(x) || (is_cons(x) && is_cons_opr_eq_add(x) && is_negative(cadr(x)))) {
+        x = negate($, x);
     }
 
-    return items_to_cons(DIRAC, p1);
+    return items_to_cons(DIRAC, x);
 }

@@ -1,6 +1,6 @@
 import { imu, is_flt, is_num, is_rat, Num, Rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { guess, isone, is_add, is_multiply, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_eq_rational, is_num_and_negative, is_power, is_rat_and_integer } from "@stemcmicro/helpers";
+import { guess, isone, is_add, is_cons_opr_eq_power, is_multiply, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_eq_rational, is_num_and_negative, is_power, is_rat_and_integer } from "@stemcmicro/helpers";
 import { caddr, cadnr, cadr, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
@@ -254,14 +254,22 @@ export function is_num_and_equal_minus_half(p: U): boolean {
     return is_num_and_eq_rational(p, -1, 2);
 }
 
-// p == 1/sqrt(2) ?
-export function isoneoversqrttwo(p: U): boolean {
-    return is_power(p) && is_num_and_eq_number(cadr(p), 2) && is_num_and_eq_rational(caddr(p), -1, 2);
+/**
+ *
+ * @param x
+ * @returns
+ */
+export function is_one_over_sqrt_two(x: U): boolean {
+    // 1/sqrt(2) = (power sqrt(2) -1) = (power (power 2 -1/2) -1)
+    if (is_cons(x) && is_cons_opr_eq_power(x)) {
+        return is_power(x) && is_num_and_eq_number(cadr(x), 2) && is_num_and_eq_rational(caddr(x), -1, 2);
+    } else {
+        return false;
+    }
 }
 
-// p == -1/sqrt(2) ?
-export function isminusoneoversqrttwo(p: U): boolean {
-    return is_multiply(p) && is_num_and_eq_number(cadr(p), -1) && isoneoversqrttwo(caddr(p)) && length_of_cons_otherwise_zero(p) === 3;
+export function is_minus_one_over_sqrt_two(p: U): boolean {
+    return is_multiply(p) && is_num_and_eq_number(cadr(p), -1) && is_one_over_sqrt_two(caddr(p)) && length_of_cons_otherwise_zero(p) === 3;
 }
 
 // Check if the value is sqrt(3)/2

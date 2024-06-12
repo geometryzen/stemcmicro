@@ -2,7 +2,7 @@
 import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_rat, is_sym, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, is_lambda, Lambda, LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { ExprEngineListener, StackFunction } from "@stemcmicro/eigenmath";
+import { ProgramIOListener, StackFunction } from "@stemcmicro/eigenmath";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { ProgramStack } from "@stemcmicro/stack";
 import { assert_U, Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
@@ -345,7 +345,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     }
 
     const cellHost = new ReactiveHost();
-    const subscribers: ExprEngineListener[] = [];
+    const subscribers: ProgramIOListener[] = [];
     const stateMap = new ShareableMap<string, Shareable>();
     let refCount = 1;
 
@@ -353,7 +353,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      * The environment return value and environment for callbacks.
      */
     const $: ExtensionEnv = {
-        get listeners(): ExprEngineListener[] {
+        get listeners(): ProgramIOListener[] {
             return subscribers;
         },
         addRef(): void {

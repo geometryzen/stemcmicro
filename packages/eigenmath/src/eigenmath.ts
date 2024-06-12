@@ -73,7 +73,7 @@ import { iszero } from "./iszero";
 import { lengthf } from "./lengthf";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
-import { ExprEngineListener, ProgramIO } from "./ProgramIO";
+import { ProgramIO, ProgramIOListener } from "./ProgramIO";
 import { StackFunction } from "./StackFunction";
 import { hadamard } from "./stack_hadamard";
 import { mag } from "./stack_mag";
@@ -11917,7 +11917,7 @@ class IntegralsProgramIO implements ProgramIO {
     get inbuf(): string {
         throw new Error("inbuf property not implemented.");
     }
-    get listeners(): ExprEngineListener[] {
+    get listeners(): ProgramIOListener[] {
         throw new Error("listeners property not implemented.");
     }
     get trace1(): number {

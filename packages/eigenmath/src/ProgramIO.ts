@@ -1,11 +1,11 @@
-export interface ExprEngineListener {
+export interface ProgramIOListener {
     output(output: string): void;
 }
 
 export interface ProgramIO {
     get inbuf(): string;
     set inbuf(inbuf: string);
-    get listeners(): ExprEngineListener[];
+    get listeners(): ProgramIOListener[];
     get trace1(): number;
     set trace1(trace1: number);
     get trace2(): number;

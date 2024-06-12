@@ -5,7 +5,7 @@ import { ExprContextFromProgram } from "./ExprContextFromProgram";
 import { infix_config_from_options } from "./format_infix";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
-import { ExprEngineListener } from "./ProgramIO";
+import { ProgramIOListener } from "./ProgramIO";
 import { render_as_html_infix } from "./render_as_html_infix";
 import { render_svg, SvgRenderConfig } from "./render_svg";
 
@@ -36,7 +36,7 @@ export type ShouldAnnotateFunction = (sym: Sym, value: U) => boolean;
  * @param should_annotate_symbol A callback function that determines whether a symbol should be annotated.
  * @returns
  */
-export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boolean, env: ProgramEnv, ctrl: ProgramControl, options: SvgRenderConfig, listeners: ExprEngineListener[], should_annotate_symbol: ShouldAnnotateFunction): void {
+export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boolean, env: ProgramEnv, ctrl: ProgramControl, options: SvgRenderConfig, listeners: ProgramIOListener[], should_annotate_symbol: ShouldAnnotateFunction): void {
     if (is_nil(value)) {
         return;
     }

@@ -1,7 +1,6 @@
 import { create_sym } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
 import {
-    stack_arccos,
     stack_arccosh,
     stack_arcsin,
     stack_arcsinh,
@@ -64,6 +63,7 @@ import { add_2_rat_uom } from "../operators/add/add_2_rat_uom";
 import { eval_add } from "../operators/add/eval_add";
 import { eval_adj } from "../operators/adj/adj";
 import { algebra_2_tensor_tensor } from "../operators/algebra/algebra_2_mat_mat";
+import { eval_arccos } from "../operators/arccos/eval_arccos";
 import { assign_any_any } from "../operators/assign/assign_any_any";
 import { assign_sym_any } from "../operators/assign/assign_sym_any";
 import { cell_extension_builder } from "../operators/atom/atom_extension";
@@ -406,7 +406,6 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(jsobject_extension_builder);
     $.defineExtension(localizable_extension_builder);
 
-    // $.defineStackFunction(native_sym(Native.abs), stack_abs);
     $.defineEvalFunction(native_sym(Native.abs), eval_abs);
 
     $.defineEvalFunction(native_sym(Native.adj), eval_adj);
@@ -415,7 +414,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     $.defineEvalFunction(AND, eval_and);
 
-    $.defineStackFunction(native_sym(Native.arccos), stack_arccos);
+    $.defineEvalFunction(native_sym(Native.arccos), eval_arccos);
     $.defineStackFunction(native_sym(Native.arccosh), stack_arccosh);
     $.defineStackFunction(native_sym(Native.arcsin), stack_arcsin);
     $.defineStackFunction(native_sym(Native.arcsinh), stack_arcsinh);

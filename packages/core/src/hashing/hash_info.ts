@@ -92,6 +92,7 @@ export function hash_unaop_cons(opr: Sym, arg: Sym): string {
 }
 
 /**
+ * Creates a hash suitable for matching a Cons with the specified operator symbol.
  * '(' opr ')'
  */
 export function hash_nonop_cons(opr: Sym): string {

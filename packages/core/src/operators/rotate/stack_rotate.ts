@@ -1,5 +1,5 @@
-import { create_sym, imu, Tensor } from "@stemcmicro/atoms";
-import { add, expfunc, istensor, multiply, multiply_factors, negate, pop, pop_integer, power, ProgramControl, ProgramEnv, push, push_integer, push_rational, sqrtfunc, stopf, subtract, value_of } from "@stemcmicro/eigenmath";
+import { create_sym, imu, is_tensor, Tensor } from "@stemcmicro/atoms";
+import { add, expfunc, multiply, multiply_factors, negate, pop, pop_integer, power, ProgramControl, ProgramEnv, push, push_integer, push_rational, sqrtfunc, stopf, subtract, value_of } from "@stemcmicro/eigenmath";
 import { Native, native_sym } from "@stemcmicro/native";
 import { ProgramStack } from "@stemcmicro/stack";
 import { cadr, car, cddr, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
@@ -11,7 +11,7 @@ export function stack_rotate(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
     value_of(env, ctrl, $);
     const PSI = pop($);
 
-    if (!istensor(PSI) || PSI.ndim > 1 || PSI.nelem > 32768 || (PSI.nelem & (PSI.nelem - 1)) !== 0) stopf("rotate error 1 first argument is not a vector or dimension error");
+    if (!is_tensor(PSI) || PSI.ndim > 1 || PSI.nelem > 32768 || (PSI.nelem & (PSI.nelem - 1)) !== 0) stopf("rotate error 1 first argument is not a vector or dimension error");
 
     let c = 0;
 

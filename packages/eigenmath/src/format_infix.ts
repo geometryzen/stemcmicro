@@ -9,7 +9,6 @@ import { find_denominator } from "./find_denominator";
 import { fmtnum } from "./fmtnum";
 import { isdenominator } from "./isdenominator";
 import { isminusone } from "./isminusone";
-import { isnegativenumber } from "./isnegativenumber";
 import { isnegativeterm } from "./isnegativeterm";
 import { isnumerator } from "./isnumerator";
 import { printname_from_symbol } from "./printname_from_symbol";
@@ -343,7 +342,7 @@ function infix_power(p: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixC
     }
 
     const expo = caddr(p);
-    if (is_num(expo) && isnegativenumber(expo)) {
+    if (is_num(expo) && expo.isNegative()) {
         infix_reciprocal(p, env, ctrl, config, outbuf);
         return;
     }

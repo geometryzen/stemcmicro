@@ -12,7 +12,6 @@ import { isdenominator } from "./isdenominator";
 import { isdigit } from "./isdigit";
 import { isfraction } from "./isfraction";
 import { isminusone } from "./isminusone";
-import { isnegativenumber } from "./isnegativenumber";
 import { isnegativeterm } from "./isnegativeterm";
 import { isnumerator } from "./isnumerator";
 import { printname_from_symbol } from "./printname_from_symbol";
@@ -1424,7 +1423,7 @@ function emit_args(p: Cons, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderCon
 }
 
 function emit_base(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
-    if ((is_num(p) && isnegativenumber(p)) || (is_rat(p) && isfraction(p)) || is_flt(p) || car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER)) emit_subexpr(p, env, $, ec);
+    if ((is_num(p) && p.isNegative()) || (is_rat(p) && isfraction(p)) || is_flt(p) || car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER)) emit_subexpr(p, env, $, ec);
     else emit_expr(p, env, $, ec);
 }
 
@@ -1524,7 +1523,7 @@ function emit_double(p: Flt, $: ProgramStack): void {
 }
 
 function emit_exponent(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfig): void {
-    if (is_num(p) && !isnegativenumber(p)) {
+    if (is_num(p) && !p.isNegative()) {
         emit_numeric_exponent(p, $); // sign is not emitted
         return;
     }
@@ -1851,7 +1850,7 @@ function emit_power(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderConfi
     }
 
     const X = caddr(p);
-    if (is_num(X) && isnegativenumber(X)) {
+    if (is_num(X) && X.isNegative()) {
         emit_reciprocal(p, env, $, ec);
         return;
     }

@@ -7,8 +7,7 @@ import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
 
 /**
- * @deprecated Move away from this once ProgramEnv becomes the same as ExprContext.
- * @deprecated An the use of value_of seems circular.
+ *
  */
 export class ExprContextFromProgram implements ExprContext {
     #refCount = 1;

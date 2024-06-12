@@ -22,7 +22,6 @@ export {
     imag,
     inner,
     isfalsey,
-    istensor,
     kronecker,
     LAST,
     list,

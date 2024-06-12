@@ -1,6 +1,7 @@
+import { is_tensor } from "@stemcmicro/atoms";
 import { ProgramStack } from "@stemcmicro/stack";
 import { Cons, is_cons } from "@stemcmicro/tree";
-import { copy_tensor, istensor, multiply, stopf, value_of } from "./eigenmath";
+import { copy_tensor, multiply, stopf, value_of } from "./eigenmath";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
 
@@ -41,7 +42,7 @@ export function hadamard(env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack)
     const rhs = _.pop();
     const lhs = _.pop();
     try {
-        if (!istensor(lhs) || !istensor(rhs)) {
+        if (!is_tensor(lhs) || !is_tensor(rhs)) {
             _.push(lhs);
             _.push(rhs);
             multiply(env, ctrl, _);

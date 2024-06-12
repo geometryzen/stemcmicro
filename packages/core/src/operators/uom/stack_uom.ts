@@ -28,7 +28,7 @@ export function eval_uom(expr: Cons, $: ExprContext): U {
     return prolog_eval_varargs(expr, handle_uom, $);
 }
 
-function handle_uom(values: Cons, $: ExprContext): U {
+function handle_uom(values: Cons): U {
     const strname = values.item0;
     try {
         if (is_str(strname)) {

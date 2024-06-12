@@ -1,9 +1,9 @@
+import { Rat, zero } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Flt, oneAsFlt } from "../../tree/flt/Flt";
-import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";

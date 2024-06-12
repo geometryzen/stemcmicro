@@ -1,18 +1,15 @@
-import { booU } from "@stemcmicro/atoms";
+import { booU, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { iszero, predicate_return_value, subtract } from "@stemcmicro/helpers";
-import { cadr, cddr } from "@stemcmicro/tree";
+import { Native, native_sym } from "@stemcmicro/native";
+import { cadr, car, cddr, cdr, cons, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "./env/ExtensionEnv";
-import { Native } from "./native/Native";
-import { native_sym } from "./native/native_sym";
 import { evaluate_as_float } from "./operators/float/float";
 import { is_flt } from "./operators/flt/is_flt";
 import { replace_assign_with_testeq } from "./operators/predicate/replace_assign_with_testeq";
 import { is_rat } from "./operators/rat/is_rat";
 import { simplify } from "./operators/simplify/simplify";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "./scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
-import { zero } from "./tree/rat/Rat";
-import { car, cdr, cons, Cons, is_cons, items_to_cons, U } from "./tree/tree";
 
 const NOT = native_sym(Native.not);
 const TESTEQ = native_sym(Native.testeq);

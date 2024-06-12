@@ -1,10 +1,10 @@
+import { Rat, zero } from "@stemcmicro/atoms";
 import { is_mul_2_any_any } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_GT, MATH_LT, MATH_MUL } from "../../runtime/ns_math";
 import { booF, booT } from "../../tree/boo/Boo";
-import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { is_boo } from "../boo/is_boo";

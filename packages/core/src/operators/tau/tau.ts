@@ -1,9 +1,8 @@
-import { Sym } from "@stemcmicro/atoms";
+import { Sym, two } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons1, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { two } from "../../tree/rat/Rat";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 

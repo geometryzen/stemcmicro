@@ -78,6 +78,12 @@ export class StackU implements ProgramStack {
             return this.#stack.splice(start);
         }
     }
+    get elements(): U[] {
+        return this.#stack.elements.map((x) => {
+            x.addRef();
+            return x;
+        });
+    }
     get length(): number {
         return this.#stack.length;
     }

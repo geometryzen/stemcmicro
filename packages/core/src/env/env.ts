@@ -846,7 +846,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             }
                         }
                     }
-                    return new UnknownConsExtension($);
+                    return new UnknownConsExtension();
                     // We can end up here for user-defined functions.
                     // The consumer is trying to answer a question
                     // throw new SystemError(`${expr}, current_phase = ${current_focus} keys = ${JSON.stringify(keys)}`);

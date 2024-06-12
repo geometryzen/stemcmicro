@@ -1,10 +1,9 @@
-import { Blade, is_blade } from "@stemcmicro/atoms";
+import { Blade, is_blade, one } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_BLADE, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Cons1 } from "../helpers/Cons1";

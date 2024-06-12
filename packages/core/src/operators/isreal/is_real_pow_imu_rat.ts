@@ -1,9 +1,8 @@
-import { assert_rat, booF, booT, is_imu, is_rat, Sym } from "@stemcmicro/atoms";
+import { assert_rat, booF, booT, four, is_imu, is_rat, Sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, Cons1, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { four } from "../../tree/rat/Rat";
 import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const POW = native_sym(Native.pow);

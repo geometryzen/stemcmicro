@@ -1,9 +1,9 @@
+import { zero } from "@stemcmicro/atoms";
 import { is_zero_sum } from "../../calculators/factorize/is_zero_sum";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
-import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";

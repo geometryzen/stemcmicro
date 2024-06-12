@@ -1,8 +1,8 @@
+import { negOne, one, Rat, zero } from "@stemcmicro/atoms";
 import { Extension, ExtensionBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { mmul } from "../../mmul";
 import { SGN } from "../../runtime/constants";
-import { negOne, one, Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";

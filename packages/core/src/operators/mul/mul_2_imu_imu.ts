@@ -1,9 +1,8 @@
-import { Imu, is_imu } from "@stemcmicro/atoms";
+import { Imu, is_imu, negOne } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_IMU } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";

@@ -1,9 +1,9 @@
+import { zero } from "@stemcmicro/atoms";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { items_to_cons } from "../../makeList";
 import { ARCSINH, SINH } from "../../runtime/constants";
 import { create_flt } from "../../tree/flt/Flt";
 import { cadr } from "../../tree/helpers";
-import { zero } from "../../tree/rat/Rat";
 import { car, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 

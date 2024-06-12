@@ -1,9 +1,9 @@
+import { zero } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { is_square_root_of_real_squared } from "../../helpers/is_square_root_of_real_squared";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../helpers/CompositeOperator";

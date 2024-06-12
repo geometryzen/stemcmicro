@@ -2,7 +2,7 @@ import { create_flt, create_sym, half, imu, is_blade, is_flt, is_num, is_rat, is
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
 import { power_e_expo } from "@stemcmicro/eigenmath";
-import { divide, isone, iszero, is_base_of_natural_logarithm, is_num_and_eq_one_half, is_rat_and_integer, num_to_number } from "@stemcmicro/helpers";
+import { divide, isone, iszero, is_base_of_natural_logarithm, is_negative, is_num_and_eq_one_half, is_rat_and_integer, num_to_number } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { StackU } from "@stemcmicro/stack";
 import { cadr, car, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
@@ -14,7 +14,6 @@ import { multiply_binary } from "../../multiply";
 import { is_integer_and_in_safe_number_range } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
-import { is_negative } from "../../predicates/is_negative";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { ARCTAN, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, SIN } from "../../runtime/constants";
 import { doexpand_binary } from "../../runtime/defs";

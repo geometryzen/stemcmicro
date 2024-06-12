@@ -1,10 +1,7 @@
+import { create_flt, is_flt, one } from "@stemcmicro/atoms";
+import { cadr, car, Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { ARCCOSH, COSH } from "../../runtime/constants";
-import { create_flt } from "../../tree/flt/Flt";
-import { cadr } from "../../tree/helpers";
-import { one } from "../../tree/rat/Rat";
-import { car, Cons, items_to_cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
 
 /* cosh =====================================================================
 

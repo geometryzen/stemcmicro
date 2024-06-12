@@ -5,6 +5,9 @@ export class Stack<T> {
         this.#elements = elements;
         this.tos = elements.length;
     }
+    get elements(): T[] {
+        return this.#elements;
+    }
     get length(): number {
         return this.#elements.length;
     }

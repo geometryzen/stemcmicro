@@ -1,9 +1,8 @@
-import { is_str, Tensor, zero } from "@stemcmicro/atoms";
+import { create_tensor_elements, is_str, Tensor, zero } from "@stemcmicro/atoms";
 import { car, cdr, is_cons, nil, U } from "@stemcmicro/tree";
 import { compare_term_term } from "./calculators/compare/compare_term_term";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { defs } from "./runtime/defs";
-import { create_tensor_elements } from "./tree/tensor/create_tensor_elements";
 
 // both ints
 export function zero_matrix(i: number, j: number): Tensor<U> {

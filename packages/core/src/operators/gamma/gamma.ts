@@ -1,11 +1,10 @@
-import { divide } from "@stemcmicro/helpers";
+import { half, negOne, Rat } from "@stemcmicro/atoms";
+import { divide, is_negative } from "@stemcmicro/helpers";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { is_negative } from "../../predicates/is_negative";
 import { GAMMA, MEQUAL } from "../../runtime/constants";
 import { DynamicConstants } from "../../runtime/defs";
 import { is_add } from "../../runtime/helpers";
 import { cadr } from "../../tree/helpers";
-import { half, negOne, Rat } from "../../tree/rat/Rat";
 import { car, cdr, items_to_cons, U } from "../../tree/tree";
 import { is_rat } from "../rat/is_rat";
 

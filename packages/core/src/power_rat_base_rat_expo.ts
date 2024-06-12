@@ -1,4 +1,4 @@
-import { bigInt, BigInteger, imu, negOne, one, Rat, Sym, zero } from "@stemcmicro/atoms";
+import { bigInt, BigInteger, half, imu, negOne, one, Rat, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
@@ -10,7 +10,6 @@ import { exp } from "./helpers/exp";
 import { is_num_and_eq_minus_one } from "./is";
 import { mroot } from "./mroot";
 import { quickfactor } from "./quickfactor";
-import { half } from "./tree/rat/Rat";
 
 export const E = native_sym(Native.E);
 export const EXP = native_sym(Native.exp);

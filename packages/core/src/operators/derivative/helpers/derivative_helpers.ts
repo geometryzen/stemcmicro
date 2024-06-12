@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { create_int, negOne, one, zero } from "@stemcmicro/atoms";
+import { create_int, negOne, one, two, zero } from "@stemcmicro/atoms";
 import { divide, inverse, subst } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { rational } from "../../../bignum";
@@ -11,7 +11,6 @@ import { DynamicConstants } from "../../../runtime/defs";
 import { is_abs, is_add } from "../../../runtime/helpers";
 import { MATH_ADD } from "../../../runtime/ns_math";
 import { caddr, cadr } from "../../../tree/helpers";
-import { two } from "../../../tree/rat/Rat";
 import { Sym } from "../../../tree/sym/Sym";
 import { car, Cons, is_cons, items_to_cons, U } from "../../../tree/tree";
 import { besselj } from "../../besselj/besselj";

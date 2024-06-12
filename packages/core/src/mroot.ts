@@ -1,7 +1,6 @@
+import { bigInt, BigInteger } from "@stemcmicro/atoms";
 import { mint } from "./bignum";
 import { halt } from "./runtime/defs";
-import { mcmp } from "./runtime/mcmp";
-import { bigInt, BigInteger } from "./tree/rat/big-integer";
 
 //-----------------------------------------------------------------------------
 //
@@ -45,7 +44,7 @@ export function mroot(n: BigInteger, index: number) {
         x = x.or(bigInt(1).shiftLeft(k));
 
         const y = x.pow(index);
-        switch (mcmp(y, n)) {
+        switch (y.compare(n)) {
             case 0:
                 return x;
             case 1:

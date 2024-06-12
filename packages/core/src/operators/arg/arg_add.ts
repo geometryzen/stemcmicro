@@ -1,12 +1,11 @@
-import { Sym } from "@stemcmicro/atoms";
+import { half, Sym } from "@stemcmicro/atoms";
+import { is_negative } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hook_create_err } from "../../hooks/hook_create_err";
-import { is_negative } from "../../predicates/is_negative";
 import { DynamicConstants } from "../../runtime/defs";
-import { half } from "../../tree/rat/Rat";
 import { CompositeOperator } from "../helpers/CompositeOperator";
 
 const ARG = native_sym(Native.arg);

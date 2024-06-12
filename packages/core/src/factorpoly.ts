@@ -1,6 +1,6 @@
 import { create_int, imu, negOne, one, Sym, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { add, divide, inverse, iszero, multiply, negate, power, subtract } from "@stemcmicro/helpers";
+import { add, divide, inverse, iszero, is_negative, multiply, negate, power, subtract } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "./bignum";
@@ -15,7 +15,6 @@ import { coefficients } from "./operators/coeff/coeff";
 import { denominator } from "./operators/denominator/denominator";
 import { ydivisors } from "./operators/divisors/divisors";
 import { lcm } from "./operators/lcm/lcm";
-import { is_negative } from "./predicates/is_negative";
 import { ProgrammingError } from "./programming/ProgrammingError";
 import { quotient } from "./quotient";
 import { defs, move_top_of_stack, noexpand_unary } from "./runtime/defs";

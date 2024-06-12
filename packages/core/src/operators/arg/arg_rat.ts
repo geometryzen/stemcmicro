@@ -1,10 +1,10 @@
+import { Rat, zero } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { hook_create_err } from "../../hooks/hook_create_err";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Cons1 } from "../helpers/Cons1";

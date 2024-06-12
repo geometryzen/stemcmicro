@@ -1,8 +1,7 @@
 import { is_flt, is_rat, one, zero } from "@stemcmicro/atoms";
-import { is_add, is_power } from "@stemcmicro/helpers";
+import { is_add, is_negative, is_power } from "@stemcmicro/helpers";
 import { cadr, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "./env/ExtensionEnv";
-import { is_negative } from "./predicates/is_negative";
 import { DIRAC } from "./runtime/constants";
 
 export function eval_dirac(expr: Cons, $: ExtensionEnv): U {

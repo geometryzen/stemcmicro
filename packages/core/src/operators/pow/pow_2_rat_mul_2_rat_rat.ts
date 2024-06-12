@@ -1,8 +1,7 @@
-import { is_rat } from "@stemcmicro/atoms";
+import { is_rat, Rat } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { MATH_POW } from "../../runtime/ns_math";
-import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";

@@ -2,12 +2,13 @@ import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
-import { RollupOptions } from "rollup";
+import { InputPluginOption, RollupOptions } from "rollup";
 import dts from "rollup-plugin-dts";
+import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import pkg from "./package.json" assert { type: "json" };
 
 /**
- * Comment with library information to be appended in the generated bundles.
+ * Banner with library information to be appended in the generated bundles.
  */
 const banner = `/**
 * ${pkg.name} ${pkg.version}
@@ -52,6 +53,7 @@ const options: RollupOptions[] = [
             }
         ],
         plugins: [
+            peerDepsExternal() as unknown as InputPluginOption,
             // Allows us to consume libraries that are CommonJS.
             commonjs(),
             resolve(),

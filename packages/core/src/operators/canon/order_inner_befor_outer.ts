@@ -1,9 +1,9 @@
+import { Rat } from "@stemcmicro/atoms";
 import { is_mul_2_any_any } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, U } from "../../tree/tree";
 import { is_add_2_any_any } from "../add/is_add_2_any_any";

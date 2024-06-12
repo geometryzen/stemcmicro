@@ -1,10 +1,9 @@
-import { is_flt, is_rat } from "@stemcmicro/atoms";
+import { is_flt, is_rat, Rat } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { create_flt, Flt } from "../../tree/flt/Flt";
-import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function2 } from "../helpers/Function2";

@@ -1,3 +1,4 @@
+import { one } from "@stemcmicro/atoms";
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { remove_imu_factors } from "../../calculators/remove_imu_factors";
 import { EnvConfig } from "../../env/EnvConfig";
@@ -5,7 +6,6 @@ import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../e
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { is_multiply } from "../../runtime/helpers";
-import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../helpers/CompositeOperator";

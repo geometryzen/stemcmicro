@@ -11366,9 +11366,9 @@ function power_numbers(base: Num, expo: Num, env: ProgramEnv, ctrl: ProgramContr
 
 // BASE is an integer
 
-function power_numbers_factor(BASE: Rat, EXPO: Rat, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (isminusone(BASE)) {
-        power_minusone(EXPO, env, ctrl, $);
+function power_numbers_factor(base: Rat, expo: Rat, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    if (isminusone(base)) {
+        power_minusone(expo, env, ctrl, $);
         let p0 = pop($);
         if (car(p0).equals(MULTIPLY)) {
             p0 = cdr(p0);
@@ -11380,11 +11380,11 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat, env: ProgramEnv, ctrl: Progr
         return;
     }
 
-    if (isinteger(EXPO)) {
-        const a = bignum_pow(BASE.a, EXPO.a);
+    if (isinteger(expo)) {
+        const a = bignum_pow(base.a, expo.a);
         const b = bignum_int(1);
 
-        if (isnegativenumber(EXPO))
+        if (isnegativenumber(expo))
             push_bignum(1, b, a, $); // reciprocate
         else push_bignum(1, a, b, $);
 
@@ -11395,42 +11395,42 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat, env: ProgramEnv, ctrl: Progr
     // ------ => q + ------
     // EXPO.b        EXPO.b
 
-    const q = bignum_div(EXPO.a, EXPO.b);
-    const r = bignum_mod(EXPO.a, EXPO.b);
+    const q = bignum_div(expo.a, expo.b);
+    const r = bignum_mod(expo.a, expo.b);
 
     // process q
 
     if (!bignum_iszero(q)) {
-        const a = bignum_pow(BASE.a, q);
+        const a = bignum_pow(base.a, q);
         const b = bignum_int(1);
 
-        if (isnegativenumber(EXPO))
+        if (isnegativenumber(expo))
             push_bignum(1, b, a, $); // reciprocate
         else push_bignum(1, a, b, $);
     }
 
     // process r
 
-    const n0 = bignum_smallnum(BASE.a);
+    const n0 = bignum_smallnum(base.a);
 
     if (typeof n0 === "number") {
         // BASE is 32 bits or less, hence BASE is a prime number, no root
         push(POWER, $);
-        push(BASE, $);
-        push_bignum(EXPO.sign, r, EXPO.b, $);
+        push(base, $);
+        push_bignum(expo.sign, r, expo.b, $);
         list(3, $);
         return;
     }
 
     // BASE was too big to factor, try finding root
 
-    const n1 = bignum_root(BASE.a, EXPO.b);
+    const n1 = bignum_root(base.a, expo.b);
 
     if (n1 === null) {
         // no root
         push(POWER, $);
-        push(BASE, $);
-        push_bignum(EXPO.sign, r, EXPO.b, $);
+        push(base, $);
+        push_bignum(expo.sign, r, expo.b, $);
         list(3, $);
         return;
     }
@@ -11439,7 +11439,7 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat, env: ProgramEnv, ctrl: Progr
 
     const n = bignum_pow(n1, r);
 
-    if (isnegativenumber(EXPO))
+    if (isnegativenumber(expo))
         push_bignum(1, bignum_int(1), n, $); // reciprocate
     else push_bignum(1, n, bignum_int(1), $);
 }

@@ -1,4 +1,4 @@
-import { imu, is_blade, is_uom } from "@stemcmicro/atoms";
+import { imu, is_blade, is_uom, negOne, one } from "@stemcmicro/atoms";
 import { count_factors } from "@stemcmicro/helpers";
 import { remove_factors } from "../../calculators/remove_factors";
 import { EnvConfig } from "../../env/EnvConfig";
@@ -6,7 +6,6 @@ import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../e
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { is_power } from "../../runtime/helpers";
-import { negOne, one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../helpers/CompositeOperator";

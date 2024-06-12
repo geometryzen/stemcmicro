@@ -1,5 +1,5 @@
+import { Rat } from "@stemcmicro/atoms";
 import { is_mul_2_any_any } from "@stemcmicro/helpers";
-import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";

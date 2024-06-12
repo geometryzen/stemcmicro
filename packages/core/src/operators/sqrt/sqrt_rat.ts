@@ -1,10 +1,9 @@
-import { is_rat, Rat, Sym } from "@stemcmicro/atoms";
+import { half, is_rat, Rat, Sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons1, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
-import { half } from "../../tree/rat/Rat";
 import { Function1 } from "../helpers/Function1";
 
 export const MATH_SQRT = native_sym(Native.sqrt);

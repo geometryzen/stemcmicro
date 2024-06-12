@@ -16,7 +16,7 @@ const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
 const LAST = create_sym("last");
 
-export function make_stack_run(io: ProgramIO) {
+export function make_stack_run(io: ProgramIO): (expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) => void {
     /**
      * run("https://...")
      * @param expr

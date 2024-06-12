@@ -1,10 +1,10 @@
+import { half } from "@stemcmicro/atoms";
 import { complex_conjugate } from "../../complex_conjugate";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_TENSOR, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { half } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { U } from "../../tree/tree";

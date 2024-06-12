@@ -1,10 +1,9 @@
-import { imu, Imu, is_imu, is_rat, negOne, one, Rat, Sym } from "@stemcmicro/atoms";
+import { half, imu, Imu, is_imu, is_rat, negOne, one, Rat, Sym } from "@stemcmicro/atoms";
 import { Cons2, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_IMU, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
-import { half } from "../../tree/rat/Rat";
 import { Function2 } from "../helpers/Function2";
 
 type LHS = Imu;

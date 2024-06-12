@@ -1,11 +1,10 @@
+import { is_flt, zero } from "@stemcmicro/atoms";
 import { car, Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { items_to_cons } from "../../makeList";
 import { ARCTANH, TANH } from "../../runtime/constants";
 import { create_flt } from "../../tree/flt/Flt";
 import { cadr } from "../../tree/helpers";
-import { zero } from "../../tree/rat/Rat";
-import { is_flt } from "../flt/is_flt";
 
 export function eval_arctanh(x: Cons, $: ExtensionEnv): U {
     return arctanh($.valueOf(cadr(x)), $);

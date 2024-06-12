@@ -2,13 +2,27 @@ import { create_sym, is_blade, is_err, is_flt, is_hyp, is_imu, is_keyword, is_nu
 import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { is_localizable } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
-import { isone, is_base_of_natural_logarithm, is_cons_opr_eq_inv, is_inner_or_dot, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_eq_two, is_num_and_negative, is_outer, is_pi, lt_num_num, negate, str_to_string } from "@stemcmicro/helpers";
+import {
+    isone,
+    is_base_of_natural_logarithm,
+    is_cons_opr_eq_inv,
+    is_inner_or_dot,
+    is_negative,
+    is_num_and_eq_number,
+    is_num_and_eq_one_half,
+    is_num_and_eq_two,
+    is_num_and_negative,
+    is_outer,
+    is_pi,
+    lt_num_num,
+    negate,
+    str_to_string
+} from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { assert_U, car, cdr, Cons, is_atom, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { isNumberOneOverSomething, is_num_and_eq_minus_one, is_rat_and_fraction } from "../is";
 import { denominator } from "../operators/denominator/denominator";
 import { numerator } from "../operators/numerator/numerator";
-import { is_negative } from "../predicates/is_negative";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import {
     ADD,

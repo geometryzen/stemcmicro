@@ -1,8 +1,8 @@
+import { half } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
 import { U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
-import { half } from "../../tree/rat/Rat";
 
 /**
  * expcos(x) = (1/2)*(exp(x*i)+exp(-x*i))

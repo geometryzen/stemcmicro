@@ -4,7 +4,6 @@ import { mint, setSignTo } from "./bignum";
 import { mgcd } from "./mgcd";
 import { mdiv, mdivrem, mmod, mmul } from "./mmul";
 import { MULTIPLY, POWER, primetab } from "./runtime/constants";
-import { mcmp } from "./runtime/mcmp";
 
 // Factor using the Pollard rho method
 
@@ -86,7 +85,7 @@ function try_kth_prime(k: number): U[] {
 
     // q = n_factor_number/d, hence if q < d then
     // n_factor_number < d^2 so n_factor_number is prime
-    if (mcmp(q, d) === -1) {
+    if (q.compare(d) === -1) {
         result.push(_factor(n_factor_number, 1));
         n_factor_number = mint(1);
     }
@@ -135,7 +134,7 @@ function factor_b(): U[] {
 
             result.push(_factor(g, 1));
 
-            if (mcmp(g, n_factor_number) === 0) {
+            if (g.compare(n_factor_number) === 0) {
                 return result;
             }
 

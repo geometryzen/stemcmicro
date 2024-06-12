@@ -1,3 +1,4 @@
+import { half, two } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
@@ -5,7 +6,6 @@ import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { has_clock_form, has_exp_form } from "../../runtime/find";
 import { imu } from "../../tree/imu/Imu";
-import { half, two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../helpers/CompositeOperator";

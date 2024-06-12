@@ -1,6 +1,6 @@
+import { Rat } from "@stemcmicro/atoms";
 import { is_mul_2_any_any } from "@stemcmicro/helpers";
 import { Flt } from "../../tree/flt/Flt";
-import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";

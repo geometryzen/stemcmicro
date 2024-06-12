@@ -1,7 +1,7 @@
+import { negOne } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { items_to_cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";

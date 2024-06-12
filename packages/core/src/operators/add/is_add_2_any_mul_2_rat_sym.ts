@@ -1,4 +1,4 @@
-import { Rat } from "../../tree/rat/Rat";
+import { Rat } from "@stemcmicro/atoms";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";

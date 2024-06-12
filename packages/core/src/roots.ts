@@ -1,4 +1,4 @@
-import { create_int, imu, is_rat, negOne, one, Tensor } from "@stemcmicro/atoms";
+import { create_int, eight, four, half, imu, is_rat, negFour, negOne, nine, one, Tensor, third, three, two } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { add, divide, guess, iszero, multiply, negate, power, subtract } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
@@ -15,7 +15,6 @@ import { ASSIGN, SECRETX } from "./runtime/constants";
 import { halt } from "./runtime/defs";
 import { is_multiply, is_power } from "./runtime/helpers";
 import { float_eval_abs_eval } from "./scripting/float_eval_abs_eval";
-import { eight, four, half, negFour, nine, third, three, two } from "./tree/rat/Rat";
 
 const testeq = native_sym(Native.testeq);
 

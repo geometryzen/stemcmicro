@@ -1,10 +1,8 @@
+import { create_tensor_elements, Tensor, zero } from "@stemcmicro/atoms";
+import { U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { MAXDIM } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
-import { zero } from "../../tree/rat/Rat";
-import { create_tensor_elements } from "../../tree/tensor/create_tensor_elements";
-import { Tensor } from "../../tree/tensor/Tensor";
-import { U } from "../../tree/tree";
 
 export function inner_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): U {
     const n = p1.dim(p1.ndim - 1);

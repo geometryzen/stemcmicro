@@ -8,7 +8,6 @@ import { ExprContextFromProgram } from "./ExprContextFromProgram";
 import { find_denominator } from "./find_denominator";
 import { fmtnum } from "./fmtnum";
 import { isdenominator } from "./isdenominator";
-import { isinteger } from "./isinteger";
 import { isminusone } from "./isminusone";
 import { isnegativenumber } from "./isnegativenumber";
 import { isnegativeterm } from "./isnegativeterm";
@@ -515,7 +514,7 @@ function infix_numeric_exponent(p: Num, config: InfixConfig, outbuf: string[]): 
         return;
     }
 
-    if (is_rat(p) && isinteger(p)) {
+    if (is_rat(p) && p.isInteger()) {
         infix_rational(p, config, outbuf);
         return;
     }

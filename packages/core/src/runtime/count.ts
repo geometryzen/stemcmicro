@@ -1,7 +1,6 @@
-import { is_sym, is_tensor, Sym } from "@stemcmicro/atoms";
+import { is_sym, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { is_atom, is_cons, U } from "@stemcmicro/tree";
-import { ExtensionEnv } from "../env/ExtensionEnv";
 
 const sum = (arr: number[]): number => arr.reduce((a: number, b: number) => a + b, 0);
 
@@ -48,28 +47,5 @@ export function countOccurrencesOfSymbol(needle: Sym, x: U, $: ExprContext): num
     } else {
         // x must be nil...
         return 0;
-    }
-}
-
-/**
- * Returns the total number of elements in an expression.
- * This is used to supports symbolsinfo (only).
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function count_size(expr: U, $: ExtensionEnv): number {
-    // TODO: Generalize by creating Extension.countSize(expr): number;
-    if (is_tensor(expr)) {
-        let n = 0;
-        for (let i = 0; i < expr.nelem; i++) {
-            n += count(expr.elem(i));
-        }
-        return n;
-    } else if (is_cons(expr)) {
-        const items = [...expr];
-        return sum(items.map(count)) + items.length;
-    } else if (is_sym(expr)) {
-        return 1;
-    } else {
-        return 1;
     }
 }

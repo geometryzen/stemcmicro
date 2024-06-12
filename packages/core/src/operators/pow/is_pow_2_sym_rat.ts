@@ -1,8 +1,8 @@
-import { is_rat } from "../rat/is_rat";
-import { Rat } from "../../tree/rat/Rat";
+import { Rat } from "@stemcmicro/atoms";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
+import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
 import { is_pow_2_any_any } from "./is_pow_2_any_any";
 

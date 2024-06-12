@@ -1,14 +1,13 @@
 // always returns a matrix with rank 2
 // i.e. two dimensions,
 
-import { one, Sym, Tensor, zero } from "@stemcmicro/atoms";
-import { Cons, Cons1, U } from "@stemcmicro/tree";
-import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { create_tensor_elements_diagonal, one, Sym, Tensor, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { cadr, Cons, Cons1, U } from "@stemcmicro/tree";
+import { TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
-import { cadr } from "../../tree/helpers";
-import { create_tensor_elements_diagonal } from "../../tree/tensor/create_tensor_elements";
 
-export function eval_unit(expr: Cons, $: ExtensionEnv): U {
+export function eval_unit(expr: Cons, $: ExprContext): U {
     const n = evaluate_integer(cadr(expr), $);
 
     if (isNaN(n)) {
@@ -26,7 +25,7 @@ export function eval_unit(expr: Cons, $: ExtensionEnv): U {
     return I;
 }
 
-export function unit(arg: U, expr: Cons1<Sym, U>, $: ExtensionEnv): [TFLAGS, U] {
+export function unit(arg: U, expr: Cons1<Sym, U>, $: ExprContext): [TFLAGS, U] {
     const n = evaluate_integer(cadr(expr), $);
 
     if (isNaN(n)) {

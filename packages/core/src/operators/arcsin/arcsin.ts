@@ -1,4 +1,4 @@
-import { is_flt, is_rat } from "@stemcmicro/atoms";
+import { half, is_flt, is_rat, third, two, zero } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
 import { is_num_and_eq_number, is_num_and_eq_rational, num_to_number } from "@stemcmicro/helpers";
 import { car, cdr, is_cons, items_to_cons, U } from "@stemcmicro/tree";
@@ -9,7 +9,6 @@ import { ARCSIN, POWER } from "../../runtime/constants";
 import { is_multiply, is_sin } from "../../runtime/helpers";
 import { MATH_PI } from "../../runtime/ns_math";
 import { create_flt, zeroAsFlt } from "../../tree/flt/Flt";
-import { half, third, two, zero } from "../../tree/rat/Rat";
 
 /* arcsin =====================================================================
 

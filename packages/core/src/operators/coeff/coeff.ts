@@ -1,10 +1,10 @@
 import { one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { divide, is_mul_2_any_any, subst } from "@stemcmicro/helpers";
+import { StackU } from "@stemcmicro/stack";
 import { Cons, is_cons, nil, U } from "@stemcmicro/tree";
 import { subtract } from "../../calculators/sub/subtract";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { Vector } from "../../env/Vector";
 import { filter } from "../../filter";
 import { divide_expand } from "../../helpers/divide";
 import { SYMBOL_X } from "../../runtime/constants";
@@ -57,7 +57,7 @@ export function coefficients(expr: U, x: U, $: Pick<ExprContext, "handlerFor" | 
         return retval;
     };
 
-    const coefficients = new Vector();
+    const coefficients = new StackU();
 
     let p = expr;
     // eslint-disable-next-line no-constant-condition

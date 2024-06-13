@@ -1,11 +1,10 @@
 import { two } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
 import { is_negative } from "@stemcmicro/helpers";
+import { Native, native_sym } from "@stemcmicro/native";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../helpers/CompositeOperator";

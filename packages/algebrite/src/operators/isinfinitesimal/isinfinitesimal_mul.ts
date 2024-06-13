@@ -1,7 +1,7 @@
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
+import { Native } from "@stemcmicro/native";
+import { native_sym } from "@stemcmicro/native";
 import { Cons } from "../../tree/tree";
 import { CompositePredicate } from "../helpers/CompositePredicate";
 

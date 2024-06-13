@@ -6,9 +6,8 @@
 
 // TODO: Don't need to define functions; these are pluggable and should not be centrally defined.
 
-import { Native } from "../native/Native";
-import { native_sym } from "../native/native_sym";
-import { create_sym } from "../tree/sym/Sym";
+import { create_sym } from "@stemcmicro/atoms";
+import { Native, native_sym } from "@stemcmicro/native";
 
 export const MATH_ADD = native_sym(Native.add);
 export const MATH_COS = native_sym(Native.cos);

@@ -59,6 +59,7 @@ export { negate } from "./negate";
 export { num_to_number } from "./num_to_number";
 export { power } from "./power";
 export { predicate_return_value } from "./predicate_return_value";
+export { prolog_eval_1_arg } from "./prolog_eval_1_arg";
 export { prolog_eval_varargs } from "./prolog_eval_varargs";
 export { str_to_string } from "./str_to_string";
 export { subst } from "./subst";

@@ -1,8 +1,8 @@
 import { count_factors, is_base_of_natural_logarithm } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
+import { Native } from "@stemcmicro/native";
+import { native_sym } from "@stemcmicro/native";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../helpers/CompositeOperator";

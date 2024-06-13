@@ -1,8 +1,8 @@
 import { negOne } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
+import { Native } from "@stemcmicro/native";
+import { native_sym } from "@stemcmicro/native";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../helpers/CompositeOperator";

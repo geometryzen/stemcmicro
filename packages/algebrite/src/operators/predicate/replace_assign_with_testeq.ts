@@ -13,8 +13,8 @@
 // can indeed test the value of an assignment (the
 // value is just the evaluation of the right side)
 
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
+import { Native } from "@stemcmicro/native";
+import { native_sym } from "@stemcmicro/native";
 import { ASSIGN } from "../../runtime/constants";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
 

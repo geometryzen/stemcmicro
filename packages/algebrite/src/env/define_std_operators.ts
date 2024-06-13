@@ -45,8 +45,7 @@ import {
     stack_testge,
     stack_testgt,
     stack_testlt,
-    stack_transpose,
-    stack_unit
+    stack_transpose
 } from "@stemcmicro/eigenmath";
 import { eval_hilbert } from "@stemcmicro/hilbert";
 import { Native, native_sym } from "@stemcmicro/native";
@@ -251,6 +250,7 @@ import { tau_builder } from "../operators/tau/tau";
 import { eval_taylor } from "../operators/taylor/taylor";
 import { tensor_extension_builder } from "../operators/tensor/tensor_extension";
 import { eval_typeof } from "../operators/typeof/eval_typeof";
+import { eval_unit } from "../operators/unit/eval_unit";
 import { eval_uom } from "../operators/uom/stack_uom";
 import { uom_extension_builder } from "../operators/uom/uom_extension";
 import { eval_zero } from "../operators/zero/zero";
@@ -692,8 +692,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineExtension(lambda_extension_builder);
     $.defineExtension(map_extension_builder);
 
-    $.defineStackFunction(native_sym(Native.unit), stack_unit);
-    // $.defineStackFunction(UOM, stack_uom);
+    $.defineEvalFunction(native_sym(Native.unit), eval_unit);
     $.defineEvalFunction(UOM, eval_uom);
 
     $.defineEvalFunction(native_sym(Native.zero), eval_zero);

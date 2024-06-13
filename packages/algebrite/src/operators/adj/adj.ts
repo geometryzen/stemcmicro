@@ -1,7 +1,7 @@
 import { ExprContext } from "@stemcmicro/context";
+import { prolog_eval_1_arg } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_atom, nil, U } from "@stemcmicro/tree";
-import { prolog_eval_1_arg } from "../../dispatch/prolog_eval_1_arg";
 
 const ADJ = native_sym(Native.adj);
 

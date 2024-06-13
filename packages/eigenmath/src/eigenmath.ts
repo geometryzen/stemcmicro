@@ -9210,27 +9210,24 @@ function transpose(n: number, m: number, $: ProgramStack): void {
     $.push(p2);
 }
 
-export function stack_unit(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
+export function stack_unit(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    $.push(expr);
+    $.rest();
+    $.head();
     value_of(env, ctrl, $);
 
     const n = pop_integer($);
 
-    if (n < 1) stopf("unit: index err");
+    if (n < 0) stopf("unit: index err");
 
-    if (n === 1) {
-        push_integer(1, $);
-        return;
-    }
-
-    const M = alloc_matrix(n, n);
+    const I = alloc_matrix(n, n);
 
     for (let i = 0; i < n; i++)
         for (let j = 0; j < n; j++)
-            if (i === j) M.elems[n * i + j] = one;
-            else M.elems[n * i + j] = zero;
+            if (i === j) I.elems[n * i + j] = one;
+            else I.elems[n * i + j] = zero;
 
-    push(M, $);
+    $.push(I);
 }
 
 export function stack_user_function(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {

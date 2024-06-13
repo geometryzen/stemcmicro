@@ -2,8 +2,8 @@ import { assert_rat, is_rat, Sym, zero } from "@stemcmicro/atoms";
 import { Cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
+import { Native } from "@stemcmicro/native";
+import { native_sym } from "@stemcmicro/native";
 import { CompositeOperator } from "../helpers/CompositeOperator";
 import { Cons1 } from "../helpers/Cons1";
 

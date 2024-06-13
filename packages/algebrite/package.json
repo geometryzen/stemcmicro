@@ -1,7 +1,8 @@
 {
-    "name": "@stemcmicro/core",
+    "name": "@stemcmicro/algebrite",
     "version": "0.9.80",
-    "description": "Computer Algebra System in TypeScript",
+    "description": "",
+    "private": true,
     "publishConfig": {
         "access": "public"
     },
@@ -24,7 +25,7 @@
         "coverage": "npm run test -- --coverage",
         "docs": "npm run docs:typedoc && open-cli docs/index.html",
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
-        "pages": "npm run docs:typedoc && gh-pages --dist docs --dest core",
+        "pages": "npm run docs:typedoc && gh-pages --dist docs --dest algebrite",
         "pretest": "npm run build",
         "release": "release-it",
         "repl": "npm run build && node repl.mjs",
@@ -66,6 +67,7 @@
         "@stemcmicro/eigenmath": "workspace:*",
         "@stemcmicro/em-parse": "workspace:*",
         "@stemcmicro/helpers": "workspace:*",
+        "@stemcmicro/hilbert": "workspace:*",
         "@stemcmicro/native": "workspace:*",
         "@stemcmicro/stack": "workspace:*",
         "@stemcmicro/tree": "workspace:*"

@@ -170,7 +170,7 @@ export interface Predicates {
     zero: boolean;
 }
 
-export interface AtomListener {
+export interface CellListener {
     reset(from: U, to: U, source: Cell): void;
 }
 
@@ -178,8 +178,8 @@ export interface AtomListener {
  *
  */
 export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, Pick<ProgramIO, "listeners"> {
-    addAtomListener(subscriber: AtomListener): void;
-    removeAtomListener(subscriber: AtomListener): void;
+    addCellListener(subscriber: CellListener): void;
+    removeCellListener(subscriber: CellListener): void;
     getCellHost(): CellHost;
     setCellHost(host: CellHost): void;
     getProlog(): readonly string[];

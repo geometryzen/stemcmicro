@@ -6,7 +6,7 @@ import { str_to_string } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { ProgramIOListener, ProgramStack, StackFunction } from "@stemcmicro/stack";
 import { Cons, is_atom, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
-import { AtomListener, CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
+import { CellListener, CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
 import { ExtensionFromExprHandler } from "../env/ExtensionFromExprHandler";
 import { render_as_infix } from "../print/render_as_infix";
 import { ProgrammingError } from "../programming/ProgrammingError";
@@ -70,10 +70,10 @@ export class ExtensionEnvFromExprContext implements ExtensionEnv {
     handlerFor<T extends U>(expr: T): ExprHandler<T> {
         return this.context.handlerFor(expr);
     }
-    addAtomListener(subscriber: AtomListener): void {
+    addCellListener(subscriber: CellListener): void {
         throw new Error("Method not implemented.");
     }
-    removeAtomListener(subscriber: AtomListener): void {
+    removeCellListener(subscriber: CellListener): void {
         throw new Error("Method not implemented.");
     }
     getCellHost(): CellHost {

@@ -1,5 +1,3 @@
-import { assert_sym, Cell, create_int, create_rat, create_sym, Sym } from "@stemcmicro/atoms";
-import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import {
     ALL_FEATURES,
     AtomExtensionBuilderFromExprHandlerBuilder,
@@ -20,11 +18,14 @@ import {
     simplify,
     transform_tree,
     UOM_NAMES
-} from "@stemcmicro/core";
+} from "@stemcmicro/algebrite";
+import { assert_sym, Cell, create_int, create_rat, create_sym, Sym } from "@stemcmicro/atoms";
+import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
 import { render_svg } from "@stemcmicro/eigenmath";
+import { EmParseOptions, em_parse } from "@stemcmicro/em-parse";
 import { Native, native_sym } from "@stemcmicro/native";
-import { ProgramEnv, ProgramStack } from "@stemcmicro/stack";
+import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
 import { assert_U, Atom, Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 
 export interface ParseConfig {
@@ -46,7 +47,7 @@ export enum Concept {
     TTY = 2
 }
 
-export interface AtomListener {
+export interface CellListener {
     reset(from: U, to: U, source: Cell): void;
 }
 
@@ -58,11 +59,13 @@ export interface ExprHandlerBuilder<T extends U> {
     create(): ExprHandler<T>;
 }
 
-export interface ExprEngine extends Pick<ProgramEnv, "clearBindings"> {
+export interface ExprEngine extends Pick<ProgramEnv, "clearBindings">, Pick<ProgramControl, "pushDirective" | "popDirective"> {
     clearBindings(): void;
 
     defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void;
     defineFunction(name: Sym, lambda: LambdaExpr): void;
+
+    parse(sourceText: string): { trees: U[]; errors: Error[] };
 
     simplify(expr: U): U;
     valueOf(expr: U): U;
@@ -79,8 +82,8 @@ export interface ExprEngine extends Pick<ProgramEnv, "clearBindings"> {
 
     renderAsString(expr: U, config?: Partial<RenderConfig>): string;
 
-    addAtomListener(listener: AtomListener): void;
-    removeAtomListener(listener: AtomListener): void;
+    addCellListener(listener: CellListener): void;
+    removeCellListener(listener: CellListener): void;
 
     addListener(listener: ExprEngineListener): void;
     removeListener(listener: ExprEngineListener): void;
@@ -253,6 +256,13 @@ class MicroEngine implements ExprEngine {
         const match = items_to_cons(name);
         this.#env.defineFunction(match, lambda);
     }
+    parse(sourceText: string): { trees: U[]; errors: Error[] } {
+        const options: EmParseOptions = {
+            useCaretForExponentiation: false,
+            useParenForTensors: false
+        };
+        return em_parse(sourceText, options);
+    }
     simplify(expr: U): U {
         return simplify(expr, this.#env);
     }
@@ -325,17 +335,23 @@ class MicroEngine implements ExprEngine {
             }
         }
     }
-    addAtomListener(listener: AtomListener): void {
-        this.#env.addAtomListener(listener);
+    addCellListener(listener: CellListener): void {
+        this.#env.addCellListener(listener);
     }
-    removeAtomListener(listener: AtomListener): void {
-        this.#env.removeAtomListener(listener);
+    removeCellListener(listener: CellListener): void {
+        this.#env.removeCellListener(listener);
     }
     addListener(listener: ExprEngineListener): void {
         this.#env.listeners.push(listener);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     removeListener(listener: ExprEngineListener): void {}
+    pushDirective(directive: number, value: number): void {
+        this.#env.pushDirective(directive, value);
+    }
+    popDirective(): void {
+        this.#env.popDirective();
+    }
 }
 
 export function create_engine(options: Partial<EngineConfig> = {}): ExprEngine {

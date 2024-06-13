@@ -2,6 +2,10 @@
     "name": "@stemcmicro/eigenmath",
     "version": "0.9.80",
     "description": "hilbert function for stemcmicro",
+    "private": true,
+    "publishConfig": {
+        "access": "public"
+    },
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -30,9 +34,6 @@
         "atoms",
         "Boo"
     ],
-    "publishConfig": {
-        "access": "public"
-    },
     "scripts": {
         "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
         "check": "npx package-check",

@@ -1,7 +1,7 @@
 packages:
+  - "packages/algebrite"
   - "packages/atoms"
   - "packages/context"
-  - "packages/core"
   - "packages/cs-parse"
   - "packages/diagnostics"
   - "packages/directive"

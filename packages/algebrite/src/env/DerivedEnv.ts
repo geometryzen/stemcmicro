@@ -12,7 +12,7 @@ import { ProgrammingError } from "../programming/ProgrammingError";
 import { ASSIGN, COMPONENT, LET } from "../runtime/constants";
 import { assert_sym_any_any } from "../stepper/step_setq";
 import { EnvConfig } from "./EnvConfig";
-import { AtomListener, CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { CellListener, CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 /**
  * Evaluates each item in the `argList` and returns (opr ...),
  */
@@ -59,11 +59,11 @@ export class DerivedEnv implements ExtensionEnv {
     setState(key: string, value: Shareable): void {
         this.#baseEnv.setState(key, value);
     }
-    addAtomListener(subscriber: AtomListener): void {
-        this.#baseEnv.addAtomListener(subscriber);
+    addCellListener(subscriber: CellListener): void {
+        this.#baseEnv.addCellListener(subscriber);
     }
-    removeAtomListener(subscriber: AtomListener): void {
-        this.#baseEnv.removeAtomListener(subscriber);
+    removeCellListener(subscriber: CellListener): void {
+        this.#baseEnv.removeCellListener(subscriber);
     }
     getCellHost(): CellHost {
         return this.#baseEnv.getCellHost();

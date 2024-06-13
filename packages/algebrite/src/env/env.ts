@@ -26,7 +26,7 @@ import { DerivedEnv } from "./DerivedEnv";
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
 import {
-    AtomListener,
+    CellListener,
     CompareFn,
     directive_from_flag,
     EvalFunction,
@@ -173,12 +173,12 @@ class ReactionVisitor implements Visitor {
 class ReactiveHost implements CellHost {
     #dependencies: Map<string, Reaction[]> = new Map();
     #scope: ExtensionEnv | undefined;
-    #subscribers: AtomListener[] = [];
+    #subscribers: CellListener[] = [];
     constructor() {}
-    addAtomListener(subscriber: AtomListener): void {
+    addCellListener(subscriber: CellListener): void {
         this.#subscribers.push(subscriber);
     }
-    removeAtomListener(subscriber: AtomListener): void {
+    removeCellListener(subscriber: CellListener): void {
         const index = this.#subscribers.indexOf(subscriber);
         if (index > -1) {
             this.#subscribers.splice(index, 1);
@@ -203,7 +203,7 @@ class ReactiveHost implements CellHost {
     }
     reset(from: U, to: U, source: Cell): void {
         for (let i = 0; i < this.#subscribers.length; i++) {
-            const subscriber: AtomListener = this.#subscribers[i];
+            const subscriber: CellListener = this.#subscribers[i];
             try {
                 subscriber.reset(from, to, source);
             } catch (e) {
@@ -373,11 +373,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setState(key: string, value: Shareable): void {
             stateMap.set(key, value);
         },
-        addAtomListener(subscriber: AtomListener): void {
-            cellHost.addAtomListener(subscriber);
+        addCellListener(subscriber: CellListener): void {
+            cellHost.addCellListener(subscriber);
         },
-        removeAtomListener(subscriber: AtomListener): void {
-            cellHost.removeAtomListener(subscriber);
+        removeCellListener(subscriber: CellListener): void {
+            cellHost.removeCellListener(subscriber);
         },
         getCellHost(): CellHost {
             // We either do this or lazily create.

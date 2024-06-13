@@ -1,8 +1,7 @@
 import { Sym } from "@stemcmicro/atoms";
 import { CompareFn, ExprContext, ExprHandler } from "@stemcmicro/context";
-import { ProgramControl, ProgramEnv, StackU } from "@stemcmicro/stack";
+import { ProgramControl, ProgramEnv } from "@stemcmicro/stack";
 import { Cons, Shareable, U } from "@stemcmicro/tree";
-import { value_of } from "./eigenmath";
 
 /**
  *
@@ -73,14 +72,7 @@ export class ExprContextFromProgram implements ExprContext {
         this.env.defineUserSymbol(name);
     }
     valueOf(expr: U): U {
-        const stack = new StackU();
-        try {
-            stack.push(expr);
-            value_of(this.env, this.ctrl, stack);
-            return stack.pop();
-        } finally {
-            stack.release();
-        }
+        return this.env.valueOf(expr);
     }
     getSymbolPrintName(sym: Sym): string {
         return this.ctrl.getSymbolPrintName(sym);

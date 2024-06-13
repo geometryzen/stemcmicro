@@ -45,7 +45,6 @@
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "peerDependencies": {
         "@stemcmicro/atoms": "workspace:*",
-        "@stemcmicro/core": "workspace:*",
         "@stemcmicro/directive": "workspace:*",
         "@stemcmicro/em-parse": "workspace:*",
         "@stemcmicro/engine": "workspace:*",

@@ -12,9 +12,9 @@ The roadmap is to create a highly modular and extensible ecosystem of packages t
 
 All packages are published together with the same version number.
 
-[![version](https://img.shields.io/npm/v/@stemcmicro/core.svg)](https://www.npmjs.com/package/@stemcmicro/core)
+[![version](https://img.shields.io/npm/v/@stemcmicro/tree.svg)](https://www.npmjs.com/package/@stemcmicro/tree)
 
-[![npm downloads](https://img.shields.io/npm/dm/@stemcmicro/core.svg)](https://npm-stat.com/charts.html?package=@stemcmicro/core&from=2024-03-27)
+[![npm downloads](https://img.shields.io/npm/dm/@stemcmicro/tree.svg)](https://npm-stat.com/charts.html?package=@stemcmicro/tree&from=2024-03-27)
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 

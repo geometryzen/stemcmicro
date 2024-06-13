@@ -48,6 +48,7 @@ import {
     stack_transpose,
     stack_unit
 } from "@stemcmicro/eigenmath";
+import { eval_hilbert } from "@stemcmicro/hilbert";
 import { Native, native_sym } from "@stemcmicro/native";
 import { eval_approxratio } from "../approxratio";
 import { MulComparator } from "../calculators/compare/compare_factor_factor";
@@ -522,6 +523,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineEvalFunction(native_sym(Native.grade), eval_grade);
 
     $.defineStackFunction(native_sym(Native.hadamard), stack_hadamard);
+    $.defineEvalFunction(native_sym(Native.hilbert), eval_hilbert);
     $.defineStackFunction(native_sym(Native.imag), stack_imag);
 
     $.defineStackFunction(native_sym(Native.component), stack_index);

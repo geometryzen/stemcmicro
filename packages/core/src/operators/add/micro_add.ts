@@ -1,6 +1,6 @@
-import { Blade, is_blade, is_rat, is_tensor, zero } from "@stemcmicro/atoms";
+import { assert_blade, is_blade, is_rat, is_tensor, zero } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
-import { assert_stack_length, combine_terms, cons, copy_tensor, flatten_items, list, pop, push, simplify_terms, sum_tensors, value_of_args } from "@stemcmicro/eigenmath";
+import { assert_stack_length, combine_terms, copy_tensor, flatten_items, list, simplify_terms, sum_tensors, value_of_args } from "@stemcmicro/eigenmath";
 import { Native, native_sym } from "@stemcmicro/native";
 import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
 import { Cons, U } from "@stemcmicro/tree";
@@ -33,84 +33,89 @@ export function micro_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: 
  * @param n The number of terms on the stack that should be added.
  * @param id The identity element for addition, used when n is zero.
  */
-function sum_terms(n: number, id: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
+function sum_terms(n: number, id: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     if (n < 0) {
         throw new ProgrammingError(`n => ${n}`);
     }
 
-    const start = _.length - n;
+    const start = $.length - n;
 
-    flatten_items(start, ADD, _);
+    flatten_items(start, ADD, $);
 
-    const sigma = sum_tensors(start, env, ctrl, _);
+    const sigma = sum_tensors(start, env, ctrl, $);
     // const blades = sum_blades(start, env, ctrl, _);
 
-    combine_terms(start, env, ctrl, _);
+    combine_terms(start, env, ctrl, $);
 
-    if (simplify_terms(start, env, ctrl, _)) {
-        combine_terms(start, env, ctrl, _);
+    if (simplify_terms(start, env, ctrl, $)) {
+        combine_terms(start, env, ctrl, $);
     }
 
-    const k = _.length - start;
+    const k = $.length - start;
 
     if (k === 0) {
-        _.push(sigma);
+        $.push(sigma);
         return;
     }
 
     if (k > 1) {
-        list(k, _);
-        _.push(ADD);
-        _.swap();
-        cons(_); // prepend ADD to list
+        list(k, $);
+        $.push(ADD);
+        $.swap();
+        $.cons();
     }
 
     if (is_tensor(sigma)) {
-        const p1 = _.pop();
-
-        const T = copy_tensor(sigma);
-
-        const nelem = T.nelem;
-
-        for (let i = 0; i < nelem; i++) {
-            _.push(T.elems[i]);
-            _.push(p1);
-            sum_terms(2, id, env, ctrl, _);
-            T.elems[i] = pop(_);
+        const p1 = $.pop();
+        try {
+            const T = copy_tensor(sigma);
+            try {
+                const nelem = T.nelem;
+                for (let i = 0; i < nelem; i++) {
+                    $.push(T.elems[i]);
+                    $.push(p1);
+                    sum_terms(2, id, env, ctrl, $);
+                    T.elems[i] = $.pop();
+                }
+                $.push(T);
+            } finally {
+                T.release();
+            }
+        } finally {
+            p1.release();
         }
-
-        _.push(T);
     }
 }
 
-export function sum_blades(start: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): U {
+export function sum_blades(start: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): U {
     let sum: U = zero;
-    for (let i = start; i < _.length; i++) {
-        const rhs = _.getAt(i);
+    for (let i = start; i < $.length; i++) {
+        const rhs = $.getAt(i);
         if (is_blade(rhs)) {
             if (is_rat(sum)) {
                 sum = rhs;
             } else {
-                push(sum, _);
-                push(rhs, _);
-                add_2_blades(env, ctrl, _);
-                sum = pop(_);
+                $.push(sum);
+                $.push(rhs);
+                add_2_blades(env, ctrl, $);
+                sum = $.pop();
             }
-            _.splice(i, 1);
+            $.splice(i, 1);
             i--; // use same index again
         }
     }
     return sum;
 }
+
 /**
  * [..., A, B] => [..., (+ A B)]
  */
 function add_2_blades(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     //                              [..., A, B]
-    const B = pop($) as Blade; //   [..., A]
-    const A = pop($) as Blade; //   [...]
+    const B = assert_blade($.pop()); //   [..., A]
+    const A = assert_blade($.pop()); //   [...]
 
     const sum = A.add(B);
 
-    push(sum, $); //  [..., (+ A B)]
+    $.push(sum); //  [..., (+ A B)]
 }

@@ -1,21 +1,36 @@
-import { pop, value_of } from "@stemcmicro/eigenmath";
+import { Err } from "@stemcmicro/atoms";
+import { value_of } from "@stemcmicro/eigenmath";
 import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
-import { U } from "@stemcmicro/tree";
-import { hook_create_err } from "../../hooks/hook_create_err";
+import { Cons } from "@stemcmicro/tree";
 
-export function stack_error(expr: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
-    _.push(expr);
-    _.rest();
-    _.head();
-    value_of(env, ctrl, _);
-    error(env, ctrl, _);
+/**
+ * [...] => [..., (head, rest)]
+ * @param expr
+ * @param env
+ * @param ctrl
+ * @param $
+ */
+export function stack_error(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    $.push(expr); //  [..., (opr, argList)]
+    $.rest(); //  [..., argList]
+    $.head(); //  [..., arg]
+    value_of(env, ctrl, $); //  [..., value-of(arg)]
+    error(env, ctrl, $); //  [..., Err(value-of(arg))]
 }
 
+/**
+ * [..., message] => [..., Err(message)]
+ */
 export function error(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const cause = pop($);
+    const message = $.pop();
     try {
-        $.push(hook_create_err(cause));
+        const err = new Err(message);
+        try {
+            $.push(err);
+        } finally {
+            err.release();
+        }
     } finally {
-        cause.release();
+        message.release();
     }
 }

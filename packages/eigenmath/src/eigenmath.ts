@@ -55,7 +55,7 @@ import {
 } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { ProgramControl, ProgramEnv, ProgramIO, ProgramIOListener, ProgramStack, StackFunction, StackU } from "@stemcmicro/stack";
-import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, Cons2, is_atom, is_cons, is_cons2, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
+import { assert_cons, car, cdr, Cons, cons as create_cons, Cons2, is_atom, is_cons, is_cons2, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { bignum_equal } from "./bignum_equal";
 import { bignum_itoa } from "./bignum_itoa";
 import { ExprContextFromProgram } from "./ExprContextFromProgram";
@@ -292,8 +292,8 @@ function cadr(p: U): U {
 }
 
 function cancel_factor(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    let p2 = pop($);
-    const p1 = pop($);
+    let p2 = $.pop();
+    const p1 = $.pop();
 
     if (car(p2).equals(ADD)) {
         const h = $.length;
@@ -308,8 +308,8 @@ function cancel_factor(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
         return;
     }
 
-    push(p1, $);
-    push(p2, $);
+    $.push(p1);
+    $.push(p2);
     multiply(env, ctrl, $);
 }
 
@@ -501,14 +501,14 @@ function coeffs(P: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
         push_integer(0, $); //  [..., P(x), X, 0]
         subst($); //  [..., P(0)]
         value_of(env, ctrl, $);
-        const C = pop($); //  [...]
+        const C = $.pop(); //  [...]
 
         push(C, $); //  [..., P(0)]
 
         push(P, $); //  [..., P(0), P(x)]
         push(C, $); //  [..., P(0), P(x), P(0)]
         subtract(env, ctrl, $); //  [..., P(0), P(x)-P(0)]
-        P = pop($); //  [..., P(0)]
+        P = $.pop(); //  [..., P(0)]
 
         if (iszero(P, env)) {
             break;
@@ -517,7 +517,7 @@ function coeffs(P: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
         push(P, $); //  [..., P(0), P(x)-P(0)]
         push(X, $); //  [..., P(0), P(x)-P(0), x]
         divide(env, ctrl, $); //  [..., P(0), (P(x)-P(0))/x]
-        P = pop($); //  [..., P(0)]
+        P = $.pop(); //  [..., P(0)]
     }
 }
 
@@ -574,7 +574,7 @@ function combine_factors_nib(i: number, j: number, env: ProgramEnv, ctrl: Progra
     add(env, ctrl, $);
     list(3, $);
 
-    $.setAt(i, pop($));
+    $.setAt(i, $.pop());
 
     return 1;
 }
@@ -588,7 +588,7 @@ function combine_numerical_factors(start: number, coeff: Num | Err, $: ProgramSt
         if (is_num(x)) {
             if (is_num(coeff)) {
                 multiply_numbers(coeff, x, $); //  [..., a, b, c, coeff * x], assume i points to a
-                coeff = pop($) as Num; //  [..., a, b, c]
+                coeff = $.pop() as Num; //  [..., a, b, c]
                 $.splice(i, 1); // remove factor        //  [..., b, c]
                 i--; //  [..., b, c],                i points to element before b
                 end--;
@@ -646,30 +646,6 @@ export function complexity(expr: U): number {
     }
 }
 
-/**
- * The stack is reduced as follows...
- *
- * -----
- * | b |
- * ----- => --------------
- * | a |    | Cons(a, b) |
- * -----    --------------
- * | X |    |      X     |
- * -----    --------------
- *
- * b must be cons or nil.
- */
-export function cons($: Pick<ProgramStack, "push" | "pop">): void {
-    const b = assert_cons_or_nil(pop($));
-    const a = pop($);
-    try {
-        push(create_cons(a, b), $);
-    } finally {
-        a.release();
-        b.release();
-    }
-}
-
 export function copy_tensor<T extends U>(source: Tensor<T>): Tensor<T> {
     const dst = alloc_tensor<T>();
 
@@ -689,8 +665,8 @@ export function copy_tensor<T extends U>(source: Tensor<T>): Tensor<T> {
 }
 
 function decomp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
-    const X = pop($);
-    const F = pop($);
+    const X = $.pop();
+    const F = $.pop();
 
     // is the entire expression constant?
 
@@ -724,10 +700,10 @@ function decomp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
     }
 }
 
-function decomp_sum(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
+function decomp_sum(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     let p2: U;
 
-    const N = _.length;
+    const N = $.length;
 
     // partition terms
 
@@ -737,12 +713,12 @@ function decomp_sum(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, _: Progra
         p2 = car(xs);
         if (findf(p2, X)) {
             if (car(p2).equals(MULTIPLY)) {
-                push(p2, _);
-                push(X, _);
-                partition_term(_); // push const part then push var part
+                $.push(p2);
+                push(X, $);
+                partition_term($); // push const part then push var part
             } else {
-                push_integer(1, _); // const part
-                push(p2, _); // var part
+                push_integer(1, $); // const part
+                $.push(p2); // var part
             }
         }
         xs = cdr(xs);
@@ -750,54 +726,54 @@ function decomp_sum(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, _: Progra
 
     // combine const parts of matching var parts
 
-    let end = _.length - N;
+    let end = $.length - N;
 
     for (let i = 0; i < end - 2; i += 2)
         for (let j = i + 2; j < end; j += 2) {
-            if (!equal(_.getAt(N + i + 1), _.getAt(N + j + 1))) {
+            if (!equal($.getAt(N + i + 1), $.getAt(N + j + 1))) {
                 continue;
             }
-            _.push(_.getAt(N + i)); // add const parts
-            _.push(_.getAt(N + j));
-            sum_terms(2, env, ctrl, _);
-            _.setAt(N + i, pop(_));
-            for (let k = j; k < end - 2; k++) _.setAt(N + k, _.getAt(N + k + 2));
+            $.push($.getAt(N + i)); // add const parts
+            $.push($.getAt(N + j));
+            sum_terms(2, env, ctrl, $);
+            $.setAt(N + i, $.pop());
+            for (let k = j; k < end - 2; k++) $.setAt(N + k, $.getAt(N + k + 2));
             j -= 2; // use same j again
             end -= 2;
-            _.splice(_.length - 2); // pop
+            $.splice($.length - 2); // pop
         }
 
     // push const parts, decomp var parts
 
-    list(_.length - N, _);
-    let parts = _.pop();
+    list($.length - N, $);
+    let parts = $.pop();
 
     while (is_cons(parts)) {
-        push(car(parts), _); // const part
-        push(cadr(parts), _); // var part
-        push(X, _);
-        decomp(env, ctrl, _);
+        push(car(parts), $); // const part
+        push(cadr(parts), $); // var part
+        push(X, $);
+        decomp(env, ctrl, $);
         parts = cddr(parts);
     }
 
     // add together all constant terms
 
-    const h = _.length;
+    const h = $.length;
     let terms = cdr(F);
     while (is_cons(terms)) {
         if (!findf(car(terms), X)) {
-            _.push(car(terms));
+            $.push(car(terms));
         }
         terms = terms.rest;
     }
 
-    const n = _.length - h;
+    const n = $.length - h;
 
     if (n > 1) {
-        list(n, _);
-        _.push(ADD);
-        _.swap();
-        cons(_); // makes ADD head of list
+        list(n, $);
+        $.push(ADD);
+        $.swap();
+        $.cons(); // makes ADD head of list
     }
 }
 
@@ -829,9 +805,9 @@ function decomp_product(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 
     if (n > 1) {
         list(n, $);
-        push(MULTIPLY, $);
-        swap($);
-        cons($); // makes MULTIPLY head of list
+        $.push(MULTIPLY);
+        $.swap();
+        $.cons();
     }
 }
 
@@ -845,7 +821,7 @@ export function divide(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
 }
 
 function dupl($: ProgramStack): void {
-    const expr = pop($);
+    const expr = $.pop();
     try {
         push(expr, $);
         push(expr, $);
@@ -867,7 +843,7 @@ export function stack_abs(expr: U, env: ProgramEnv, ctrl: ProgramControl, _: Pro
 }
 
 export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const x = pop($);
+    const x = $.pop();
     try {
         if (is_atom(x)) {
             const handler = env.handlerFor(x);
@@ -915,12 +891,12 @@ export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
         push_rational(1, 2, $);
         power(env, ctrl, $);
 
-        const p2 = pop($);
-        push(p2, $);
+        const p2 = $.pop();
+        $.push(p2);
         floatfunc(env, ctrl, $);
-        const p3 = pop($);
+        const p3 = $.pop();
         if (is_flt(p3)) {
-            push(p2, $);
+            $.push(p2);
             if (p3.isNegative()) {
                 negate(env, ctrl, $);
             }
@@ -954,7 +930,7 @@ export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
         if (isnegativeterm(x) || (car(x).equals(ADD) && isnegativeterm(cadr(x)))) {
             push(x, $);
             negate(env, ctrl, $);
-            const X = pop($);
+            const X = $.pop();
             push(ABS, $);
             push(X, $);
             list(2, $);
@@ -1014,7 +990,7 @@ export function stack_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: 
 }
 
 /**
- * @deprecated Use sum_terms(2) instead
+ * [..., v1, v2] => [..., v1 + v2]
  */
 export function add(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     sum_terms(2, env, ctrl, $);
@@ -1023,52 +999,55 @@ export function add(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): voi
 /**
  * [..., v1, v2, ..., vn] => [..., X] where X is the sum of v1 through vn
  */
-export function sum_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
+export function sum_terms(n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     if (n < 0) {
         throw new Error(`n => ${n}`);
     }
 
-    const start = _.length - n;
+    const start = $.length - n;
 
-    flatten_items(start, ADD, _);
+    flatten_items(start, ADD, $);
 
-    const sigma = sum_tensors(start, env, ctrl, _);
+    const sigma = sum_tensors(start, env, ctrl, $);
 
-    combine_terms(start, env, ctrl, _);
+    combine_terms(start, env, ctrl, $);
 
-    if (simplify_terms(start, env, ctrl, _)) {
-        combine_terms(start, env, ctrl, _);
+    if (simplify_terms(start, env, ctrl, $)) {
+        combine_terms(start, env, ctrl, $);
     }
 
-    const k = _.length - start;
+    const k = $.length - start;
 
     if (k === 0) {
-        _.push(sigma);
+        $.push(sigma);
         return;
     }
 
     if (k > 1) {
-        list(k, _);
-        _.push(ADD);
-        _.swap();
-        cons(_); // prepend ADD to list
+        list(k, $);
+        $.push(ADD);
+        $.swap();
+        $.cons();
     }
 
     if (is_tensor(sigma)) {
-        const p1 = _.pop();
+        const p1 = $.pop();
+        try {
+            const T = copy_tensor(sigma);
 
-        const T = copy_tensor(sigma);
+            const nelem = T.nelem;
 
-        const nelem = T.nelem;
+            for (let i = 0; i < nelem; i++) {
+                $.push(T.elems[i]);
+                $.push(p1);
+                sum_terms(2, env, ctrl, $);
+                T.elems[i] = $.pop();
+            }
 
-        for (let i = 0; i < nelem; i++) {
-            _.push(T.elems[i]);
-            _.push(p1);
-            sum_terms(2, env, ctrl, _);
-            T.elems[i] = pop(_);
+            $.push(T);
+        } finally {
+            p1.release();
         }
-
-        _.push(T);
     }
 }
 
@@ -1117,8 +1096,8 @@ export function sum_tensors(start: number, env: ProgramEnv, ctrl: ProgramControl
  */
 function add_2_tensors(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     //                              [..., A, B]
-    const B = pop($) as Tensor; //  [..., A]
-    const A = pop($) as Tensor; //  [...]
+    const B = $.pop() as Tensor; //  [..., A]
+    const A = $.pop() as Tensor; //  [...]
 
     if (!compatible_dimensions(A, B)) {
         stopf("incompatible tensor arithmetic");
@@ -1132,7 +1111,7 @@ function add_2_tensors(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
         push(A.elems[i], $);
         push(B.elems[i], $);
         sum_terms(2, env, ctrl, $);
-        C.elems[i] = pop($);
+        C.elems[i] = $.pop();
     }
 
     push(C, $); //  [..., (+ A B)]
@@ -1153,9 +1132,9 @@ export function combine_terms(start: number, env: ProgramEnv, ctrl: ProgramContr
     }
 }
 
-function combine_terms_nib(i: number, j: number, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): boolean {
-    const lhs = _.getAt(i);
-    const rhs = _.getAt(j);
+function combine_terms_nib(i: number, j: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): boolean {
+    const lhs = $.getAt(i);
+    const rhs = $.getAt(j);
 
     // console.lg("combine_terms_nib", `${lhs}`, `${rhs}`);
 
@@ -1171,13 +1150,13 @@ function combine_terms_nib(i: number, j: number, env: ProgramEnv, ctrl: ProgramC
     }
 
     if (iszero(lhs, env)) {
-        _.setAt(i, rhs);
+        $.setAt(i, rhs);
         return true;
     }
 
     if (is_num(lhs) && is_num(rhs)) {
-        add_numbers(lhs, rhs, _);
-        _.setAt(i, pop(_));
+        add_numbers(lhs, rhs, $);
+        $.setAt(i, $.pop());
         return true;
     }
 
@@ -1220,37 +1199,37 @@ function combine_terms_nib(i: number, j: number, env: ProgramEnv, ctrl: ProgramC
         return false;
     }
 
-    add_numbers(coeff1, coeff2, _);
+    add_numbers(coeff1, coeff2, $);
 
-    coeff1 = assert_num(pop(_));
+    coeff1 = assert_num($.pop());
 
     if (iszero(coeff1, env)) {
-        _.setAt(i, coeff1);
+        $.setAt(i, coeff1);
         return true;
     }
 
     if (isplusone(coeff1) && !is_flt(coeff1)) {
         if (denorm) {
-            push(MULTIPLY, _);
-            push(p1, _); // p1 is a list, not an atom
-            cons(_); // prepend MULTIPLY
-        } else push(p1, _);
+            $.push(MULTIPLY);
+            $.push(p1);
+            $.cons();
+        } else $.push(p1);
     } else {
         if (denorm) {
-            push(MULTIPLY, _);
-            push(coeff1, _);
-            push(p1, _); // p1 is a list, not an atom
-            cons(_); // prepend coeff1
-            cons(_); // prepend MULTIPLY
+            $.push(MULTIPLY);
+            push(coeff1, $);
+            $.push(p1);
+            $.cons();
+            $.cons();
         } else {
-            push(MULTIPLY, _);
-            push(coeff1, _);
-            push(p1, _);
-            list(3, _);
+            $.push(MULTIPLY);
+            push(coeff1, $);
+            $.push(p1);
+            list(3, $);
         }
     }
 
-    _.setAt(i, pop(_));
+    $.setAt(i, $.pop());
 
     return true;
 }
@@ -1350,9 +1329,9 @@ export function simplify_terms(h: number, env: ProgramEnv, ctrl: ProgramControl,
     for (let i = h; i < $.length; i++) {
         const p1 = $.getAt(i);
         if (isradicalterm(p1)) {
-            push(p1, $);
+            $.push(p1);
             value_of(env, ctrl, $);
-            const p2 = pop($);
+            const p2 = $.pop();
             if (!equal(p1, p2)) {
                 $.setAt(i, p2);
                 n++;
@@ -1409,7 +1388,7 @@ export function stack_adj(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: Progr
 }
 
 function adj(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (!is_tensor(p1)) {
         push_integer(1, $); // adj of scalar is 1 because adj = det inv
@@ -1428,12 +1407,12 @@ function adj(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         p2.elems[0] = p1.elems[3];
         push(p1.elems[1], $);
         negate(env, ctrl, $);
-        p2.elems[1] = pop($);
+        p2.elems[1] = $.pop();
         push(p1.elems[2], $);
         negate(env, ctrl, $);
-        p2.elems[2] = pop($);
+        p2.elems[2] = $.pop();
         p2.elems[3] = p1.elems[0];
-        push(p2, $);
+        $.push(p2);
         return;
     }
 
@@ -1448,23 +1427,23 @@ function adj(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             push(p3, $);
             det(env, ctrl, $);
             if ((row + col) % 2) negate(env, ctrl, $);
-            p2.elems[n * col + row] = pop($); // transpose
+            p2.elems[n * col + row] = $.pop(); // transpose
         }
     }
 
-    push(p2, $);
+    $.push(p2);
 }
 
 export function stack_algebra(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(assert_cons(expr).item(1), $);
     value_of(env, ctrl, $);
-    const metric = pop($);
+    const metric = $.pop();
     if (!is_tensor(metric)) {
         stopf("");
     }
     push(assert_cons(expr).item(2), $);
     value_of(env, ctrl, $);
-    const labels = pop($);
+    const labels = $.pop();
     if (!is_tensor(labels)) {
         stopf("");
     }
@@ -1646,7 +1625,7 @@ export function stack_and(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
     while (is_cons(p1)) {
         push(car(p1), $);
         evalp(env, ctrl, $);
-        const p2 = pop($);
+        const p2 = $.pop();
         if (iszero(p2, env)) {
             push_integer(0, $);
             return;
@@ -1664,7 +1643,7 @@ export function stack_and(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 export function evaluate_expression(expression: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): U {
     push(expression, $);
     value_of(env, ctrl, $);
-    return pop($);
+    return $.pop();
 }
 
 export function stack_arccos(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
@@ -1674,7 +1653,7 @@ export function stack_arccos(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 }
 
 function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -1682,7 +1661,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             arccos(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
@@ -1701,14 +1680,14 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (is_flt(p1) || isdoublez(p1)) {
         push_double(1.0, $);
-        push(p1, $);
-        push(p1, $);
+        $.push(p1);
+        $.push(p1);
         multiply(env, ctrl, $);
         subtract(env, ctrl, $);
         sqrtfunc(env, ctrl, $);
         push(imu, $);
         multiply(env, ctrl, $);
-        push(p1, $);
+        $.push(p1);
         add(env, ctrl, $);
         logfunc(env, ctrl, $);
         push(imu, $);
@@ -1721,7 +1700,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isoneoversqrttwo(p1)) {
         push_rational(1, 4, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         multiply(env, ctrl, $);
         return;
     }
@@ -1730,7 +1709,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isminusoneoversqrttwo(p1)) {
         push_rational(3, 4, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         multiply(env, ctrl, $);
         return;
     }
@@ -1739,7 +1718,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (iszero(p1, env)) {
         push_rational(1, 2, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         multiply(env, ctrl, $);
         return;
     }
@@ -1748,7 +1727,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isequalq(p1, 1, 2)) {
         push_rational(1, 3, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         multiply(env, ctrl, $);
         return;
     }
@@ -1764,7 +1743,7 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isequalq(p1, -1, 2)) {
         push_rational(2, 3, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         multiply(env, ctrl, $);
         return;
     }
@@ -1772,12 +1751,12 @@ function arccos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // arccos(-1) = pi
 
     if (isminusone(p1)) {
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         return;
     }
 
     push(ARCCOS, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -1788,7 +1767,7 @@ export function stack_arccosh(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: P
 }
 
 function arccosh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -1796,7 +1775,7 @@ function arccosh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             arccosh(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
@@ -1814,13 +1793,13 @@ function arccosh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // arccosh(z) = log(sqrt(z^2 - 1) + z)
 
     if (is_flt(p1) || isdoublez(p1)) {
-        push(p1, $);
-        push(p1, $);
+        $.push(p1);
+        $.push(p1);
         multiply(env, ctrl, $);
         push_double(-1.0, $);
         add(env, ctrl, $);
         sqrtfunc(env, ctrl, $);
-        push(p1, $);
+        $.push(p1);
         add(env, ctrl, $);
         logfunc(env, ctrl, $);
         return;
@@ -1837,7 +1816,7 @@ function arccosh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     }
 
     push(ARCCOSH, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -1848,7 +1827,7 @@ export function stack_arcsin(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 }
 
 function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -1856,7 +1835,7 @@ function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             arcsin(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
@@ -1877,11 +1856,11 @@ function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         push(imu, $);
         negate(env, ctrl, $);
         push(imu, $);
-        push(p1, $);
+        $.push(p1);
         multiply(env, ctrl, $);
         push_double(1.0, $);
-        push(p1, $);
-        push(p1, $);
+        $.push(p1);
+        $.push(p1);
         multiply(env, ctrl, $);
         subtract(env, ctrl, $);
         sqrtfunc(env, ctrl, $);
@@ -1894,7 +1873,7 @@ function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // arcsin(-x) = -arcsin(x)
 
     if (isnegativeterm(p1)) {
-        push(p1, $);
+        $.push(p1);
         negate(env, ctrl, $);
         arcsin(env, ctrl, $);
         negate(env, ctrl, $);
@@ -1905,7 +1884,7 @@ function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isoneoversqrttwo(p1)) {
         push_rational(1, 4, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         multiply(env, ctrl, $);
         return;
     }
@@ -1921,7 +1900,7 @@ function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isequalq(p1, 1, 2)) {
         push_rational(1, 6, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         multiply(env, ctrl, $);
         return;
     }
@@ -1930,13 +1909,13 @@ function arcsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isplusone(p1)) {
         push_rational(1, 2, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         multiply(env, ctrl, $);
         return;
     }
 
     push(ARCSIN, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -1947,7 +1926,7 @@ export function stack_arcsinh(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: P
 }
 
 function arcsinh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -1955,7 +1934,7 @@ function arcsinh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             arcsinh(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
@@ -1971,27 +1950,27 @@ function arcsinh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // arcsinh(z) = log(sqrt(z^2 + 1) + z)
 
     if (isdoublez(p1)) {
-        push(p1, $);
-        push(p1, $);
+        $.push(p1);
+        $.push(p1);
         multiply(env, ctrl, $);
         push_double(1.0, $);
         add(env, ctrl, $);
         sqrtfunc(env, ctrl, $);
-        push(p1, $);
+        $.push(p1);
         add(env, ctrl, $);
         logfunc(env, ctrl, $);
         return;
     }
 
     if (iszero(p1, env)) {
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
     // arcsinh(-x) = -arcsinh(x)
 
     if (isnegativeterm(p1)) {
-        push(p1, $);
+        $.push(p1);
         negate(env, ctrl, $);
         arcsinh(env, ctrl, $);
         negate(env, ctrl, $);
@@ -2004,7 +1983,7 @@ function arcsinh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     }
 
     push(ARCSINH, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -2026,8 +2005,8 @@ export function stack_arctan(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, 
 }
 
 function arctan(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const x = pop($);
-    const y = pop($);
+    const x = $.pop();
+    const y = $.pop();
 
     if (is_tensor(y)) {
         const T = copy_tensor(y);
@@ -2036,7 +2015,7 @@ function arctan(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             push(T.elems[i], $);
             push(x, $);
             arctan(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
@@ -2053,7 +2032,7 @@ function arctan(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         push(y, $);
         push(x, $);
         divide(env, ctrl, $);
-        const Z = pop($);
+        const Z = $.pop();
         push_double(-0.5, $);
         push(imu, $);
         multiply(env, ctrl, $);
@@ -2108,7 +2087,7 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: 
     // X and Y are rational numbers
 
     if (iszero(Y, env)) {
-        if (X.isNegative()) push(MATH_PI, $);
+        if (X.isNegative()) $.push(MATH_PI);
         else push_integer(0, $);
         return;
     }
@@ -2116,7 +2095,7 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: 
     if (iszero(X, env)) {
         if (Y.isNegative()) push_rational(-1, 2, $);
         else push_rational(1, 2, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         multiply(env, ctrl, $);
         return;
     }
@@ -2127,17 +2106,17 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: 
     push(X, $);
     divide(env, ctrl, $);
     absfunc(env, ctrl, $);
-    const T = pop($);
+    const T = $.pop();
 
     push(T, $);
     numerator(env, ctrl, $);
     if (Y.isNegative()) negate(env, ctrl, $);
-    const Ynum = pop($) as Rat;
+    const Ynum = $.pop() as Rat;
 
     push(T, $);
     denominator(env, ctrl, $);
     if (X.isNegative()) negate(env, ctrl, $);
-    const Xnum = pop($) as Rat;
+    const Xnum = $.pop() as Rat;
 
     // compare numerators and denominators, ignore signs
 
@@ -2169,7 +2148,7 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ProgramEnv, ctrl: 
         else push_rational(1, 4, $);
     }
 
-    push(MATH_PI, $);
+    $.push(MATH_PI);
     multiply(env, ctrl, $);
 }
 
@@ -2180,7 +2159,7 @@ export function stack_arctanh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $
 }
 
 function arctanh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -2188,7 +2167,7 @@ function arctanh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             arctanh(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
@@ -2196,7 +2175,7 @@ function arctanh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isplusone(p1) || isminusone(p1)) {
         push(ARCTANH, $);
-        push(p1, $);
+        $.push(p1);
         list(2, $);
         return;
     }
@@ -2214,11 +2193,11 @@ function arctanh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (is_flt(p1) || isdoublez(p1)) {
         push_double(1.0, $);
-        push(p1, $);
+        $.push(p1);
         add(env, ctrl, $);
         logfunc(env, ctrl, $);
         push_double(1.0, $);
-        push(p1, $);
+        $.push(p1);
         subtract(env, ctrl, $);
         logfunc(env, ctrl, $);
         subtract(env, ctrl, $);
@@ -2235,7 +2214,7 @@ function arctanh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // arctanh(-x) = -arctanh(x)
 
     if (isnegativeterm(p1)) {
-        push(p1, $);
+        $.push(p1);
         negate(env, ctrl, $);
         arctanh(env, ctrl, $);
         negate(env, ctrl, $);
@@ -2248,7 +2227,7 @@ function arctanh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     }
 
     push(ARCTANH, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -2263,7 +2242,7 @@ export function stack_arg(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 // use numerator and denominator to handle (a + i b) / (c + i d)
 
 function arg(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const z = pop($);
+    const z = $.pop();
     try {
         if (is_tensor(z)) {
             const T = copy_tensor(z);
@@ -2271,7 +2250,7 @@ function arg(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             for (let i = 0; i < n; i++) {
                 push(T.elems[i], $);
                 arg(env, ctrl, $);
-                T.elems[i] = pop($);
+                T.elems[i] = $.pop();
             }
             push(T, $);
             return;
@@ -2296,7 +2275,7 @@ function arg(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 }
 
 function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const z = pop($);
+    const z = $.pop();
     try {
         if (is_atom(z)) {
             const handler = env.handlerFor(z);
@@ -2318,7 +2297,7 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             if (z.isZero()) {
                 $.push(new Err(new Str("arg of zero (0) is undefined")));
             } else if (z.isNegative()) {
-                push(MATH_PI, $);
+                $.push(MATH_PI);
                 negate(env, ctrl, $); // This is wrong, should be PI
             } else {
                 push_integer(0, $);
@@ -2389,13 +2368,13 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         if (car(z).equals(ADD)) {
             push(z, $);
             rect(env, ctrl, $); // convert polar and clock forms
-            const rect_z = pop($);
+            const rect_z = $.pop();
             push(rect_z, $);
             real(env, ctrl, $);
-            const x = pop($);
+            const x = $.pop();
             push(rect_z, $);
             imag(env, ctrl, $);
-            const y = pop($);
+            const y = $.pop();
             push(y, $);
             push(x, $);
             arctan(env, ctrl, $);
@@ -2484,7 +2463,7 @@ export function stack_ceiling(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $
 }
 
 function ceilingfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -2492,14 +2471,14 @@ function ceilingfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             ceilingfunc(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
     if (is_rat(p1) && p1.isInteger()) {
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
@@ -2523,7 +2502,7 @@ function ceilingfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
     }
 
     push(CEILING, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -2548,7 +2527,7 @@ function circexp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 }
 
 function circexp_subst($: ProgramStack): void {
-    let p1 = pop($);
+    let p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -2556,7 +2535,7 @@ function circexp_subst($: ProgramStack): void {
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             circexp_subst($);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
@@ -2625,7 +2604,7 @@ function circexp_subst($: ProgramStack): void {
         return;
     }
 
-    push(p1, $);
+    $.push(p1);
 }
 
 export function stack_clear(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
@@ -2654,7 +2633,7 @@ export function stack_clock(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $
  * clock(z) = mag(z) * (-1)**(arg(z)/pi)
  */
 function clockfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const z = pop($); //  [...]
+    const z = $.pop(); //  [...]
     try {
         if (is_tensor(z)) {
             const T = copy_tensor(z);
@@ -2662,7 +2641,7 @@ function clockfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
             for (let i = 0; i < n; i++) {
                 push(T.elems[i], $);
                 clockfunc(env, ctrl, $);
-                T.elems[i] = pop($);
+                T.elems[i] = $.pop();
             }
             push(T, $);
             return;
@@ -2673,7 +2652,7 @@ function clockfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
         push_integer(-1, $); //  [..., mag(z), -1]
         push(z, $); //  [..., mag(z), -1, z]
         arg(env, ctrl, $); //  [..., mag(z), -1, arg(z)]
-        push(MATH_PI, $); //  [..., mag(z), -1, arg(z), pi]
+        $.push(MATH_PI); //  [..., mag(z), -1, arg(z), pi]
         divide(env, ctrl, $); //  [..., mag(z), -1, arg(z)/pi]
         power(env, ctrl, $); //  [..., mag(z), (-1)**(arg(z)/pi)]
         multiply(env, ctrl, $); //  [..., mag(z) * (-1)**arg(z)/pi)]
@@ -2685,7 +2664,7 @@ function clockfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
 export function stack_cofactor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
-    const p2 = assert_tensor(pop($));
+    const p2 = assert_tensor($.pop());
 
     push(caddr(p1), $);
     value_of(env, ctrl, $);
@@ -2701,7 +2680,7 @@ export function stack_cofactor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, 
         stopf("cofactor: index err");
     }
 
-    push(p2, $);
+    $.push(p2);
 
     minormatrix(i, j, $);
 
@@ -2722,7 +2701,7 @@ export function conjfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
 }
 
 function conjfunc_subst(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const z = pop($);
+    const z = $.pop();
     try {
         if (is_tensor(z)) {
             const T = copy_tensor(z);
@@ -2730,7 +2709,7 @@ function conjfunc_subst(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
             for (let i = 0; i < n; i++) {
                 push(T.elems[i], $);
                 conjfunc_subst(env, ctrl, $);
-                T.elems[i] = pop($);
+                T.elems[i] = $.pop();
             }
             push(T, $);
             return;
@@ -2800,18 +2779,18 @@ export function stack_contract(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, 
 function contract(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const index: number[] = [];
 
-    const p3 = pop($);
-    const p2 = pop($);
-    const p1 = pop($);
+    const p3 = $.pop();
+    const p2 = $.pop();
+    const p1 = $.pop();
 
     if (!is_tensor(p1)) {
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
     const ndim = p1.ndim;
 
-    push(p2, $);
+    $.push(p2);
     let n = pop_integer($);
 
     push(p3, $);
@@ -2846,7 +2825,7 @@ function contract(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
 
         sum_terms(ncol, env, ctrl, $);
 
-        T.elems[i] = pop($);
+        T.elems[i] = $.pop();
 
         // increment index
 
@@ -2878,7 +2857,7 @@ export function stack_cos(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 }
 
 function cosfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         push(elementwise(p1, cosfunc, env, ctrl, $), $);
@@ -2897,12 +2876,12 @@ function cosfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     if (isdoublez(p1)) {
         push_double(0.5, $);
         push(imu, $);
-        push(p1, $);
+        $.push(p1);
         multiply(env, ctrl, $);
         expfunc(env, ctrl, $);
         push(imu, $);
         negate(env, ctrl, $);
-        push(p1, $);
+        $.push(p1);
         multiply(env, ctrl, $);
         expfunc(env, ctrl, $);
         add(env, ctrl, $);
@@ -2913,7 +2892,7 @@ function cosfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // cos(-x) = cos(x)
 
     if (isnegativeterm(p1)) {
-        push(p1, $);
+        $.push(p1);
         negate(env, ctrl, $);
         cosfunc(env, ctrl, $);
         return;
@@ -2958,14 +2937,14 @@ function cosfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // n pi ?
 
-    push(p1, $);
-    push(MATH_PI, $);
+    $.push(p1);
+    $.push(MATH_PI);
     divide(env, ctrl, $);
-    let p2 = pop($);
+    let p2 = $.pop();
 
     if (!is_num(p2)) {
         push(COS, $);
-        push(p1, $);
+        $.push(p1);
         list(2, $);
         return;
     }
@@ -2977,19 +2956,19 @@ function cosfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         return;
     }
 
-    push(p2, $); // nonnegative by cos(-x) = cos(x) above
+    $.push(p2); // nonnegative by cos(-x) = cos(x) above
     push_integer(180, $);
     multiply(env, ctrl, $);
-    p2 = pop($);
+    p2 = $.pop();
 
     if (!(is_rat(p2) && p2.isInteger())) {
         push(COS, $);
-        push(p1, $);
+        $.push(p1);
         list(2, $);
         return;
     }
 
-    push(p2, $);
+    $.push(p2);
     push_integer(360, $);
     modfunc(env, ctrl, $);
     const n = pop_integer($);
@@ -3047,7 +3026,7 @@ function cosfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             break;
         default:
             push(COS, $);
-            push(p1, $);
+            $.push(p1);
             list(2, $);
             break;
     }
@@ -3061,14 +3040,14 @@ function cosfunc_sum(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Program
         push_integer(2, $);
         push(car(p2), $);
         multiply(env, ctrl, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         divide(env, ctrl, $);
-        let p3 = pop($);
+        let p3 = $.pop();
         if (is_rat(p3) && p3.isInteger()) {
-            push(p1, $);
+            $.push(p1);
             push(car(p2), $);
             subtract(env, ctrl, $);
-            p3 = pop($);
+            p3 = $.pop();
             push(p3, $);
             cosfunc(env, ctrl, $);
             push(car(p2), $);
@@ -3085,7 +3064,7 @@ function cosfunc_sum(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Program
         p2 = cdr(p2);
     }
     push(COS, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -3096,7 +3075,7 @@ export function stack_cosh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
 }
 
 function coshfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -3104,7 +3083,7 @@ function coshfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             coshfunc(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
@@ -3121,9 +3100,9 @@ function coshfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
 
     if (isdoublez(p1)) {
         push_rational(1, 2, $);
-        push(p1, $);
+        $.push(p1);
         expfunc(env, ctrl, $);
-        push(p1, $);
+        $.push(p1);
         negate(env, ctrl, $);
         expfunc(env, ctrl, $);
         add(env, ctrl, $);
@@ -3139,7 +3118,7 @@ function coshfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
     // cosh(-x) = cosh(x)
 
     if (isnegativeterm(p1)) {
-        push(p1, $);
+        $.push(p1);
         negate(env, ctrl, $);
         coshfunc(env, ctrl, $);
         return;
@@ -3151,34 +3130,34 @@ function coshfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
     }
 
     push(COSH, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
 export function stack_defint(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
-    let F = pop($);
+    let F = $.pop();
 
     p1 = cddr(p1);
 
     while (is_cons(p1)) {
         push(car(p1), $);
         value_of(env, ctrl, $);
-        const X = pop($);
+        const X = $.pop();
 
         push(cadr(p1), $);
         value_of(env, ctrl, $);
-        const A = pop($);
+        const A = $.pop();
 
         push(caddr(p1), $);
         value_of(env, ctrl, $);
-        const B = pop($);
+        const B = $.pop();
 
         push(F, $);
         push(X, $);
         integral(env, ctrl, $);
-        F = pop($);
+        F = $.pop();
 
         push(F, $);
         push(X, $);
@@ -3193,7 +3172,7 @@ export function stack_defint(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
         value_of(env, ctrl, $);
 
         subtract(env, ctrl, $);
-        F = pop($);
+        F = $.pop();
 
         p1 = cdddr(p1);
     }
@@ -3208,7 +3187,7 @@ export function stack_denominator(p1: Cons, env: ProgramEnv, ctrl: ProgramContro
 }
 
 export function denominator(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const arg = pop($);
+    const arg = $.pop();
 
     if (is_rat(arg)) {
         const denom = arg.denom();
@@ -3221,20 +3200,20 @@ export function denominator(env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     let p2: U = one; // denominator
 
     while (find_divisor(p1, env, ctrl, $)) {
-        const p0 = pop($); // p0 is a denominator
+        const p0 = $.pop(); // p0 is a denominator
 
         push(p0, $); // cancel in orig expr
-        push(p1, $);
+        $.push(p1);
         cancel_factor(env, ctrl, $);
-        p1 = pop($);
+        p1 = $.pop();
 
         push(p0, $); // update denominator
-        push(p2, $);
+        $.push(p2);
         cancel_factor(env, ctrl, $);
-        p2 = pop($);
+        p2 = $.pop();
     }
 
-    push(p2, $);
+    $.push(p2);
 }
 
 export function stack_derivative(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -3259,7 +3238,7 @@ export function stack_derivative(p1: Cons, env: ProgramEnv, ctrl: ProgramControl
         } else {
             push(car(p1), $);
             value_of(env, ctrl, $);
-            X = pop($);
+            X = $.pop();
             p1 = cdr(p1);
         }
 
@@ -3267,7 +3246,7 @@ export function stack_derivative(p1: Cons, env: ProgramEnv, ctrl: ProgramControl
             push(X, $);
             const n = pop_integer($);
             push(X_LOWER, $);
-            X = pop($);
+            X = $.pop();
             for (let i = 0; i < n; i++) {
                 push(X, $);
                 derivative(env, ctrl, $);
@@ -3278,7 +3257,7 @@ export function stack_derivative(p1: Cons, env: ProgramEnv, ctrl: ProgramControl
         if (is_cons(p1)) {
             push(car(p1), $);
             value_of(env, ctrl, $);
-            Y = pop($);
+            Y = $.pop();
             p1 = cdr(p1);
 
             if (is_num(Y)) {
@@ -3300,8 +3279,8 @@ export function stack_derivative(p1: Cons, env: ProgramEnv, ctrl: ProgramControl
 }
 
 function derivative(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const X = pop($);
-    const F = pop($);
+    const X = $.pop();
+    const F = $.pop();
 
     if (is_tensor(F)) {
         if (is_tensor(X)) {
@@ -3451,7 +3430,7 @@ function dsum(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     p1 = cdr(p1);
     while (is_cons(p1)) {
         push(car(p1), $);
-        push(p2, $);
+        $.push(p2);
         derivative(env, ctrl, $);
         p1 = cdr(p1);
     }
@@ -3465,7 +3444,7 @@ function dproduct(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: Progra
         for (let j = 0; j < n; j++) {
             push(car(p3), $);
             if (i === j) {
-                push(p2, $);
+                $.push(p2);
                 derivative(env, ctrl, $);
             }
             p3 = cdr(p3);
@@ -3522,7 +3501,7 @@ function dpower(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
 
 function dlog(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push(cadr(p1), $);
     divide(env, ctrl, $);
@@ -3544,16 +3523,16 @@ function dd(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
     // d(f(x,y),x)
 
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
 
-    const p3 = pop($);
+    const p3 = $.pop();
 
     if (car(p3).equals(DERIVATIVE)) {
         // sort dx terms
 
-        push(DERIVATIVE, $);
-        push(DERIVATIVE, $);
+        $.push(DERIVATIVE);
+        $.push(DERIVATIVE);
         push(cadr(p3), $);
 
         if (lessp(caddr(p3), caddr(p1))) {
@@ -3580,16 +3559,16 @@ function dfunction(p1: U, p2: U, $: ProgramStack): void {
     const p3 = cdr(p1); // p3 is the argument list for the function
 
     if (p3.isnil || findf(p3, p2)) {
-        push(DERIVATIVE, $);
-        push(p1, $);
-        push(p2, $);
+        $.push(DERIVATIVE);
+        $.push(p1);
+        $.push(p2);
         list(3, $);
     } else push_integer(0, $);
 }
 
 function dsin(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push(cadr(p1), $);
     cosfunc(env, ctrl, $);
@@ -3598,7 +3577,7 @@ function dsin(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
 
 function dcos(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push(cadr(p1), $);
     sinfunc(env, ctrl, $);
@@ -3608,7 +3587,7 @@ function dcos(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
 
 function dtan(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push(cadr(p1), $);
     cosfunc(env, ctrl, $);
@@ -3619,7 +3598,7 @@ function dtan(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
 
 function darcsin(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push_integer(1, $);
     push(cadr(p1), $);
@@ -3633,7 +3612,7 @@ function darcsin(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: Program
 
 function darccos(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push_integer(1, $);
     push(cadr(p1), $);
@@ -3648,7 +3627,7 @@ function darccos(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: Program
 
 function darctan(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push_integer(1, $);
     push(cadr(p1), $);
@@ -3661,7 +3640,7 @@ function darctan(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: Program
 
 function dsinh(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push(cadr(p1), $);
     coshfunc(env, ctrl, $);
@@ -3670,7 +3649,7 @@ function dsinh(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
 
 function dcosh(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push(cadr(p1), $);
     sinhfunc(env, ctrl, $);
@@ -3679,7 +3658,7 @@ function dcosh(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
 
 function dtanh(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push(cadr(p1), $);
     coshfunc(env, ctrl, $);
@@ -3690,7 +3669,7 @@ function dtanh(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
 
 function darcsinh(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push(cadr(p1), $);
     push_integer(2, $);
@@ -3704,7 +3683,7 @@ function darcsinh(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: Progra
 
 function darccosh(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push(cadr(p1), $);
     push_integer(2, $);
@@ -3718,7 +3697,7 @@ function darccosh(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: Progra
 
 function darctanh(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     push_integer(1, $);
     push(cadr(p1), $);
@@ -3736,14 +3715,14 @@ function derf(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     push_integer(-1, $);
     multiply(env, ctrl, $);
     expfunc(env, ctrl, $);
-    push(MATH_PI, $);
+    $.push(MATH_PI);
     push_rational(-1, 2, $);
     power(env, ctrl, $);
     multiply(env, ctrl, $);
     push_integer(2, $);
     multiply(env, ctrl, $);
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     multiply(env, ctrl, $);
 }
@@ -3755,14 +3734,14 @@ function derfc(p1: U, p2: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
     push_integer(-1, $);
     multiply(env, ctrl, $);
     expfunc(env, ctrl, $);
-    push(MATH_PI, $);
+    $.push(MATH_PI);
     push_rational(-1, 2, $);
     power(env, ctrl, $);
     multiply(env, ctrl, $);
     push_integer(-2, $);
     multiply(env, ctrl, $);
     push(cadr(p1), $);
-    push(p2, $);
+    $.push(p2);
     derivative(env, ctrl, $);
     multiply(env, ctrl, $);
 }
@@ -3780,7 +3759,7 @@ function d_tensor_tensor(p1: Tensor, p2: Tensor, env: ProgramEnv, ctrl: ProgramC
             push(p1.elems[i], $);
             push(p2.elems[j], $);
             derivative(env, ctrl, $);
-            p3.elems[m * i + j] = pop($);
+            p3.elems[m * i + j] = $.pop();
         }
     }
 
@@ -3807,10 +3786,10 @@ function d_scalar_tensor(p1: U, p2: Tensor, env: ProgramEnv, ctrl: ProgramContro
     const n = p2.nelem;
 
     for (let i = 0; i < n; i++) {
-        push(p1, $);
+        $.push(p1);
         push(p2.elems[i], $);
         derivative(env, ctrl, $);
-        p3.elems[i] = pop($);
+        p3.elems[i] = $.pop();
     }
 
     push(p3, $);
@@ -3825,9 +3804,9 @@ function d_tensor_scalar(p1: Tensor, p2: U, env: ProgramEnv, ctrl: ProgramContro
 
     for (let i = 0; i < n; i++) {
         push(p1.elems[i], $);
-        push(p2, $);
+        $.push(p2);
         derivative(env, ctrl, $);
-        p3.elems[i] = pop($);
+        p3.elems[i] = $.pop();
     }
 
     push(p3, $);
@@ -3840,10 +3819,10 @@ export function stack_det(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 }
 
 function det(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (!is_tensor(p1)) {
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
@@ -3908,7 +3887,7 @@ function det(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         }
         let k = 0;
         for (let i = 1; i < n; i++) for (let j = 0; j < n; j++) if (j !== m) p2.elems[k++] = p1.elems[n * i + j];
-        push(p2, $);
+        $.push(p2);
         det(env, ctrl, $);
         push(p1.elems[m], $);
         multiply(env, ctrl, $);
@@ -3924,7 +3903,7 @@ function det(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 export function stack_dim(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
-    const p2 = pop($);
+    const p2 = $.pop();
 
     if (!is_tensor(p2)) {
         push_integer(1, $);
@@ -3949,7 +3928,7 @@ export function stack_do(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pro
     push(nil, $);
     p1 = cdr(p1);
     while (is_cons(p1)) {
-        pop($);
+        $.pop();
         push(car(p1), $);
         value_of(env, ctrl, $);
         p1 = cdr(p1);
@@ -3967,7 +3946,7 @@ export function stack_eigenvec(punk: Cons, env: ProgramEnv, ctrl: ProgramControl
     push(cadr(punk), $);
     value_of(env, ctrl, $);
     floatfunc(env, ctrl, $);
-    let T = pop($) as Tensor<Flt>;
+    let T = $.pop() as Tensor<Flt>;
 
     if (!issquarematrix(T)) stopf("eigenvec: square matrix expected");
 
@@ -4100,7 +4079,7 @@ export function stack_erf(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 }
 
 function erffunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -4108,7 +4087,7 @@ function erffunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             erffunc(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
@@ -4128,7 +4107,7 @@ function erffunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (isnegativeterm(p1)) {
         push(ERF, $);
-        push(p1, $);
+        $.push(p1);
         negate(env, ctrl, $);
         list(2, $);
         negate(env, ctrl, $);
@@ -4136,7 +4115,7 @@ function erffunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     }
 
     push(ERF, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -4147,7 +4126,7 @@ export function stack_erfc(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
 }
 
 function erfcfunc(env: ProgramEnv, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -4155,7 +4134,7 @@ function erfcfunc(env: ProgramEnv, $: ProgramStack): void {
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             erfcfunc(env, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
@@ -4174,7 +4153,7 @@ function erfcfunc(env: ProgramEnv, $: ProgramStack): void {
     }
 
     push(ERFC, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -4210,7 +4189,7 @@ export function stack_exp(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 
 export function expfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(MATH_E, $);
-    swap($);
+    $.swap();
     power(env, ctrl, $);
 }
 
@@ -4221,10 +4200,10 @@ export function stack_expcos(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
 }
 
 function expcos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     push(imu, $);
-    push(p1, $);
+    $.push(p1);
     multiply(env, ctrl, $);
     expfunc(env, ctrl, $);
     push_rational(1, 2, $);
@@ -4232,7 +4211,7 @@ function expcos(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(imu, $);
     negate(env, ctrl, $);
-    push(p1, $);
+    $.push(p1);
     multiply(env, ctrl, $);
     expfunc(env, ctrl, $);
     push_rational(1, 2, $);
@@ -4248,10 +4227,10 @@ export function stack_expcosh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $
 }
 
 function expcosh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
-    push(p1, $);
+    const p1 = $.pop();
+    $.push(p1);
     expfunc(env, ctrl, $);
-    push(p1, $);
+    $.push(p1);
     negate(env, ctrl, $);
     expfunc(env, ctrl, $);
     add(env, ctrl, $);
@@ -4266,10 +4245,10 @@ export function stack_expsin(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
 }
 
 function expsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     push(imu, $);
-    push(p1, $);
+    $.push(p1);
     multiply(env, ctrl, $);
     expfunc(env, ctrl, $);
     push(imu, $);
@@ -4279,7 +4258,7 @@ function expsin(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     push(imu, $);
     negate(env, ctrl, $);
-    push(p1, $);
+    $.push(p1);
     multiply(env, ctrl, $);
     expfunc(env, ctrl, $);
     push(imu, $);
@@ -4297,10 +4276,10 @@ export function stack_expsinh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $
 }
 
 function expsinh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
-    push(p1, $);
+    const p1 = $.pop();
+    $.push(p1);
     expfunc(env, ctrl, $);
-    push(p1, $);
+    $.push(p1);
     negate(env, ctrl, $);
     expfunc(env, ctrl, $);
     subtract(env, ctrl, $);
@@ -4321,15 +4300,15 @@ function exptan(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     multiply_factors(3, env, ctrl, $);
     expfunc(env, ctrl, $);
 
-    const p1 = pop($);
+    const p1 = $.pop();
 
     push(imu, $);
     push(imu, $);
-    push(p1, $);
+    $.push(p1);
     multiply(env, ctrl, $);
     subtract(env, ctrl, $);
 
-    push(p1, $);
+    $.push(p1);
     push_integer(1, $);
     add(env, ctrl, $);
 
@@ -4346,11 +4325,11 @@ function exptanh(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push_integer(2, $);
     multiply(env, ctrl, $);
     expfunc(env, ctrl, $);
-    const p1 = pop($);
-    push(p1, $);
+    const p1 = $.pop();
+    $.push(p1);
     push_integer(1, $);
     subtract(env, ctrl, $);
-    push(p1, $);
+    $.push(p1);
     push_integer(1, $);
     add(env, ctrl, $);
     divide(env, ctrl, $);
@@ -4363,7 +4342,7 @@ export function stack_factorial(p1: Cons, env: ProgramEnv, ctrl: ProgramControl,
 }
 
 function factorial(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const N = pop($);
+    const N = $.pop();
 
     if (is_rat(N) && N.isPositiveInteger()) {
         $.push(N);
@@ -4404,7 +4383,7 @@ export function floatfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
 }
 
 function floatfunc_subst($: ProgramStack): void {
-    const expr = pop($);
+    const expr = $.pop();
     try {
         if (is_tensor(expr)) {
             const T = copy_tensor(expr);
@@ -4412,7 +4391,7 @@ function floatfunc_subst($: ProgramStack): void {
             for (let i = 0; i < n; i++) {
                 push(T.elems[i], $);
                 floatfunc_subst($);
-                T.elems[i] = pop($);
+                T.elems[i] = $.pop();
             }
             push(T, $);
             return;
@@ -4447,7 +4426,7 @@ function floatfunc_subst($: ProgramStack): void {
         // don't float imaginary unit, but multiply it by 1.0
 
         if (car(expr).equals(POWER) && isminusone(cadr(expr))) {
-            push(MULTIPLY, $);
+            $.push(MULTIPLY);
             push_double(1.0, $);
             push(POWER, $);
             push(cadr(expr), $);
@@ -4492,7 +4471,7 @@ export function stack_floor(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $
 }
 
 function floorfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -4500,14 +4479,14 @@ function floorfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             floorfunc(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
     }
 
     if (is_rat(p1) && p1.isInteger()) {
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
@@ -4530,7 +4509,7 @@ function floorfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
     }
 
     push(FLOOR, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -4600,7 +4579,7 @@ export function stack_imag(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: Prog
 }
 
 export function imag(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    let p1 = pop($);
+    let p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
@@ -4608,19 +4587,19 @@ export function imag(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
             imag(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
     }
 
-    push(p1, $);
+    $.push(p1);
     rect(env, ctrl, $);
-    p1 = pop($);
+    p1 = $.pop();
     push_rational(-1, 2, $);
     push(imu, $);
-    push(p1, $);
-    push(p1, $);
+    $.push(p1);
+    $.push(p1);
     conjfunc(env, ctrl, $);
     subtract(env, ctrl, $);
     multiply_factors(3, env, ctrl, $);
@@ -4654,7 +4633,7 @@ export function stack_index(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $
 
     push(T, $);
     value_of(env, ctrl, $);
-    T = pop($);
+    T = $.pop();
 
     if (!is_tensor(T)) {
         $.splice(h); // pop all
@@ -4702,7 +4681,7 @@ function indexfunc(T: Tensor, h: number, $: ProgramStack): void {
 
     for (let i = 0; i < r; i++) p1.dims[i] = T.dims[n + i];
 
-    push(p1, $);
+    $.push(p1);
 }
 
 export function stack_inner(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -4722,21 +4701,21 @@ export function stack_inner(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
     value_of(env, ctrl, $);
 
     while ($.length - h > 1) {
-        swap($);
+        $.swap();
         value_of(env, ctrl, $);
-        swap($);
+        $.swap();
         inner(env, ctrl, $);
     }
 }
 
 export function inner(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    let p2 = pop($);
-    let p1 = pop($);
+    let p2 = $.pop();
+    let p1 = $.pop();
     let p3: Tensor;
 
     if (!is_tensor(p1) && !is_tensor(p2)) {
-        push(p1, $);
-        push(p2, $);
+        $.push(p1);
+        $.push(p2);
         multiply(env, ctrl, $);
         return;
     }
@@ -4751,10 +4730,10 @@ export function inner(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
         const T = copy_tensor(p2);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(p1, $);
+            $.push(p1);
             push(T.elems[i], $);
             multiply(env, ctrl, $);
-            T.elems[i] = pop($);
+            T.elems[i] = $.pop();
         }
         push(T, $);
         return;
@@ -4800,7 +4779,7 @@ export function inner(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
                 multiply(env, ctrl, $);
             }
             sum_terms(ncol, env, ctrl, $);
-            p3.elems[i * mcol + j] = pop($);
+            p3.elems[i * mcol + j] = $.pop();
         }
     }
 
@@ -5774,7 +5753,7 @@ export function stack_integral(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, 
         } else {
             push(car(p1), $);
             value_of(env, ctrl, $);
-            X = pop($);
+            X = $.pop();
             p1 = cdr(p1);
         }
 
@@ -5782,7 +5761,7 @@ export function stack_integral(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, 
             push(X, $);
             const n = pop_integer($);
             push(X_LOWER, $);
-            X = pop($);
+            X = $.pop();
             for (let i = 0; i < n; i++) {
                 push(X, $);
                 integral(env, ctrl, $);
@@ -5795,7 +5774,7 @@ export function stack_integral(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, 
         if (is_cons(p1)) {
             push(car(p1), $);
             value_of(env, ctrl, $);
-            Y = pop($);
+            Y = $.pop();
             p1 = cdr(p1);
 
             if (is_num(Y)) {
@@ -5817,8 +5796,8 @@ export function stack_integral(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, 
 }
 
 function integral(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const X = pop($);
-    let F = pop($);
+    const X = $.pop();
+    let F = $.pop();
 
     if (!(is_sym(X) && env.hasUserFunction(X))) stopf("integral: symbol expected");
 
@@ -5839,7 +5818,7 @@ function integral(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
         push(F, $);
         push(X, $);
         partition_term($); // push const part then push var part
-        F = pop($); // pop var part
+        F = $.pop(); // pop var part
         integral_nib(F, X, env, ctrl, $);
         multiply_factors(2, env, ctrl, $); // multiply by const part
         return;
@@ -5934,10 +5913,10 @@ function integral_search(h: number, F: U, table: string[], n: number, env: Progr
 
     for (i = 0; i < n; i += 3) {
         scan_integrals(table[i + 0], env, ctrl, $, config); // integrand
-        I = pop($);
+        I = $.pop();
 
         scan_integrals(table[i + 2], env, ctrl, $, config); // condition
-        C = pop($);
+        C = $.pop();
 
         if (integral_search_nib(h, F, I, C, env, ctrl, $)) break;
     }
@@ -5961,14 +5940,14 @@ function integral_search_nib(h: number, F: U, I: U, C: U, env: ProgramEnv, ctrl:
 
             push(C, $); // condition ok?
             value_of(env, ctrl, $);
-            let p1 = pop($);
+            let p1 = $.pop();
             if (iszero(p1, env)) continue; // no, go to next j
 
             push(F, $); // F = I?
             push(I, $);
             value_of(env, ctrl, $);
             subtract(env, ctrl, $);
-            p1 = pop($);
+            p1 = $.pop();
             if (iszero(p1, env)) return 1; // yes
         }
     }
@@ -5983,20 +5962,20 @@ export function stack_inv(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 }
 
 function inv(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (!is_tensor(p1)) {
-        push(p1, $);
+        $.push(p1);
         reciprocate(env, ctrl, $);
         return;
     }
 
     if (!issquarematrix(p1)) stopf("inv: square matrix expected");
 
-    push(p1, $);
+    $.push(p1);
     adj(env, ctrl, $);
 
-    push(p1, $);
+    $.push(p1);
     det(env, ctrl, $);
 
     divide(env, ctrl, $);
@@ -6028,8 +6007,8 @@ export function stack_kronecker(expr: Cons, env: ProgramEnv, ctrl: ProgramContro
  * kronecker(a,b)
  */
 export function kronecker(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const b = pop($);
-    const a = pop($);
+    const b = $.pop();
+    const a = $.pop();
 
     if (!is_tensor(a) || !is_tensor(b)) {
         push(a, $);
@@ -6061,7 +6040,7 @@ export function kronecker(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
                     push(a.elems[n * i + k], $);
                     push(b.elems[q * j + l], $);
                     multiply(env, ctrl, $);
-                    ab.elems[h++] = pop($);
+                    ab.elems[h++] = $.pop();
                 }
             }
         }
@@ -6095,7 +6074,7 @@ export function stack_log(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 }
 
 function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    let x = pop($);
+    let x = $.pop();
 
     if (is_tensor(x)) {
         push(elementwise(x, logfunc, env, ctrl, $), $);
@@ -6152,7 +6131,7 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         negate(env, ctrl, $);
         logfunc(env, ctrl, $);
         push(imu, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         multiply(env, ctrl, $);
         add(env, ctrl, $);
         return;
@@ -6174,10 +6153,10 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
                 multiply(env, ctrl, $);
             } else {
                 push(LOG, $);
-                push(p2, $);
+                $.push(p2);
                 list(2, $);
             }
-            $.setAt(i, pop($));
+            $.setAt(i, $.pop());
         }
         sum_terms($.length - h, env, ctrl, $);
         return;
@@ -6223,7 +6202,7 @@ export function elementwise(source: Tensor, foo: (env: ProgramEnv, ctrl: Program
     for (let i = 0; i < n; i++) {
         push(T.elems[i], $);
         foo(env, ctrl, $);
-        T.elems[i] = pop($);
+        T.elems[i] = $.pop();
     }
     return T;
 }
@@ -6231,7 +6210,7 @@ export function elementwise(source: Tensor, foo: (env: ProgramEnv, ctrl: Program
 export function stack_minor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
-    const p2 = pop($);
+    const p2 = $.pop();
 
     push(caddr(p1), $);
     value_of(env, ctrl, $);
@@ -6245,7 +6224,7 @@ export function stack_minor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 
     if (i < 1 || i > p2.dims[0] || j < 0 || j > p2.dims[1]) stopf("minor");
 
-    push(p2, $);
+    $.push(p2);
 
     minormatrix(i, j, $);
 
@@ -6255,7 +6234,7 @@ export function stack_minor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 export function stack_minormatrix(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
-    const p2 = pop($);
+    const p2 = $.pop();
 
     push(caddr(p1), $);
     value_of(env, ctrl, $);
@@ -6269,13 +6248,13 @@ export function stack_minormatrix(p1: Cons, env: ProgramEnv, ctrl: ProgramContro
 
     if (i < 1 || i > p2.dims[0] || j < 0 || j > p2.dims[1]) stopf("minormatrix: index err");
 
-    push(p2, $);
+    $.push(p2);
 
     minormatrix(i, j, $);
 }
 
 function minormatrix(row: number, col: number, $: ProgramStack): void {
-    const p1 = pop($) as Tensor;
+    const p1 = $.pop() as Tensor;
 
     const n = p1.dims[0];
     const m = p1.dims[1];
@@ -6318,7 +6297,7 @@ function minormatrix(row: number, col: number, $: ProgramStack): void {
         }
     }
 
-    push(p2, $);
+    $.push(p2);
 }
 
 export function stack_mod(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -6330,26 +6309,26 @@ export function stack_mod(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 }
 
 function modfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p2 = pop($);
-    const p1 = pop($);
+    const p2 = $.pop();
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
-            push(p2, $);
+            $.push(p2);
             modfunc(env, ctrl, $);
-            p1.elems[i] = pop($);
+            p1.elems[i] = $.pop();
         }
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
     if (!is_num(p1) || !is_num(p2) || iszero(p2, env)) {
         push(MOD, $);
-        push(p1, $);
-        push(p2, $);
+        $.push(p1);
+        $.push(p2);
         list(3, $);
         return;
     }
@@ -6370,13 +6349,13 @@ function mod_rationals(p1: Rat, p2: Rat, env: ProgramEnv, ctrl: ProgramControl, 
         mod_integers(p1, p2, $);
         return;
     }
-    push(p1, $);
-    push(p1, $);
-    push(p2, $);
+    $.push(p1);
+    $.push(p1);
+    $.push(p2);
     divide(env, ctrl, $);
     absfunc(env, ctrl, $);
     floorfunc(env, ctrl, $);
-    push(p2, $);
+    $.push(p2);
     multiply(env, ctrl, $);
     if (p1.sign === p2.sign) {
         negate(env, ctrl, $);
@@ -6428,7 +6407,7 @@ export function stack_noexpand(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, 
  */
 export function evaluate_nonstop(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     if (ctrl.getDirective(Directive.nonstop)) {
-        const expr = pop($);
+        const expr = $.pop();
         try {
             push(nil, $);
             return; // not reentrant
@@ -6471,7 +6450,7 @@ export function stack_not(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
     $.rest();
     $.head();
     evalp(env, ctrl, $);
-    const x = pop($);
+    const x = $.pop();
     try {
         if (isfalsey(x, env)) {
             push(predicate_return_value(true, ctrl), $);
@@ -6523,8 +6502,8 @@ export function stack_nroots(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, 
  * [..., p , x]
  */
 function nroots(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const X = pop($);
-    const P = pop($);
+    const X = $.pop();
+    const P = $.pop();
 
     try {
         const cr: number[] = [];
@@ -6544,12 +6523,12 @@ function nroots(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             push($.getAt(h + i), $);
             real(env, ctrl, $);
             floatfunc(env, ctrl, $);
-            const RE = pop($);
+            const RE = $.pop();
 
             push($.getAt(h + i), $);
             imag(env, ctrl, $);
             floatfunc(env, ctrl, $);
-            const IM = pop($);
+            const IM = $.pop();
 
             if (!is_flt(RE) || !is_flt(IM)) stopf("nroots: coeffs");
 
@@ -6783,7 +6762,7 @@ function urandom(): number {
 export function stack_number(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(expr), $);
     value_of(env, ctrl, $);
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_num(p1)) push_integer(1, $);
     else push_integer(0, $);
@@ -6796,7 +6775,7 @@ export function stack_numerator(p1: Cons, env: ProgramEnv, ctrl: ProgramControl,
 }
 
 export function numerator(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const x = pop($);
+    const x = $.pop();
 
     if (is_rat(x)) {
         const a = x.numer();
@@ -6807,12 +6786,12 @@ export function numerator(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
 
     let p1 = x;
     while (find_divisor(p1, env, ctrl, $)) {
-        push(p1, $);
+        $.push(p1);
         cancel_factor(env, ctrl, $);
-        p1 = pop($);
+        p1 = $.pop();
     }
 
-    push(p1, $);
+    $.push(p1);
 }
 
 export function stack_or(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -6820,7 +6799,7 @@ export function stack_or(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pro
     while (is_cons(p1)) {
         push(car(p1), $);
         evalp(env, ctrl, $);
-        const p2 = pop($);
+        const p2 = $.pop();
         if (!iszero(p2, env)) {
             push_integer(1, $);
             return;
@@ -6888,8 +6867,8 @@ function outer_prolog(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Prog
  * [..., lhs, rhs] => [..., (code lhs rhs)]
  */
 function binop_prolog(code: Native, expr: Cons, next: (env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) => void, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const rhs = pop($);
-    const lhs = pop($);
+    const rhs = $.pop();
+    const lhs = $.pop();
     try {
         if (is_cons2(expr) && is_combo(expr, code)) {
             const a = expr.lhs;
@@ -6924,8 +6903,8 @@ function binop_prolog(code: Native, expr: Cons, next: (env: ProgramEnv, ctrl: Pr
  * [..., a, b] => [..., (outer a b)]
  */
 function outer(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const rhs = pop($);
-    const lhs = pop($);
+    const rhs = $.pop();
+    const lhs = $.pop();
     try {
         if (is_atom(lhs)) {
             if (is_atom(rhs)) {
@@ -6979,7 +6958,7 @@ function outer(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
                 push(lhs.elems[i], $);
                 push(rhs.elems[j], $);
                 multiply(env, ctrl, $);
-                p3.elems[i * ncol + j] = pop($);
+                p3.elems[i * ncol + j] = $.pop();
             }
 
         // dim info
@@ -7012,25 +6991,25 @@ export function stack_polar(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 }
 
 function polar(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         push(elementwise(p1, polar, env, ctrl, $), $);
         return;
     }
 
-    push(p1, $);
+    $.push(p1);
     mag(env, ctrl, $);
     push(imu, $);
-    push(p1, $);
+    $.push(p1);
     arg(env, ctrl, $);
-    const p2 = pop($);
+    const p2 = $.pop();
     if (is_flt(p2)) {
         push_double(p2.d / Math.PI, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         multiply_factors(3, env, ctrl, $);
     } else {
-        push(p2, $);
+        $.push(p2);
         multiply_factors(2, env, ctrl, $);
     }
     expfunc(env, ctrl, $);
@@ -7045,11 +7024,11 @@ export function stack_power(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $
         value_of(env, ctrl, $);
         $.dupl();
         // expo has been evaluated with a decremented expanding value.
-        const expo = pop($);
+        const expo = $.pop();
         try {
             // if exponent is negative then evaluate base without expanding,
             // otherwise, evaluate the base normally.
-            swap($);
+            $.swap();
             try {
                 if (is_num(expo) && expo.isNegative()) {
                     ctrl.pushDirective(Directive.expanding, 0);
@@ -7064,7 +7043,7 @@ export function stack_power(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $
                     value_of(env, ctrl, $);
                 }
             } finally {
-                swap($);
+                $.swap();
             }
 
             power(env, ctrl, $);
@@ -7088,8 +7067,8 @@ export function stack_power(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $
  * Both expressions have been evaluated.
  */
 function power_args($: ProgramStack): [base: U, expo: U] {
-    const expo = pop($);
-    const base = pop($);
+    const expo = $.pop();
+    const base = $.pop();
     if (is_sym(base) && is_flt(expo)) {
         if (base.equals(MATH_E)) {
             return [create_flt(Math.E), expo];
@@ -7138,7 +7117,7 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
                 push(base, $);
                 push(T.elems[i], $);
                 power(env, ctrl, $);
-                T.elems[i] = pop($);
+                T.elems[i] = $.pop();
             }
             push(T, $);
             return;
@@ -7151,7 +7130,7 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
                 push(T.elems[i], $);
                 push(expo, $);
                 power(env, ctrl, $);
-                T.elems[i] = pop($);
+                T.elems[i] = $.pop();
             }
             push(T, $);
             return;
@@ -7238,18 +7217,18 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
                     list(3, $);
                 } else {
                     push(POWER, $);
-                    push(p1, $);
+                    $.push(p1);
                     push(expo, $);
                     list(3, $);
                 }
-                $.setAt(h + i, pop($));
+                $.setAt(h + i, $.pop());
             }
             if (n > 1) {
                 sort_factors(h, ctrl, $);
                 list(n, $);
-                push(MULTIPLY, $);
-                swap($);
-                cons($); // prepend MULTIPLY to list
+                $.push(MULTIPLY);
+                $.swap();
+                $.cons();
             }
             return;
         }
@@ -7330,7 +7309,7 @@ export function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): v
 export function stack_prefixform(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(expr), $);
     value_of(env, ctrl, $);
-    const p1 = pop($);
+    const p1 = $.pop();
     const outbuf: string[] = [];
     prefixform(p1, outbuf);
     const s = outbuf.join("");
@@ -7341,9 +7320,9 @@ export function stack_product(expr: Cons, env: ProgramEnv, ctrl: ProgramControl,
     if (lengthf(expr) === 2) {
         push(cadr(expr), $);
         value_of(env, ctrl, $);
-        const p1 = pop($);
+        const p1 = $.pop();
         if (!is_tensor(p1)) {
-            push(p1, $);
+            $.push(p1);
             return;
         }
         const n = p1.nelem;
@@ -7373,9 +7352,9 @@ export function stack_product(expr: Cons, env: ProgramEnv, ctrl: ProgramControl,
 
     for (;;) {
         push_integer(j, $);
-        const p3 = pop($);
+        const p3 = $.pop();
         set_symbol(p2, p3, nil, env);
-        push(p1, $);
+        $.push(p1);
         value_of(env, ctrl, $);
         if (j === k) break;
         if (j < k) j++;
@@ -7401,7 +7380,7 @@ export function stack_rank(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
         try {
             $.push(a);
             value_of(env, ctrl, $);
-            const A = pop($);
+            const A = $.pop();
             try {
                 if (is_tensor(A)) {
                     push_integer(A.rank, $);
@@ -7426,7 +7405,7 @@ export function stack_rationalize(p1: Cons, env: ProgramEnv, ctrl: ProgramContro
 }
 
 function rationalize(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    let p1 = pop($);
+    let p1 = $.pop();
 
     if (is_tensor(p1)) {
         push(elementwise(p1, rationalize, env, ctrl, $), $);
@@ -7436,19 +7415,19 @@ function rationalize(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
     let p2: U = one;
 
     while (find_divisor(p1, env, ctrl, $)) {
-        const p0 = pop($);
+        const p0 = $.pop();
         push(p0, $);
-        push(p1, $);
+        $.push(p1);
         cancel_factor(env, ctrl, $);
-        p1 = pop($);
+        p1 = $.pop();
         push(p0, $);
-        push(p2, $);
+        $.push(p2);
         multiply_noexpand(env, ctrl, $);
-        p2 = pop($);
+        p2 = $.pop();
     }
 
-    push(p1, $);
-    push(p2, $);
+    $.push(p1);
+    $.push(p2);
     reciprocate(env, ctrl, $);
     multiply_noexpand(env, ctrl, $);
 }
@@ -7463,7 +7442,7 @@ export function stack_real(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
  * [x+i*y] => [x]
  */
 export function real(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const z = pop($); //  []
+    const z = $.pop(); //  []
     try {
         if (is_atom(z)) {
             // I'd like to apply the Native.real operation to this atom through an extension
@@ -7506,7 +7485,7 @@ export function stack_rect(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
  *
  */
 export function rect(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const z = pop($);
+    const z = $.pop();
     try {
         if (is_tensor(z)) {
             push(elementwise(z, rect, env, ctrl, $), $);
@@ -7565,13 +7544,13 @@ export function rect(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
 
             push(z, $);
             arg(env, ctrl, $);
-            const p2 = pop($);
+            const p2 = $.pop();
 
-            push(p2, $);
+            $.push(p2);
             cosfunc(env, ctrl, $);
 
             push(imu, $);
-            push(p2, $);
+            $.push(p2);
             sinfunc(env, ctrl, $);
             multiply(env, ctrl, $);
 
@@ -7604,8 +7583,8 @@ export function stack_roots(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 }
 
 function roots(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const X = pop($);
-    const P = pop($);
+    const X = $.pop();
+    const P = $.pop();
 
     const h = $.length;
 
@@ -7695,12 +7674,12 @@ function findroot(h: number, n: number, env: ProgramEnv, ctrl: ProgramControl, $
         }
         push(C, $);
         denominator(env, ctrl, $);
-        C = pop($);
+        C = $.pop();
         for (let j = 0; j < n; j++) {
             push($.getAt(h + j), $);
             push(C, $);
             multiply(env, ctrl, $);
-            $.setAt(h + j, pop($));
+            $.setAt(h + j, $.pop());
         }
     }
 
@@ -7725,11 +7704,11 @@ function findroot(h: number, n: number, env: ProgramEnv, ctrl: ProgramControl, $
             push($.getAt(i), $);
             push($.getAt(j), $);
             divide(env, ctrl, $);
-            let A = pop($);
+            let A = $.pop();
 
             horner(h, n, A, env, ctrl, $);
 
-            let PA = pop($); // polynomial evaluated at A
+            let PA = $.pop(); // polynomial evaluated at A
 
             if (iszero(PA, env)) {
                 $.length = p; // pop all
@@ -7741,11 +7720,11 @@ function findroot(h: number, n: number, env: ProgramEnv, ctrl: ProgramControl, $
 
             push(A, $);
             negate(env, ctrl, $);
-            A = pop($);
+            A = $.pop();
 
             horner(h, n, A, env, ctrl, $);
 
-            PA = pop($); // polynomial evaluated at A
+            PA = $.pop(); // polynomial evaluated at A
 
             if (iszero(PA, env)) {
                 $.length = p; // pop all
@@ -7814,7 +7793,7 @@ function divisors(n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
 function divisors_nib(h: number, k: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     if (h === k) return;
 
-    const ACCUM = pop($);
+    const ACCUM = $.pop();
 
     const BASE = $.getAt(h + 0);
     const EXPO = $.getAt(h + 1);
@@ -7841,7 +7820,7 @@ function reduce(h: number, n: number, A: U, env: ProgramEnv, ctrl: ProgramContro
         multiply(env, ctrl, $);
         push($.getAt(h + i - 1), $);
         add(env, ctrl, $);
-        $.setAt(h + i - 1, pop($));
+        $.setAt(h + i - 1, $.pop());
     }
 
     if (!iszero($.getAt(h), env)) stopf("roots: residual error"); // not a root
@@ -7870,7 +7849,7 @@ export function stack_assign(x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
     if (is_sym(sym) && env.hasUserFunction(sym)) {
         push(x.rhs, $);
         value_of(env, ctrl, $);
-        const rhs = pop($);
+        const rhs = $.pop();
 
         set_symbol(sym, rhs, nil, env);
     } else {
@@ -7903,8 +7882,8 @@ function setq_indexed(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Progra
     push(caddr(p1), $);
     value_of(env, ctrl, $);
 
-    const RVAL = pop($);
-    const LVAL = pop($);
+    const RVAL = $.pop();
+    const LVAL = $.pop();
 
     const h = $.length;
 
@@ -7993,7 +7972,7 @@ function setq_usrfunc(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Progra
 
         push(B, $);
         convert_body(A, $);
-        const C = pop($);
+        const C = $.pop();
 
         set_symbol(F, B, C, env);
     } else {
@@ -8077,7 +8056,7 @@ export function stack_sgn(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 }
 
 function sgn(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         push(elementwise(p1, sgn, env, ctrl, $), $);
@@ -8086,7 +8065,7 @@ function sgn(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     if (!is_num(p1)) {
         push(SGN, $);
-        push(p1, $);
+        $.push(p1);
         list(2, $);
         return;
     }
@@ -8107,7 +8086,7 @@ export function stack_simplify(expr: Cons, env: ProgramEnv, ctrl: ProgramControl
 }
 
 export function simplify(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const expr = pop($);
+    const expr = $.pop();
     if (is_tensor(expr)) {
         simplify_tensor(expr, env, ctrl, $);
     } else {
@@ -8122,7 +8101,7 @@ function simplify_tensor(M: Tensor, env: ProgramEnv, ctrl: ProgramControl, $: Pr
     for (let i = 0; i < n; i++) {
         push(M.elems[i], $);
         simplify(env, ctrl, $);
-        M.elems[i] = pop($);
+        M.elems[i] = $.pop();
     }
 }
 
@@ -8130,7 +8109,7 @@ function simplify_scalar(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: Progra
     // already simple?
 
     if (!is_cons(p1)) {
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
@@ -8153,42 +8132,42 @@ function simplify_scalar(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: Progra
 }
 
 function simplify_pass1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    let p1 = pop($);
+    let p1 = $.pop();
 
     // already simple?
 
     if (!is_cons(p1)) {
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
     let T: U;
 
     if (car(p1).equals(ADD)) {
-        push(p1, $);
+        $.push(p1);
         rationalize(env, ctrl, $);
-        T = pop($);
+        T = $.pop();
         if (car(T).equals(ADD)) {
-            push(p1, $); // no change
+            $.push(p1); // no change
             return;
         }
     } else T = p1;
 
     push(T, $);
     numerator(env, ctrl, $);
-    let numer = pop($);
+    let numer = $.pop();
 
     push(T, $);
     denominator(env, ctrl, $);
     value_of(env, ctrl, $); // to expand denominator
-    let denom = pop($);
+    let denom = $.pop();
 
     // if DEN is a sum then rationalize it
 
     if (car(denom).equals(ADD)) {
         push(denom, $);
         rationalize(env, ctrl, $);
-        T = pop($);
+        T = $.pop();
         if (!car(T).equals(ADD)) {
             // update NUM
             push(T, $);
@@ -8196,11 +8175,11 @@ function simplify_pass1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
             value_of(env, ctrl, $); // to expand denominator
             push(numer, $);
             multiply(env, ctrl, $);
-            numer = pop($);
+            numer = $.pop();
             // update DEN
             push(T, $);
             numerator(env, ctrl, $);
-            denom = pop($);
+            denom = $.pop();
         }
     }
 
@@ -8211,11 +8190,11 @@ function simplify_pass1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
         push(numer, $);
         push(denom, $);
         divide(env, ctrl, $);
-        T = pop($);
+        T = $.pop();
         if (complexity(T) < complexity(p1)) {
             p1 = T;
         }
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
@@ -8223,7 +8202,7 @@ function simplify_pass1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
     push(cadr(denom), $); // push first term of denominator
     divide(env, ctrl, $);
 
-    const R = pop($); // provisional ratio
+    const R = $.pop(); // provisional ratio
 
     push(R, $);
     push(denom, $);
@@ -8232,59 +8211,59 @@ function simplify_pass1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
     push(numer, $);
     subtract(env, ctrl, $);
 
-    T = pop($);
+    T = $.pop();
 
     if (iszero(T, env)) p1 = R;
 
-    push(p1, $);
+    $.push(p1);
 }
 
 // try exponential form
 
 function simplify_pass2(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     // already simple?
 
     if (!is_cons(p1)) {
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
-    push(p1, $);
+    $.push(p1);
     circexp(env, ctrl, $);
     rationalize(env, ctrl, $);
     value_of(env, ctrl, $); // to normalize
-    const p2 = pop($);
+    const p2 = $.pop();
 
     if (complexity(p2) < complexity(p1)) {
-        push(p2, $);
+        $.push(p2);
         return;
     }
 
-    push(p1, $);
+    $.push(p1);
 }
 
 // try polar form
 
 function simplify_pass3(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (!car(p1).equals(ADD) || isusersymbolsomewhere(p1, env) || !findf(p1, imu)) {
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
-    push(p1, $);
+    $.push(p1);
     polar(env, ctrl, $);
-    const p2 = pop($);
+    const p2 = $.pop();
 
     if (!is_cons(p2)) {
-        push(p2, $);
+        $.push(p2);
         return;
     }
 
-    push(p1, $);
+    $.push(p1);
 }
 
 export function stack_sin(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -8294,7 +8273,7 @@ export function stack_sin(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 }
 
 function sinfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         push(elementwise(p1, sinfunc, env, ctrl, $), $);
@@ -8315,12 +8294,12 @@ function sinfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         push(imu, $);
         multiply(env, ctrl, $);
         push(imu, $);
-        push(p1, $);
+        $.push(p1);
         multiply(env, ctrl, $);
         expfunc(env, ctrl, $);
         push(imu, $);
         negate(env, ctrl, $);
-        push(p1, $);
+        $.push(p1);
         multiply(env, ctrl, $);
         expfunc(env, ctrl, $);
         subtract(env, ctrl, $);
@@ -8331,7 +8310,7 @@ function sinfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // sin(-x) = -sin(x)
 
     if (isnegativeterm(p1)) {
-        push(p1, $);
+        $.push(p1);
         negate(env, ctrl, $);
         sinfunc(env, ctrl, $);
         negate(env, ctrl, $);
@@ -8377,14 +8356,14 @@ function sinfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // n pi ?
 
-    push(p1, $);
-    push(MATH_PI, $);
+    $.push(p1);
+    $.push(MATH_PI);
     divide(env, ctrl, $);
-    let p2 = pop($);
+    let p2 = $.pop();
 
     if (!is_num(p2)) {
         push(SIN, $);
-        push(p1, $);
+        $.push(p1);
         list(2, $);
         return;
     }
@@ -8396,19 +8375,19 @@ function sinfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         return;
     }
 
-    push(p2, $); // nonnegative by sin(-x) = -sin(x) above
+    $.push(p2); // nonnegative by sin(-x) = -sin(x) above
     push_integer(180, $);
     multiply(env, ctrl, $);
-    p2 = pop($);
+    p2 = $.pop();
 
     if (!(is_rat(p2) && p2.isInteger())) {
         push(SIN, $);
-        push(p1, $);
+        $.push(p1);
         list(2, $);
         return;
     }
 
-    push(p2, $);
+    $.push(p2);
     push_integer(360, $);
     modfunc(env, ctrl, $);
     const n = pop_integer($);
@@ -8466,7 +8445,7 @@ function sinfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             break;
         default:
             push(SIN, $);
-            push(p1, $);
+            $.push(p1);
             list(2, $);
             break;
     }
@@ -8480,14 +8459,14 @@ function sinfunc_sum(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
         push_integer(2, $);
         push(car(p2), $);
         multiply(env, ctrl, $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         divide(env, ctrl, $);
-        let p3 = pop($);
+        let p3 = $.pop();
         if (is_rat(p3) && p3.isInteger()) {
-            push(p1, $);
+            $.push(p1);
             push(car(p2), $);
             subtract(env, ctrl, $);
-            p3 = pop($);
+            p3 = $.pop();
             push(p3, $);
             sinfunc(env, ctrl, $);
             push(car(p2), $);
@@ -8504,7 +8483,7 @@ function sinfunc_sum(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
         p2 = cdr(p2);
     }
     push(SIN, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -8517,7 +8496,7 @@ export function stack_sinh(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
 }
 
 function sinhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const x = pop($);
+    const x = $.pop();
 
     if (is_tensor(x)) {
         push(elementwise(x, sinhfunc, env, ctrl, $), $);
@@ -8603,49 +8582,49 @@ export function stack_subst(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 /**
  * [..., F(x), x, a] => [..., F(a)]
  */
-function subst(_: Pick<ProgramStack, "length" | "pop" | "push">): void {
-    const a = pop(_); // new expr           [..., F, x]
-    const x = pop(_); // old expr           [..., F]
+function subst($: Pick<ProgramStack, "length" | "pop" | "push" | "cons">): void {
+    const a = $.pop(); // new expr           [..., F, x]
+    const x = $.pop(); // old expr           [..., F]
 
     if (x.isnil || a.isnil) {
         return; //  [..., F]
     }
 
-    let F = pop(_); // expr             //  [...]
+    let F = $.pop(); // expr             //  [...]
 
     if (is_tensor(F)) {
         const T = copy_tensor(F);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i], _);
-            push(x, _);
-            push(a, _);
-            subst(_);
-            T.elems[i] = pop(_);
+            push(T.elems[i], $);
+            push(x, $);
+            push(a, $);
+            subst($);
+            T.elems[i] = $.pop();
         }
-        push(T, _);
+        push(T, $);
         return;
     }
 
     if (equal(F, x)) {
-        push(a, _); //  [..., a]        because F is the same as X
+        push(a, $); //  [..., a]        because F is the same as X
         return;
     }
 
     if (is_cons(F)) {
-        const h = _.length;
+        const h = $.length;
         while (is_cons(F)) {
-            push(car(F), _);
-            push(x, _);
-            push(a, _);
-            subst(_);
+            push(car(F), $);
+            push(x, $);
+            push(a, $);
+            subst($);
             F = cdr(F);
         }
-        list(_.length - h, _);
+        list($.length - h, $);
         return;
     }
 
-    push(F, _);
+    push(F, $);
 }
 
 /**
@@ -8660,9 +8639,9 @@ export function stack_sum(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
         if (lengthf(expr) === 2) {
             push(car(argList), $);
             value_of(env, ctrl, $);
-            const p1 = pop($);
+            const p1 = $.pop();
             if (!is_tensor(p1)) {
-                push(p1, $);
+                $.push(p1);
                 return;
             } else {
                 const n = p1.nelem;
@@ -8695,7 +8674,7 @@ export function stack_sum(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 
             for (;;) {
                 push_integer(j, $);
-                const J = pop($);
+                const J = $.pop();
                 set_symbol(i, J, nil, env);
                 push(F, $);
                 value_of(env, ctrl, $);
@@ -8725,7 +8704,7 @@ export function stack_tan(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 }
 
 function tanfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         push(elementwise(p1, tanfunc, env, ctrl, $), $);
@@ -8740,9 +8719,9 @@ function tanfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     }
 
     if (isdoublez(p1)) {
-        push(p1, $);
+        $.push(p1);
         sinfunc(env, ctrl, $);
-        push(p1, $);
+        $.push(p1);
         cosfunc(env, ctrl, $);
         divide(env, ctrl, $);
         return;
@@ -8751,7 +8730,7 @@ function tanfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     // tan(-x) = -tan(x)
 
     if (isnegativeterm(p1)) {
-        push(p1, $);
+        $.push(p1);
         negate(env, ctrl, $);
         tanfunc(env, ctrl, $);
         negate(env, ctrl, $);
@@ -8772,14 +8751,14 @@ function tanfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // n pi ?
 
-    push(p1, $);
-    push(MATH_PI, $);
+    $.push(p1);
+    $.push(MATH_PI);
     divide(env, ctrl, $);
-    let p2 = pop($);
+    let p2 = $.pop();
 
     if (!is_num(p2)) {
         push(TAN, $);
-        push(p1, $);
+        $.push(p1);
         list(2, $);
         return;
     }
@@ -8791,19 +8770,19 @@ function tanfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         return;
     }
 
-    push(p2, $); // nonnegative by tan(-x) = -tan(x) above
+    $.push(p2); // nonnegative by tan(-x) = -tan(x) above
     push_integer(180, $);
     multiply(env, ctrl, $);
-    p2 = pop($);
+    p2 = $.pop();
 
     if (!(is_rat(p2) && p2.isInteger())) {
         push(TAN, $);
-        push(p1, $);
+        $.push(p1);
         list(2, $);
         return;
     }
 
-    push(p2, $);
+    $.push(p2);
     push_integer(360, $);
     modfunc(env, ctrl, $);
     const n = pop_integer($);
@@ -8852,7 +8831,7 @@ function tanfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             break;
         default:
             push(TAN, $);
-            push(p1, $);
+            $.push(p1);
             list(2, $);
             break;
     }
@@ -8864,11 +8843,11 @@ function tanfunc_sum(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     let p2 = cdr(p1);
     while (is_cons(p2)) {
         push(car(p2), $);
-        push(MATH_PI, $);
+        $.push(MATH_PI);
         divide(env, ctrl, $);
-        const p3 = pop($);
+        const p3 = $.pop();
         if (is_rat(p3) && p3.isInteger()) {
-            push(p1, $);
+            $.push(p1);
             push(car(p2), $);
             subtract(env, ctrl, $);
             tanfunc(env, ctrl, $);
@@ -8877,7 +8856,7 @@ function tanfunc_sum(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
         p2 = cdr(p2);
     }
     push(TAN, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -8888,7 +8867,7 @@ export function stack_tanh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
 }
 
 function tanhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_tensor(p1)) {
         push(elementwise(p1, tanhfunc, env, ctrl, $), $);
@@ -8903,9 +8882,9 @@ function tanhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
     }
 
     if (isdoublez(p1)) {
-        push(p1, $);
+        $.push(p1);
         sinhfunc(env, ctrl, $);
-        push(p1, $);
+        $.push(p1);
         coshfunc(env, ctrl, $);
         divide(env, ctrl, $);
         return;
@@ -8919,7 +8898,7 @@ function tanhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
     // tanh(-x) = -tanh(x)
 
     if (isnegativeterm(p1)) {
-        push(p1, $);
+        $.push(p1);
         negate(env, ctrl, $);
         tanhfunc(env, ctrl, $);
         negate(env, ctrl, $);
@@ -8932,7 +8911,7 @@ function tanhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
     }
 
     push(TANH, $);
-    push(p1, $);
+    $.push(p1);
     list(2, $);
 }
 
@@ -8962,9 +8941,9 @@ export function stack_tau(x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pro
 }
 
 function taufunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const n = pop($);
+    const n = $.pop();
     push(two, $);
-    push(MATH_PI, $);
+    $.push(MATH_PI);
     push(n, $);
     multiply_factors(3, env, ctrl, $);
 }
@@ -8972,11 +8951,11 @@ function taufunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 export function stack_taylor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
-    let F = pop($);
+    let F = $.pop();
 
     push(caddr(p1), $);
     value_of(env, ctrl, $);
-    const X = pop($);
+    const X = $.pop();
 
     push(cadddr(p1), $);
     value_of(env, ctrl, $);
@@ -8989,7 +8968,7 @@ export function stack_taylor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
         value_of(env, ctrl, $);
     } else push_integer(0, $); // default expansion point
 
-    const A = pop($);
+    const A = $.pop();
 
     const h = $.length;
 
@@ -9000,13 +8979,13 @@ export function stack_taylor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
     value_of(env, ctrl, $);
 
     push_integer(1, $);
-    let C = pop($);
+    let C = $.pop();
 
     for (let i = 1; i <= n; i++) {
         push(F, $); // f = f'
         push(X, $);
         derivative(env, ctrl, $);
-        F = pop($);
+        F = $.pop();
 
         if (iszero(F, env)) break;
 
@@ -9015,7 +8994,7 @@ export function stack_taylor(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
         push(A, $);
         subtract(env, ctrl, $);
         multiply(env, ctrl, $);
-        C = pop($);
+        C = $.pop();
 
         push(F, $); // f(a)
         push(X, $);
@@ -9041,10 +9020,10 @@ function evaluate_tensor(p1: Tensor, env: ProgramEnv, ctrl: ProgramControl, $: P
     for (let i = 0; i < n; i++) {
         push(p1.elems[i], $);
         value_of(env, ctrl, $);
-        p1.elems[i] = pop($);
+        p1.elems[i] = $.pop();
     }
 
-    push(p1, $);
+    $.push(p1);
 
     promote_tensor($);
 }
@@ -9059,7 +9038,7 @@ export function stack_test(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
         }
         push(car(p1), $);
         evalp(env, ctrl, $);
-        const p2 = pop($);
+        const p2 = $.pop();
         if (!iszero(p2, env)) {
             push(cadr(p1), $);
             value_of(env, ctrl, $);
@@ -9077,7 +9056,7 @@ export function stack_testeq(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, 
     value_of(env, ctrl, $); //  [lhs, rhs]
     subtract(env, ctrl, $); //  [lhs-rhs]
     simplify(env, ctrl, $); //  [lhs-rhs]
-    const diff = pop($);
+    const diff = $.pop();
     try {
         if (iszero(diff, env)) {
             push(predicate_return_value(true, ctrl), $);
@@ -9160,8 +9139,8 @@ function cmp_args(expr: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStac
 export function stack_transpose(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push(cadr(p1), $);
     value_of(env, ctrl, $);
-    const p2 = pop($);
-    push(p2, $);
+    const p2 = $.pop();
+    $.push(p2);
 
     if (!is_tensor(p2) || p2.ndim < 2) return;
 
@@ -9190,7 +9169,7 @@ export function stack_transpose(p1: Cons, env: ProgramEnv, ctrl: ProgramControl,
 function transpose(n: number, m: number, $: ProgramStack): void {
     const index: number[] = [];
 
-    const p1 = pop($) as Tensor;
+    const p1 = $.pop() as Tensor;
 
     const ndim = p1.ndim;
     const nelem = p1.nelem;
@@ -9228,7 +9207,7 @@ function transpose(n: number, m: number, $: ProgramStack): void {
         }
     }
 
-    push(p2, $);
+    $.push(p2);
 }
 
 export function stack_unit(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -9315,15 +9294,15 @@ export function stack_user_function(expr: Cons, env: ProgramEnv, ctrl: ProgramCo
         save_symbol(ARG9, env);
         try {
             // TODO: We should be calling release on all the popped.
-            set_symbol(ARG9, pop($), nil, env);
-            set_symbol(ARG8, pop($), nil, env);
-            set_symbol(ARG7, pop($), nil, env);
-            set_symbol(ARG6, pop($), nil, env);
-            set_symbol(ARG5, pop($), nil, env);
-            set_symbol(ARG4, pop($), nil, env);
-            set_symbol(ARG3, pop($), nil, env);
-            set_symbol(ARG2, pop($), nil, env);
-            set_symbol(ARG1, pop($), nil, env);
+            set_symbol(ARG9, $.pop(), nil, env);
+            set_symbol(ARG8, $.pop(), nil, env);
+            set_symbol(ARG7, $.pop(), nil, env);
+            set_symbol(ARG6, $.pop(), nil, env);
+            set_symbol(ARG5, $.pop(), nil, env);
+            set_symbol(ARG4, $.pop(), nil, env);
+            set_symbol(ARG3, $.pop(), nil, env);
+            set_symbol(ARG2, $.pop(), nil, env);
+            set_symbol(ARG1, $.pop(), nil, env);
 
             value_of(env, ctrl, $);
         } finally {
@@ -9396,7 +9375,7 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
             stopf("circular definition?");
         }
 
-        const expr = pop($);
+        const expr = $.pop();
         try {
             if (is_cons(expr)) {
                 const opr = expr.opr;
@@ -9489,7 +9468,7 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
  * @param $
  */
 function evalp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const expr = pop($);
+    const expr = $.pop();
     try {
         if (is_cons(expr) && expr.opr.equals(ASSIGN)) {
             stack_testeq(expr, env, ctrl, $);
@@ -9527,17 +9506,17 @@ function expand_sum_factors(start: number, env: ProgramEnv, ctrl: ProgramControl
     if (n > 1) {
         sort_factors(start, ctrl, $);
         list(n, $);
-        push(MULTIPLY, $);
-        swap($);
-        cons($);
+        $.push(MULTIPLY);
+        $.swap();
+        $.cons();
     }
 
-    const p1 = pop($); // p1 is the multiplier
+    const p1 = $.pop(); // p1 is the multiplier
 
     p2 = cdr(p2); // p2 is the sum
 
     while (is_cons(p2)) {
-        push(p1, $);
+        $.push(p1);
         push(car(p2), $);
         multiply(env, ctrl, $);
         p2 = cdr(p2);
@@ -9553,9 +9532,9 @@ function factor_bignum(N: BigInteger, M: U, env: ProgramEnv, ctrl: ProgramContro
     if (!bignum_issmallnum(N)) {
         push_bignum(1, N, bignum_int(1), $);
         if (isplusone(M)) return;
-        push(POWER, $);
-        swap($);
-        push(M, $);
+        $.push(POWER);
+        $.swap();
+        $.push(M);
         list(3, $);
         return;
     }
@@ -9575,7 +9554,7 @@ function factor_bignum(N: BigInteger, M: U, env: ProgramEnv, ctrl: ProgramContro
         push(EXPO, $);
         push(M, $);
         multiply(env, ctrl, $);
-        EXPO = pop($);
+        EXPO = $.pop();
 
         if (isplusone(EXPO)) {
             $.setAt(h + i, BASE);
@@ -9586,7 +9565,7 @@ function factor_bignum(N: BigInteger, M: U, env: ProgramEnv, ctrl: ProgramContro
         push(BASE, $);
         push(EXPO, $);
         list(3, $);
-        $.setAt(h + i, pop($));
+        $.setAt(h + i, $.pop());
     }
 
     $.splice(h + n); // pop all
@@ -9594,7 +9573,7 @@ function factor_bignum(N: BigInteger, M: U, env: ProgramEnv, ctrl: ProgramContro
 // factors N or N^M where N and M are rational numbers, returns factors on stack
 
 function factor_factor(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const INPUT = pop($);
+    const INPUT = $.pop();
 
     if (car(INPUT).equals(POWER)) {
         const BASE = cadr(INPUT);
@@ -9626,7 +9605,7 @@ function factor_factor(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
             // flip sign of exponent
             push(EXPO, $);
             negate(env, ctrl, $);
-            const expo = pop($);
+            const expo = $.pop();
             factor_bignum(denom, expo, env, ctrl, $);
         }
 
@@ -10001,7 +9980,7 @@ function isdenormalpolarterm(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: 
         push(expr, $);
         push_rational(-1, 2, $);
         add(env, ctrl, $);
-        expr = pop($);
+        expr = $.pop();
 
         if (!(is_num(expr) && expr.isNegative())) {
             return 1; // p >= 1/2
@@ -10095,10 +10074,10 @@ function lessp(p1: U, p2: U): boolean {
 /**
  * [..., x1, x2, ..., xn] => [..., (x1, x2, ..., xn)]
  */
-export function list(n: number, _: Pick<ProgramStack, "pop" | "push">): void {
-    push(nil, _);
+export function list(n: number, $: Pick<ProgramStack, "pop" | "push" | "cons">): void {
+    push(nil, $);
     for (let i = 0; i < n; i++) {
-        cons(_);
+        $.cons();
     }
 }
 
@@ -10272,9 +10251,9 @@ function multiply_scalar_factors(start: number, env: ProgramEnv, ctrl: ProgramCo
         default:
             sort_factors(start, ctrl, $); // previously sorted provisionally
             list(n, $);
-            push(MULTIPLY, $);
-            swap($);
-            cons($);
+            $.push(MULTIPLY);
+            $.swap();
+            $.cons();
             break;
     }
 }
@@ -10293,9 +10272,9 @@ function multiply_tensor_factors(start: number, env: ProgramEnv, ctrl: ProgramCo
         }
         if (is_tensor(T)) {
             push(T, $);
-            push(p1, $);
+            $.push(p1);
             hadamard(env, ctrl, $);
-            T = pop($);
+            T = $.pop();
         } else {
             // The first time through, T is nil.
             T = p1;
@@ -10408,7 +10387,7 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
     push(R, $);
     push_integer(2, $);
     modfunc(env, ctrl, $);
-    R = pop($);
+    R = $.pop();
 
     // convert negative rotation to positive
 
@@ -10416,7 +10395,7 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
         push(R, $);
         push_integer(2, $);
         add(env, ctrl, $);
-        R = pop($);
+        R = $.pop();
     }
 
     push(R, $);
@@ -10430,7 +10409,7 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
     push_rational(-1, 2, $);
     multiply(env, ctrl, $);
     add(env, ctrl, $);
-    R = pop($); // remainder
+    R = $.pop(); // remainder
 
     switch (n) {
         case 0:
@@ -10438,10 +10417,10 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
             else {
                 push(POWER, $);
                 push(MATH_E, $);
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push(R, $);
                 push(imu, $);
-                push(MATH_PI, $);
+                $.push(MATH_PI);
                 list(4, $);
                 list(3, $);
             }
@@ -10450,14 +10429,14 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
         case 1:
             if (iszero(R, env)) push(imu, $);
             else {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push(imu, $);
                 push(POWER, $);
                 push(MATH_E, $);
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push(R, $);
                 push(imu, $);
-                push(MATH_PI, $);
+                $.push(MATH_PI);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -10467,14 +10446,14 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
         case 2:
             if (iszero(R, env)) push_integer(-1, $);
             else {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(POWER, $);
                 push(MATH_E, $);
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push(R, $);
                 push(imu, $);
-                push(MATH_PI, $);
+                $.push(MATH_PI);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -10483,20 +10462,20 @@ function normalize_polar_term_rational(R: U, env: ProgramEnv, ctrl: ProgramContr
 
         case 3:
             if (iszero(R, env)) {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(imu, $);
                 list(3, $);
             } else {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(imu, $);
                 push(POWER, $);
                 push(MATH_E, $);
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push(R, $);
                 push(imu, $);
-                push(MATH_PI, $);
+                $.push(MATH_PI);
                 list(4, $);
                 list(3, $);
                 list(4, $);
@@ -10526,10 +10505,10 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
             else {
                 push(POWER, $);
                 push(MATH_E, $);
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_double(r, $);
                 push(imu, $);
-                push(MATH_PI, $);
+                $.push(MATH_PI);
                 list(4, $);
                 list(3, $);
             }
@@ -10538,14 +10517,14 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
         case 1:
             if (r === 0) push(imu, $);
             else {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push(imu, $);
                 push(POWER, $);
                 push(MATH_E, $);
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_double(r, $);
                 push(imu, $);
-                push(MATH_PI, $);
+                $.push(MATH_PI);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -10555,14 +10534,14 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
         case 2:
             if (r === 0) push_integer(-1, $);
             else {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(POWER, $);
                 push(MATH_E, $);
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_double(r, $);
                 push(imu, $);
-                push(MATH_PI, $);
+                $.push(MATH_PI);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -10571,20 +10550,20 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
 
         case 3:
             if (r === 0) {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(imu, $);
                 list(3, $);
             } else {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(imu, $);
                 push(POWER, $);
                 push(MATH_E, $);
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_double(r, $);
                 push(imu, $);
-                push(MATH_PI, $);
+                $.push(MATH_PI);
                 list(4, $);
                 list(3, $);
                 list(4, $);
@@ -10601,7 +10580,7 @@ function normalize_power_factors(h: number, env: ProgramEnv, ctrl: ProgramContro
             push(cadr(p1), $);
             push(caddr(p1), $);
             power(env, ctrl, $);
-            p1 = pop($);
+            p1 = $.pop();
             if (car(p1).equals(MULTIPLY)) {
                 p1 = cdr(p1);
                 $.setAt(i, car(p1));
@@ -10684,8 +10663,8 @@ function order_factor(expr: U): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 {
 }
 */
 function partition_term($: ProgramStack): void {
-    const X = pop($);
-    const F = pop($);
+    const X = $.pop();
+    const F = $.pop();
 
     // push const factors
 
@@ -10701,9 +10680,9 @@ function partition_term($: ProgramStack): void {
     if (n === 0) push_integer(1, $);
     else if (n > 1) {
         list(n, $);
-        push(MULTIPLY, $);
-        swap($);
-        cons($); // makes MULTIPLY head of list
+        $.push(MULTIPLY);
+        $.swap();
+        $.cons();
     }
 
     // push var factors
@@ -10720,9 +10699,9 @@ function partition_term($: ProgramStack): void {
     if (n === 0) push_integer(1, $);
     else if (n > 1) {
         list(n, $);
-        push(MULTIPLY, $);
-        swap($);
-        cons($); // makes MULTIPLY head of list
+        $.push(MULTIPLY);
+        $.swap();
+        $.cons();
     }
 }
 // https://github.com/ghewgill/picomath
@@ -10767,7 +10746,7 @@ function assert_num_to_number(x: Num): number | never {
 }
 
 function pop_double($: ProgramStack): number {
-    const expr = pop($);
+    const expr = $.pop();
     try {
         if (is_num(expr)) {
             return expr.toNumber();
@@ -10780,7 +10759,7 @@ function pop_double($: ProgramStack): number {
 }
 
 export function pop_integer($: Pick<ProgramStack, "pop">): number {
-    const expr = pop($);
+    const expr = $.pop();
     try {
         if (!issmallinteger(expr)) {
             stopf("small integer expected");
@@ -10839,14 +10818,14 @@ function power_complex_minus(X: U, Y: U, n: number, env: ProgramEnv, ctrl: Progr
     push(Y, $);
     multiply(env, ctrl, $);
     add(env, ctrl, $);
-    const R = pop($);
+    const R = $.pop();
 
     // X = X / R
 
     push(X, $);
     push(R, $);
     divide(env, ctrl, $);
-    X = pop($);
+    X = $.pop();
 
     // Y = -Y / R
 
@@ -10854,7 +10833,7 @@ function power_complex_minus(X: U, Y: U, n: number, env: ProgramEnv, ctrl: Progr
     negate(env, ctrl, $);
     push(R, $);
     divide(env, ctrl, $);
-    Y = pop($);
+    Y = $.pop();
 
     let PX = X;
     let PY = Y;
@@ -10876,8 +10855,8 @@ function power_complex_minus(X: U, Y: U, n: number, env: ProgramEnv, ctrl: Progr
         multiply(env, ctrl, $);
         add(env, ctrl, $);
 
-        PY = pop($);
-        PX = pop($);
+        PY = $.pop();
+        PX = $.pop();
     }
 
     // X + i*Y
@@ -10960,8 +10939,8 @@ function power_complex_plus(X: U, Y: U, n: number, env: ProgramEnv, ctrl: Progra
         multiply(env, ctrl, $);
         add(env, ctrl, $);
 
-        PY = pop($);
-        PX = pop($);
+        PY = $.pop();
+        PX = $.pop();
     }
 
     // X + i Y
@@ -10993,11 +10972,11 @@ function power_complex_rational(_BASE: U, EXPO: U, X: U, Y: U, env: ProgramEnv, 
     push(Y, $);
     push(X, $);
     arctan(env, ctrl, $);
-    push(MATH_PI, $);
+    $.push(MATH_PI);
     divide(env, ctrl, $);
     push(EXPO, $);
     multiply(env, ctrl, $);
-    EXPO = pop($);
+    EXPO = $.pop();
     power_minusone(EXPO, env, ctrl, $);
 
     // result = sqrt(X^2 + Y^2) ^ (1/2 * EXPO) * (-1) ^ (EXPO * arctan(Y, X) / pi)
@@ -11044,7 +11023,7 @@ function normalize_clock_rational(expo: U, env: ProgramEnv, ctrl: ProgramControl
     push(expo, $);
     push_integer(2, $);
     modfunc(env, ctrl, $);
-    let R = pop($);
+    let R = $.pop();
 
     // convert negative rotation to positive
 
@@ -11052,7 +11031,7 @@ function normalize_clock_rational(expo: U, env: ProgramEnv, ctrl: ProgramControl
         push(R, $);
         push_integer(2, $);
         add(env, ctrl, $);
-        R = pop($);
+        R = $.pop();
     }
 
     push(R, $);
@@ -11066,7 +11045,7 @@ function normalize_clock_rational(expo: U, env: ProgramEnv, ctrl: ProgramControl
     push_rational(-1, 2, $);
     multiply(env, ctrl, $);
     add(env, ctrl, $);
-    R = pop($); // remainder
+    R = $.pop(); // remainder
 
     switch (n) {
         case 0:
@@ -11082,7 +11061,7 @@ function normalize_clock_rational(expo: U, env: ProgramEnv, ctrl: ProgramControl
         case 1:
             if (iszero(R, env)) push(imu, $);
             else {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(POWER, $);
                 push_integer(-1, $);
@@ -11097,7 +11076,7 @@ function normalize_clock_rational(expo: U, env: ProgramEnv, ctrl: ProgramControl
         case 2:
             if (iszero(R, env)) push_integer(-1, $);
             else {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(POWER, $);
                 push_integer(-1, $);
@@ -11109,7 +11088,7 @@ function normalize_clock_rational(expo: U, env: ProgramEnv, ctrl: ProgramControl
 
         case 3:
             if (iszero(R, env)) {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(imu, $);
                 list(3, $);
@@ -11154,7 +11133,7 @@ function normalize_clock_double(EXPO: Flt, $: ProgramStack): void {
         case 1:
             if (r === 0) push(imu, $);
             else {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(POWER, $);
                 push_integer(-1, $);
@@ -11167,7 +11146,7 @@ function normalize_clock_double(EXPO: Flt, $: ProgramStack): void {
         case 2:
             if (r === 0) push_integer(-1, $);
             else {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(POWER, $);
                 push_integer(-1, $);
@@ -11179,7 +11158,7 @@ function normalize_clock_double(EXPO: Flt, $: ProgramStack): void {
 
         case 3:
             if (r === 0) {
-                push(MULTIPLY, $);
+                $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(imu, $);
                 list(3, $);
@@ -11336,7 +11315,7 @@ function power_numbers(base: Num, expo: Num, env: ProgramEnv, ctrl: ProgramContr
             base = cadr(p1) as Num;
             expo = caddr(p1) as Num;
             power_numbers_factor(base as Rat, expo as Rat, env, ctrl, $);
-            $.setAt(h + i, pop($)); // fill hole
+            $.setAt(h + i, $.pop()); // fill hole
         }
     }
 
@@ -11347,10 +11326,10 @@ function power_numbers(base: Num, expo: Num, env: ProgramEnv, ctrl: ProgramContr
     for (let i = h; i < $.length; i++) {
         const p2 = $.getAt(i);
         if (is_num(p2)) {
-            push(p1, $);
-            push(p2, $);
+            $.push(p1);
+            $.push(p2);
             multiply(env, ctrl, $);
-            p1 = pop($);
+            p1 = $.pop();
             $.splice(i, 1);
             i--;
         }
@@ -11361,7 +11340,7 @@ function power_numbers(base: Num, expo: Num, env: ProgramEnv, ctrl: ProgramContr
     n = $.length - h;
 
     if (n === 0 || !isplusone(p1)) {
-        push(p1, $);
+        $.push(p1);
         n++;
     }
 
@@ -11369,9 +11348,9 @@ function power_numbers(base: Num, expo: Num, env: ProgramEnv, ctrl: ProgramContr
 
     sort_factors(h, ctrl, $);
     list(n, $);
-    push(MULTIPLY, $);
-    swap($);
-    cons($);
+    $.push(MULTIPLY);
+    $.swap();
+    $.cons();
 }
 
 // BASE is an integer
@@ -11379,7 +11358,7 @@ function power_numbers(base: Num, expo: Num, env: ProgramEnv, ctrl: ProgramContr
 function power_numbers_factor(base: Rat, expo: Rat, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     if (isminusone(base)) {
         power_minusone(expo, env, ctrl, $);
-        let p0 = pop($);
+        let p0 = $.pop();
         if (car(p0).equals(MULTIPLY)) {
             p0 = cdr(p0);
             while (is_cons(p0)) {
@@ -11590,10 +11569,10 @@ function prefixform(p: U, outbuf: string[]) {
 }
 
 function promote_tensor($: Pick<ProgramStack, "pop" | "push">): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (!is_tensor(p1)) {
-        push(p1, $);
+        $.push(p1);
         return;
     }
 
@@ -11610,7 +11589,7 @@ function promote_tensor($: Pick<ProgramStack, "pop" | "push">): void {
     }
 
     if (!is_tensor(p2)) {
-        push(p1, $);
+        $.push(p1);
         return; // all elements are scalars
     }
 
@@ -11645,8 +11624,8 @@ function promote_tensor($: Pick<ProgramStack, "pop" | "push">): void {
  * pushes the expression onto the stack.
  * There is no evaluation of the expression.
  */
-export function push(expr: U, _: Pick<ProgramStack, "push">): void {
-    _.push(expr);
+export function push(expr: U, $: Pick<ProgramStack, "push">): void {
+    $.push(expr);
 }
 /*
 function peek(tag: string, $: ProgramStack): void {
@@ -11704,7 +11683,7 @@ export function push_rational(a: number, b: number, $: Pick<ProgramStack, "push"
 export function push_string(s: string, $: ProgramStack) {
     const str = new Str(s);
     try {
-        push(str, $);
+        $.push(str);
     } finally {
         str.release();
     }
@@ -11744,7 +11723,7 @@ function reduce_radical_double(h: number, COEFF: Flt, $: ProgramStack): Flt {
     }
 
     push_double(c, $);
-    const C = pop($) as Flt;
+    const C = $.pop() as Flt;
 
     return C;
 }
@@ -11761,15 +11740,15 @@ function reduce_radical_rational(h: number, COEFF: Rat, env: ProgramEnv, ctrl: P
 
     push(COEFF, $);
     absfunc(env, ctrl, $);
-    let p1 = pop($);
+    let p1 = $.pop();
 
-    push(p1, $);
+    $.push(p1);
     numerator(env, ctrl, $);
-    let NUMER = pop($);
+    let NUMER = $.pop();
 
-    push(p1, $);
+    $.push(p1);
     denominator(env, ctrl, $);
-    let DENOM = pop($);
+    let DENOM = $.pop();
 
     let k = 0;
 
@@ -11782,36 +11761,36 @@ function reduce_radical_rational(h: number, COEFF: Rat, env: ProgramEnv, ctrl: P
         const EXPO = caddr(p1);
         if (is_num(EXPO) && EXPO.isNegative()) {
             mod_integers(NUMER as Rat, BASE as Rat, $);
-            const p2 = pop($);
+            const p2 = $.pop();
             if (iszero(p2, env)) {
                 push(NUMER, $);
                 push(BASE, $);
                 divide(env, ctrl, $);
-                NUMER = pop($);
+                NUMER = $.pop();
                 push(POWER, $);
                 push(BASE, $);
                 push_integer(1, $);
                 push(EXPO, $);
                 add(env, ctrl, $);
                 list(3, $);
-                $.setAt(i, pop($));
+                $.setAt(i, $.pop());
                 k++;
             }
         } else {
             mod_integers(DENOM as Rat, BASE as Rat, $);
-            const p2 = pop($);
+            const p2 = $.pop();
             if (iszero(p2, env)) {
                 push(DENOM, $);
                 push(BASE, $);
                 divide(env, ctrl, $);
-                DENOM = pop($);
+                DENOM = $.pop();
                 push(POWER, $);
                 push(BASE, $);
                 push_integer(-1, $);
                 push(EXPO, $);
                 add(env, ctrl, $);
                 list(3, $);
-                $.setAt(i, pop($));
+                $.setAt(i, $.pop());
                 k++;
             }
         }
@@ -11822,7 +11801,7 @@ function reduce_radical_rational(h: number, COEFF: Rat, env: ProgramEnv, ctrl: P
         push(DENOM, $);
         divide(env, ctrl, $);
         if (COEFF.isNegative()) negate(env, ctrl, $);
-        COEFF = pop($) as Rat;
+        COEFF = $.pop() as Rat;
     }
 
     return COEFF;
@@ -11955,8 +11934,8 @@ function scan_stmt(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, io: P
     scan_relational_expr(env, ctrl, $, io, config);
     if (token === "=") {
         get_token_skip_newlines(io, config); // get token after =
-        push(ASSIGN, $);
-        swap($);
+        $.push(ASSIGN);
+        $.swap();
         scan_relational_expr(env, ctrl, $, io, config);
         list(3, $);
     }
@@ -11986,7 +11965,7 @@ function scan_relational_expr(env: ProgramEnv, ctrl: ProgramControl, $: ProgramS
         default:
             return;
     }
-    swap($);
+    $.swap();
     get_token_skip_newlines(io, config); // get token after rel op
     scan_additive_expr(env, ctrl, $, io, config);
     list(3, $);
@@ -12006,9 +11985,9 @@ function scan_additive_expr(env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     }
     if ($.length - h > 1) {
         list($.length - h, $);
-        push(ADD, $);
-        swap($);
-        cons($);
+        $.push(ADD);
+        $.swap();
+        $.cons();
     }
 }
 
@@ -12033,9 +12012,9 @@ function scan_multiplicative_expr(env: ProgramEnv, ctrl: ProgramControl, $: Prog
 
     if ($.length - h > 1) {
         list($.length - h, $);
-        push(MULTIPLY, $);
-        swap($);
-        cons($);
+        $.push(MULTIPLY);
+        $.swap();
+        $.cons();
     }
 }
 
@@ -12074,7 +12053,7 @@ function scan_power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, io: 
         if (token === "^") {
             get_token_skip_newlines(io, config);
             push(POWER, $);
-            swap($);
+            $.swap();
             scan_power(env, ctrl, $, io, config);
             list(3, $);
         }
@@ -12082,7 +12061,7 @@ function scan_power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, io: 
         if (token === T_EXPONENTIATION) {
             get_token_skip_newlines(io, config);
             push(POWER, $);
-            swap($);
+            $.swap();
             scan_power(env, ctrl, $, io, config);
             list(3, $);
         }
@@ -12134,8 +12113,8 @@ function scan_factor(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, io:
         scan_level++;
 
         get_token(io, config); // get token after [
-        push(INDEX, $);
-        swap($);
+        $.push(INDEX);
+        $.swap();
 
         scan_additive_expr(env, ctrl, $, io, config);
 
@@ -12155,8 +12134,8 @@ function scan_factor(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, io:
 
     while ((token as string) === "!") {
         get_token(io, config); // get token after !
-        push(FACTORIAL, $);
-        swap($);
+        $.push(FACTORIAL);
+        $.swap();
         list(2, $);
     }
 }
@@ -12520,16 +12499,16 @@ function sort_factors_provisional(start: number, $: ProgramStack): void {
 }
 
 function static_negate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p1 = pop($);
+    const p1 = $.pop();
 
     if (is_num(p1)) {
-        push(p1, $);
+        $.push(p1);
         negate(env, ctrl, $);
         return;
     }
 
     if (car(p1).equals(MULTIPLY)) {
-        push(MULTIPLY, $);
+        $.push(MULTIPLY);
         if (is_num(cadr(p1))) {
             push(cadr(p1), $);
             negate(env, ctrl, $);
@@ -12538,48 +12517,48 @@ function static_negate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): 
             push_integer(-1, $);
             push(cdr(p1), $);
         }
-        cons($);
-        cons($);
+        $.cons();
+        $.cons();
         return;
     }
 
-    push(MULTIPLY, $);
+    $.push(MULTIPLY);
     push_integer(-1, $);
-    push(p1, $);
+    $.push(p1);
     list(3, $);
 }
 
 function static_reciprocate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p2 = pop($);
-    const p1 = pop($);
+    const p2 = $.pop();
+    const p1 = $.pop();
 
     if (iszero(p2, env)) {
         if (!(is_rat(p1) && isinteger1(p1))) {
-            push(p1, $);
+            $.push(p1);
         }
         push(POWER, $);
-        push(p2, $);
+        $.push(p2);
         push_integer(-1, $);
         list(3, $);
         return;
     }
 
     if (is_num(p1) && is_num(p2)) {
-        push(p1, $);
-        push(p2, $);
+        $.push(p1);
+        $.push(p2);
         divide(env, ctrl, $);
         return;
     }
 
     if (is_num(p2)) {
-        if (!(is_rat(p1) && isinteger1(p1))) push(p1, $);
-        push(p2, $);
+        if (!(is_rat(p1) && isinteger1(p1))) $.push(p1);
+        $.push(p2);
         reciprocate(env, ctrl, $);
         return;
     }
 
     if (car(p2).equals(POWER) && is_num(caddr(p2))) {
-        if (!(is_rat(p1) && isinteger1(p1))) push(p1, $);
+        if (!(is_rat(p1) && isinteger1(p1))) $.push(p1);
         push(POWER, $);
         push(cadr(p2), $);
         push(caddr(p2), $);
@@ -12588,10 +12567,10 @@ function static_reciprocate(env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
         return;
     }
 
-    if (!(is_rat(p1) && isinteger1(p1))) push(p1, $);
+    if (!(is_rat(p1) && isinteger1(p1))) $.push(p1);
 
     push(POWER, $);
-    push(p2, $);
+    $.push(p2);
     push_integer(-1, $);
     list(3, $);
 }
@@ -12606,21 +12585,6 @@ export function stopf(errmsg: string): never {
 export function subtract(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     negate(env, ctrl, $); //  [..., x, (* -1 y)]
     sum_terms(2, env, ctrl, $); //  [..., (+ x (* -1 y))]
-}
-
-/**
- * ( x y => y x )
- */
-export function swap($: ProgramStack): void {
-    const p2 = pop($);
-    const p1 = pop($);
-    try {
-        push(p2, $);
-        push(p1, $);
-    } finally {
-        p1.release();
-        p2.release();
-    }
 }
 
 function trace_source_text(env: ProgramEnv, io: ProgramIO): void {

@@ -3,21 +3,21 @@ import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
 import { Cons, is_cons } from "@stemcmicro/tree";
 import { copy_tensor, multiply, stopf, value_of } from "./eigenmath";
 
-export function stack_hadamard(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
+export function stack_hadamard(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const argList = expr.argList;
     try {
         const head = argList.head;
         try {
-            _.push(head);
-            value_of(env, ctrl, _);
+            $.push(head);
+            value_of(env, ctrl, $);
             let xs = argList.rest;
             try {
                 while (is_cons(xs)) {
                     const x = xs.head;
                     try {
-                        _.push(x);
-                        value_of(env, ctrl, _);
-                        hadamard(env, ctrl, _);
+                        $.push(x);
+                        value_of(env, ctrl, $);
+                        hadamard(env, ctrl, $);
                         const rest = xs.rest;
                         xs.release();
                         xs = rest;
@@ -36,14 +36,14 @@ export function stack_hadamard(expr: Cons, env: ProgramEnv, ctrl: ProgramControl
     }
 }
 
-export function hadamard(env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
-    const rhs = _.pop();
-    const lhs = _.pop();
+export function hadamard(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    const rhs = $.pop();
+    const lhs = $.pop();
     try {
         if (!is_tensor(lhs) || !is_tensor(rhs)) {
-            _.push(lhs);
-            _.push(rhs);
-            multiply(env, ctrl, _);
+            $.push(lhs);
+            $.push(rhs);
+            multiply(env, ctrl, $);
             return;
         }
 
@@ -64,13 +64,13 @@ export function hadamard(env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack)
             const nelem = H.nelem;
 
             for (let i = 0; i < nelem; i++) {
-                _.push(lhs.elems[i]);
-                _.push(rhs.elems[i]);
-                multiply(env, ctrl, _);
-                H.elems[i] = _.pop();
+                $.push(lhs.elems[i]);
+                $.push(rhs.elems[i]);
+                multiply(env, ctrl, $);
+                H.elems[i] = $.pop();
             }
 
-            _.push(H);
+            $.push(H);
         } finally {
             H.release();
         }

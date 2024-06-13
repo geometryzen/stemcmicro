@@ -104,12 +104,13 @@ export class Stack<T> {
         }
     }
     /**
+     * [..., a, b] => [..., b, a]
      * Changes the order of the top two elements on the stack.
      */
     swap(): void {
-        const p = this.pop();
-        const q = this.pop();
-        this.push(p);
-        this.push(q);
+        const b = this.pop();
+        const a = this.pop();
+        this.push(b);
+        this.push(a);
     }
 }

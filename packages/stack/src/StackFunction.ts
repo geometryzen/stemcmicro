@@ -4,5 +4,5 @@ import { ProgramEnv } from "./ProgramEnv";
 import { ProgramStack } from "./ProgramStack";
 
 export interface StackFunction {
-    (x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void;
+    (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void;
 }

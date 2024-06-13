@@ -16,6 +16,21 @@ export class StackU implements ProgramStack {
         }
         this.#stack = new Stack(elements);
     }
+    /**
+     * [... , a, b] => [..., cons(a,b)]
+     *
+     * b must be cons or nil.
+     */
+    cons(): void {
+        const b = assert_cons_or_nil(this.pop());
+        const a = this.pop();
+        try {
+            this.push(cons(a, b));
+        } finally {
+            a.release();
+            b.release();
+        }
+    }
     dupl(): void {
         const x = this.pop();
         try {
@@ -25,6 +40,9 @@ export class StackU implements ProgramStack {
             x.release();
         }
     }
+    /**
+     * [... , (head, rest)] => [..., head]
+     */
     head(): void {
         const expr = this.pop();
         try {
@@ -38,6 +56,9 @@ export class StackU implements ProgramStack {
             expr.release();
         }
     }
+    /**
+     * [... , (head, rest)] => [..., rest]
+     */
     rest(): void {
         const expr = this.pop();
         try {
@@ -57,6 +78,9 @@ export class StackU implements ProgramStack {
     rotateR(n: number): void {
         this.#stack.rotateR(n);
     }
+    /**
+     * [..., a, b] => [..., b, a]
+     */
     swap(): void {
         this.#stack.swap();
     }
@@ -66,9 +90,12 @@ export class StackU implements ProgramStack {
         }
     }
     getAt(i: number): U {
-        return this.#stack.getAt(i);
+        const x = this.#stack.getAt(i);
+        x.addRef();
+        return x;
     }
     setAt(i: number, expr: U): void {
+        expr.addRef();
         this.#stack.setAt(i, expr);
     }
     splice(start: number, deleteCount?: number): U[] {
@@ -114,9 +141,9 @@ export class StackU implements ProgramStack {
             this.#stack.push(cons(arg1, arg2));
         }
     }
-    push(element: U): void {
-        element.addRef();
-        this.#stack.push(element);
+    push(x: U): void {
+        x.addRef();
+        this.#stack.push(x);
     }
     peek(): U {
         const x = this.pop();

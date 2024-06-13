@@ -7,14 +7,15 @@ import { list } from "./eigenmath";
  * [..., v1, v2, ..., vn] => [..., x1, x2, ..., xm]
  *
  * @param start The starting position on the stack.
+ * @param opr Either ADD or MULTIPLY
  */
-export function flatten_items(start: number, opr: Sym, _: ProgramStack): void {
+export function flatten_items(start: number, opr: Sym, $: ProgramStack): void {
     //                              // [..., v1, v2, ..., vn]
     const vs: U[] = [];
-    const end = _.length;
+    const end = $.length;
     const n = end - start;
     for (let i = 0; i < n; i++) {
-        const v = _.pop();
+        const v = $.pop();
         vs.push(v);
     }
     vs.reverse(); // [...], v1 contains [v1, v2, ..., vn] with reference counts incremented by pops.
@@ -22,7 +23,7 @@ export function flatten_items(start: number, opr: Sym, _: ProgramStack): void {
     for (let i = 0; i < n; i++) {
         const vi = vs[i];
         try {
-            flatten_item_recursive(_, vi, opr, opr);
+            flatten_item_recursive($, vi, opr, opr);
         } finally {
             vi.release();
         }

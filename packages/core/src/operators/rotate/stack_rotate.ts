@@ -1,5 +1,5 @@
 import { create_sym, imu, is_tensor, Tensor } from "@stemcmicro/atoms";
-import { add, expfunc, multiply, multiply_factors, negate, pop, pop_integer, power, push, push_integer, push_rational, sqrtfunc, stopf, subtract, value_of } from "@stemcmicro/eigenmath";
+import { add, expfunc, multiply, multiply_factors, negate, pop_integer, power, push_integer, push_rational, sqrtfunc, stopf, subtract, value_of } from "@stemcmicro/eigenmath";
 import { Native, native_sym } from "@stemcmicro/native";
 import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
 import { cadr, car, cddr, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
@@ -7,9 +7,9 @@ import { cadr, car, cddr, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 const PI = native_sym(Native.PI);
 
 export function stack_rotate(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
+    $.push(cadr(p1));
     value_of(env, ctrl, $);
-    const PSI = pop($);
+    const PSI = $.pop();
 
     if (!is_tensor(PSI) || PSI.ndim > 1 || PSI.nelem > 32768 || (PSI.nelem & (PSI.nelem - 1)) !== 0) stopf("rotate error 1 first argument is not a vector or dimension error");
 
@@ -21,7 +21,7 @@ export function stack_rotate(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
         if (!is_cons(cdr(p1))) stopf("rotate error 2 unexpected end of argument list");
 
         const OPCODE = car(p1);
-        push(cadr(p1), $);
+        $.push(cadr(p1));
         value_of(env, ctrl, $);
         let n = pop_integer($);
 
@@ -42,13 +42,13 @@ export function stack_rotate(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
 
         if (OPCODE.equals(create_sym("P"))) {
             if (!is_cons(p1)) stopf("rotate error 2 unexpected end of argument list");
-            push(car(p1), $);
+            $.push(car(p1));
             p1 = cdr(p1);
             value_of(env, ctrl, $);
-            push(imu, $);
+            $.push(imu);
             multiply(env, ctrl, $);
             expfunc(env, ctrl, $);
-            const PHASE = pop($);
+            const PHASE = $.pop();
             rotate_p(PSI, PHASE, c, n, env, ctrl, $);
             c = 0;
             continue;
@@ -69,7 +69,7 @@ export function stack_rotate(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
         if (OPCODE.equals(create_sym("W"))) {
             const m = n;
             if (!is_cons(p1)) stopf("rotate error 2 unexpected end of argument list");
-            push(car(p1), $);
+            $.push(car(p1));
             p1 = cdr(p1);
             value_of(env, ctrl, $);
             n = pop_integer($);
@@ -100,7 +100,7 @@ export function stack_rotate(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
         stopf("rotate error 4 unknown rotation code");
     }
 
-    push(PSI, $);
+    $.push(PSI);
 }
 
 // hadamard
@@ -110,20 +110,20 @@ function rotate_h(PSI: Tensor, c: number, n: number, env: ProgramEnv, ctrl: Prog
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) !== c) continue;
         if (i & n) {
-            push(PSI.elems[i ^ n], $); // KET0
-            push(PSI.elems[i], $); // KET1
+            $.push(PSI.elems[i ^ n]); // KET0
+            $.push(PSI.elems[i]); // KET1
             add(env, ctrl, $);
             push_rational(1, 2, $);
             sqrtfunc(env, ctrl, $);
             multiply(env, ctrl, $);
-            push(PSI.elems[i ^ n], $); // KET0
-            push(PSI.elems[i], $); // KET1
+            $.push(PSI.elems[i ^ n]); // KET0
+            $.push(PSI.elems[i]); // KET1
             subtract(env, ctrl, $);
             push_rational(1, 2, $);
             sqrtfunc(env, ctrl, $);
             multiply(env, ctrl, $);
-            PSI.elems[i] = pop($); // KET1
-            PSI.elems[i ^ n] = pop($); // KET0
+            PSI.elems[i] = $.pop(); // KET1
+            PSI.elems[i ^ n] = $.pop(); // KET0
         }
     }
 }
@@ -135,10 +135,10 @@ function rotate_p(PSI: Tensor, PHASE: U, c: number, n: number, env: ProgramEnv, 
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) !== c) continue;
         if (i & n) {
-            push(PSI.elems[i], $); // KET1
-            push(PHASE, $);
+            $.push(PSI.elems[i]); // KET1
+            $.push(PHASE);
             multiply(env, ctrl, $);
-            PSI.elems[i] = pop($); // KET1
+            PSI.elems[i] = $.pop(); // KET1
         }
     }
 }
@@ -151,10 +151,10 @@ function rotate_w(PSI: Tensor, c: number, m: number, n: number, $: ProgramStack)
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) !== c) continue;
         if (i & m && !(i & n)) {
-            push(PSI.elems[i], $);
-            push(PSI.elems[i ^ m ^ n], $);
-            PSI.elems[i] = pop($);
-            PSI.elems[i ^ m ^ n] = pop($);
+            $.push(PSI.elems[i]);
+            $.push(PSI.elems[i ^ m ^ n]);
+            PSI.elems[i] = $.pop();
+            PSI.elems[i ^ m ^ n] = $.pop();
         }
     }
 }
@@ -164,10 +164,10 @@ function rotate_x(PSI: Tensor, c: number, n: number, $: ProgramStack): void {
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) !== c) continue;
         if (i & n) {
-            push(PSI.elems[i ^ n], $); // KET0
-            push(PSI.elems[i], $); // KET1
-            PSI.elems[i ^ n] = pop($); // KET0
-            PSI.elems[i] = pop($); // KET1
+            $.push(PSI.elems[i ^ n]); // KET0
+            $.push(PSI.elems[i]); // KET1
+            PSI.elems[i ^ n] = $.pop(); // KET0
+            PSI.elems[i] = $.pop(); // KET1
         }
     }
 }
@@ -177,15 +177,15 @@ function rotate_y(PSI: Tensor, c: number, n: number, env: ProgramEnv, ctrl: Prog
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) !== c) continue;
         if (i & n) {
-            push(imu, $);
+            $.push(imu);
             negate(env, ctrl, $);
-            push(PSI.elems[i ^ n], $); // KET0
+            $.push(PSI.elems[i ^ n]); // KET0
             multiply(env, ctrl, $);
-            push(imu, $);
-            push(PSI.elems[i], $); // KET1
+            $.push(imu);
+            $.push(PSI.elems[i]); // KET1
             multiply(env, ctrl, $);
-            PSI.elems[i ^ n] = pop($); // KET0
-            PSI.elems[i] = pop($); // KET1
+            PSI.elems[i ^ n] = $.pop(); // KET0
+            PSI.elems[i] = $.pop(); // KET1
         }
     }
 }
@@ -195,9 +195,9 @@ function rotate_z(PSI: Tensor, c: number, n: number, env: ProgramEnv, ctrl: Prog
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) !== c) continue;
         if (i & n) {
-            push(PSI.elems[i], $); // KET1
+            $.push(PSI.elems[i]); // KET1
             negate(env, ctrl, $);
-            PSI.elems[i] = pop($); // KET1
+            PSI.elems[i] = $.pop(); // KET1
         }
     }
 }
@@ -211,12 +211,12 @@ function rotate_q(PSI: Tensor, n: number, env: ProgramEnv, ctrl: ProgramControl,
             push_rational(1, 2, $);
             push_integer(i - j, $);
             power(env, ctrl, $);
-            push(imu, $);
-            push(PI, $);
+            $.push(imu);
+            $.push(PI);
             value_of(env, ctrl, $);
             multiply_factors(3, env, ctrl, $);
             expfunc(env, ctrl, $);
-            const PHASE = pop($);
+            const PHASE = $.pop();
             rotate_p(PSI, PHASE, 1 << j, i, env, ctrl, $);
         }
     }
@@ -232,13 +232,13 @@ function rotate_v(PSI: Tensor, n: number, env: ProgramEnv, ctrl: ProgramControl,
             push_rational(1, 2, $);
             push_integer(i - j, $);
             power(env, ctrl, $);
-            push(imu, $);
-            push(PI, $);
+            $.push(imu);
+            $.push(PI);
             value_of(env, ctrl, $);
             multiply_factors(3, env, ctrl, $);
             negate(env, ctrl, $);
             expfunc(env, ctrl, $);
-            const PHASE = pop($);
+            const PHASE = $.pop();
             rotate_p(PSI, PHASE, 1 << j, i, env, ctrl, $);
         }
         rotate_h(PSI, 0, i, env, ctrl, $);

@@ -60,12 +60,14 @@
         "url": "https://github.com/geometryzen/stemcmicro/issues"
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
+    "dependencies": {
+        "@stemcmicro/core": "workspace:*",
+        "@stemcmicro/eigenmath": "workspace:*"
+    },
     "peerDependencies": {
         "@stemcmicro/atoms": "workspace:*",
         "@stemcmicro/context": "workspace:*",
-        "@stemcmicro/core": "workspace:*",
         "@stemcmicro/directive": "workspace:*",
-        "@stemcmicro/eigenmath": "workspace:*",
         "@stemcmicro/native": "workspace:*",
         "@stemcmicro/stack": "workspace:*",
         "@stemcmicro/tree": "workspace:*"

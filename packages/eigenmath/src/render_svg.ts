@@ -1252,6 +1252,9 @@ class SvgProgramStack implements ProgramStack {
     get istrue(): boolean {
         return this.#stack.istrue;
     }
+    cons(): void {
+        this.#stack.cons();
+    }
     dupl(): void {
         this.#stack.dupl();
     }

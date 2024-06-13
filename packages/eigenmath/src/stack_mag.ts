@@ -3,7 +3,7 @@ import { is_cons_opr_eq_add, is_cons_opr_eq_multiply, is_cons_opr_eq_power } fro
 import { Native, native_sym } from "@stemcmicro/native";
 import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
 import { caddr, car, cdr, Cons, is_atom, is_cons } from "@stemcmicro/tree";
-import { absfunc, add, denominator, divide, elementwise, expfunc, imag, multiply, multiply_factors, numerator, pop, power, push, push_integer, push_rational, real, rect, value_of } from "./eigenmath";
+import { absfunc, add, denominator, divide, elementwise, expfunc, imag, multiply, multiply_factors, numerator, power, push_integer, push_rational, real, rect, value_of } from "./eigenmath";
 import { isminusone } from "./isminusone";
 
 export function stack_mag(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -15,26 +15,26 @@ export function stack_mag(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 }
 
 export function mag(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const z = pop($);
+    const z = $.pop();
     try {
         if (is_atom(z)) {
             if (is_imu(z)) {
-                push(one, $);
+                $.push(one);
                 return;
             }
             if (is_tensor(z)) {
-                push(elementwise(z, mag, env, ctrl, $), $);
+                $.push(elementwise(z, mag, env, ctrl, $));
                 return;
             }
         }
 
         // use numerator and denominator to handle (a + i b) / (c + i d)
 
-        push(z, $);
+        $.push(z);
         numerator(env, ctrl, $);
         mag_nib(env, ctrl, $);
 
-        push(z, $);
+        $.push(z);
         denominator(env, ctrl, $);
         mag_nib(env, ctrl, $);
 
@@ -45,41 +45,48 @@ export function mag(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): voi
 }
 
 function mag_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const z = pop($);
+    const z = $.pop();
     try {
         if (is_atom(z)) {
             // Every atom should be handled, there should be no fall-through.
             if (is_num(z)) {
-                push(z, $);
+                $.push(z);
                 absfunc(env, ctrl, $);
                 return;
             }
             if (is_imu(z)) {
-                push(one, $);
+                $.push(one);
                 return;
             }
             if (is_sym(z)) {
                 // We assume that the symbol is a real number.
-                push(z, $);
+                $.push(z);
                 return;
             }
             if (is_uom(z)) {
-                push(z, $);
+                $.push(z);
                 return;
             }
         }
 
         // -1 to a power
 
-        if (is_cons(z) && is_cons_opr_eq_power(z) && isminusone(z.base)) {
-            push_integer(1, $);
-            return;
+        if (is_cons(z) && is_cons_opr_eq_power(z)) {
+            const base = z.base;
+            try {
+                if (isminusone(base)) {
+                    push_integer(1, $);
+                    return;
+                }
+            } finally {
+                base.release();
+            }
         }
 
         // exponential
 
         if (is_cons(z) && is_cons_opr_eq_power(z) && z.base.equals(native_sym(Native.E))) {
-            push(caddr(z), $);
+            $.push(caddr(z));
             real(env, ctrl, $);
             expfunc(env, ctrl, $);
             return;
@@ -91,7 +98,7 @@ function mag_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             let p1 = cdr(z);
             const h = $.length;
             while (is_cons(p1)) {
-                push(car(p1), $);
+                $.push(car(p1));
                 mag(env, ctrl, $);
                 p1 = cdr(p1);
             }
@@ -102,23 +109,23 @@ function mag_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
         // sum
 
         if (is_cons(z) && is_cons_opr_eq_add(z)) {
-            push(z, $);
+            $.push(z);
             rect(env, ctrl, $); // convert polar terms, if any
-            const p1 = pop($);
+            const p1 = $.pop();
             try {
-                push(p1, $);
+                $.push(p1);
                 real(env, ctrl, $);
-                const x = pop($);
+                const x = $.pop();
                 try {
-                    push(p1, $);
+                    $.push(p1);
                     imag(env, ctrl, $);
-                    const y = pop($);
+                    const y = $.pop();
                     try {
-                        push(x, $);
-                        push(x, $);
+                        $.push(x);
+                        $.push(x);
                         multiply(env, ctrl, $);
-                        push(y, $);
-                        push(y, $);
+                        $.push(y);
+                        $.push(y);
                         multiply(env, ctrl, $);
                         add(env, ctrl, $);
                         push_rational(1, 2, $);
@@ -137,7 +144,7 @@ function mag_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
         // real
 
-        push(z, $);
+        $.push(z);
     } finally {
         z.release();
     }

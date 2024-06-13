@@ -7,11 +7,29 @@ export interface ProgramStack extends Shareable {
     get isatom(): boolean;
     get iscons(): boolean;
     get istrue(): boolean;
+    /**
+     * [... , a, b] => [..., (a, b)]
+     *
+     * b must be cons or nil.
+     */
+    cons(): void;
     dupl(): void;
     peek(): U;
+    /**
+     * [..., expr] => [...]
+     */
     pop(): U;
+    /**
+     * [...] => [..., expr]
+     */
     push(expr: U): void;
+    /**
+     * [... , (head, rest)] => [..., head]
+     */
     head(): void;
+    /**
+     * [... , (head, rest)] => [..., rest]
+     */
     rest(): void;
     rotateL(n: number): void;
     rotateR(n: number): void;

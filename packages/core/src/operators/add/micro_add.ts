@@ -1,8 +1,8 @@
 import { Blade, is_blade, is_rat, is_tensor, zero } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
-import { assert_stack_length, combine_terms, cons, copy_tensor, flatten_items, list, pop, ProgramControl, ProgramEnv, push, simplify_terms, sum_tensors, value_of_args } from "@stemcmicro/eigenmath";
+import { assert_stack_length, combine_terms, cons, copy_tensor, flatten_items, list, pop, push, simplify_terms, sum_tensors, value_of_args } from "@stemcmicro/eigenmath";
 import { Native, native_sym } from "@stemcmicro/native";
-import { ProgramStack } from "@stemcmicro/stack";
+import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
 import { Cons, U } from "@stemcmicro/tree";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 

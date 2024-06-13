@@ -1,5 +1,5 @@
-import { pop, ProgramControl, ProgramEnv, value_of } from "@stemcmicro/eigenmath";
-import { ProgramStack } from "@stemcmicro/stack";
+import { pop, value_of } from "@stemcmicro/eigenmath";
+import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
 import { U } from "@stemcmicro/tree";
 import { hook_create_err } from "../../hooks/hook_create_err";
 

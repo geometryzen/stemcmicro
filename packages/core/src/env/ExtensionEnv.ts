@@ -1,7 +1,7 @@
 import { Cell, CellHost, Sym, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
-import { ProgramControl, ProgramEnv, ProgramIO, StackFunction } from "@stemcmicro/eigenmath";
 import { Native } from "@stemcmicro/native";
+import { ProgramControl, ProgramEnv, ProgramIO, StackFunction } from "@stemcmicro/stack";
 import { Cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "./EnvConfig";
 

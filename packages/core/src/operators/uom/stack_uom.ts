@@ -1,8 +1,8 @@
 import { is_str } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { ProgramControl, ProgramEnv, value_of } from "@stemcmicro/eigenmath";
+import { value_of } from "@stemcmicro/eigenmath";
 import { prolog_eval_varargs } from "@stemcmicro/helpers";
-import { ProgramStack } from "@stemcmicro/stack";
+import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
 import { cadr, Cons, U } from "@stemcmicro/tree";
 import { create_uom, is_uom_name } from "./uom";
 

@@ -1,4 +1,5 @@
-import { ExprContextFromProgram, ProgramControl, ProgramEnv, StackFunction } from "@stemcmicro/eigenmath";
+import { ExprContextFromProgram } from "@stemcmicro/eigenmath";
+import { ProgramControl, ProgramEnv, StackFunction } from "@stemcmicro/stack";
 import { Cons, U } from "@stemcmicro/tree";
 import { EvalFunction } from "../env/ExtensionEnv";
 import { ExtensionEnvFromExprContext } from "./ExtensionEnvFromExprContext";

@@ -1,9 +1,7 @@
 import { is_tensor } from "@stemcmicro/atoms";
-import { ProgramStack } from "@stemcmicro/stack";
+import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
 import { Cons, is_cons } from "@stemcmicro/tree";
 import { copy_tensor, multiply, stopf, value_of } from "./eigenmath";
-import { ProgramControl } from "./ProgramControl";
-import { ProgramEnv } from "./ProgramEnv";
 
 export function stack_hadamard(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
     const argList = expr.argList;

@@ -1,8 +1,7 @@
+import { ProgramControl, ProgramEnv } from "@stemcmicro/stack";
 import { U } from "@stemcmicro/tree";
-import { ColorCode, html_escape_and_colorize } from "./html_escape_and_colorize";
 import { InfixConfig, infix_expr, infix_write } from "./format_infix";
-import { ProgramControl } from "./ProgramControl";
-import { ProgramEnv } from "./ProgramEnv";
+import { ColorCode, html_escape_and_colorize } from "./html_escape_and_colorize";
 
 export function render_as_html_infix(x: U, env: ProgramEnv, ctrl: ProgramControl, config: InfixConfig): string {
     const outbuf: string[] = [];

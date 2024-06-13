@@ -1,5 +1,5 @@
-import { make_stack_draw, ProgramIO, StackFunction } from "@stemcmicro/eigenmath";
-import { StackU } from "@stemcmicro/stack";
+import { make_stack_draw } from "@stemcmicro/eigenmath";
+import { ProgramIO, StackFunction, StackU } from "@stemcmicro/stack";
 import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 

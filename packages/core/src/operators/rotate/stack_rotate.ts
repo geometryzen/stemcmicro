@@ -1,7 +1,7 @@
 import { create_sym, imu, is_tensor, Tensor } from "@stemcmicro/atoms";
-import { add, expfunc, multiply, multiply_factors, negate, pop, pop_integer, power, ProgramControl, ProgramEnv, push, push_integer, push_rational, sqrtfunc, stopf, subtract, value_of } from "@stemcmicro/eigenmath";
+import { add, expfunc, multiply, multiply_factors, negate, pop, pop_integer, power, push, push_integer, push_rational, sqrtfunc, stopf, subtract, value_of } from "@stemcmicro/eigenmath";
 import { Native, native_sym } from "@stemcmicro/native";
-import { ProgramStack } from "@stemcmicro/stack";
+import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
 import { cadr, car, cddr, cdr, Cons, is_cons, U } from "@stemcmicro/tree";
 
 const PI = native_sym(Native.PI);

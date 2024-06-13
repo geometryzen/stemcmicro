@@ -1,8 +1,8 @@
 import { Sym } from "@stemcmicro/atoms";
 import { CompareFn, ExprContext, ExprHandler } from "@stemcmicro/context";
 import { Native, native_sym } from "@stemcmicro/native";
+import { ProgramEnv } from "@stemcmicro/stack";
 import { Cons, is_atom, Shareable, U } from "@stemcmicro/tree";
-import { ProgramEnv } from "./ProgramEnv";
 
 class IsZeroExprContext implements ExprContext {
     #refCount = 1;

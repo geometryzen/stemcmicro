@@ -1,9 +1,7 @@
-import { ProgramStack } from "@stemcmicro/stack";
+import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
 import { Cons } from "@stemcmicro/tree";
 import { push_string, value_of } from "./eigenmath";
 import { infix_config_from_options, infix_expr } from "./format_infix";
-import { ProgramControl } from "./ProgramControl";
-import { ProgramEnv } from "./ProgramEnv";
 
 export function stack_infix(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
     _.push(expr); //  [..., expr]

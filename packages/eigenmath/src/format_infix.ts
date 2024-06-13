@@ -1,6 +1,7 @@
 import { Flt, is_err, is_flt, is_imu, is_num, is_rat, is_str, is_sym, is_tensor, Num, Rat, Tensor } from "@stemcmicro/atoms";
 import { str_to_string } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
+import { ProgramControl, ProgramEnv } from "@stemcmicro/stack";
 import { Atom, caddr, cadr, car, cddr, cdr, Cons, is_atom, is_cons, is_nil, nil, U } from "@stemcmicro/tree";
 import { bignum_itoa } from "./bignum_itoa";
 import { count_denominators } from "./count_denominators";
@@ -12,8 +13,6 @@ import { isminusone } from "./isminusone";
 import { isnegativeterm } from "./isnegativeterm";
 import { isnumerator } from "./isnumerator";
 import { printname_from_symbol } from "./printname_from_symbol";
-import { ProgramControl } from "./ProgramControl";
-import { ProgramEnv } from "./ProgramEnv";
 
 const ADD = native_sym(Native.add);
 const ASSIGN = native_sym(Native.assign);

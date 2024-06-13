@@ -1,12 +1,9 @@
 import { create_sym, is_imu } from "@stemcmicro/atoms";
-import { ProgramStack } from "@stemcmicro/stack";
+import { ProgramControl, ProgramEnv, ProgramIO, ProgramStack } from "@stemcmicro/stack";
 import { car, cdr, is_cons, nil, U } from "@stemcmicro/tree";
 import { get_binding, value_of } from "./eigenmath";
 import { make_should_annotate } from "./make_should_annotate";
 import { print_value_and_input_as_svg_or_infix } from "./print_value_and_input_as_svg_or_infix";
-import { ProgramControl } from "./ProgramControl";
-import { ProgramEnv } from "./ProgramEnv";
-import { ProgramIO } from "./ProgramIO";
 import { SvgRenderConfig } from "./render_svg";
 import { should_render_svg } from "./should_eigenmath_render_svg";
 

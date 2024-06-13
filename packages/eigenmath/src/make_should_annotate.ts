@@ -1,7 +1,7 @@
 import { Sym } from "@stemcmicro/atoms";
 import { is_native_sym } from "@stemcmicro/native";
+import { ProgramEnv } from "@stemcmicro/stack";
 import { is_nil, U } from "@stemcmicro/tree";
-import { ProgramEnv } from "./ProgramEnv";
 
 export function make_should_annotate(env: ProgramEnv) {
     return function should_annotate_symbol(x: Sym, value: U): boolean {

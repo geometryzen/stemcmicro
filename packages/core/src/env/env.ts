@@ -2,9 +2,8 @@
 import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_rat, is_sym, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, is_lambda, Lambda, LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { ProgramIOListener, StackFunction } from "@stemcmicro/eigenmath";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
-import { ProgramStack } from "@stemcmicro/stack";
+import { ProgramIOListener, ProgramStack, StackFunction } from "@stemcmicro/stack";
 import { assert_U, Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
 import { ExtensionEnvFromExprContext } from "../adapters/ExtensionEnvFromExprContext";
 import { make_eval } from "../adapters/make_eval";

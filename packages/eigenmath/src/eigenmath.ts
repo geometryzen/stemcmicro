@@ -54,7 +54,7 @@ import {
     prolog_eval_varargs
 } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
-import { ProgramStack, StackU } from "@stemcmicro/stack";
+import { ProgramControl, ProgramEnv, ProgramIO, ProgramIOListener, ProgramStack, StackFunction, StackU } from "@stemcmicro/stack";
 import { assert_cons, assert_cons_or_nil, car, cdr, Cons, cons as create_cons, Cons2, is_atom, is_cons, is_cons2, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { bignum_equal } from "./bignum_equal";
 import { bignum_itoa } from "./bignum_itoa";
@@ -71,10 +71,6 @@ import { isnegativeterm } from "./isnegativeterm";
 import { isplusone } from "./isplusone";
 import { iszero } from "./iszero";
 import { lengthf } from "./lengthf";
-import { ProgramControl } from "./ProgramControl";
-import { ProgramEnv } from "./ProgramEnv";
-import { ProgramIO, ProgramIOListener } from "./ProgramIO";
-import { StackFunction } from "./StackFunction";
 import { hadamard } from "./stack_hadamard";
 import { mag } from "./stack_mag";
 

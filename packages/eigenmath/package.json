@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/eigenmath",
-    "version": "0.9.78",
+    "version": "0.9.79",
     "description": "hilbert function for stemcmicro",
     "exports": {
         ".": {

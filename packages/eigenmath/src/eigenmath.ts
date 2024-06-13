@@ -834,12 +834,12 @@ function equal(lhs: U, rhs: U): boolean {
     return cmp(lhs, rhs) === 0;
 }
 
-export function stack_abs(expr: U, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
-    _.push(expr);
-    _.rest();
-    _.head();
-    value_of(env, ctrl, _);
-    absfunc(env, ctrl, _);
+export function stack_abs(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    $.push(expr);
+    $.rest();
+    $.head();
+    value_of(env, ctrl, $);
+    absfunc(env, ctrl, $);
 }
 
 export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -973,17 +973,17 @@ export function assert_stack_length(expectedLength: number, _: ProgramStack): vo
 /**
  * [...] => [..., X], where X is the sum of the evaluated terms, (x1 x2 x3 ... xn).
  */
-export function stack_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
+export function stack_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
     try {
-        const L0 = _.length; // [...]
+        const L0 = $.length; // [...]
         // By pushing the identity element for addition, zero, we ensure (+) evaluates to zero.
-        _.push(zero); // [..., 0]
-        _.push(expr); // [..., 0, (+ x1 x2 ... xn)]
-        _.rest(); // [..., 0, (x1 x2 ... xn)]
-        const n = value_of_args(env, ctrl, _); // [..., 0, v1, v2, ..., vn]
-        sum_terms(n + 1, env, ctrl, _); // [..., X]
-        assert_stack_length(L0 + 1, _);
+        $.push(zero); // [..., 0]
+        $.push(expr); // [..., 0, (+ x1 x2 ... xn)]
+        $.rest(); // [..., 0, (x1 x2 ... xn)]
+        const n = value_of_args(env, ctrl, $); // [..., 0, v1, v2, ..., vn]
+        sum_terms(n + 1, env, ctrl, $); // [..., X]
+        assert_stack_length(L0 + 1, $);
     } finally {
         ctrl.popDirective();
     }
@@ -1381,8 +1381,8 @@ function add_rationals(lhs: Rat, rhs: Rat, _: Pick<ProgramStack, "push">): void 
     push(sum, _);
 }
 
-export function stack_adj(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
+export function stack_adj(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    $.push(cadr(expr));
     value_of(env, ctrl, $);
     adj(env, ctrl, $);
 }
@@ -1434,8 +1434,8 @@ function adj(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     $.push(p2);
 }
 
-export function stack_algebra(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(assert_cons(expr).item(1), $);
+export function stack_algebra(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    $.push(assert_cons(expr).item(1));
     value_of(env, ctrl, $);
     const metric = $.pop();
     if (!is_tensor(metric)) {

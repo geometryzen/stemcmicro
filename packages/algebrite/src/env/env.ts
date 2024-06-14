@@ -2,6 +2,7 @@
 import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_rat, is_sym, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, is_lambda, Lambda, LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
+import { DirectiveStack } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { ProgramIOListener, ProgramStack, StackFunction } from "@stemcmicro/stack";
 import { assert_U, Atom, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, Shareable, U } from "@stemcmicro/tree";
@@ -23,7 +24,6 @@ import { ShareableMap } from "../shareable/ShareableMap";
 import { visit } from "../visitor/visit";
 import { Visitor } from "../visitor/Visitor";
 import { DerivedEnv } from "./DerivedEnv";
-import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
 import {
     CellListener,

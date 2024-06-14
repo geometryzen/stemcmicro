@@ -1,21 +1,16 @@
-import { create_flt, create_rat, is_flt, is_sym, is_tensor, Num, Sym, third, zero } from "@stemcmicro/atoms";
+import { create_flt, create_rat, imu, is_flt, is_num, is_sym, is_tensor, Num, piAsFlt, Sym, third, zero } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
 import { eigenmath_arctan_numbers, isdoublez, isnegativeterm, isplusone } from "@stemcmicro/eigenmath";
-import { iszero, is_negative, is_num_and_eq_number, is_num_and_eq_rational } from "@stemcmicro/helpers";
+import { iszero, is_multiply, is_negative, is_num_and_eq_number, is_num_and_eq_rational, is_power } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { StackU } from "@stemcmicro/stack";
-import { car, cdr, Cons, Cons1, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
+import { caddr, cadr, car, cdr, Cons, Cons1, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { rational } from "../../bignum";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { ARCTAN, COS, POWER, SIN, TAN } from "../../runtime/constants";
 import { DynamicConstants } from "../../runtime/defs";
-import { is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_PI } from "../../runtime/ns_math";
-import { piAsFlt } from "../../tree/flt/Flt";
-import { caddr, cadr } from "../../tree/helpers";
-import { imu } from "../../tree/imu/Imu";
 import { denominator } from "../denominator/denominator";
-import { is_num } from "../num/is_num";
 import { numerator } from "../numerator/numerator";
 
 export function is_sin(expr: U): expr is Cons1<Sym, U> {

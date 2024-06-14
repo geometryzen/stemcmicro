@@ -14,6 +14,9 @@ export class Stack<T> {
     set length(length: number) {
         this.#elements.length = length;
     }
+    /**
+     * Returns the entry at the top of the stack.
+     */
     get top(): T {
         if (this.#elements.length > 0) {
             return this.#elements[this.#elements.length - 1];

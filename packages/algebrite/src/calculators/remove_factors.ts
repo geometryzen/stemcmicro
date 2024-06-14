@@ -1,7 +1,6 @@
 import { one } from "@stemcmicro/atoms";
-import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
+import { canonicalize_multiplicative_expr, is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { cons, Cons, is_cons, U } from "@stemcmicro/tree";
-import { canonicalize_mul } from "./canonicalize/canonicalize_mul";
 
 /**
  * Removes factors from a (* f1 f2 f3) or atom that satisfy the predicate.
@@ -10,7 +9,7 @@ import { canonicalize_mul } from "./canonicalize/canonicalize_mul";
 export function remove_factors(expr: U, predicate: (factor: U) => boolean): U {
     if (is_cons(expr)) {
         if (is_cons_opr_eq_multiply(expr)) {
-            return canonicalize_mul(cons(expr.opr, remove_factors_recursive(expr.argList, predicate)));
+            return canonicalize_multiplicative_expr(cons(expr.opr, remove_factors_recursive(expr.argList, predicate)));
         } else {
             return expr;
         }

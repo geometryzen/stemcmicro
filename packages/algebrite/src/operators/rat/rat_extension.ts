@@ -1,12 +1,12 @@
 import { assert_rat, create_flt, create_str, create_sym, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, one, Rat, Str, Sym, zero } from "@stemcmicro/atoms";
-import { ExprContext } from "@stemcmicro/context";
+import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
 import { iszero, multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Atom, Cons, is_atom, is_cons, is_singleton, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
-import { Extension, ExtensionBuilder, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionBuilder, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { order_binary } from "../../helpers/order_binary";
 import { hook_create_err } from "../../hooks/hook_create_err";
@@ -31,7 +31,7 @@ function rat_times_simple_atom(lhs: Rat, rhs: Atom, env: ExprContext) {
     }
 }
 
-export class RatExtension implements Extension<Rat> {
+export class RatExtension implements ExprHandler<Rat> {
     readonly #hash = hash_for_atom(assert_rat(one));
     constructor() {
         // Nothing to see here.
@@ -46,6 +46,9 @@ export class RatExtension implements Extension<Rat> {
             throw new Error(`${this.name}.test(${atom},${opr}) method not implemented.`);
         }
     }
+    /**
+     * @override
+     */
     binL(lhs: Rat, opr: Sym, rhs: U, env: ExprContext): U {
         switch (opr.id) {
             case Native.add: {
@@ -131,6 +134,9 @@ export class RatExtension implements Extension<Rat> {
         }
         return nil;
     }
+    /**
+     * @override
+     */
     binR(rhs: Rat, opr: Sym, lhs: U, env: ExprContext): U {
         if (opr.equalsSym(MUL)) {
             if (is_atom(lhs)) {
@@ -145,6 +151,9 @@ export class RatExtension implements Extension<Rat> {
         }
         return nil;
     }
+    /**
+     * @override
+     */
     dispatch(target: Rat, opr: Sym, argList: Cons, env: ExprContext): U {
         switch (opr.id) {
             case Native.abs: {
@@ -193,15 +202,27 @@ export class RatExtension implements Extension<Rat> {
         }
         return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
+    /**
+     * @override
+     */
     iscons(): false {
         return false;
     }
+    /**
+     * @override
+     */
     operator(): never {
         throw new ProgrammingError();
     }
+    /**
+     * @override
+     */
     get hash(): string {
         return this.#hash;
     }
+    /**
+     * @override
+     */
     get name(): string {
         return "RatExtension";
     }
@@ -214,6 +235,9 @@ export class RatExtension implements Extension<Rat> {
         }
         return arg instanceof Rat;
     }
+    /**
+     * @override
+     */
     subst(expr: Rat, oldExpr: U, newExpr: U): U {
         if (is_rat(oldExpr)) {
             if (expr.equals(oldExpr)) {
@@ -222,6 +246,9 @@ export class RatExtension implements Extension<Rat> {
         }
         return expr;
     }
+    /**
+     * @override
+     */
     toAsciiString(rat: Rat): string {
         return rat.toInfixString();
     }

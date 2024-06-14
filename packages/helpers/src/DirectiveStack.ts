@@ -1,6 +1,5 @@
 import { Directive } from "@stemcmicro/directive";
 import { Stack } from "@stemcmicro/stack";
-import { PrintMode } from "../runtime/defs";
 
 type Directives = { [directive: number]: number };
 
@@ -144,7 +143,7 @@ function initial_directives(): Directives {
     update_directives(directives, Directive.nonstop, 0);
     update_directives(directives, Directive.forceFixedPrintout, 1);
     update_directives(directives, Directive.maxFixedPrintoutDigits, 6);
-    update_directives(directives, Directive.printMode, PrintMode.Human);
+    update_directives(directives, Directive.printMode, 1);
     update_directives(directives, Directive.codeGen, 0);
     return Object.freeze(directives);
 }

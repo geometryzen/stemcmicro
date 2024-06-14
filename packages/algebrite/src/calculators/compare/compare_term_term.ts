@@ -1,55 +1,46 @@
 import { is_blade, is_boo, is_imu, is_num, is_str, is_tensor } from "@stemcmicro/atoms";
-import { compare_num_num, contains_single_blade, count_factors, is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
-import { Native, native_sym } from "@stemcmicro/native";
+import { ExprContext, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
+import { compare_blade_blade, compare_num_num, contains_single_blade, count_factors, is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
-import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
 import { remove_factors } from "../remove_factors";
 import { compare_expr_expr } from "./compare_expr_expr";
 import { extract_single_blade } from "./extract_single_blade";
 
-export class AddComparator implements ExprComparator {
-    compare(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-        const lhsR = canonical_factor_num_rhs(lhs);
-        const rhsR = canonical_factor_num_rhs(rhs);
+export function compare_term_term(lhs: U, rhs: U, $: ExprContext): Sign {
+    const lhsR = canonical_factor_num_rhs(lhs);
+    const rhsR = canonical_factor_num_rhs(rhs);
 
-        // Under addition, we don't want strings to be sorted because they don't commute.
-        // Perhaps the only thing that doesn't commute under addition?
-        if (is_str(lhsR) && is_str(rhsR)) {
-            return SIGN_EQ;
+    // Under addition, we don't want strings to be sorted because they don't commute.
+    // Perhaps the only thing that doesn't commute under addition?
+    if (is_str(lhsR) && is_str(rhsR)) {
+        return SIGN_EQ;
+    }
+
+    if (is_boo(lhsR) || is_boo(rhsR)) {
+        return SIGN_EQ;
+    }
+
+    switch (compare_terms_core(lhsR, rhsR, $)) {
+        case SIGN_GT: {
+            return SIGN_GT;
         }
-
-        if (is_boo(lhsR) || is_boo(rhsR)) {
-            return SIGN_EQ;
+        case SIGN_LT: {
+            return SIGN_LT;
         }
-
-        switch (compare_terms_core(lhsR, rhsR, $)) {
-            case SIGN_GT: {
-                return SIGN_GT;
-            }
-            case SIGN_LT: {
-                return SIGN_LT;
-            }
-            case SIGN_EQ: {
-                // If two terms, apart from numeric factors, are equal then it really does not matter too much
-                // how they are sorted because they are destined to be combined through addition.
-                // TODO: When tests are passing, try removing this code and returning SIGN_EQ.
-                // In other words do we ever have sums where adjacent terms differ only in numerical factors?
-                const lhsL = canonical_factor_num_lhs(lhs);
-                const rhsL = canonical_factor_num_lhs(rhs);
-                return compare_num_num(lhsL, rhsL);
-            }
+        case SIGN_EQ: {
+            // If two terms, apart from numeric factors, are equal then it really does not matter too much
+            // how they are sorted because they are destined to be combined through addition.
+            // TODO: When tests are passing, try removing this code and returning SIGN_EQ.
+            // In other words do we ever have sums where adjacent terms differ only in numerical factors?
+            const lhsL = canonical_factor_num_lhs(lhs);
+            const rhsL = canonical_factor_num_lhs(rhs);
+            return compare_num_num(lhsL, rhsL);
         }
     }
 }
 
-export function compare_term_term(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    // console.lg("compare_term_term", $.toInfixString(lhs), $.toInfixString(rhs));
-    return $.compareFn(native_sym(Native.add))(lhs, rhs);
-}
-
-export function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+function compare_terms_core(lhs: U, rhs: U, $: ExprContext): Sign {
     // console.lg("ENTERING", "cmp_terms", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
     // numbers can be combined
     if (lhs.equals(rhs)) {

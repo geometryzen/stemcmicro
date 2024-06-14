@@ -7,11 +7,11 @@ export interface ExprHandler<T extends U> {
     binR(rhs: T, opr: Sym, lhs: U, env: ExprContext): U;
     dispatch(expr: T, opr: Sym, argList: Cons, env: ExprContext): U;
     /**
-     * @deprecated Use dispatch method instead.
+     * TODO: Migrate to using dispatch.
      */
     subst(expr: T, oldExpr: U, newExpr: U, env: Pick<ExprContext, "handlerFor">): U;
     /**
-     * @deprecated Use dispatch method instead.
+     * TODO: Migrate to using dispatch.
      */
     test(expr: T, opr: Sym, env: ExprContext): boolean;
 }

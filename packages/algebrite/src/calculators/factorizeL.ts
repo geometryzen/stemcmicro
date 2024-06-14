@@ -1,14 +1,16 @@
 import { is_rat, one, Rat, Sym } from "@stemcmicro/atoms";
-import { is_mul_2_any_any } from "@stemcmicro/helpers";
-import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
-import { Cons2 } from "../operators/helpers/Cons2";
-import { is_pow_2_any_any } from "../operators/pow/is_pow_2_any_any";
+import { is_cons_opr_eq_multiply, is_cons_opr_eq_power } from "@stemcmicro/helpers";
+import { Cons, Cons2, is_cons, is_cons2, items_to_cons, U } from "@stemcmicro/tree";
 import { MATH_MUL, MATH_POW } from "../runtime/ns_math";
 
 function is_pow_2_any_positive_integer(expr: Cons): expr is Cons2<Sym, U, Rat> {
-    if (is_pow_2_any_any(expr)) {
-        const expo = expr.rhs;
-        return is_rat(expo) && expo.isPositiveInteger();
+    if (is_cons_opr_eq_power(expr)) {
+        const expo = expr.expo;
+        try {
+            return is_rat(expo) && expo.isPositiveInteger();
+        } finally {
+            expo.release();
+        }
     }
     return false;
 }
@@ -20,7 +22,7 @@ export function factorizeL(expr: U): [lhs: U, rhs: U, split: boolean] {
     let s = expr;
     const parts: U[] = [];
     while (is_cons(s)) {
-        if (is_mul_2_any_any(s)) {
+        if (is_cons_opr_eq_multiply(s) && is_cons2(s)) {
             parts.push(s.rhs);
             s = s.lhs;
             continue;

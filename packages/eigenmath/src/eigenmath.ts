@@ -815,9 +815,9 @@ function decomp_product(F: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: Pr
  * [..., a, b] => [..., a * (1/b)]
  */
 export function divide(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    //                                          [..., a, b]
-    reciprocate(env, ctrl, $); //  [..., a, 1/b]
-    multiply_factors(2, env, ctrl, $); //  [..., a/b]
+    //                                        [..., a, b]
+    reciprocate(env, ctrl, $); //             [..., a, 1/b]
+    multiply_factors(2, env, ctrl, $); //     [..., a/b]
 }
 
 function dupl($: ProgramStack): void {
@@ -834,14 +834,20 @@ function equal(lhs: U, rhs: U): boolean {
     return cmp(lhs, rhs) === 0;
 }
 
+/**
+ * [..., (head, (arg))] => [..., abs(value(arg))]
+ */
 export function stack_abs(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    $.push(expr);
-    $.rest();
-    $.head();
-    value_of(env, ctrl, $);
-    absfunc(env, ctrl, $);
+    $.push(expr); //           [..., (head, (arg))]
+    $.rest(); //               [..., (arg)]
+    $.head(); //               [..., arg]
+    value_of(env, ctrl, $); // [..., value(arg)]
+    absfunc(env, ctrl, $); //  [..., abs(value(arg))]
 }
 
+/**
+ * [..., x] => [..., abs(x)]
+ */
 export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const x = $.pop();
     try {
@@ -884,33 +890,46 @@ export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
             */
         }
 
-        push(x, $);
-        push(x, $);
-        conjfunc(env, ctrl, $);
-        multiply(env, ctrl, $);
-        push_rational(1, 2, $);
-        power(env, ctrl, $);
+        push(x, $); //             [..., z]
+        push(x, $); //             [..., z, z]
+        conjfunc(env, ctrl, $); // [..., z, conj(z)]
+        multiply(env, ctrl, $); // [..., z * conj(z)]
+        push_rational(1, 2, $); // [..., z * conj(z), 1/2]
+        power(env, ctrl, $); //    [..., (power (z * conj(z) (1/2)))]
 
-        const p2 = $.pop();
-        $.push(p2);
-        floatfunc(env, ctrl, $);
-        const p3 = $.pop();
-        if (is_flt(p3)) {
-            $.push(p2);
-            if (p3.isNegative()) {
-                negate(env, ctrl, $);
+        {
+            const p2 = $.pop();
+            try {
+                $.push(p2);
+                floatfunc(env, ctrl, $);
+                const p3 = $.pop();
+                if (is_flt(p3)) {
+                    $.push(p2);
+                    if (p3.isNegative()) {
+                        negate(env, ctrl, $);
+                    }
+                    return;
+                }
+            } finally {
+                p2.release();
             }
-            return;
         }
 
-        // abs(1/a) evaluates to 1/abs(a)
-
-        if (car(x).equals(POWER) && isnegativeterm(caddr(x))) {
-            push(x, $);
-            reciprocate(env, ctrl, $);
-            absfunc(env, ctrl, $);
-            reciprocate(env, ctrl, $);
-            return;
+        // abs(1/a^n) evaluates to 1/abs(a^n)
+        // 1/a = (power a -1)
+        if (is_cons(x) && is_cons_opr_eq_power(x)) {
+            const expo = x.expo;
+            try {
+                if (isnegativeterm(expo)) {
+                    push(x, $);
+                    reciprocate(env, ctrl, $);
+                    absfunc(env, ctrl, $);
+                    reciprocate(env, ctrl, $);
+                    return;
+                }
+            } finally {
+                expo.release();
+            }
         }
 
         // abs(a*b) evaluates to abs(a)*abs(b)
@@ -6344,20 +6363,20 @@ function modfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     push_double(d1 % d2, $);
 }
 
-function mod_rationals(p1: Rat, p2: Rat, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (p1.isInteger() && p2.isInteger()) {
-        mod_integers(p1, p2, $);
+function mod_rationals(a: Rat, b: Rat, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    if (a.isInteger() && b.isInteger()) {
+        mod_integers(a, b, $);
         return;
     }
-    $.push(p1);
-    $.push(p1);
-    $.push(p2);
-    divide(env, ctrl, $);
+    $.push(a); //  [..., a]
+    $.push(a); //  [..., a, a]
+    $.push(b); //  [..., a, a, b]
+    divide(env, ctrl, $); //  [..., a, a/b]
     absfunc(env, ctrl, $);
     floorfunc(env, ctrl, $);
-    $.push(p2);
+    $.push(b);
     multiply(env, ctrl, $);
-    if (p1.sign === p2.sign) {
+    if (a.sign === b.sign) {
         negate(env, ctrl, $);
     }
     add(env, ctrl, $);

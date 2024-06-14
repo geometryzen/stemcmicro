@@ -1,5 +1,5 @@
 import { Tensor } from "@stemcmicro/atoms";
-import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { compare_expr_expr } from "./compare_expr_expr";
 
 /**

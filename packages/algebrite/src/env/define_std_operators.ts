@@ -50,8 +50,8 @@ import {
 import { eval_hilbert } from "@stemcmicro/hilbert";
 import { Native, native_sym } from "@stemcmicro/native";
 import { eval_approxratio } from "../approxratio";
-import { MulComparator } from "../calculators/compare/compare_factor_factor";
-import { AddComparator } from "../calculators/compare/compare_term_term";
+import { AddComparator } from "../calculators/compare/AddComparator";
+import { MulComparator } from "../calculators/compare/MulComparator";
 import { eval_choose } from "../choose";
 import { eval_clear } from "../clear";
 import { eval_and, eval_not, eval_test, eval_testeq, eval_testle, eval_testne } from "../eval_test";

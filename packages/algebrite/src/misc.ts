@@ -1,7 +1,8 @@
 import { create_tensor_elements, is_str, Tensor, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
+import { Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, is_cons, nil, U } from "@stemcmicro/tree";
 import { compare_term_term } from "./calculators/compare/compare_term_term";
-import { ExtensionEnv } from "./env/ExtensionEnv";
 import { defs } from "./runtime/defs";
 
 // both ints
@@ -46,12 +47,11 @@ function unique_f(p: U, p1: U, p2: U) {
  * @param n
  * @param $
  */
-export function sort_stack(n: number, $: ExtensionEnv) {
+export function sort_stack(n: number, $: ExprContext) {
     const h = defs.tos - n;
     const subsetOfStack = defs.stack.slice(h, h + n) as U[];
-    subsetOfStack.sort(function (a, b) {
-        return compare_term_term(a, b, $);
-    });
+    const compareFn = $.compareFn(native_sym(Native.add));
+    subsetOfStack.sort(compareFn);
     defs.stack = defs.stack
         .slice(0, h)
         .concat(subsetOfStack)
@@ -63,7 +63,7 @@ export function sort_stack(n: number, $: ExtensionEnv) {
  * @param arr
  * @param $
  */
-export function sort(arr: U[], $: ExtensionEnv): void {
+export function sort(arr: U[], $: ExprContext): void {
     arr.sort(function (a, b) {
         return compare_term_term(a, b, $);
     });

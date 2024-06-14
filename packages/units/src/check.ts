@@ -9,7 +9,7 @@ export interface CheckConfig {
     useCaretForExponentiation: boolean;
 }
 
-export function check(actual: string, expected: string, options: Partial<CheckConfig> = {}): void {
+export function check(actual: string | string[], expected: string, options: Partial<CheckConfig> = {}): void {
     const actualU = munge(actual, options);
     const actualS = render_as_string(actualU, options);
     assert.strictEqual(actualS, expected);

@@ -1,4 +1,4 @@
-import { create_str, create_sym, imu, Imu, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, negOne, one, Sym } from "@stemcmicro/atoms";
+import { create_str, create_sym, half, imu, Imu, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, negOne, one, Sym, two } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { multiply } from "@stemcmicro/helpers";
@@ -8,7 +8,6 @@ import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/Ext
 import { HASH_IMU } from "../../hashing/hash_info";
 import { order_binary } from "../../helpers/order_binary";
 import { MATH_IMU } from "../../runtime/ns_math";
-import { half, two } from "@stemcmicro/atoms";
 
 const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
@@ -105,6 +104,9 @@ class ImuExtension implements Extension<Imu> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dispatch(target: Imu, opr: Sym, argList: Cons, env: ExprContext): U {
         switch (opr.id) {
+            case Native.abs: {
+                return one;
+            }
             case Native.arg: {
                 return order_binary(MUL, half, PI, env);
             }

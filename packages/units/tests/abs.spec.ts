@@ -40,4 +40,9 @@ describe("abs", function () {
         check("abs(ex)", "1");
         // check("abs(Ax*ex+Ay*ey)", "1");
     });
+    it("abs(x + i * y)", function () {
+        check(["i=sqrt(-1)", "i * i"], "-1");
+        check(["i=sqrt(-1)", "abs(i)"], "1");
+        check(["i=sqrt(-1)", "abs(x + i * y)"], "(x**2+y**2)**(1/2)");
+    });
 });

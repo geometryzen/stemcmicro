@@ -17,11 +17,13 @@ class MockProgramEnv implements ProgramEnv {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getBinding(opr: Sym, target: Cons): U {
         if (opr.equalsSym(ADD)) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const body: LambdaExpr = (argList: Cons, $: ExprContext): U => {
                 return items_to_cons(ADD, ...argList);
             };
             return new Lambda(body, "???");
         } else if (opr.equalsSym(POWER)) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const body: LambdaExpr = (argList: Cons, $: ExprContext): U => {
                 return items_to_cons(POWER, ...argList);
             };

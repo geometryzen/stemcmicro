@@ -19,7 +19,7 @@ export interface MungeConfig {
 /**
  * Parse and evaluate the sourceText using the specified options.
  */
-export function munge(sourceText: string, options: Partial<MungeConfig> = {}): U {
+export function munge(sourceText: string | string[], options: Partial<MungeConfig> = {}): U {
     const { trees, errors } = parse(sourceText, options);
     if (errors.length === 0) {
         const engine = create_engine({
@@ -29,25 +29,37 @@ export function munge(sourceText: string, options: Partial<MungeConfig> = {}): U
             useIntegersForPredicates: options.useIntegersForPredicates
         });
         engine.defineFunction(create_sym("hilbert"), hilbert);
-        return engine.valueOf(trees[0]);
+        for (let i = 0; i < trees.length; i++) {
+            const value = engine.valueOf(trees[i]);
+            try {
+                if (i === trees.length - 1) {
+                    value.addRef();
+                    return value;
+                }
+            } finally {
+                value.release();
+            }
+        }
+        return engine.valueOf(trees[trees.length - 1]);
     } else {
         throw errors[0];
     }
 }
 
-export function parse(sourceText: string, options: Partial<MungeConfig>): { trees: U[]; errors: Error[] } {
+export function parse(sourceText: string | string[], options: Partial<MungeConfig>): { trees: U[]; errors: Error[] } {
+    const s = Array.isArray(sourceText) ? sourceText.join("\n") : sourceText;
     switch (options.language) {
         case "eigenmath": {
-            return em_parse(sourceText, em_parse_options(options));
+            return em_parse(s, em_parse_options(options));
         }
         case "javascript": {
-            return js_parse(sourceText);
+            return js_parse(s);
         }
         case "python": {
-            return py_parse(sourceText);
+            return py_parse(s);
         }
         default: {
-            return em_parse(sourceText, em_parse_options(options));
+            return em_parse(s, em_parse_options(options));
         }
     }
 }

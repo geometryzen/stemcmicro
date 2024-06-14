@@ -2,7 +2,6 @@ import { create_tensor_elements, is_str, Tensor, zero } from "@stemcmicro/atoms"
 import { ExprContext } from "@stemcmicro/context";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, is_cons, nil, U } from "@stemcmicro/tree";
-import { compare_term_term } from "./calculators/compare/compare_term_term";
 import { defs } from "./runtime/defs";
 
 // both ints
@@ -64,7 +63,6 @@ export function sort_stack(n: number, $: ExprContext) {
  * @param $
  */
 export function sort(arr: U[], $: ExprContext): void {
-    arr.sort(function (a, b) {
-        return compare_term_term(a, b, $);
-    });
+    const compareFn = $.compareFn(native_sym(Native.add));
+    arr.sort(compareFn);
 }

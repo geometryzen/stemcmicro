@@ -7,28 +7,25 @@ import { compare_expr_expr } from "./compare_expr_expr";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { compare_tensors } from "./compare_tensors";
 
-export function compare_factor_factor(lhs: U, rhs: U): Sign {
-    // console.lg("compare_factor_factor", $.toInfixString(lhs), $.toInfixString(rhs));
-
+export function compare_factors(lhs: U, rhs: U): Sign {
     // We have to treat (pow base expo) as a special case because of the ambiguity in representing a symbol.
     // i.e. sym is the same as (pow sym expo).
     // So we have to order power expressions according to the base.
-
-    // Under multiplication, we don't want strings to be sorted because they don't commute.
-    // This makes more sense for addition, but why order them under multiplication?
-    // Perhaps the only thing that doesn't commute under addition?
-    // This will likely mess with the use of strings as units of measure.
-    if (is_str(lhs) && is_str(rhs)) {
-        return SIGN_EQ;
-    }
-
     if (is_cons(lhs) && is_cons_opr_eq_power(lhs)) {
         const base = lhs.base;
-        return compare_factor_factor(base, rhs);
+        try {
+            return compare_factors(base, rhs);
+        } finally {
+            base.release();
+        }
     }
     if (is_cons(rhs) && is_cons_opr_eq_power(rhs)) {
         const base = rhs.base;
-        return compare_factor_factor(lhs, base);
+        try {
+            return compare_factors(lhs, base);
+        } finally {
+            base.release();
+        }
     }
 
     if (lhs === rhs || lhs.equals(rhs)) {
@@ -140,7 +137,11 @@ export function compare_factor_factor(lhs: U, rhs: U): Sign {
 
     if (is_str(lhs)) {
         if (is_str(rhs)) {
-            return strcmp(lhs.str, rhs.str);
+            // Under multiplication, we don't want strings to be sorted because they don't commute.
+            // This makes more sense for addition, but why order them under multiplication?
+            // Perhaps the only thing that doesn't commute under addition?
+            // This will likely mess with the use of strings as units of measure.
+            return SIGN_EQ;
         } else {
             return SIGN_LT;
         }

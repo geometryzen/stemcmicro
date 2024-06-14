@@ -1,5 +1,5 @@
 import { is_blade, is_boo, is_imu, is_num, is_str, is_tensor } from "@stemcmicro/atoms";
-import { ExprContext, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
+import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { compare_blade_blade, compare_num_num, contains_single_blade, count_factors, is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
@@ -7,7 +7,7 @@ import { remove_factors } from "../remove_factors";
 import { compare_expr_expr } from "./compare_expr_expr";
 import { extract_single_blade } from "./extract_single_blade";
 
-export function compare_term_term(lhs: U, rhs: U, $: ExprContext): Sign {
+export function compare_terms(lhs: U, rhs: U): Sign {
     const lhsR = canonical_factor_num_rhs(lhs);
     const rhsR = canonical_factor_num_rhs(rhs);
 
@@ -21,7 +21,7 @@ export function compare_term_term(lhs: U, rhs: U, $: ExprContext): Sign {
         return SIGN_EQ;
     }
 
-    switch (compare_terms_core(lhsR, rhsR, $)) {
+    switch (compare_terms_core(lhsR, rhsR)) {
         case SIGN_GT: {
             return SIGN_GT;
         }
@@ -40,7 +40,7 @@ export function compare_term_term(lhs: U, rhs: U, $: ExprContext): Sign {
     }
 }
 
-function compare_terms_core(lhs: U, rhs: U, $: ExprContext): Sign {
+function compare_terms_core(lhs: U, rhs: U): Sign {
     // console.lg("ENTERING", "cmp_terms", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
     // numbers can be combined
     if (lhs.equals(rhs)) {
@@ -53,7 +53,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExprContext): Sign {
         if (bladeL.equals(lhs) && bladeR.equals(rhs)) {
             return compare_blade_blade(bladeL, bladeR);
         } else {
-            switch (compare_term_term(bladeL, bladeR, $)) {
+            switch (compare_terms(bladeL, bladeR)) {
                 case SIGN_GT: {
                     return SIGN_GT;
                 }
@@ -61,7 +61,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExprContext): Sign {
                     return SIGN_LT;
                 }
                 default: {
-                    return compare_term_term(remove_factors(lhs, is_blade), remove_factors(rhs, is_blade), $);
+                    return compare_terms(remove_factors(lhs, is_blade), remove_factors(rhs, is_blade));
                 }
             }
         }
@@ -76,7 +76,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExprContext): Sign {
     }
 
     if (contains_single_imu(lhs) && contains_single_imu(rhs)) {
-        return compare_term_term(remove_factors(lhs, is_imu), remove_factors(rhs, is_imu), $);
+        return compare_terms(remove_factors(lhs, is_imu), remove_factors(rhs, is_imu));
     }
 
     // These probably belong in general expression comparision.
@@ -120,7 +120,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExprContext): Sign {
     if (lhsPart.equals(lhs) && rhsPart.equals(rhs)) {
         return compare_expr_expr(lhsPart, rhsPart);
     } else {
-        return compare_term_term(lhsPart, rhsPart, $);
+        return compare_terms(lhsPart, rhsPart);
     }
 }
 

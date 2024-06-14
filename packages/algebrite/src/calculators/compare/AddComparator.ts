@@ -1,10 +1,9 @@
-import { ExprContext } from "@stemcmicro/context";
 import { U } from "@stemcmicro/tree";
 import { ExprComparator, Sign } from "../../env/ExtensionEnv";
-import { compare_term_term } from "./compare_term_term";
+import { compare_terms } from "./compare_terms";
 
 export class AddComparator implements ExprComparator {
-    compare(lhs: U, rhs: U, $: ExprContext): Sign {
-        return compare_term_term(lhs, rhs, $);
+    compare(lhs: U, rhs: U): Sign {
+        return compare_terms(lhs, rhs);
     }
 }

@@ -1,10 +1,8 @@
 import { imu, is_blade, is_uom, negOne, one } from "@stemcmicro/atoms";
-import { count_factors } from "@stemcmicro/helpers";
-import { remove_factors } from "../../calculators/remove_factors";
+import { count_factors, remove_factors } from "@stemcmicro/helpers";
+import { Native, native_sym } from "@stemcmicro/native";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { Native } from "@stemcmicro/native";
-import { native_sym } from "@stemcmicro/native";
 import { is_power } from "../../runtime/helpers";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";

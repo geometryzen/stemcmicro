@@ -1,6 +1,7 @@
 import { one } from "@stemcmicro/atoms";
-import { canonicalize_multiplicative_expr, is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { cons, Cons, is_cons, U } from "@stemcmicro/tree";
+import { canonicalize_multiplicative_expr } from "./canonicalize_multiplicative_expr";
+import { is_cons_opr_eq_multiply } from "./is_cons_opr_eq_multiply";
 
 /**
  * Removes factors from a (* f1 f2 f3) or atom that satisfy the predicate.

@@ -1,9 +1,7 @@
-import { count_factors } from "@stemcmicro/helpers";
-import { remove_factors } from "../../calculators/remove_factors";
+import { count_factors, remove_factors } from "@stemcmicro/helpers";
+import { Native, native_sym } from "@stemcmicro/native";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { Native } from "@stemcmicro/native";
-import { native_sym } from "@stemcmicro/native";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../helpers/CompositeOperator";

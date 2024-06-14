@@ -1,6 +1,6 @@
 import { is_sym } from "@stemcmicro/atoms";
+import { Sign } from "@stemcmicro/context";
 import { is_nil, U } from "@stemcmicro/tree";
-import { Sign } from "../../env/ExtensionEnv";
 import { compare_sym_sym } from "./compare_sym_sym";
 
 /**

@@ -3,20 +3,10 @@ import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, nil, U } from "@stemcmicro/tree";
-import { Extension, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_STR } from "../../hashing/hash_info";
 
 const ADD = native_sym(Native.add);
-
-export function strcmp(str1: string, str2: string): Sign {
-    if (str1 === str2) {
-        return 0;
-    } else if (str1 > str2) {
-        return 1;
-    } else {
-        return -1;
-    }
-}
 
 export function is_str(arg: unknown): arg is Str {
     return arg instanceof Str;

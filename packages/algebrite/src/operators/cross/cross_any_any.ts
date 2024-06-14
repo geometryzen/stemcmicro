@@ -1,9 +1,7 @@
 import { create_sym, is_blade, Sym } from "@stemcmicro/atoms";
-import { contains_single_blade } from "@stemcmicro/helpers";
+import { contains_single_blade, extract_single_blade, remove_factors } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons2, items_to_cons, U } from "@stemcmicro/tree";
-import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
-import { remove_factors } from "../../calculators/remove_factors";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Function2 } from "../helpers/Function2";

@@ -1,8 +1,9 @@
 import { is_uom, Uom } from "@stemcmicro/atoms";
-import { count_factors, is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
-import { remove_factors } from "../remove_factors";
+import { count_factors } from "./count_factors";
+import { is_cons_opr_eq_multiply } from "./is_cons_opr_eq_multiply";
 import { not_is_uom } from "./not_is_uom";
+import { remove_factors } from "./remove_factors";
 
 export function extract_single_uom(expr: U): Uom {
     if (is_uom(expr)) {

@@ -1,11 +1,10 @@
 import { create_int, eight, four, half, imu, is_rat, negFour, negOne, nine, one, Tensor, third, three, two } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { add, divide, guess, iszero, multiply, negate, power, subtract } from "@stemcmicro/helpers";
+import { add, compare_expr_expr, divide, guess, iszero, multiply, negate, power, subtract } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { caddr, cadr, car, Cons, nil, U } from "@stemcmicro/tree";
 import { rational } from "./bignum";
 import { add_terms } from "./calculators/add/add_terms";
-import { compare_expr_expr } from "./calculators/compare/compare_expr_expr";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { is_complex_number, is_poly_expanded_form } from "./is";
 import { coefficients } from "./operators/coeff/coeff";

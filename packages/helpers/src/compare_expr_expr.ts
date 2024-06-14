@@ -1,8 +1,9 @@
 import { is_blade, is_imu, is_num, is_str, is_sym, is_tensor, is_uom } from "@stemcmicro/atoms";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
-import { compare_blade_blade, compare_num_num } from "@stemcmicro/helpers";
 import { car, cdr, is_cons, U } from "@stemcmicro/tree";
-import { strcmp } from "../../operators/str/str_extension";
+import { compare_blade_blade } from "./compare_blade_blade";
+import { compare_num_num } from "./compare_num_num";
+import { compare_string_string } from "./compare_string_string";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { compare_tensors } from "./compare_tensors";
 
@@ -41,7 +42,7 @@ export function compare_expr_expr(lhs: U, rhs: U): Sign {
     // Under addition, or multiplication, we shouldn't get here.
     // Especially under addition where the addition (+) operator is usually taken to mean string concatenation.
     if (is_str(lhs) && is_str(rhs)) {
-        return strcmp(lhs.str, rhs.str);
+        return compare_string_string(lhs.str, rhs.str);
     }
 
     if (is_str(lhs)) {

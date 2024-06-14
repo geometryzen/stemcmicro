@@ -1,11 +1,11 @@
 import { two } from "@stemcmicro/atoms";
-import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
+import { compare_sym_sym } from "@stemcmicro/helpers";
+import { items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { items_to_cons, U } from "../../tree/tree";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_sym } from "../sym/is_sym";

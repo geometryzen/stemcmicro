@@ -1,11 +1,15 @@
 import { is_blade, is_boo, is_imu, is_num, is_str, is_tensor } from "@stemcmicro/atoms";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
-import { compare_blade_blade, compare_num_num, contains_single_blade, count_factors, is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
-import { canonical_factor_num_lhs, canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
-import { remove_factors } from "../remove_factors";
+import { canonical_factor_num_lhs, canonical_factor_num_rhs } from "./canonical_factor_num";
+import { compare_blade_blade } from "./compare_blade_blade";
 import { compare_expr_expr } from "./compare_expr_expr";
+import { compare_num_num } from "./compare_num_num";
+import { contains_single_blade } from "./contains_single_blade";
+import { count_factors } from "./count_factors";
 import { extract_single_blade } from "./extract_single_blade";
+import { is_cons_opr_eq_multiply } from "./is_cons_opr_eq_multiply";
+import { remove_factors } from "./remove_factors";
 
 export function compare_terms(lhs: U, rhs: U): Sign {
     const lhsR = canonical_factor_num_rhs(lhs);

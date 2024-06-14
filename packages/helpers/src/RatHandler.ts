@@ -9,7 +9,7 @@ const ISONE = native_sym(Native.isone);
 const ISZERO = native_sym(Native.iszero);
 const PI = native_sym(Native.PI);
 
-export class RatExprHandler implements ExprHandler<Rat> {
+export class RatHandler implements ExprHandler<Rat> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     binL(lhs: Rat, opr: Sym, rhs: U, env: ExprContext): U {
         throw new Error("Method not implemented.");

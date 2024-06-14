@@ -1,11 +1,12 @@
 import { is_blade, is_hyp, is_imu, is_num, is_str, is_sym, is_tensor, is_uom } from "@stemcmicro/atoms";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
-import { compare_num_num, is_cons_opr_eq_power } from "@stemcmicro/helpers";
 import { car, cdr, is_cons, is_nil, U } from "@stemcmicro/tree";
-import { strcmp } from "../../operators/str/str_extension";
 import { compare_expr_expr } from "./compare_expr_expr";
+import { compare_num_num } from "./compare_num_num";
+import { compare_string_string } from "./compare_string_string";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { compare_tensors } from "./compare_tensors";
+import { is_cons_opr_eq_power } from "./is_cons_opr_eq_power";
 
 export function compare_factors(lhs: U, rhs: U): Sign {
     // We have to treat (pow base expo) as a special case because of the ambiguity in representing a symbol.
@@ -111,7 +112,7 @@ export function compare_factors(lhs: U, rhs: U): Sign {
 
     if (is_hyp(lhs) && is_hyp(rhs)) {
         // Will probably order base on symbols in future.
-        return strcmp(lhs.printname, rhs.printname);
+        return compare_string_string(lhs.printname, rhs.printname);
     }
 
     if (is_hyp(lhs)) {

@@ -1,10 +1,8 @@
 import { Blade, create_int, is_blade, one, Rat } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { contains_single_blade, divide, multiply, power } from "@stemcmicro/helpers";
+import { contains_single_blade, divide, extract_single_blade, multiply, power, remove_factors } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { items_to_cons, U } from "@stemcmicro/tree";
-import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
-import { remove_factors } from "../../calculators/remove_factors";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function power_blade_int(x: Blade, n: number, _: ExprContext): U {

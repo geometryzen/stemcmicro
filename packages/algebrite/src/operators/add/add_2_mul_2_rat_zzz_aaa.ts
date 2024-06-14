@@ -1,5 +1,5 @@
 import { Rat } from "@stemcmicro/atoms";
-import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
+import { compare_sym_sym } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";

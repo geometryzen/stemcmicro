@@ -1,6 +1,7 @@
 import { is_num, Num, one } from "@stemcmicro/atoms";
-import { canonicalize_multiplicative_expr, is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { cons, is_cons, is_nil, U } from "@stemcmicro/tree";
+import { canonicalize_multiplicative_expr } from "./canonicalize_multiplicative_expr";
+import { is_cons_opr_eq_multiply } from "./is_cons_opr_eq_multiply";
 
 /**
  * expr = canonical_factor_num_lhs(expr) * canonical_factor_num_rhs(expr)

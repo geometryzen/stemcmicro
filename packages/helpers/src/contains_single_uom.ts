@@ -1,6 +1,7 @@
 import { is_uom } from "@stemcmicro/atoms";
-import { count_factors, is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import { is_cons, U } from "@stemcmicro/tree";
+import { count_factors } from "./count_factors";
+import { is_cons_opr_eq_multiply } from "./is_cons_opr_eq_multiply";
 
 export function contains_single_uom(expr: U): boolean {
     if (is_uom(expr)) {

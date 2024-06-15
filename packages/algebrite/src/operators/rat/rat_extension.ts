@@ -181,6 +181,9 @@ export class RatExtension implements ExprHandler<Rat> {
                     head.release();
                 }
             }
+            case Native.mag: {
+                return target.abs();
+            }
             case Native.ascii: {
                 return create_str(this.toAsciiString(target));
             }

@@ -1,86 +1,29 @@
-import { half, is_flt, is_sym, zero } from "@stemcmicro/atoms";
+import { half, is_flt, is_imu, is_sym, piAsFlt, zero, zeroAsFlt } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
 import { stack_arg } from "@stemcmicro/eigenmath";
-import { is_add, is_base_of_natural_logarithm, is_cons_opr_eq_sym, is_multiply, is_negative, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_negative, is_pi, is_power } from "@stemcmicro/helpers";
+import { add, divide, iszero, is_add, is_base_of_natural_logarithm, is_cons_opr_eq_sym, is_multiply, is_negative, is_num_and_eq_number, is_num_and_eq_one_half, is_num_and_negative, is_pi, is_power, multiply, negate } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { StackU } from "@stemcmicro/stack";
-import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
+import { caddr, cadr, Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { subtract } from "../../calculators/sub/subtract";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { hook_create_err } from "../../hooks/hook_create_err";
+import { isreal } from "../../helpers/isreal";
+import { rect } from "../../helpers/rect";
 import { is_num_and_gt_zero } from "../../is";
 import { DynamicConstants } from "../../runtime/defs";
 import { MATH_PI } from "../../runtime/ns_math";
-import { piAsFlt, zeroAsFlt } from "../../tree/flt/Flt";
-import { caddr, cadr } from "../../tree/helpers";
+import { arctan } from "../arctan/arctan";
+import { denominator } from "../denominator/denominator";
 import { MATH_EXP } from "../exp/MATH_EXP";
 import { is_unaop } from "../helpers/is_unaop";
 import { im } from "../imag/imag";
-import { is_imu } from "../imu/is_imu";
+import { numerator } from "../numerator/numerator";
 import { re } from "../real/real";
 
 export const ARG = native_sym(Native.arg);
 export const IM = native_sym(Native.imag);
 export const RE = native_sym(Native.real);
-
-/**
- * Example of inverting the registration
- */
-export function define_arg($: ExtensionEnv): void {
-    // If we also want to control the name as it appears in the script
-    $.defineEvalFunction(ARG, function (expr: Cons, $: ExtensionEnv): U {
-        const z = cadr(expr);
-        // console.lg("z", $.toInfixString(z));
-        const value_of_z = $.valueOf(z);
-        // console.lg("value_of_z", $.toInfixString(value_of_z));
-        const arg_z = arg(value_of_z, $);
-        // console.lg(`arg_z => ${render_as_sexpr(arg_z, $)}`);
-        return arg_z;
-    });
-}
-
-function arg(z: U, $: ExtensionEnv): U {
-    // TODO: arg is being computed here by immediately going to real and imag parts.
-    // If z is in the form of a (power base expo) then it can make sense to equate to a polar form
-    // and solve for theta that way. The implementation of real is already using that approach.
-    // console.lg(`arg`, $.toSExprString(z));
-    const y = $.im(z);
-    const x = $.re(z);
-    // TODO: handle the undefined case when both x and y are zero.
-    if ($.iszero(x)) {
-        if ($.iszero(y)) {
-            // Undefined
-            return hook_create_err(items_to_cons(ARG, $.add(x, y)));
-        } else {
-            const k = is_negative(y) ? half.neg() : half;
-            const pi = DynamicConstants.PI($);
-            return $.multiply(k, pi);
-        }
-        /*
-        else if (is_negative(y)) {
-            return $.negate(pi);
-        }
-        else {
-            return divide(pi,two,$);
-        }
-        */
-    } else {
-        if (is_negative(x)) {
-            const pi = DynamicConstants.PI($);
-            if (is_negative(y)) {
-                return $.subtract($.arctan($.divide(y, x)), pi);
-            } else {
-                const lhs = $.arctan($.divide(y, x));
-                const rhs = pi;
-                const sum = $.add(lhs, rhs);
-                return sum;
-            }
-        } else {
-            // TODO: We're getting arg(x) is zero because of assumptions that x is not negative.
-            return $.arctan($.divide(y, x));
-        }
-    }
-}
 
 export function eval_arg(expr: Cons, env: ExtensionEnv): U {
     const $ = new StackU();
@@ -88,7 +31,11 @@ export function eval_arg(expr: Cons, env: ExtensionEnv): U {
     return $.pop();
 }
 
-export function yyarg(expr: U, $: ExtensionEnv): U {
+export function arg(z: U, $: ExprContext): U {
+    return subtract(yyarg(numerator(z, $), $), yyarg(denominator(z, $), $), $);
+}
+
+export function yyarg(expr: U, $: ExprContext): U {
     // console.lg("yyarg", $.toSExprString(expr));
     // case of plain number
     if (is_num_and_gt_zero(expr) || is_pi(expr)) {
@@ -96,8 +43,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     }
 
     if (is_num_and_negative(expr)) {
-        const pi = is_flt(expr) || $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : MATH_PI;
-        return $.negate(pi);
+        return is_flt(expr) || $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : MATH_PI;
     }
 
     // you'd think that something like
@@ -110,7 +56,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
 
     // Implementation in which the imaginary unit is it's own object.
     if (is_imu(expr)) {
-        return $.multiply(DynamicConstants.PI($), half);
+        return multiply($, DynamicConstants.PI($), half);
     }
 
     if (is_power(expr)) {
@@ -118,7 +64,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
         // Implementation in which imaginary unit is (pow -1 1/2).
         if (is_num_and_eq_number(base, -1)) {
             // -1 to a power
-            return $.multiply(DynamicConstants.PI($), expr.expo);
+            return multiply($, DynamicConstants.PI($), expr.expo);
         }
 
         // (pow e X) => im(X)
@@ -137,8 +83,8 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     }
 
     if (is_power(expr) && is_num_and_eq_one_half(caddr(expr))) {
-        const arg1 = $.arg(cadr(expr));
-        return $.multiply(arg1, caddr(expr));
+        const arg1 = arg(cadr(expr), $);
+        return multiply($, arg1, caddr(expr));
     }
 
     if (is_multiply(expr)) {
@@ -146,10 +92,10 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
         return expr
             .tail()
             .map(function (x) {
-                return $.arg(x);
+                return arg(x, $);
             })
             .reduce(function (x, y) {
-                return $.add(x, y);
+                return add($, x, y);
             }, zero);
     }
 
@@ -157,7 +103,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
         return arg_of_sum_old(expr, $);
     }
 
-    if ($.isreal(expr)) {
+    if (isreal(expr, $)) {
         return zero;
     }
 
@@ -166,28 +112,28 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     return items_to_cons(ARG, expr);
 }
 
-function arg_of_sum_old(expr: Cons, $: ExtensionEnv): U {
+function arg_of_sum_old(expr: Cons, $: ExprContext): U {
     // console.lg(`arg_of_sum(${expr})`);
     // sum of terms
-    const z = $.rect(expr);
+    const z = rect(expr, $);
     // console.lg(`z => ${z}`);
     const x = re(z, $);
     const y = im(z, $);
     // console.lg(`x => ${$.toListString(x)}`);
     // console.lg(`y => ${$.toListString(y)}`);
-    if ($.iszero(x)) {
+    if (iszero(x, $)) {
         if (is_negative(y)) {
-            return $.negate(DynamicConstants.PI($));
+            return negate($, DynamicConstants.PI($));
         } else {
             return DynamicConstants.PI($);
         }
     } else {
-        const arg1 = $.arctan($.divide(y, x));
+        const arg1 = arctan(divide(y, x, $), $);
         if (is_negative(x)) {
             if (is_negative(y)) {
                 return subtract(arg1, DynamicConstants.PI($), $); // quadrant 1 -> 3
             } else {
-                return $.add(arg1, DynamicConstants.PI($)); // quadrant 4 -> 2
+                return add($, arg1, DynamicConstants.PI($)); // quadrant 4 -> 2
             }
         }
         return arg1;

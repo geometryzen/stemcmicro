@@ -39,6 +39,7 @@ import {
 import { ExprContext, is_lambda, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
+import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import {
     complex_comparator,
     complex_to_item,
@@ -47,6 +48,7 @@ import {
     convert_tensor_to_strings,
     guess,
     handle_atom_atom_binop,
+    is_cons_opr_eq_add,
     is_cons_opr_eq_power,
     is_power,
     item_to_complex,
@@ -933,7 +935,6 @@ export function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack):
         }
 
         // abs(a*b) evaluates to abs(a)*abs(b)
-
         if (car(x).equals(MULTIPLY)) {
             const h = $.length;
             let p1 = cdr(x);
@@ -2264,14 +2265,7 @@ function arg(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const z = $.pop();
     try {
         if (is_tensor(z)) {
-            const T = copy_tensor(z);
-            const n = T.nelem;
-            for (let i = 0; i < n; i++) {
-                push(T.elems[i], $);
-                arg(env, ctrl, $);
-                T.elems[i] = $.pop();
-            }
-            push(T, $);
+            push(elementwise(z, arg, env, ctrl, $), $);
             return;
         }
 
@@ -2311,7 +2305,8 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
                 context.release();
             }
         }
-
+        // The following (Rat and Flt) should be dead code if handlers are available.
+        /*
         if (is_rat(z)) {
             if (z.isZero()) {
                 $.push(new Err(new Str("arg of zero (0) is undefined")));
@@ -2328,12 +2323,13 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
             if (z.isZero()) {
                 $.push(new Err(new Str("arg of zero (0.0) is undefined")));
             } else if (z.isNegative()) {
-                push_double(-Math.PI, $);
+                push_double(-Math.PI, $);   // This is wrong, should be PI
             } else {
                 push_double(0.0, $);
             }
             return;
         }
+        */
 
         // arg((-1)**expo) => pi*expo
 
@@ -2414,57 +2410,52 @@ function arg1(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
  * [..., a*pi] => [..., a*pi]
  */
 function principal_value(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const context = new ExprContextFromProgram(env, ctrl);
     const step = two;
     const lowerBound = negOne; // or some authors use zero
     const upperBound = lowerBound.add(step);
-    try {
-        $.push(native_sym(Native.PI)); //  [..., a*pi, pi]
-        divide(env, ctrl, $); //  [..., a]
+    $.push(native_sym(Native.PI)); //      [..., a*pi, pi]
+    divide(env, ctrl, $); //               [..., a]
 
-        $.dupl(); //  [..., a, a]
-        push_native(Native.testgt, $); //  [..., a, a, >]
-        $.swap(); //  [..., a, >, a]
-        $.push(upperBound); //  [..., a, >, a, upperBound]
-        list(3, $); //  [..., a, (> a upperBound)]
-        value_of(env, ctrl, $); //  [..., a, value(> a upperBound)]
-        while ($.istrue) {
-            $.pop().release(); //  [..., a]
-            $.push(step); //  [..., a, step]
-            subtract(env, ctrl, $); //  [..., b], where b = a - step
-            $.dupl(); //  [..., b, b]
-            push_native(Native.testgt, $); //  [..., b, b, >]
-            $.swap(); //  [..., b, >, b]
-            $.push(upperBound); //  [..., b, >, b, upperBound]
-            list(3, $); //  [..., b, (> b upperBound)]
-            value_of(env, ctrl, $); //  [..., b, value(> b upperBound)]
-        }
-        $.pop().release(); //  [..., b]
-
-        $.dupl(); //  [..., b, b]
-        push_native(Native.testle, $); //  [..., b, b, <=]
-        $.swap(); //  [..., b, <=, b]
-        $.push(lowerBound); //  [..., b, <=, b, lowerBound]
-        list(3, $); //  [..., b, (<= b lowerBound)]
-        value_of(env, ctrl, $); //  [..., b, value(<= b lowerBound)]
-        while ($.istrue) {
-            $.pop().release(); //  [..., b]
-            $.push(step); //  [..., b, step]
-            sum_terms(2, env, ctrl, $); //  [..., c], where c = b + step
-            $.dupl(); //  [..., c, c]
-            push_native(Native.testle, $); //  [..., c, c, <=]
-            $.swap(); //  [..., c, <=, c]
-            $.push(lowerBound); //  [..., c, <=, c, lowerBound]
-            list(3, $); //  [..., c, (<= c lowerBound)]
-            value_of(env, ctrl, $); //  [..., c, value(<= c lowerBound)]
-        }
-        $.pop().release(); //  [..., c]
-
-        $.push(native_sym(Native.PI)); //  [..., c, pi]
-        multiply_factors(2, env, ctrl, $); //  [..., c * pi]
-    } finally {
-        context.release();
+    $.dupl(); //                           [..., a, a]
+    push_native(Native.testgt, $); //      [..., a, a, >]
+    $.swap(); //                           [..., a, >, a]
+    $.push(upperBound); //                 [..., a, >, a, upperBound]
+    list(3, $); //                         [..., a, (> a upperBound)]
+    value_of(env, ctrl, $); //             [..., a, value(> a upperBound)]
+    while ($.istrue) {
+        $.pop().release(); //              [..., a]
+        $.push(step); //                   [..., a, step]
+        subtract(env, ctrl, $); //         [..., b], where b = a - step
+        $.dupl(); //                       [..., b, b]
+        push_native(Native.testgt, $); //  [..., b, b, >]
+        $.swap(); //                       [..., b, >, b]
+        $.push(upperBound); //             [..., b, >, b, upperBound]
+        list(3, $); //                     [..., b, (> b upperBound)]
+        value_of(env, ctrl, $); //         [..., b, value(> b upperBound)]
     }
+    $.pop().release(); //                  [..., b]
+
+    $.dupl(); //                           [..., b, b]
+    push_native(Native.testle, $); //      [..., b, b, <=]
+    $.swap(); //                           [..., b, <=, b]
+    $.push(lowerBound); //                 [..., b, <=, b, lowerBound]
+    list(3, $); //                         [..., b, (<= b lowerBound)]
+    value_of(env, ctrl, $); //             [..., b, value(<= b lowerBound)]
+    while ($.istrue) {
+        $.pop().release(); //              [..., b]
+        $.push(step); //                   [..., b, step]
+        sum_terms(2, env, ctrl, $); //     [..., c], where c = b + step
+        $.dupl(); //                       [..., c, c]
+        push_native(Native.testle, $); //  [..., c, c, <=]
+        $.swap(); //                       [..., c, <=, c]
+        $.push(lowerBound); //             [..., c, <=, c, lowerBound]
+        list(3, $); //                     [..., c, (<= c lowerBound)]
+        value_of(env, ctrl, $); //         [..., c, value(<= c lowerBound)]
+    }
+    $.pop().release(); //                  [..., c]
+
+    $.push(native_sym(Native.PI)); //      [..., c, pi]
+    multiply_factors(2, env, ctrl, $); //  [..., c * pi]
 }
 
 /**
@@ -7511,7 +7502,7 @@ export function rect(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
             return;
         }
 
-        if (car(z).equals(ADD)) {
+        if (is_cons(z) && is_cons_opr_eq_add(z)) {
             let p1 = cdr(z);
             const h = $.length;
             while (is_cons(p1)) {
@@ -7523,7 +7514,7 @@ export function rect(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
             return;
         }
 
-        if (car(z).equals(MULTIPLY)) {
+        if (is_cons(z) && is_cons_opr_eq_multiply(z)) {
             let p1 = cdr(z);
             const h = $.length;
             while (is_cons(p1)) {
@@ -7535,13 +7526,13 @@ export function rect(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): vo
             return;
         }
 
-        if (is_cons(z) && car(z).equals(POWER)) {
+        if (is_cons(z) && is_cons_opr_eq_power(z)) {
             const base = z.base;
             const expo = z.expo;
 
             // handle sum in exponent
 
-            if (car(expo).equals(ADD)) {
+            if (is_cons(expo) && is_cons_opr_eq_add(expo)) {
                 let p1 = cdr(expo);
                 const h = $.length;
                 while (is_cons(p1)) {

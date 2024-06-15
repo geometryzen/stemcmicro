@@ -35,14 +35,15 @@ describe("abs", function () {
         check("typeof(ex)", "blade");
         check("abs(ex)", "1");
     });
-    it("abs(x: blade)", function () {
-        check("typeof(ex)", "blade");
-        check("abs(ex)", "1");
-        // check("abs(Ax*ex+Ay*ey)", "1");
-    });
-    it("abs(x + i * y)", function () {
+    it("abs(x+i*y)", function () {
         check(["i=sqrt(-1)", "i * i"], "-1");
         check(["i=sqrt(-1)", "abs(i)"], "1");
         check(["i=sqrt(-1)", "abs(x + i * y)"], "(x**2+y**2)**(1/2)");
+    });
+    it("abs(x*y*z)", function () {
+        check(["abs(x*y*z)"], "abs(x)*abs(y)*abs(z)");
+    });
+    it("abs(1/x)", function () {
+        check(["abs(1/x)"], "1/(abs(x))");
     });
 });

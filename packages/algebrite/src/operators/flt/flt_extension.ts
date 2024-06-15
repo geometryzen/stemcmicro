@@ -1,14 +1,13 @@
-import { assert_flt, create_str, create_sym, Flt, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, Sym } from "@stemcmicro/atoms";
-import { ExprContext } from "@stemcmicro/context";
+import { assert_flt, create_flt, create_str, create_sym, Err, Flt, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, oneAsFlt, piAsFlt, Sym, zeroAsFlt } from "@stemcmicro/atoms";
+import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { iszero, multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { Extension, FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { order_binary } from "../../helpers/order_binary";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
-import { create_flt, oneAsFlt, zeroAsFlt } from "../../tree/flt/Flt";
 
 const ADD = native_sym(Native.add);
 const ISONE = native_sym(Native.isone);
@@ -26,7 +25,7 @@ export function compare_flts(lhs: Flt, rhs: Flt): Sign {
     return 0;
 }
 
-export class FltExtension implements Extension<Flt> {
+export class FltExtension implements ExprHandler<Flt> {
     readonly #hash = hash_for_atom(assert_flt(oneAsFlt));
     constructor() {
         // Nothing to see here.
@@ -161,6 +160,15 @@ export class FltExtension implements Extension<Flt> {
             case Native.abs: {
                 return target.abs();
             }
+            case Native.arg: {
+                if (target.isNegative()) {
+                    return piAsFlt;
+                } else if (target.isZero()) {
+                    return new Err(items_to_cons(native_sym(opr.id), target));
+                } else {
+                    return zeroAsFlt;
+                }
+            }
             case Native.grade: {
                 const head = argList.head;
                 try {
@@ -172,6 +180,9 @@ export class FltExtension implements Extension<Flt> {
                 } finally {
                     head.release();
                 }
+            }
+            case Native.mag: {
+                return target.abs();
             }
             case Native.ascii: {
                 return create_str(this.toAsciiString(target, env));

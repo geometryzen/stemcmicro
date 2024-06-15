@@ -153,6 +153,10 @@ class SymExtension implements Extension<Sym> {
                     head.release();
                 }
             }
+            case Native.mag: {
+                // This assumes that all symbols represent positive scalars.
+                return target;
+            }
             case Native.ascii: {
                 return create_str(this.toAsciiString(target, env));
             }

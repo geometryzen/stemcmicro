@@ -113,6 +113,9 @@ class ImuExtension implements Extension<Imu> {
             case Native.infix: {
                 return create_str(this.toInfixString(target));
             }
+            case Native.mag: {
+                return one;
+            }
             case Native.simplify: {
                 return target;
             }

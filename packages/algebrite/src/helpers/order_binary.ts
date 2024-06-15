@@ -5,8 +5,8 @@ import { items_to_cons, U } from "@stemcmicro/tree";
 /**
  * Ensures the ordering of binary products. There is no evaluation.
  */
-export function order_binary(opr: Sym, lhs: U, rhs: U, _: Pick<ExprContext, "compareFn">): U {
-    const compareFn = _.compareFn(opr);
+export function order_binary(opr: Sym, lhs: U, rhs: U, $: Pick<ExprContext, "compareFn">): U {
+    const compareFn = $.compareFn(opr);
     switch (compareFn(lhs, rhs)) {
         case SIGN_LT: {
             return items_to_cons(opr, lhs, rhs);

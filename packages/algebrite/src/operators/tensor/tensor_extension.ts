@@ -174,20 +174,20 @@ class TensorExtension implements Extension<Tensor> {
         switch (opr.id) {
             case Native.abs: {
                 // Using the Eigenmath implementation right now as it is a bit simpler than abs_of_tensor.
-                const _ = new StackU();
+                const $ = new StackU();
                 if (target.ndim > 1) {
-                    _.push(ABS);
-                    _.push(target);
-                    _.list(2);
-                    return _.pop();
+                    $.push(ABS);
+                    $.push(target);
+                    $.list(2);
+                    return $.pop();
                 }
-                _.push(target); //  [x]
-                _.push(target); //  [x, x]
-                conjfunc(env, env, _); //  [x, conj(x)]
-                inner(env, env, _); //  [x | conj(x)]
-                push_rational(1, 2, _); //  [x | conj(x), 1/2]
-                power(env, env, _); //  [sqrt(x | conj(x))]
-                return _.pop();
+                $.push(target); //          [x]
+                $.push(target); //          [x, x]
+                conjfunc(env, env, $); //   [x, conj(x)]
+                inner(env, env, $); //      [x | conj(x)]
+                push_rational(1, 2, $); //  [x | conj(x), 1/2]
+                power(env, env, $); //      [sqrt(x | conj(x))]
+                return $.pop();
             }
             case Native.adj: {
                 return adj(target, env);

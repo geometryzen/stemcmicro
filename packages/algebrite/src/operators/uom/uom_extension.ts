@@ -76,6 +76,9 @@ class UomExtension implements Extension<Uom> {
             case Native.abs: {
                 return target;
             }
+            case Native.mag: {
+                return target;
+            }
             case Native.ascii: {
                 return create_str(this.toAsciiString(target));
             }

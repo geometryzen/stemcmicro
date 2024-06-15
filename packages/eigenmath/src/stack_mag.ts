@@ -1,10 +1,12 @@
-import { is_imu, is_num, is_sym, is_tensor, is_uom, one } from "@stemcmicro/atoms";
 import { is_cons_opr_eq_add, is_cons_opr_eq_multiply, is_cons_opr_eq_power } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
-import { caddr, car, cdr, Cons, is_atom, is_cons } from "@stemcmicro/tree";
-import { absfunc, add, denominator, divide, elementwise, expfunc, imag, multiply, multiply_factors, numerator, power, push_integer, push_rational, real, rect, value_of } from "./eigenmath";
+import { caddr, car, cdr, Cons, is_atom, is_cons, nil } from "@stemcmicro/tree";
+import { delegate_to_atom } from "./delegate_to_atom";
+import { add, denominator, divide, expfunc, imag, multiply, multiply_factors, numerator, power, push_integer, push_rational, real, rect, value_of } from "./eigenmath";
 import { isminusone } from "./isminusone";
+
+const MAGNITUDE = native_sym(Native.mag);
 
 export function stack_mag(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     $.push(expr); //  [expr]
@@ -18,14 +20,8 @@ export function mag(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): voi
     const z = $.pop();
     try {
         if (is_atom(z)) {
-            if (is_imu(z)) {
-                $.push(one);
-                return;
-            }
-            if (is_tensor(z)) {
-                $.push(elementwise(z, mag, env, ctrl, $));
-                return;
-            }
+            delegate_to_atom(z, MAGNITUDE, nil, env, ctrl, $);
+            return;
         }
 
         // use numerator and denominator to handle (a + i b) / (c + i d)
@@ -48,25 +44,8 @@ function mag_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const z = $.pop();
     try {
         if (is_atom(z)) {
-            // Every atom should be handled, there should be no fall-through.
-            if (is_num(z)) {
-                $.push(z);
-                absfunc(env, ctrl, $);
-                return;
-            }
-            if (is_imu(z)) {
-                $.push(one);
-                return;
-            }
-            if (is_sym(z)) {
-                // We assume that the symbol is a real number.
-                $.push(z);
-                return;
-            }
-            if (is_uom(z)) {
-                $.push(z);
-                return;
-            }
+            delegate_to_atom(z, MAGNITUDE, nil, env, ctrl, $);
+            return;
         }
 
         // -1 to a power

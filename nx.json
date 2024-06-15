@@ -3,14 +3,10 @@
     "targetDefaults": {
         "build": {
             "cache": true,
-            "dependsOn": [
-                "^build"
-            ]
+            "dependsOn": ["^build"]
         },
         "test": {
-            "dependsOn": [
-                "build"
-            ],
+            "dependsOn": ["build"],
             "cache": true,
             "options": {
                 "passWithNoTests": true

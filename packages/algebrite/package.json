@@ -26,8 +26,6 @@
         "docs": "npm run docs:typedoc && open-cli docs/index.html",
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
         "pages": "npm run docs:typedoc && gh-pages --dist docs --dest algebrite",
-        "pretest": "npm run build",
-        "release": "release-it",
         "repl": "npm run build && node repl.mjs",
         "test": "jest",
         "lint": "eslint ."

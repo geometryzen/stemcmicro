@@ -43,8 +43,6 @@
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
         "lint": "eslint .",
         "pages": "npm run docs:typedoc && gh-pages --dist docs --dest atoms",
-        "pretest": "npm run build",
-        "release": "release-it",
         "test": "jest"
     },
     "repository": {

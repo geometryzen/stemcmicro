@@ -13,6 +13,7 @@ export { complex_comparator, complex_to_item, item_to_complex, Polar } from "./c
 export { contains_single_blade } from "./contains_single_blade";
 export { contains_single_uom } from "./contains_single_uom";
 export { convert_tensor_to_strings } from "./convert_tensor_to_strings";
+export { copy_tensor } from "./copy_tensor";
 export { count_factors } from "./count_factors";
 export { convertMetricToNative, create_algebra_as_blades, create_algebra_as_tensor } from "./create_algebra_as_tensor";
 export { DirectiveStack } from "./DirectiveStack";

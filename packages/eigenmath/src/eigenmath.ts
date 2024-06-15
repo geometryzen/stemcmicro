@@ -39,16 +39,17 @@ import {
 import { ExprContext, is_lambda, LambdaExpr, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
-import { is_cons_opr_eq_multiply } from "@stemcmicro/helpers";
 import {
     complex_comparator,
     complex_to_item,
     contains_single_blade,
     convertMetricToNative,
     convert_tensor_to_strings,
+    copy_tensor,
     guess,
     handle_atom_atom_binop,
     is_cons_opr_eq_add,
+    is_cons_opr_eq_multiply,
     is_cons_opr_eq_power,
     is_power,
     item_to_complex,
@@ -503,23 +504,23 @@ function coeffs(P: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
         push_integer(0, $); //  [..., P(x), X, 0]
         subst($); //  [..., P(0)]
         value_of(env, ctrl, $);
-        const C = $.pop(); //  [...]
+        const C = $.pop(); //       [...]
 
-        push(C, $); //  [..., P(0)]
+        push(C, $); //              [..., P(0)]
 
-        push(P, $); //  [..., P(0), P(x)]
-        push(C, $); //  [..., P(0), P(x), P(0)]
+        push(P, $); //              [..., P(0), P(x)]
+        push(C, $); //              [..., P(0), P(x), P(0)]
         subtract(env, ctrl, $); //  [..., P(0), P(x)-P(0)]
-        P = $.pop(); //  [..., P(0)]
+        P = $.pop(); //             [..., P(0)]
 
         if (iszero(P, env)) {
             break;
         }
 
-        push(P, $); //  [..., P(0), P(x)-P(0)]
-        push(X, $); //  [..., P(0), P(x)-P(0), x]
-        divide(env, ctrl, $); //  [..., P(0), (P(x)-P(0))/x]
-        P = $.pop(); //  [..., P(0)]
+        push(P, $); //              [..., P(0), P(x)-P(0)]
+        push(X, $); //              [..., P(0), P(x)-P(0), x]
+        divide(env, ctrl, $); //    [..., P(0), (P(x)-P(0))/x]
+        P = $.pop(); //             [..., P(0)]
     }
 }
 
@@ -646,24 +647,6 @@ export function complexity(expr: U): number {
         // Atoms have complexity of 1
         return 1;
     }
-}
-
-export function copy_tensor<T extends U>(source: Tensor<T>): Tensor<T> {
-    const dst = alloc_tensor<T>();
-
-    const ndim = source.ndim;
-
-    for (let i = 0; i < ndim; i++) {
-        dst.dims[i] = source.dims[i];
-    }
-
-    const nelem = source.nelem;
-
-    for (let i = 0; i < nelem; i++) {
-        dst.elems[i] = source.elems[i];
-    }
-
-    return dst;
 }
 
 function decomp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {

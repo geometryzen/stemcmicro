@@ -2247,11 +2247,6 @@ export function stack_arg(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 function arg(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const z = $.pop();
     try {
-        if (is_tensor(z)) {
-            push(elementwise(z, arg, env, ctrl, $), $);
-            return;
-        }
-
         push(z, $);
         numerator(env, ctrl, $);
         arg1(env, ctrl, $);
@@ -2851,11 +2846,6 @@ export function stack_cos(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 
 function cosfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const p1 = $.pop();
-
-    if (is_tensor(p1)) {
-        push(elementwise(p1, cosfunc, env, ctrl, $), $);
-        return;
-    }
 
     if (is_flt(p1)) {
         let d = p1.toNumber();
@@ -6069,11 +6059,6 @@ export function stack_log(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     let x = $.pop();
 
-    if (is_tensor(x)) {
-        push(elementwise(x, logfunc, env, ctrl, $), $);
-        return;
-    }
-
     // log of zero is not evaluated
 
     if (iszero(x, env)) {
@@ -6986,11 +6971,6 @@ export function stack_polar(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 function polar(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const p1 = $.pop();
 
-    if (is_tensor(p1)) {
-        push(elementwise(p1, polar, env, ctrl, $), $);
-        return;
-    }
-
     $.push(p1);
     mag(env, ctrl, $);
     push(imu, $);
@@ -7400,11 +7380,6 @@ export function stack_rationalize(p1: Cons, env: ProgramEnv, ctrl: ProgramContro
 function rationalize(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     let p1 = $.pop();
 
-    if (is_tensor(p1)) {
-        push(elementwise(p1, rationalize, env, ctrl, $), $);
-        return;
-    }
-
     let p2: U = one;
 
     while (find_divisor(p1, env, ctrl, $)) {
@@ -7437,13 +7412,6 @@ export function stack_real(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
 export function real(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const z = $.pop(); //  []
     try {
-        if (is_atom(z)) {
-            // I'd like to apply the Native.real operation to this atom through an extension
-            if (is_tensor(z)) {
-                push(elementwise(z, real, env, ctrl, $), $);
-                return;
-            }
-        }
         // In all other cases we would be handling cons or nil
         $.push(z); //  [z]
         rect(env, ctrl, $); //  [x+i*y]
@@ -7480,11 +7448,6 @@ export function stack_rect(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
 export function rect(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const z = $.pop();
     try {
-        if (is_tensor(z)) {
-            push(elementwise(z, rect, env, ctrl, $), $);
-            return;
-        }
-
         if (is_cons(z) && is_cons_opr_eq_add(z)) {
             let p1 = cdr(z);
             const h = $.length;
@@ -8051,11 +8014,6 @@ export function stack_sgn(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 function sgn(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const p1 = $.pop();
 
-    if (is_tensor(p1)) {
-        push(elementwise(p1, sgn, env, ctrl, $), $);
-        return;
-    }
-
     if (!is_num(p1)) {
         push(SGN, $);
         $.push(p1);
@@ -8267,11 +8225,6 @@ export function stack_sin(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 
 function sinfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const p1 = $.pop();
-
-    if (is_tensor(p1)) {
-        push(elementwise(p1, sinfunc, env, ctrl, $), $);
-        return;
-    }
 
     if (is_flt(p1)) {
         let d = p1.toNumber();
@@ -8491,11 +8444,6 @@ export function stack_sinh(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $:
 function sinhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const x = $.pop();
 
-    if (is_tensor(x)) {
-        push(elementwise(x, sinhfunc, env, ctrl, $), $);
-        return;
-    }
-
     if (is_flt(x)) {
         push_double(Math.sinh(x.toNumber()), $);
         return;
@@ -8699,11 +8647,6 @@ export function stack_tan(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pr
 function tanfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const p1 = $.pop();
 
-    if (is_tensor(p1)) {
-        push(elementwise(p1, tanfunc, env, ctrl, $), $);
-        return;
-    }
-
     if (is_flt(p1)) {
         let d = p1.toNumber();
         d = Math.tan(d);
@@ -8861,11 +8804,6 @@ export function stack_tanh(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: P
 
 function tanhfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const p1 = $.pop();
-
-    if (is_tensor(p1)) {
-        push(elementwise(p1, tanhfunc, env, ctrl, $), $);
-        return;
-    }
 
     if (is_flt(p1)) {
         let d = p1.toNumber();

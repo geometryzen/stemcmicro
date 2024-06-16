@@ -183,10 +183,10 @@ class TensorExtension implements Extension<Tensor> {
                 }
                 $.push(target); //          [x]
                 $.push(target); //          [x, x]
-                conjfunc(env, env, $); //   [x, conj(x)]
-                inner(env, env, $); //      [x | conj(x)]
+                conjfunc(env, $); //   [x, conj(x)]
+                inner(env, $); //      [x | conj(x)]
                 push_rational(1, 2, $); //  [x | conj(x), 1/2]
-                power(env, env, $); //      [sqrt(x | conj(x))]
+                power(env, $); //      [sqrt(x | conj(x))]
                 return $.pop();
             }
             case Native.adj: {

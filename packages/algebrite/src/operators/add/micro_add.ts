@@ -1,9 +1,10 @@
 import { assert_blade, is_blade, is_rat, is_tensor, zero } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
 import { assert_stack_length, combine_terms, flatten_items, list, simplify_terms, sum_tensors, value_of_args } from "@stemcmicro/eigenmath";
 import { copy_tensor } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
-import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
+import { ProgramStack } from "@stemcmicro/stack";
 import { Cons, U } from "@stemcmicro/tree";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
@@ -12,17 +13,17 @@ const ADD = native_sym(Native.add);
 /**
  * [...] => [..., X], where X is the sum of the evaluated terms, (x1 x2 x3 ... xn).
  */
-export function micro_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: ProgramStack): void {
-    ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
+export function micro_add(expr: Cons, env: ExprContext, _: ProgramStack): void {
+    env.pushDirective(Directive.expanding, env.getDirective(Directive.expanding) - 1);
     try {
         const L0 = _.length; // [...]
         _.push(expr); // [..., (+ x1 x2 ... xn)]
         _.rest(); // [..., (x1 x2 ... xn)]
-        const n = value_of_args(env, ctrl, _); // [..., v1, v2, ..., vn]
-        sum_terms(n, zero, env, ctrl, _); // [..., X]
+        const n = value_of_args(env, _); // [..., v1, v2, ..., vn]
+        sum_terms(n, zero, env, _); // [..., X]
         assert_stack_length(L0 + 1, _);
     } finally {
-        ctrl.popDirective();
+        env.popDirective();
     }
 }
 
@@ -34,7 +35,7 @@ export function micro_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, _: 
  * @param n The number of terms on the stack that should be added.
  * @param id The identity element for addition, used when n is zero.
  */
-function sum_terms(n: number, id: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function sum_terms(n: number, id: U, env: ExprContext, $: ProgramStack): void {
     if (n < 0) {
         throw new ProgrammingError(`n => ${n}`);
     }
@@ -43,13 +44,13 @@ function sum_terms(n: number, id: U, env: ProgramEnv, ctrl: ProgramControl, $: P
 
     flatten_items(start, ADD, $);
 
-    const sigma = sum_tensors(start, env, ctrl, $);
+    const sigma = sum_tensors(start, env, $);
     // const blades = sum_blades(start, env, ctrl, _);
 
-    combine_terms(start, env, ctrl, $);
+    combine_terms(start, env, $);
 
-    if (simplify_terms(start, env, ctrl, $)) {
-        combine_terms(start, env, ctrl, $);
+    if (simplify_terms(start, env, $)) {
+        combine_terms(start, env, $);
     }
 
     const k = $.length - start;
@@ -75,7 +76,7 @@ function sum_terms(n: number, id: U, env: ProgramEnv, ctrl: ProgramControl, $: P
                 for (let i = 0; i < nelem; i++) {
                     $.push(T.elems[i]);
                     $.push(p1);
-                    sum_terms(2, id, env, ctrl, $);
+                    sum_terms(2, id, env, $);
                     T.elems[i] = $.pop();
                 }
                 $.push(T);
@@ -88,7 +89,7 @@ function sum_terms(n: number, id: U, env: ProgramEnv, ctrl: ProgramControl, $: P
     }
 }
 
-export function sum_blades(start: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): U {
+export function sum_blades(start: number, env: ExprContext, $: ProgramStack): U {
     let sum: U = zero;
     for (let i = start; i < $.length; i++) {
         const rhs = $.getAt(i);
@@ -98,7 +99,7 @@ export function sum_blades(start: number, env: ProgramEnv, ctrl: ProgramControl,
             } else {
                 $.push(sum);
                 $.push(rhs);
-                add_2_blades(env, ctrl, $);
+                add_2_blades(env, $);
                 sum = $.pop();
             }
             $.splice(i, 1);
@@ -111,7 +112,7 @@ export function sum_blades(start: number, env: ProgramEnv, ctrl: ProgramControl,
 /**
  * [..., A, B] => [..., (+ A B)]
  */
-function add_2_blades(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function add_2_blades(env: ExprContext, $: ProgramStack): void {
     //                              [..., A, B]
     const B = assert_blade($.pop()); //   [..., A]
     const A = assert_blade($.pop()); //   [...]

@@ -1,5 +1,6 @@
 import { create_sym, is_imu, is_str } from "@stemcmicro/atoms";
-import { ProgramControl, ProgramEnv, ProgramIO, ProgramStack } from "@stemcmicro/stack";
+import { ExprContext } from "@stemcmicro/context";
+import { ProgramIO, ProgramStack } from "@stemcmicro/stack";
 import { cadr, is_nil, nil, U } from "@stemcmicro/tree";
 import { EigenmathParseConfig, evaluate_expression, get_binding, scan_inbuf, set_symbol, stopf, value_of } from "./eigenmath";
 import { make_should_annotate } from "./make_should_annotate";
@@ -13,15 +14,15 @@ const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
 const LAST = create_sym("last");
 
-export function make_stack_run(io: ProgramIO): (expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) => void {
+export function make_stack_run(io: ProgramIO): (expr: U, env: ExprContext, $: ProgramStack) => void {
     /**
      * run("https://...")
      * @param expr
      * @param $
      */
-    return function (expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    return function (expr: U, env: ExprContext, $: ProgramStack): void {
         $.push(cadr(expr));
-        value_of(env, ctrl, $);
+        value_of(env, $);
         const url = $.pop();
 
         if (!is_str(url)) stopf("run: string expected");
@@ -47,17 +48,17 @@ export function make_stack_run(io: ProgramIO): (expr: U, env: ProgramEnv, ctrl: 
             // This would have to come from an argument to run...
             const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
 
-            k = scan_inbuf(k, env, ctrl, $, io, config);
+            k = scan_inbuf(k, env, $, io, config);
 
             if (k === 0) break; // end of input
 
             const input = $.pop();
-            const result = evaluate_expression(input, env, ctrl, $);
+            const result = evaluate_expression(input, env, $);
             const ec: SvgRenderConfig = {
                 useImaginaryI: is_imu(get_binding(I_LOWER, nil, env)),
                 useImaginaryJ: is_imu(get_binding(J_LOWER, nil, env))
             };
-            print_value_and_input_as_svg_or_infix(result, input, should_render_svg(env), env, ctrl, ec, io.listeners, make_should_annotate(env));
+            print_value_and_input_as_svg_or_infix(result, input, should_render_svg(env), env, ec, io.listeners, make_should_annotate(env));
             if (!is_nil(result)) {
                 set_symbol(LAST, result, nil, env);
             }

@@ -1,4 +1,3 @@
-export { ProgramControl } from "./ProgramControl";
 export { ProgramEnv } from "./ProgramEnv";
 export { ProgramIO, ProgramIOListener } from "./ProgramIO";
 export { ProgramStack } from "./ProgramStack";

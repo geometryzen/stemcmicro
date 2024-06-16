@@ -1,24 +1,25 @@
 import { is_tensor } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
 import { copy_tensor } from "@stemcmicro/helpers";
-import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
+import { ProgramStack } from "@stemcmicro/stack";
 import { Cons, is_cons } from "@stemcmicro/tree";
 import { multiply, stopf, value_of } from "./eigenmath";
 
-export function stack_hadamard(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_hadamard(expr: Cons, env: ExprContext, $: ProgramStack): void {
     const argList = expr.argList;
     try {
         const head = argList.head;
         try {
             $.push(head);
-            value_of(env, ctrl, $);
+            value_of(env, $);
             let xs = argList.rest;
             try {
                 while (is_cons(xs)) {
                     const x = xs.head;
                     try {
                         $.push(x);
-                        value_of(env, ctrl, $);
-                        hadamard(env, ctrl, $);
+                        value_of(env, $);
+                        hadamard(env, $);
                         const rest = xs.rest;
                         xs.release();
                         xs = rest;
@@ -37,14 +38,14 @@ export function stack_hadamard(expr: Cons, env: ProgramEnv, ctrl: ProgramControl
     }
 }
 
-export function hadamard(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function hadamard(env: ExprContext, $: ProgramStack): void {
     const rhs = $.pop();
     const lhs = $.pop();
     try {
         if (!is_tensor(lhs) || !is_tensor(rhs)) {
             $.push(lhs);
             $.push(rhs);
-            multiply(env, ctrl, $);
+            multiply(env, $);
             return;
         }
 
@@ -67,7 +68,7 @@ export function hadamard(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
             for (let i = 0; i < nelem; i++) {
                 $.push(lhs.elems[i]);
                 $.push(rhs.elems[i]);
-                multiply(env, ctrl, $);
+                multiply(env, $);
                 H.elems[i] = $.pop();
             }
 

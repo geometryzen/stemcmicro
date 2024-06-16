@@ -19,11 +19,11 @@ function rank($: ProgramStack): void {
 }
 
 export function eval_rank(expr: Cons, env: ExprContext): U {
-    const $ = new StackU(); // ()
-    $.push(expr); // (expr)
-    $.rest(); // (argList)
-    $.head(); // (arg)
-    value_of(env, env, $); // (value)
-    rank($); // (rank)
-    return $.pop(); // ()
+    const _ = new StackU(); // ()
+    _.push(expr); // (expr)
+    _.rest(); // (argList)
+    _.head(); // (arg)
+    value_of(env, _); // (value)
+    rank(_); // (rank)
+    return _.pop(); // ()
 }

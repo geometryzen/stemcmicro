@@ -1,7 +1,7 @@
 import { Cell, CellHost, Sym, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Native } from "@stemcmicro/native";
-import { ProgramControl, ProgramEnv, ProgramIO, StackFunction } from "@stemcmicro/stack";
+import { ProgramIO, StackFunction } from "@stemcmicro/stack";
 import { Cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "./EnvConfig";
 
@@ -177,7 +177,7 @@ export interface CellListener {
 /**
  *
  */
-export interface ExtensionEnv extends ExprContext, ProgramEnv, ProgramControl, Pick<ProgramIO, "listeners"> {
+export interface ExtensionEnv extends ExprContext, Pick<ProgramIO, "listeners"> {
     addCellListener(subscriber: CellListener): void;
     removeCellListener(subscriber: CellListener): void;
     getCellHost(): CellHost;

@@ -27,7 +27,7 @@ export const RE = native_sym(Native.real);
 
 export function eval_arg(expr: Cons, env: ExtensionEnv): U {
     const $ = new StackU();
-    stack_arg(expr, env, env, $);
+    stack_arg(expr, env, $);
     return $.pop();
 }
 

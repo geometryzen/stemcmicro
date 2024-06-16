@@ -97,9 +97,9 @@ function arctan2(y: U, x: U, $: ExprContext): U {
 }
 
 function arctan_numbers(x: Num, y: Num, env: ExprContext): U {
-    const stack = new StackU();
-    eigenmath_arctan_numbers(x, y, env, env, stack);
-    return stack.pop();
+    const _ = new StackU();
+    eigenmath_arctan_numbers(x, y, env, _);
+    return _.pop();
 }
 
 /**

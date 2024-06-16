@@ -205,7 +205,7 @@ export function power_base_expo(base: U, expo: U, $: ExtensionEnv): U {
 
     if (is_base_of_natural_logarithm(base)) {
         const stack = new StackU();
-        power_e_expo(expo, $, $, stack);
+        power_e_expo(expo, $, stack);
         return hook(stack.pop(), "N");
     }
 

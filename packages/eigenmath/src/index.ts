@@ -158,7 +158,6 @@ export {
     value_of,
     value_of_args
 } from "./eigenmath";
-export { ExprContextFromProgram } from "./ExprContextFromProgram";
 export { flatten_items } from "./flatten_items";
 export { isdoublez } from "./isdoublez";
 export { isnegativeterm } from "./isnegativeterm";

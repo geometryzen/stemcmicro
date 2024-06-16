@@ -6,7 +6,7 @@ import { ExtensionEnv } from "../../env/ExtensionEnv";
 export function eval_draw(expr: Cons, env: ExtensionEnv): U {
     const io: Pick<ProgramIO, "listeners"> = env;
     const consFunction: StackFunction = make_stack_draw(io);
-    const stack = new StackU();
-    consFunction(expr, env, env, stack);
-    return stack.pop();
+    const _ = new StackU();
+    consFunction(expr, env, _);
+    return _.pop();
 }

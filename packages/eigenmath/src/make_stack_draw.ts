@@ -1,9 +1,9 @@
 import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_err, is_imu, is_num, is_tensor, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { ProgramControl, ProgramEnv, ProgramIO, ProgramStack, StackFunction } from "@stemcmicro/stack";
+import { ProgramIO, ProgramStack, StackFunction } from "@stemcmicro/stack";
 import { assert_cons, Cons, nil, U } from "@stemcmicro/tree";
 import { broadcast, evaluate_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
-import { ExprContextFromProgram } from "./ExprContextFromProgram";
 import { draw_formula, emit_list, height, set_emit_small_font, SvgRenderConfig, SvgRenderEnv, width } from "./render_svg";
 
 interface DrawContext {
@@ -46,7 +46,7 @@ const DRAW_BOTTOM_PAD = 40;
 const DRAW_XLABEL_BASELINE = 30;
 const DRAW_YLABEL_MARGIN = 15;
 
-function draw_args(argList: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): [F: U, varName: Sym, n: number, pass2: boolean] {
+function draw_args(argList: Cons, env: ExprContext, $: ProgramStack): [F: U, varName: Sym, n: number, pass2: boolean] {
     // The following illustrates how using stack operations can avoid the need for explicit reference counting code.
     // Whenever a pop happens, the popped item should either be returned or released.
     // Keeping track of the stack contents is difficult but can be aided by inline comment documentation.
@@ -61,7 +61,7 @@ function draw_args(argList: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Prog
     $.rest(); // (argList.rest.rest)
     $.dupl(); // (argList.rest.rest, argList.rest.rest)
     $.head(); // (arg2, argList.rest.rest)
-    value_of(env, ctrl, $); // (val2, argList.rest.rest)
+    value_of(env, $); // (val2, argList.rest.rest)
     const N = $.pop(); // (argList.rest.rest)
     $.rest(); // (argList.rest.rest.rest)
     $.pop(); // ()
@@ -78,15 +78,14 @@ function draw_args(argList: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Prog
 }
 
 export function make_stack_draw(io: Pick<ProgramIO, "listeners">): StackFunction {
-    return function (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    return function (expr: Cons, env: ExprContext, $: ProgramStack): void {
         assert_cons(expr);
-        if (ctrl.getDirective(Directive.drawing)) {
+        if (env.getDirective(Directive.drawing)) {
             // Do nothing
         } else {
-            const exprContext = new ExprContextFromProgram(env, ctrl);
-            ctrl.pushDirective(Directive.drawing, 1);
+            env.pushDirective(Directive.drawing, 1);
             try {
-                const [F, varName, n, pass2] = draw_args(expr.argList, env, ctrl, $);
+                const [F, varName, n, pass2] = draw_args(expr.argList, env, $);
                 /*
                 if (!(is_sym(T) && env.hasUserFunction(T))) {
                     T = X_LOWER;
@@ -105,18 +104,18 @@ export function make_stack_draw(io: Pick<ProgramIO, "listeners">): StackFunction
                         ymax: +10,
                         ymin: -10
                     };
-                    setup_trange(env, ctrl, $, dc);
-                    setup_xrange(env, ctrl, $, dc);
-                    setup_yrange(env, ctrl, $, dc);
+                    setup_trange(env, $, dc);
+                    setup_xrange(env, $, dc);
+                    setup_yrange(env, $, dc);
 
-                    setup_final(F, assert_sym(varName), env, ctrl, $, dc);
+                    setup_final(F, assert_sym(varName), env, $, dc);
 
                     const points: { t: number; x: number; y: number }[] = [];
 
                     // TODO: Why do we use the theta range? How do we ensure integrity across function calls?
-                    draw_pass1(F, varName, n, points, env, ctrl, $, dc);
+                    draw_pass1(F, varName, n, points, env, $, dc);
                     if (pass2) {
-                        draw_pass2(F, varName, points, env, ctrl, $, dc);
+                        draw_pass2(F, varName, points, env, $, dc);
                     }
 
                     const outbuf: string[] = [];
@@ -125,7 +124,7 @@ export function make_stack_draw(io: Pick<ProgramIO, "listeners">): StackFunction
                         useImaginaryI: is_imu(get_binding(I_LOWER, nil, env)),
                         useImaginaryJ: is_imu(get_binding(J_LOWER, nil, env))
                     };
-                    emit_graph(points, exprContext, $, dc, ec, outbuf);
+                    emit_graph(points, env, $, dc, ec, outbuf);
 
                     const output = outbuf.join("");
 
@@ -134,7 +133,7 @@ export function make_stack_draw(io: Pick<ProgramIO, "listeners">): StackFunction
                     restore_symbol(env);
                 }
             } finally {
-                ctrl.popDirective();
+                env.popDirective();
             }
         }
 
@@ -142,14 +141,14 @@ export function make_stack_draw(io: Pick<ProgramIO, "listeners">): StackFunction
     };
 }
 
-function setup_trange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function setup_trange(env: ExprContext, $: ProgramStack, dc: DrawContext): void {
     dc.tmin = -Math.PI;
     dc.tmax = +Math.PI;
 
     let p1: U = lookup(create_sym("trange"), env);
     $.push(p1);
-    evaluate_nonstop(env, ctrl, $);
-    floatfunc(env, ctrl, $);
+    evaluate_nonstop(env, $);
+    floatfunc(env, $);
     p1 = $.pop()!;
 
     if (!is_tensor(p1) || p1.ndim !== 1 || p1.dims[0] !== 2) return;
@@ -165,14 +164,14 @@ function setup_trange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc
     dc.tmax = p3.toNumber();
 }
 
-function setup_xrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function setup_xrange(env: ExprContext, $: ProgramStack, dc: DrawContext): void {
     dc.xmin = -10;
     dc.xmax = +10;
 
     let p1: U = lookup(create_sym("xrange"), env);
     $.push(p1);
-    evaluate_nonstop(env, ctrl, $);
-    floatfunc(env, ctrl, $);
+    evaluate_nonstop(env, $);
+    floatfunc(env, $);
     p1 = $.pop()!;
 
     if (!is_tensor(p1) || p1.ndim !== 1 || p1.dims[0] !== 2) {
@@ -188,14 +187,14 @@ function setup_xrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc
     dc.xmax = p3.toNumber();
 }
 
-function setup_yrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function setup_yrange(env: ExprContext, $: ProgramStack, dc: DrawContext): void {
     dc.ymin = -10;
     dc.ymax = +10;
 
     let p1: U = lookup(create_sym("yrange"), env);
     $.push(p1);
-    evaluate_nonstop(env, ctrl, $);
-    floatfunc(env, ctrl, $);
+    evaluate_nonstop(env, $);
+    floatfunc(env, $);
     p1 = $.pop()!;
 
     if (!is_tensor(p1) || p1.ndim !== 1 || p1.dims[0] !== 2) {
@@ -211,15 +210,15 @@ function setup_yrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc
     dc.ymax = p3.toNumber();
 }
 
-function draw_pass1(F: U, varName: Sym, n: number, points: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function draw_pass1(F: U, varName: Sym, n: number, points: { t: number; x: number; y: number }[], env: ExprContext, $: ProgramStack, dc: DrawContext): void {
     const n_minus_one = n - 1;
     for (let i = 0; i < n; i++) {
         const t = dc.tmin + ((dc.tmax - dc.tmin) * i) / n_minus_one;
-        sample(F, varName, t, points, env, ctrl, $, dc);
+        sample(F, varName, t, points, env, $, dc);
     }
 }
 
-function draw_pass2(F: U, varName: Sym, points: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function draw_pass2(F: U, varName: Sym, points: { t: number; x: number; y: number }[], env: ExprContext, $: ProgramStack, dc: DrawContext): void {
     const n = points.length - 1;
 
     for (let i = 0; i < n; i++) {
@@ -244,16 +243,16 @@ function draw_pass2(F: U, varName: Sym, points: { t: number; x: number; y: numbe
 
         for (let j = 1; j < m; j++) {
             const t = t1 + (dt * j) / m;
-            sample(F, varName, t, points, env, ctrl, $, dc);
+            sample(F, varName, t, points, env, $, dc);
         }
     }
 }
 
-function setup_final(F: U, varName: Sym, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function setup_final(F: U, varName: Sym, env: ExprContext, $: ProgramStack, dc: DrawContext): void {
     set_symbol(varName, create_flt(dc.tmin), nil, env);
 
     $.push(F);
-    evaluate_nonstop(env, ctrl, $);
+    evaluate_nonstop(env, $);
     const Fmin = $.pop();
 
     if (!is_tensor(Fmin)) {
@@ -262,9 +261,9 @@ function setup_final(F: U, varName: Sym, env: ProgramEnv, ctrl: ProgramControl, 
     }
 }
 
-function sample(funcExpr: U, varName: Sym, t: number, points: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function sample(funcExpr: U, varName: Sym, t: number, points: { t: number; x: number; y: number }[], env: ExprContext, $: ProgramStack, dc: DrawContext): void {
     $.push(funcExpr);
-    value_of(env, ctrl, $);
+    value_of(env, $);
     const F = $.pop();
     try {
         let X: U = create_flt(t);
@@ -272,15 +271,15 @@ function sample(funcExpr: U, varName: Sym, t: number, points: { t: number; x: nu
         set_symbol(assert_sym(varName), X, nil, env);
 
         $.push(F);
-        value_of(env, ctrl, $);
+        value_of(env, $);
         const temp = $.pop();
         if (is_err(temp)) {
             return;
         } else {
             // The following appears to be redundant because temp is already a Flt.
             $.push(temp);
-            // eval_nonstop(env, ctrl, $);
-            floatfunc(env, ctrl, $);
+            // eval_nonstop(env, $);
+            floatfunc(env, $);
             let Y = $.pop();
             try {
                 if (is_tensor(Y)) {

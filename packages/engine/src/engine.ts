@@ -20,12 +20,12 @@ import {
     UOM_NAMES
 } from "@stemcmicro/algebrite";
 import { assert_sym, Cell, create_int, create_rat, create_sym, Sym } from "@stemcmicro/atoms";
-import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
+import { ExprContext, ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
 import { render_svg } from "@stemcmicro/eigenmath";
 import { EmParseOptions, em_parse } from "@stemcmicro/em-parse";
 import { Native, native_sym } from "@stemcmicro/native";
-import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
+import { ProgramStack } from "@stemcmicro/stack";
 import { assert_U, Atom, Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 
 export interface ParseConfig {
@@ -59,7 +59,7 @@ export interface ExprHandlerBuilder<T extends U> {
     create(): ExprHandler<T>;
 }
 
-export interface ExprEngine extends Pick<ProgramEnv, "clearBindings">, Pick<ProgramControl, "pushDirective" | "popDirective"> {
+export interface ExprEngine extends Pick<ExprContext, "clearBindings">, Pick<ExprContext, "pushDirective" | "popDirective"> {
     clearBindings(): void;
 
     defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void;

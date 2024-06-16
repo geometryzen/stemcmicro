@@ -2,13 +2,13 @@ import { is_str } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { value_of } from "@stemcmicro/eigenmath";
 import { prolog_eval_varargs } from "@stemcmicro/helpers";
-import { ProgramControl, ProgramEnv, ProgramStack } from "@stemcmicro/stack";
+import { ProgramStack } from "@stemcmicro/stack";
 import { cadr, Cons, U } from "@stemcmicro/tree";
 import { create_uom, is_uom_name } from "./uom";
 
-export function stack_uom(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+export function stack_uom(expr: Cons, env: ExprContext, $: ProgramStack): void {
     $.push(cadr(expr));
-    value_of(env, ctrl, $);
+    value_of(env, $);
 
     const strname = $.pop();
     if (is_str(strname)) {

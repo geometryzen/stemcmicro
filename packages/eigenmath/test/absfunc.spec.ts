@@ -2,7 +2,7 @@ import { assert_rat, create_rat, create_sym, imu, is_imu, is_rat, is_sym, Sym } 
 import { CompareFn, ExprContext, ExprHandler, Lambda, LambdaExpr } from "@stemcmicro/context";
 import { compare_factors, compare_terms, DirectiveStack, ImuHandler, RatHandler, SymHandler } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
-import { ProgramControl, ProgramEnv, ProgramStack, StackU } from "@stemcmicro/stack";
+import { ProgramStack, StackU } from "@stemcmicro/stack";
 import { Cons, is_atom, items_to_cons, Shareable, U } from "@stemcmicro/tree";
 import { absfunc } from "../src/eigenmath";
 
@@ -10,7 +10,31 @@ const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
 const POWER = native_sym(Native.pow);
 
-class MockProgramEnv implements ProgramEnv {
+class MockExprContext implements ExprContext {
+    #directives = new DirectiveStack();
+    constructor() {}
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    compareFn(opr: Sym): CompareFn {
+        if (ADD.equalsSym(opr)) {
+            return compare_terms;
+        } else if (MULTIPLY.equalsSym(opr)) {
+            return compare_factors;
+        }
+        throw new Error(`MockExprContext.compareFn ${opr}`);
+    }
+    getDirective(directive: number): number {
+        return this.#directives.get(directive);
+    }
+    pushDirective(directive: number, value: number): void {
+        this.#directives.push(directive, value);
+    }
+    popDirective(): void {
+        this.#directives.pop();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getSymbolPrintName(sym: Sym): string {
+        throw new Error("Method not implemented.");
+    }
     clearBindings(): void {
         throw new Error("Method not implemented.");
     }
@@ -102,40 +126,12 @@ class MockProgramEnv implements ProgramEnv {
     release(): void {}
 }
 
-class MockProgramControl implements ProgramControl {
-    #directives = new DirectiveStack();
-    constructor() {}
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    compareFn(opr: Sym): CompareFn {
-        if (ADD.equalsSym(opr)) {
-            return compare_terms;
-        } else if (MULTIPLY.equalsSym(opr)) {
-            return compare_factors;
-        }
-        throw new Error(`MockProgramControl.compareFn ${opr}`);
-    }
-    getDirective(directive: number): number {
-        return this.#directives.get(directive);
-    }
-    pushDirective(directive: number, value: number): void {
-        this.#directives.push(directive, value);
-    }
-    popDirective(): void {
-        this.#directives.pop();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getSymbolPrintName(sym: Sym): string {
-        throw new Error("Method not implemented.");
-    }
-}
-
 describe("absfunc", () => {
     it("Rat(1)", () => {
-        const env = new MockProgramEnv();
-        const ctrl = new MockProgramControl();
+        const env = new MockExprContext();
         const $ = new StackU();
         $.push(create_rat(1, 1));
-        absfunc(env, ctrl, $);
+        absfunc(env, $);
         const actual = $.pop();
         try {
             const x = assert_rat(actual);
@@ -145,15 +141,14 @@ describe("absfunc", () => {
         }
     });
     it("x + i * y", () => {
-        const env = new MockProgramEnv();
-        const ctrl = new MockProgramControl();
+        const env = new MockExprContext();
         const $ = new StackU();
         const x = create_sym("x");
         const y = create_sym("y");
         const iy = items_to_cons(MULTIPLY, imu, y);
         const z = items_to_cons(ADD, x, iy);
         $.push(z);
-        absfunc(env, ctrl, $);
+        absfunc(env, $);
         const actual = $.pop();
         try {
             // TODO

@@ -1,8 +1,8 @@
 import { is_sym, Sym } from "@stemcmicro/atoms";
+import { ExprContext } from "@stemcmicro/context";
 import { Native, native_sym } from "@stemcmicro/native";
-import { ProgramControl, ProgramEnv, ProgramIOListener } from "@stemcmicro/stack";
+import { ProgramIOListener } from "@stemcmicro/stack";
 import { is_nil, items_to_cons, U } from "@stemcmicro/tree";
-import { ExprContextFromProgram } from "./ExprContextFromProgram";
 import { infix_config_from_options } from "./format_infix";
 import { render_as_html_infix } from "./render_as_html_infix";
 import { render_svg, SvgRenderConfig } from "./render_svg";
@@ -34,7 +34,7 @@ export type ShouldAnnotateFunction = (sym: Sym, value: U) => boolean;
  * @param should_annotate_symbol A callback function that determines whether a symbol should be annotated.
  * @returns
  */
-export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boolean, env: ProgramEnv, ctrl: ProgramControl, options: SvgRenderConfig, listeners: ProgramIOListener[], should_annotate_symbol: ShouldAnnotateFunction): void {
+export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boolean, env: ExprContext, options: SvgRenderConfig, listeners: ProgramIOListener[], should_annotate_symbol: ShouldAnnotateFunction): void {
     if (is_nil(value)) {
         return;
     }
@@ -47,14 +47,13 @@ export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boole
     }
 
     if (svg) {
-        const $ = new ExprContextFromProgram(env, ctrl);
         for (const listener of listeners) {
-            listener.output(render_svg(value, $, options));
+            listener.output(render_svg(value, env, options));
         }
     } else {
         const config = infix_config_from_options({});
         for (const listener of listeners) {
-            listener.output(render_as_html_infix(value, env, ctrl, config));
+            listener.output(render_as_html_infix(value, env, config));
         }
     }
 }

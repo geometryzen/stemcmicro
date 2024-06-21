@@ -3,7 +3,7 @@ import { is_native, Native } from "@stemcmicro/native";
 import { Cons, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
+import { hash_binop_cons_atom, HASH_SYM } from "@stemcmicro/hashing";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { and } from "../helpers/and";
 import { Cons2 } from "../helpers/Cons2";

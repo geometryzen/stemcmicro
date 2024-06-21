@@ -1,4 +1,4 @@
-import { HASH_SYM } from "../hashing/hash_info";
+import { HASH_SYM } from "@stemcmicro/hashing";
 import { AbstractKeywordExtension } from "../operators/helpers/KeywordSymbol";
 import { is_sym } from "../operators/sym/is_sym";
 import { Sym } from "../tree/sym/Sym";

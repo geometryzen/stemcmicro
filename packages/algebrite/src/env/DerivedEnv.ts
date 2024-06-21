@@ -3,16 +3,33 @@ import { CellHost, create_sym, is_boo, is_flt, is_jsobject, is_keyword, is_map, 
 import { ExprHandler, LambdaExpr } from "@stemcmicro/context";
 import { Native } from "@stemcmicro/native";
 import { ProgramIOListener, ProgramStack, StackFunction } from "@stemcmicro/stack";
-import { Cons, is_atom, is_cons, is_nil, items_to_cons, Shareable, U } from "@stemcmicro/tree";
+import { Cons, Cons2, is_atom, is_cons, is_cons2, is_nil, items_to_cons, Shareable, U } from "@stemcmicro/tree";
 import { setq } from "../operators/assign/assign_any_any";
 import { eval_dotdot } from "../operators/dotdot/eval_dotdot";
 import { JsObjectExtension } from "../operators/jsobject/JsObjectExtension";
 import { eval_let } from "../operators/let/eval_let";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import { ASSIGN, COMPONENT, LET } from "../runtime/constants";
-import { assert_sym_any_any } from "../stepper/step_setq";
 import { EnvConfig } from "./EnvConfig";
 import { CellListener, CompareFn, EvalFunction, ExprComparator, Extension, ExtensionBuilder, ExtensionEnv, Predicates, PrintHandler, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+
+function is_sym_any_any(expr: Cons): expr is Cons2<Sym, U, U> {
+    const opr = expr.car;
+    if (is_sym(opr) && is_cons2(expr)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function assert_sym_any_any(expr: Cons): Cons2<Sym, U, U> {
+    if (is_sym_any_any(expr)) {
+        return expr;
+    } else {
+        throw new Error();
+    }
+}
+
 /**
  * Evaluates each item in the `argList` and returns (opr ...),
  */

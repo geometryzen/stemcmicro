@@ -2,7 +2,7 @@ import { create_sym, is_rat, Rat, Sym } from "@stemcmicro/atoms";
 import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_RAT, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Function1 } from "../helpers/Function1";
 
 class PredRat extends Function1<Rat> {

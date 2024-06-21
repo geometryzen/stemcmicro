@@ -1,7 +1,7 @@
 import { is_flt, Sym } from "@stemcmicro/atoms";
+import { HASH_ANY, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Cons1, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { SGN } from "../../runtime/constants";
 import { cadr } from "../../tree/helpers";
 import { Function1 } from "../helpers/Function1";

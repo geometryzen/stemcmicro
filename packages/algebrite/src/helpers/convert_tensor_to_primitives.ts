@@ -1,4 +1,4 @@
-import { HASH_BOO, HASH_STR } from "../hashing/hash_info";
+import { HASH_BOO, HASH_STR } from "@stemcmicro/hashing";
 import { is_boo } from "../operators/boo/is_boo";
 import { is_str } from "../operators/str/is_str";
 import { is_tensor } from "../operators/tensor/is_tensor";

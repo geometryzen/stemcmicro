@@ -2,7 +2,7 @@ import { Blade, is_blade, is_rat, negOne } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Cons2, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_BLADE } from "@stemcmicro/hashing";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Function2 } from "../helpers/Function2";

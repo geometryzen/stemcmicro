@@ -3,7 +3,7 @@ import { U } from "@stemcmicro/tree";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_RAT } from "@stemcmicro/hashing";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
 

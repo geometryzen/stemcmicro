@@ -5,7 +5,7 @@ import { Directive } from "@stemcmicro/directive";
 import { Native } from "@stemcmicro/native";
 import { cons, Cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_for_atom } from "../../hashing/hash_info";
+import { hash_for_atom } from "@stemcmicro/hashing";
 import { listform } from "../../helpers/listform";
 import { print_str } from "../../print/print";
 import { PrintMode } from "../../runtime/defs";

@@ -1,11 +1,11 @@
 import { assert_sym, create_sym, is_sym, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { HASH_SYM } from "@stemcmicro/hashing";
 import { Native } from "@stemcmicro/native";
 import { cons, Cons, nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { create_str } from "../str/create_str";
 

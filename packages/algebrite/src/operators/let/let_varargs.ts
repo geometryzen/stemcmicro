@@ -1,7 +1,7 @@
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_nonop_cons } from "../../hashing/hash_info";
+import { hash_nonop_cons } from "@stemcmicro/hashing";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { eval_let } from "./eval_let";
 

@@ -4,7 +4,7 @@ import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
-import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_RAT, hash_unaop_atom } from "@stemcmicro/hashing";
 import { hook_create_err } from "../../hooks/hook_create_err";
 import { Function1 } from "../helpers/Function1";
 

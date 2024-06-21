@@ -1,7 +1,7 @@
 import { is_uom, Uom } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, FEATURE, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_FLT, hash_for_atom } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_FLT, hash_for_atom } from "@stemcmicro/hashing";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";

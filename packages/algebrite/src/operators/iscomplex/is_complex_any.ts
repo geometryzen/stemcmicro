@@ -3,7 +3,7 @@ import { Native, native_sym } from "@stemcmicro/native";
 import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_ANY, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 

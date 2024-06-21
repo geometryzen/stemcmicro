@@ -6,7 +6,7 @@ import { str_to_string } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, FEATURE, mkbuilder } from "../../env/ExtensionEnv";
-import { hash_for_atom } from "../../hashing/hash_info";
+import { hash_for_atom } from "@stemcmicro/hashing";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { create_str } from "../str/create_str";
 

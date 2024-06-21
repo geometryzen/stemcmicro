@@ -2,7 +2,7 @@ import { one } from "@stemcmicro/atoms";
 import { is_base_of_natural_logarithm } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_SYM, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Native } from "@stemcmicro/native";
 import { native_sym } from "@stemcmicro/native";
 import { Sym } from "../../tree/sym/Sym";

@@ -1,7 +1,7 @@
 import { Imu, is_flt, is_imu } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_FLT, HASH_IMU } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_FLT, HASH_IMU } from "@stemcmicro/hashing";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";

@@ -3,7 +3,7 @@ import { Native, native_sym } from "@stemcmicro/native";
 import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionBuilder, ExtensionEnv, Predicates } from "../../env/ExtensionEnv";
-import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_SYM, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Predicate1 } from "../helpers/Predicate1";
 
 class Builder implements ExtensionBuilder<U> {

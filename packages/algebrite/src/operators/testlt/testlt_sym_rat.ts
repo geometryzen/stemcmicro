@@ -1,8 +1,8 @@
 import { is_rat, is_sym, Rat, Sym } from "@stemcmicro/atoms";
+import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "@stemcmicro/hashing";
 import { Cons2 } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_LT } from "../../runtime/ns_math";
 import { Predicate2 } from "../helpers/Predicate2";
 

@@ -4,7 +4,7 @@ import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Native } from "@stemcmicro/native";
 import { Cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_for_atom } from "../../hashing/hash_info";
+import { hash_for_atom } from "@stemcmicro/hashing";
 
 function verify_keyword(x: Keyword): Keyword | never {
     if (is_keyword(x)) {

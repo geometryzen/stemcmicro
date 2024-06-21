@@ -4,7 +4,7 @@ import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { is_native, Native } from "@stemcmicro/native";
 import { cons, Cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_for_atom } from "../../hashing/hash_info";
+import { hash_for_atom } from "@stemcmicro/hashing";
 import { infix } from "../../helpers/infix";
 import { hook_create_err } from "../../hooks/hook_create_err";
 import { ProgrammingError } from "../../programming/ProgrammingError";

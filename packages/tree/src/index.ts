@@ -1,6 +1,6 @@
 export { cadnr } from "./cadnr";
 export { car, cdr } from "./car-cdr-1";
-export { caar, cadr, cdar, cddr } from "./car-cdr-2";
+export { caar, cadr, cdadr, cdar, cddr } from "./car-cdr-2";
 export { caadr, caddr, cdddr } from "./car-cdr-3";
 export { cadadr, cadddr } from "./car-cdr-4";
 export { cdnr } from "./cdnr";

@@ -2,7 +2,7 @@ import { half } from "@stemcmicro/atoms";
 import { complex_conjugate } from "../../complex_conjugate";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS } from "../../env/ExtensionEnv";
-import { HASH_TENSOR, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_TENSOR, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Native } from "@stemcmicro/native";
 import { native_sym } from "@stemcmicro/native";
 import { Sym } from "../../tree/sym/Sym";

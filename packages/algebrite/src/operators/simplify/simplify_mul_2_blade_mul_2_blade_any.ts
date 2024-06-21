@@ -1,7 +1,7 @@
 import { Blade, is_blade } from "@stemcmicro/atoms";
+import { hash_binop_atom_cons, HASH_BLADE } from "@stemcmicro/hashing";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_atom_cons, HASH_BLADE } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";

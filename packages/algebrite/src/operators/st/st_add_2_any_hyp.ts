@@ -1,8 +1,8 @@
 import { Hyp, is_hyp, Sym } from "@stemcmicro/atoms";
+import { hash_unaop_cons } from "@stemcmicro/hashing";
 import { Cons1, Cons2, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { and } from "../helpers/and";
 import { Function1 } from "../helpers/Function1";

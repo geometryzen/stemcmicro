@@ -2,7 +2,7 @@ import { Imu, is_imu, Sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons1, U } from "@stemcmicro/tree";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_IMU, hash_unaop_atom } from "@stemcmicro/hashing";
 import { half } from "@stemcmicro/atoms";
 import { Function1 } from "../helpers/Function1";
 

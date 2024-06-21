@@ -2,7 +2,7 @@ import { is_rat, Rat, Sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, Cons2, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, FEATURE, MODE_FACTORING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
+import { HASH_ANY, hash_binop_cons_atom } from "@stemcmicro/hashing";
 import { MATH_POW } from "../../runtime/ns_math";
 import { and } from "../helpers/and";
 import { Function2 } from "../helpers/Function2";

@@ -2,7 +2,7 @@ import { create_boo, create_flt, create_sym, is_jsobject, is_sym, Str } from "@s
 import { Cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_nonop_cons } from "../../hashing/hash_info";
+import { hash_nonop_cons } from "@stemcmicro/hashing";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 

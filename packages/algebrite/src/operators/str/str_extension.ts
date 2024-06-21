@@ -1,10 +1,10 @@
 import { create_str, create_sym, Str, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { HASH_STR } from "@stemcmicro/hashing";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, nil, U } from "@stemcmicro/tree";
 import { Extension, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_STR } from "../../hashing/hash_info";
 
 const ADD = native_sym(Native.add);
 

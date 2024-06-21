@@ -1,6 +1,6 @@
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_unaop_cons } from "../../hashing/hash_info";
+import { hash_unaop_cons } from "@stemcmicro/hashing";
 import { COSH } from "../../runtime/constants";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";

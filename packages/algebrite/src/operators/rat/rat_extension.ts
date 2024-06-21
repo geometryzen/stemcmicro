@@ -7,7 +7,7 @@ import { Native, native_sym } from "@stemcmicro/native";
 import { Atom, Cons, is_atom, is_cons, is_singleton, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { ExtensionBuilder, ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { hash_for_atom } from "../../hashing/hash_info";
+import { hash_for_atom } from "@stemcmicro/hashing";
 import { order_binary } from "../../helpers/order_binary";
 import { hook_create_err } from "../../hooks/hook_create_err";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";

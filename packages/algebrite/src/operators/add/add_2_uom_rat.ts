@@ -2,7 +2,7 @@ import { is_rat, is_uom, Rat, Uom } from "@stemcmicro/atoms";
 import { Cons2 } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, FEATURE, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, hash_for_atom, HASH_RAT } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, hash_for_atom, HASH_RAT } from "@stemcmicro/hashing";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";

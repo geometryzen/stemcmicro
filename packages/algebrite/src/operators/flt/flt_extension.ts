@@ -5,7 +5,7 @@ import { iszero, multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_for_atom } from "../../hashing/hash_info";
+import { hash_for_atom } from "@stemcmicro/hashing";
 import { order_binary } from "../../helpers/order_binary";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
 

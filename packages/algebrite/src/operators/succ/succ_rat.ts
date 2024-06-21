@@ -1,7 +1,7 @@
 import { create_sym, is_rat, Rat, Sym } from "@stemcmicro/atoms";
+import { HASH_RAT, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Cons1, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { Function1 } from "../helpers/Function1";
 
 class Builder implements ExtensionBuilder<U> {

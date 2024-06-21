@@ -1,6 +1,6 @@
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_nonop_cons } from "../../hashing/hash_info";
+import { hash_nonop_cons } from "@stemcmicro/hashing";
 import { GAMMA } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";

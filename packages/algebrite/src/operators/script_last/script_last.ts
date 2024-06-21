@@ -1,8 +1,8 @@
 import { Sym } from "@stemcmicro/atoms";
+import { HASH_SYM } from "@stemcmicro/hashing";
 import { nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { HASH_SYM } from "../../hashing/hash_info";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
 import { AbstractKeywordExtension } from "../helpers/KeywordSymbol";
 import { wrap_as_transform } from "../wrap_as_transform";

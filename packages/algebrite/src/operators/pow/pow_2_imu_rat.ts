@@ -2,7 +2,7 @@ import { half, imu, Imu, is_imu, is_rat, negOne, one, Rat, Sym } from "@stemcmic
 import { Cons2, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_IMU, HASH_RAT } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_IMU, HASH_RAT } from "@stemcmicro/hashing";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
 

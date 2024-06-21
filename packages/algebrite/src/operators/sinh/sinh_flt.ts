@@ -1,6 +1,6 @@
+import { HASH_FLT, hash_unaop_atom } from "@stemcmicro/hashing";
 import { EnvConfig } from "../../env/EnvConfig";
 import { FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
 import { SINH } from "../../runtime/constants";
 import { create_flt, Flt, zeroAsFlt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";

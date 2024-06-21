@@ -1,7 +1,7 @@
 import { Rat } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_RAT } from "@stemcmicro/hashing";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";

@@ -2,8 +2,8 @@
 import { create_sym, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { hash_for_atom } from "@stemcmicro/hashing";
 import { Atom, Cons, is_atom, nil, U } from "@stemcmicro/tree";
-import { hash_for_atom } from "../hashing/hash_info";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { ProgrammingError } from "../programming/ProgrammingError";
 import { Extension, ExtensionEnv } from "./ExtensionEnv";

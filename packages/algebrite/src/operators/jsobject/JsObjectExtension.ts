@@ -1,10 +1,10 @@
 import { assert_jsobject, create_sym, is_jsobject, JsObject, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { hash_for_atom } from "@stemcmicro/hashing";
 import { Cons, nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_for_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
 export class JsObjectExtension implements Extension<JsObject> {

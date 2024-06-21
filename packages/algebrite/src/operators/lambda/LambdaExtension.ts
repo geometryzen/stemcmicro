@@ -4,7 +4,7 @@ import { ExprContext, is_lambda, Lambda } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, mkbuilder } from "../../env/ExtensionEnv";
-import { HASH_LAMBDA } from "../../hashing/hash_info";
+import { HASH_LAMBDA } from "@stemcmicro/hashing";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { wrap_as_transform } from "../wrap_as_transform";
 

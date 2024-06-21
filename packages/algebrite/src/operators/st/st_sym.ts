@@ -1,8 +1,8 @@
 import { is_sym, Sym } from "@stemcmicro/atoms";
+import { HASH_ANY, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Cons1, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { Function1 } from "../helpers/Function1";
 import { MATH_STANDARD_PART } from "./MATH_STANDARD_PART";
 

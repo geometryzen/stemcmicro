@@ -1,7 +1,7 @@
 import { Cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { eval_expand } from "../../expand";
-import { hash_nonop_cons } from "../../hashing/hash_info";
+import { hash_nonop_cons } from "@stemcmicro/hashing";
 import { EXPAND } from "../../runtime/constants";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 

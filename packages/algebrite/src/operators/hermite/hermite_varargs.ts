@@ -1,6 +1,6 @@
 import { Cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_nonop_cons } from "../../hashing/hash_info";
+import { hash_nonop_cons } from "@stemcmicro/hashing";
 import { HERMITE } from "../../runtime/constants";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { eval_hermite } from "./eval_hermite";

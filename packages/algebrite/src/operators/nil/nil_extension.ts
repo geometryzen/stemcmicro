@@ -4,7 +4,7 @@ import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Native } from "@stemcmicro/native";
 import { cons, Cons, nil, U } from "@stemcmicro/tree";
 import { Extension, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_NIL } from "../../hashing/hash_info";
+import { HASH_NIL } from "@stemcmicro/hashing";
 
 class NilExtension implements Extension<Cons> {
     constructor() {

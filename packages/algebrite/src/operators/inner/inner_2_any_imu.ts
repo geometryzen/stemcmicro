@@ -1,7 +1,7 @@
 import { Imu, is_imu, one, Sym } from "@stemcmicro/atoms";
 import { items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_binop_atom_atom, HASH_IMU } from "../../hashing/hash_info";
+import { HASH_ANY, hash_binop_atom_atom, HASH_IMU } from "@stemcmicro/hashing";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";

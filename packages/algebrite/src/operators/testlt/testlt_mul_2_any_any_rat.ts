@@ -1,8 +1,8 @@
 import { Rat, zero } from "@stemcmicro/atoms";
+import { hash_binop_cons_atom, HASH_RAT } from "@stemcmicro/hashing";
 import { is_mul_2_any_any } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_GT, MATH_LT, MATH_MUL } from "../../runtime/ns_math";
 import { booF, booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";

@@ -1,6 +1,6 @@
+import { HASH_ANY, hash_unaop_atom } from "@stemcmicro/hashing";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { SINH } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";

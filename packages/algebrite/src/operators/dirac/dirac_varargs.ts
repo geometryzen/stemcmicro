@@ -2,7 +2,7 @@ import { Cons, U } from "@stemcmicro/tree";
 import { eval_dirac } from "../../dirac";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_nonop_cons } from "../../hashing/hash_info";
+import { hash_nonop_cons } from "@stemcmicro/hashing";
 import { DIRAC } from "../../runtime/constants";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 

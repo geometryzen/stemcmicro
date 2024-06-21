@@ -8,9 +8,21 @@ In order to develop stemcmicro, you MUST clone this repo then take the following
 
 Read the contributing guide in Lerna and set up volta, verdaccio, etc as if you were going to develop Lerna.
 
+For the time being, you will need to remove this line from Lerna's package.json file...
+
+```
+  "packageManager": "npm@10.7.0",
+```
+
+I think this is a regression?
+
+Then,
+
 In the Lerna folder, in a Terminal (1)
 
 ```
+npm install
+npm run build
 npm run local-registry start
 ```
 
@@ -23,6 +35,7 @@ Later, when building stemcmicro, we'll install Lerna from this local registry.
 In the Lerna folder, in a second Terminal (2)
 
 ```
+
 npm --registry=http://localhost:4873 run lerna-release 999.9.9 --local
 ```
 

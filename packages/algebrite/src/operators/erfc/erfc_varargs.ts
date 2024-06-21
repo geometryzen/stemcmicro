@@ -1,7 +1,7 @@
 import { create_flt, is_flt, one } from "@stemcmicro/atoms";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_nonop_cons } from "../../hashing/hash_info";
+import { hash_nonop_cons } from "@stemcmicro/hashing";
 import { ERFC } from "../../runtime/constants";
 import { cadr } from "../../tree/helpers";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";

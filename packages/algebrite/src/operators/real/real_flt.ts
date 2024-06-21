@@ -1,8 +1,7 @@
+import { HASH_FLT, hash_unaop_atom } from "@stemcmicro/hashing";
+import { Native, native_sym } from "@stemcmicro/native";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "@stemcmicro/native";
-import { native_sym } from "@stemcmicro/native";
 import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";

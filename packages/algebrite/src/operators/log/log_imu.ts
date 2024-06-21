@@ -1,7 +1,7 @@
 import { half } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_IMU, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Native } from "@stemcmicro/native";
 import { native_sym } from "@stemcmicro/native";
 import { imu, Imu } from "../../tree/imu/Imu";

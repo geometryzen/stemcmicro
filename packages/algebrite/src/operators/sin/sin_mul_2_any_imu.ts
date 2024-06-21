@@ -1,8 +1,8 @@
 import { is_imu, Sym } from "@stemcmicro/atoms";
+import { hash_unaop_cons } from "@stemcmicro/hashing";
 import { Cons1, Cons2, is_cons, items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_unaop_cons } from "../../hashing/hash_info";
 import { SINH } from "../../runtime/constants";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { and } from "../helpers/and";

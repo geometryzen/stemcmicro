@@ -1,7 +1,7 @@
 import { one } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_HYP, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_HYP, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Hyp } from "../../tree/hyp/Hyp";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";

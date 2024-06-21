@@ -1,9 +1,9 @@
 import { is_rat, Rat, Sym } from "@stemcmicro/atoms";
+import { hash_binop_atom_atom, HASH_RAT } from "@stemcmicro/hashing";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons2 } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, mkbuilder } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { Predicate2 } from "../helpers/Predicate2";
 
 export const MATH_LT = native_sym(Native.testlt);

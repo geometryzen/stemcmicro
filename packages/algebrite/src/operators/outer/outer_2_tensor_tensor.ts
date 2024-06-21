@@ -1,7 +1,7 @@
 import { is_tensor, Sym, Tensor } from "@stemcmicro/atoms";
 import { Cons2, U } from "@stemcmicro/tree";
 import { ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_TENSOR } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_TENSOR } from "@stemcmicro/hashing";
 import { MAXDIM } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { MATH_OUTER } from "../../runtime/ns_math";

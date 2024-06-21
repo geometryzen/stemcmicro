@@ -5,7 +5,7 @@ import { multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { HASH_IMU } from "../../hashing/hash_info";
+import { HASH_IMU } from "@stemcmicro/hashing";
 import { order_binary } from "../../helpers/order_binary";
 import { MATH_IMU } from "../../runtime/ns_math";
 

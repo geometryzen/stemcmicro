@@ -1,6 +1,6 @@
 import { negOne, one, Rat, zero } from "@stemcmicro/atoms";
+import { HASH_RAT, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Extension, ExtensionBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { mmul } from "../../mmul";
 import { SGN } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";

@@ -1,4 +1,5 @@
 import { is_sym, Sym } from "@stemcmicro/atoms";
+import { define_function, setq_indexed } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons2, is_cons, nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
@@ -8,8 +9,6 @@ import { halt } from "../../runtime/defs";
 import { caadr } from "../../tree/helpers";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
-import { define_function } from "./define_function";
-import { setq_indexed } from "./setq_indexed";
 
 const COMPONENT = native_sym(Native.component);
 

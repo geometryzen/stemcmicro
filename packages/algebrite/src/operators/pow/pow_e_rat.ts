@@ -2,7 +2,7 @@ import { is_rat, is_sym, one, Rat } from "@stemcmicro/atoms";
 import { is_base_of_natural_logarithm } from "@stemcmicro/helpers";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
+import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "@stemcmicro/hashing";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";

@@ -1,7 +1,7 @@
 import { is_flt } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_atom_cons, HASH_FLT } from "../../hashing/hash_info";
+import { hash_binop_atom_cons, HASH_FLT } from "@stemcmicro/hashing";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";

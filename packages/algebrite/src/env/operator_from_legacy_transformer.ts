@@ -1,7 +1,7 @@
 import { is_sym, Sym } from "@stemcmicro/atoms";
 import { LambdaExpr } from "@stemcmicro/context";
+import { hash_nonop_cons } from "@stemcmicro/hashing";
 import { Cons, is_cons, U } from "@stemcmicro/tree";
-import { hash_nonop_cons } from "../hashing/hash_info";
 import { FunctionVarArgs } from "../operators/helpers/FunctionVarArgs";
 import { EvalFunction, Extension, ExtensionBuilder, ExtensionEnv, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 

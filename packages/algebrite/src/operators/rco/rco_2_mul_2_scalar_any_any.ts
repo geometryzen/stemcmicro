@@ -1,7 +1,7 @@
 import { Sym } from "@stemcmicro/atoms";
+import { HASH_ANY, hash_binop_cons_atom } from "@stemcmicro/hashing";
 import { Cons2, items_to_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_MUL, MATH_RCO } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";

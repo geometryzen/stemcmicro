@@ -1,7 +1,7 @@
 import { Uom } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { hash_for_atom, hash_unaop_atom } from "../../hashing/hash_info";
+import { hash_for_atom, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Native } from "@stemcmicro/native";
 import { native_sym } from "@stemcmicro/native";
 import { Sym } from "../../tree/sym/Sym";

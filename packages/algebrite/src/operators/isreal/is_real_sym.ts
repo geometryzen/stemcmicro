@@ -1,7 +1,7 @@
 import { create_boo, is_sym, Sym } from "@stemcmicro/atoms";
 import { Cons1, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_BOO, HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_BOO, HASH_SYM, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Function1 } from "../helpers/Function1";
 
 type ARG = Sym;

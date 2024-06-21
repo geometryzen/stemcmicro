@@ -2,7 +2,7 @@ import { is_opr_2_any_any } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
+import { HASH_ANY, hash_binop_cons_atom } from "@stemcmicro/hashing";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, U } from "../../tree/tree";

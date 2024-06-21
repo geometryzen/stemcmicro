@@ -16,6 +16,10 @@ export function cdar(p: U): Cons {
 export function cddr(p: U): Cons {
     return cdr(cdr(p));
 }
+
+export function cdadr(p: U): Cons {
+    return cdr(car(cdr(p)));
+}
 /*
 
 export function caddr(p: U): U {
@@ -24,10 +28,6 @@ export function caddr(p: U): U {
 
 export function cadar(p: U): U {
     return car(cdr(car(p)));
-}
-
-export function cdadr(p: U): Cons {
-    return cdr(car(cdr(p)));
 }
 
 export function cddar(p: U): Cons {

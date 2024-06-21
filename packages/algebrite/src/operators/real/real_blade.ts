@@ -1,7 +1,7 @@
 import { Blade, is_blade, zero } from "@stemcmicro/atoms";
+import { HASH_BLADE, hash_unaop_atom } from "@stemcmicro/hashing";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_BLADE, hash_unaop_atom } from "../../hashing/hash_info";
 import { REAL } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";

@@ -2,7 +2,7 @@ import { Blade, is_blade, Sym } from "@stemcmicro/atoms";
 import { Cons2, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_BLADE } from "@stemcmicro/hashing";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
 

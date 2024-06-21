@@ -1,9 +1,9 @@
 import { create_sym, is_str, is_tensor } from "@stemcmicro/atoms";
+import { hash_nonop_cons, HASH_STR, HASH_TENSOR } from "@stemcmicro/hashing";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionEnv, mkbuilder, Predicates, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_nonop_cons, HASH_STR, HASH_TENSOR } from "../../hashing/hash_info";
 import { convert_tensor_to_primitives } from "../../helpers/convert_tensor_to_primitives";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 

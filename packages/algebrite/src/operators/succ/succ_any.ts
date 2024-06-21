@@ -1,7 +1,7 @@
 import { create_sym, Sym } from "@stemcmicro/atoms";
+import { HASH_ANY, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Cons, Cons1, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 

@@ -1,7 +1,7 @@
 import { Flt, is_flt, negOne, one, Rat, Sym, zero } from "@stemcmicro/atoms";
+import { HASH_FLT, hash_unaop_atom } from "@stemcmicro/hashing";
 import { U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
 import { SGN } from "../../runtime/constants";
 import { Function1 } from "../helpers/Function1";
 

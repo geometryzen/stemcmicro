@@ -2,7 +2,7 @@ import { Sym } from "@stemcmicro/atoms";
 import { Cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_ANY, hash_unaop_atom } from "@stemcmicro/hashing";
 import { inv } from "../../inv";
 import { MATH_INV } from "../../runtime/ns_math";
 import { cadr } from "../../tree/helpers";

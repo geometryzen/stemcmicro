@@ -1,6 +1,6 @@
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_FLT, hash_unaop_atom } from "@stemcmicro/hashing";
 import { hook_create_err } from "../../hooks/hook_create_err";
 import { Native } from "@stemcmicro/native";
 import { native_sym } from "@stemcmicro/native";

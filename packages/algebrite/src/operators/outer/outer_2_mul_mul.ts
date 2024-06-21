@@ -3,7 +3,7 @@ import { ExprContext } from "@stemcmicro/context";
 import { contains_single_blade, extract_single_blade, multiply, remove_factors } from "@stemcmicro/helpers";
 import { Cons0, Cons2, U } from "@stemcmicro/tree";
 import { mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, hash_nonop_cons } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, hash_nonop_cons } from "@stemcmicro/hashing";
 import { is_multiply } from "../../runtime/helpers";
 import { MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";

@@ -4,7 +4,7 @@ import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_IMU, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Function1 } from "../helpers/Function1";
 
 export const MATH_EXP = native_sym(Native.exp);

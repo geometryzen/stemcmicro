@@ -2,7 +2,7 @@ import { Boo, booT, is_rat, one, Rat, Sym } from "@stemcmicro/atoms";
 import { Cons1, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_RAT, hash_unaop_atom } from "@stemcmicro/hashing";
 import { ISREAL } from "../../runtime/constants";
 import { Function1 } from "../helpers/Function1";
 

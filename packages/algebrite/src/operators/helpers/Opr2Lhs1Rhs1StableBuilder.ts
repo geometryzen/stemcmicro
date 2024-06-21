@@ -1,5 +1,5 @@
 import { Extension, ExtensionBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_binop_cons_cons } from "../../hashing/hash_info";
+import { hash_binop_cons_cons } from "@stemcmicro/hashing";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "./and";

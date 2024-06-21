@@ -1,7 +1,7 @@
 import { Sym } from "@stemcmicro/atoms";
 import { Cons, Cons1, is_cons, U } from "@stemcmicro/tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_ANY, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Function1 } from "./Function1";
 
 export abstract class CompositeOperator extends Function1<Cons> {

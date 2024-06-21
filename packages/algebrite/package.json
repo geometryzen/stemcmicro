@@ -64,6 +64,7 @@
         "@stemcmicro/directive": "workspace:*",
         "@stemcmicro/eigenmath": "workspace:*",
         "@stemcmicro/em-parse": "workspace:*",
+        "@stemcmicro/hashing": "workspace:*",
         "@stemcmicro/helpers": "workspace:*",
         "@stemcmicro/hilbert": "workspace:*",
         "@stemcmicro/native": "workspace:*",

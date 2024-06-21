@@ -1,7 +1,7 @@
 import { create_sym, is_str, Str, Sym } from "@stemcmicro/atoms";
+import { HASH_STR, hash_unaop_atom } from "@stemcmicro/hashing";
 import { U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_STR, hash_unaop_atom } from "../../hashing/hash_info";
 import { Function1 } from "../helpers/Function1";
 import { create_uom } from "./uom";
 

@@ -2,7 +2,7 @@ import { Blade, is_blade, Sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_BLADE } from "@stemcmicro/hashing";
 import { Function2 } from "../helpers/Function2";
 
 class Builder implements ExtensionBuilder<U> {

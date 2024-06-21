@@ -3,7 +3,7 @@ import { Directive } from "@stemcmicro/directive";
 import { nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { Extension, ExtensionBuilder, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_SYM } from "../../hashing/hash_info";
+import { HASH_SYM } from "@stemcmicro/hashing";
 import { render_using_print_mode } from "../../print/render_using_print_mode";
 import { PrintMode } from "../../runtime/defs";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";

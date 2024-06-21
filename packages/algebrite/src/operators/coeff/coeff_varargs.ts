@@ -1,6 +1,6 @@
 import { Cons, U } from "@stemcmicro/tree";
 import { Extension, ExtensionBuilder, ExtensionEnv, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_nonop_cons } from "../../hashing/hash_info";
+import { hash_nonop_cons } from "@stemcmicro/hashing";
 import { COEFF } from "../../runtime/constants";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { eval_coeff } from "./coeff";

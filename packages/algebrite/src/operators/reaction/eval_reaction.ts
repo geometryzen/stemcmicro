@@ -1,8 +1,8 @@
 import { Cell, create_sym, Sym } from "@stemcmicro/atoms";
+import { HASH_ANY, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Cons1, nil, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";

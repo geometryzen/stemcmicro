@@ -3,7 +3,7 @@ import { compare_sym_sym } from "@stemcmicro/helpers";
 import { items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_SYM } from "@stemcmicro/hashing";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons2 } from "../helpers/Cons2";

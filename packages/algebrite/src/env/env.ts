@@ -2,6 +2,7 @@
 import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_rat, is_sym, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, is_lambda, Lambda, LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
+import { hash_for_atom, hash_info, hash_nonop_cons, hash_target } from "@stemcmicro/hashing";
 import { DirectiveStack } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { ProgramIOListener, ProgramStack, StackFunction } from "@stemcmicro/stack";
@@ -10,7 +11,6 @@ import { ExtensionEnvFromExprContext } from "../adapters/ExtensionEnvFromExprCon
 import { make_eval } from "../adapters/make_eval";
 import { eval_function } from "../eval_function";
 import { factor_polynomial } from "../factorpoly";
-import { hash_for_atom, hash_info, hash_nonop_cons, hash_target } from "../hashing/hash_info";
 import { hook_create_err } from "../hooks/hook_create_err";
 import { is_poly_expanded_form } from "../is";
 import { algebra } from "../operators/algebra/algebra";

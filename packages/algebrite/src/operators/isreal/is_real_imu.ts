@@ -1,9 +1,9 @@
 import { Boo, booF, Imu, is_imu, Rat, Sym, zero } from "@stemcmicro/atoms";
+import { HASH_IMU, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Native, native_sym } from "@stemcmicro/native";
 import { U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
 import { Function1 } from "../helpers/Function1";
 
 class IsRealImu extends Function1<Imu> {

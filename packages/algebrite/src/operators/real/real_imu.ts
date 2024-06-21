@@ -1,7 +1,7 @@
 import { zero } from "@stemcmicro/atoms";
+import { HASH_IMU, hash_unaop_atom } from "@stemcmicro/hashing";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
 import { REAL } from "../../runtime/constants";
 import { Imu } from "../../tree/imu/Imu";
 import { Sym } from "../../tree/sym/Sym";

@@ -1,7 +1,7 @@
 import { Blade, is_blade, one } from "@stemcmicro/atoms";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { HASH_BLADE, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_BLADE, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Native } from "@stemcmicro/native";
 import { native_sym } from "@stemcmicro/native";
 import { Sym } from "../../tree/sym/Sym";

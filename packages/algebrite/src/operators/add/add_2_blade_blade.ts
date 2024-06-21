@@ -3,7 +3,7 @@ import { compare_blade_blade } from "@stemcmicro/helpers";
 import { Cons2, items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
+import { hash_binop_atom_atom, HASH_BLADE } from "@stemcmicro/hashing";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Function2 } from "../helpers/Function2";
 

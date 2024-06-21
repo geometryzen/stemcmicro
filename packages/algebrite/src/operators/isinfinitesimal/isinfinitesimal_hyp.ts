@@ -2,7 +2,7 @@ import { Hyp, is_hyp } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { EnvConfig } from "../../env/EnvConfig";
 import { mkbuilder } from "../../env/ExtensionEnv";
-import { HASH_HYP, hash_unaop_atom } from "../../hashing/hash_info";
+import { HASH_HYP, hash_unaop_atom } from "@stemcmicro/hashing";
 import { Predicate1 } from "../helpers/Predicate1";
 
 const ISINFINITESIMAL = native_sym(Native.isinfinitesimal);

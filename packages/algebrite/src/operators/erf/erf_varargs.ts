@@ -3,7 +3,7 @@ import { is_negative } from "@stemcmicro/helpers";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { hash_nonop_cons } from "../../hashing/hash_info";
+import { hash_nonop_cons } from "@stemcmicro/hashing";
 import { ERF } from "../../runtime/constants";
 import { cadr } from "../../tree/helpers";
 import { erfc } from "../erfc/erfc";

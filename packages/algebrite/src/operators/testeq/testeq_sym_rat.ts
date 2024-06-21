@@ -1,8 +1,8 @@
 import { Rat } from "@stemcmicro/atoms";
+import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "@stemcmicro/hashing";
 import { Native, native_sym } from "@stemcmicro/native";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { booF, booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";

@@ -4,7 +4,7 @@ import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { HASH_CELL } from "../../hashing/hash_info";
+import { HASH_CELL } from "@stemcmicro/hashing";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
 const ISONE = native_sym(Native.isone);

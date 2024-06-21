@@ -7,7 +7,7 @@ import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
-import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
+import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "@stemcmicro/hashing";
 import { divide_by_imu } from "../../optimize/divide_by_imu";
 import { MATH_ADD, MATH_MUL, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { MATH_COS } from "../cos/MATH_COS";

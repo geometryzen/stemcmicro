@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/stepper",
-    "version": "0.9.85",
+    "version": "0.9.86",
     "description": "Provides the meaning of universal mathematics symbols",
     "exports": {
         ".": {
@@ -57,7 +57,6 @@
         "url": "https://github.com/geometryzen/stemcmicro/issues"
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
-    "dependencies": {},
     "peerDependencies": {
         "@stemcmicro/atoms": "workspace:*",
         "@stemcmicro/context": "workspace:*",

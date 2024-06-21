@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/hashing",
-    "version": "0.9.85",
+    "version": "0.9.86",
     "description": "",
     "exports": {
         ".": {
@@ -56,7 +56,6 @@
         "url": "https://github.com/geometryzen/stemcmicro/issues"
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
-    "dependencies": {},
     "peerDependencies": {
         "@stemcmicro/atoms": "workspace:*",
         "@stemcmicro/context": "workspace:*",

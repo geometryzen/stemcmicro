@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/tree",
-    "version": "0.9.85",
+    "version": "0.9.86",
     "description": "Data structure for constructing math expressions",
     "exports": {
         ".": {

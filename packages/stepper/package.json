@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/stepper",
-    "version": "0.9.86",
+    "version": "0.9.87",
     "description": "Provides the meaning of universal mathematics symbols",
     "exports": {
         ".": {

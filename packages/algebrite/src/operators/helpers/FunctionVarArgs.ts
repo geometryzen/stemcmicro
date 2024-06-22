@@ -26,7 +26,7 @@ export abstract class FunctionVarArgs<T extends Cons> extends AbstractExtension<
     get hash(): string {
         return this.#hash;
     }
-    iscons(): boolean {
+    iscons(): this is FunctionVarArgs<Cons> {
         return true;
     }
     operator(): Sym {

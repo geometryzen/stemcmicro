@@ -49,7 +49,7 @@ class SymMathAdd implements Extension<Sym> {
     test(expr: Sym, opr: Sym): boolean {
         throw new Error("Method not implemented.");
     }
-    iscons(): false {
+    iscons(): this is Extension<Cons> {
         return false;
     }
     operator(): never {

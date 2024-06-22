@@ -40,7 +40,7 @@ export abstract class AbstractKeywordExtension implements Extension<Sym> {
     keyword(): Sym {
         return this.#keyword;
     }
-    iscons(): boolean {
+    iscons(): this is Extension<Cons> {
         return false;
     }
     operator(): never {

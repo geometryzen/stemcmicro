@@ -2,10 +2,10 @@ import { create_str, create_sym, is_map, Map, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
+import { hash_for_atom } from "@stemcmicro/hashing";
 import { Native } from "@stemcmicro/native";
 import { cons, Cons, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_for_atom } from "@stemcmicro/hashing";
 import { listform } from "../../helpers/listform";
 import { print_str } from "../../print/print";
 import { PrintMode } from "../../runtime/defs";
@@ -59,7 +59,7 @@ class DictionaryExtension implements Extension<Map> {
         }
         return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
-    iscons(): false {
+    iscons(): this is Extension<Cons> {
         return false;
     }
     operator(): never {

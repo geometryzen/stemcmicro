@@ -26,7 +26,7 @@ export class UnknownConsExtension implements Extension<Cons> {
     key?: string | undefined;
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
-    iscons(): true {
+    iscons(): this is UnknownConsExtension {
         return true;
     }
     operator(): Sym {

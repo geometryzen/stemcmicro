@@ -1,10 +1,10 @@
 import { create_str, create_sym, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { HASH_NIL } from "@stemcmicro/hashing";
 import { Native } from "@stemcmicro/native";
 import { cons, Cons, nil, U } from "@stemcmicro/tree";
 import { Extension, mkbuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_NIL } from "@stemcmicro/hashing";
 
 class NilExtension implements Extension<Cons> {
     constructor() {
@@ -31,7 +31,7 @@ class NilExtension implements Extension<Cons> {
     test(expr: Cons, opr: Sym): boolean {
         return false;
     }
-    iscons(): false {
+    iscons(): this is Extension<Cons> {
         return false;
     }
     operator(): never {

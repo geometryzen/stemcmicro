@@ -1,10 +1,10 @@
 import { Boo, booT, create_str, create_sym, is_boo, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { HASH_BOO } from "@stemcmicro/hashing";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, is_atom, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { HASH_BOO } from "@stemcmicro/hashing";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { wrap_as_transform } from "../wrap_as_transform";
 
@@ -56,7 +56,7 @@ export class BooExtension implements Extension<Boo> {
         }
         return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
-    iscons(): false {
+    iscons(): this is Extension<Cons> {
         return false;
     }
     operator(): never {

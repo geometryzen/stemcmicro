@@ -1,3 +1,4 @@
+import { equals_cons_array } from "@stemcmicro/helpers";
 import { Stack } from "@stemcmicro/stack";
 import { Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { State } from "./Stepper";
@@ -30,8 +31,13 @@ export function step_add(expr: Cons, stack: Stack<State>, state: State): State |
         const opr = expr.opr;
         try {
             const value = items_to_cons(opr, ...state.argValues);
-            stack.top.value = value;
-            return void 0;
+            if (equals_cons_array(argList, state.argValues)) {
+                // Evaluating the arguments produced no change
+                stack.top.value = value;
+                return void 0;
+            } else {
+                return new State(value, state.scope);
+            }
         } finally {
             opr.release();
         }

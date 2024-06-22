@@ -101,7 +101,7 @@ class SymMathPi implements Extension<Sym> {
         }
         throw new Error(`SymMathPi.test ${opr} Method not implemented.`);
     }
-    iscons(): false {
+    iscons(): this is Extension<Cons> {
         return false;
     }
     operator(): Sym {

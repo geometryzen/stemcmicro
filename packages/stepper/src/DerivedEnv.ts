@@ -22,7 +22,6 @@ export class DerivedScope implements Scope {
         throw new Error("Method not implemented.");
     }
     setBinding(sym: Sym, binding: U): void {
-        console.log(`DerivedEnv.setBinding ${sym} ${binding}`);
         this.#bindings.set(sym.key(), binding);
         // throw new Error(`DerivedEnv.setBinding ${sym} ${binding} Method not implemented.`);
     }

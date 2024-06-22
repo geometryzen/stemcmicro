@@ -235,7 +235,7 @@ export class Stepper {
     }
     #nextState(): State | null {
         const stack: Stack<State> = this.#stack;
-        let state = stack.top;
+        const state = stack.top;
         if (state) {
             const input = state.input;
             // console.lg(`node => ${node}`);

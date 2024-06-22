@@ -1,10 +1,10 @@
 import { Cell, create_sym, is_cell, Sym } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { HASH_CELL } from "@stemcmicro/hashing";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, nil, U } from "@stemcmicro/tree";
 import { Extension, ExtensionEnv, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { HASH_CELL } from "@stemcmicro/hashing";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 
 const ISONE = native_sym(Native.isone);
@@ -48,7 +48,7 @@ class CellExtension implements Extension<Cell> {
     dispatch(target: Cell, opr: Sym, argList: Cons, env: ExprContext): U {
         return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
-    iscons(): boolean {
+    iscons(): this is Extension<Cons> {
         return false;
     }
     operator(): Sym {

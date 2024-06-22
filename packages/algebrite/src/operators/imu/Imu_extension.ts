@@ -1,11 +1,11 @@
 import { create_str, create_sym, half, imu, Imu, is_blade, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, negOne, one, Sym, two } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { HASH_IMU } from "@stemcmicro/hashing";
 import { multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { Extension, FEATURE, mkbuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
-import { HASH_IMU } from "@stemcmicro/hashing";
 import { order_binary } from "../../helpers/order_binary";
 import { MATH_IMU } from "../../runtime/ns_math";
 
@@ -130,7 +130,7 @@ class ImuExtension implements Extension<Imu> {
         }
         throw new Error(`ImuExtension.test ${opr} method not implemented.`);
     }
-    iscons(): false {
+    iscons(): this is Extension<Cons> {
         return false;
     }
     operator(): never {

@@ -34,7 +34,7 @@ class ConsExtension implements Extension<Cons> {
     test(expr: Cons, opr: Sym): boolean {
         throw new Error(`${this.name}.test(${expr},${opr}) method not implemented.`);
     }
-    iscons(): false {
+    iscons(): this is Extension<Cons> {
         return false;
     }
     operator(): never {

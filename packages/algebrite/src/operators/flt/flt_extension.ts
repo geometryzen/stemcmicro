@@ -1,11 +1,11 @@
 import { assert_flt, create_flt, create_str, create_sym, Err, Flt, is_blade, is_boo, is_err, is_flt, is_hyp, is_imu, is_rat, is_sym, is_tensor, is_uom, oneAsFlt, piAsFlt, Sym, zeroAsFlt } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { hash_for_atom } from "@stemcmicro/hashing";
 import { iszero, multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { cons, Cons, is_atom, items_to_cons, nil, U } from "@stemcmicro/tree";
-import { FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_for_atom } from "@stemcmicro/hashing";
+import { Extension, FEATURE, mkbuilder, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { order_binary } from "../../helpers/order_binary";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
 
@@ -205,7 +205,7 @@ export class FltExtension implements ExprHandler<Flt> {
         }
         return diagnostic(Diagnostics.Property_0_does_not_exist_on_type_1, opr, create_sym(target.type));
     }
-    iscons(): false {
+    iscons(): this is Extension<Cons> {
         return false;
     }
     operator(): never {

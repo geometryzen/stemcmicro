@@ -1,29 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { assert_sym, create_sym, is_sym, Sym } from "@stemcmicro/atoms";
 import { ExprContext, LambdaExpr } from "@stemcmicro/context";
+import { hash_candidates, hash_nonop_cons } from "@stemcmicro/hashing";
 import { is_cons_opr_eq_sym } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { ProgramIOListener, Stack } from "@stemcmicro/stack";
 import { Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { BaseEnv } from "./BaseEnv";
 import { DerivedScope } from "./DerivedEnv";
-import { step_1_args } from "./step_1_args";
-import { step_2_args } from "./step_2_args";
-import { step_3_args } from "./step_3_args";
-import { step_abs } from "./step_abs";
 import { step_add } from "./step_add";
 import { step_module } from "./step_module";
-import { step_multiply } from "./step_multiply";
-import { step_n_args } from "./step_n_args";
-import { step_power } from "./step_power";
-import { step_relational_expr } from "./step_relational_expr";
 import { step_setq } from "./step_setq";
-import { step_taylor } from "./step_taylor";
-import { step_test } from "./step_test";
-import { step_transpose } from "./step_transpose";
-import { step_unit } from "./step_unit";
-import { step_v_args } from "./step_v_args";
-import { step_zero } from "./step_zero";
 
 const STEP_ERROR = { STEP_ERROR: true };
 const MODULE = create_sym("module");
@@ -36,11 +23,11 @@ function is_cons_opr_eq_module(x: Cons): boolean {
  * Return the key property of the operator of the cons expression.
  * In all other cases, an exception is raised.
  */
-function assert_cons_opr_key(x: Cons): string | never {
+function assert_cons_opr(x: Cons): Sym | never {
     if (is_cons(x)) {
         const candidate = x.opr;
         if (is_sym(candidate)) {
-            return candidate.key();
+            return candidate;
         } else {
             throw new Error();
         }
@@ -109,7 +96,7 @@ export class State {
     constructor(
         readonly input: U,
         readonly scope: Scope
-    ) {}
+    ) { }
 }
 
 /**
@@ -150,7 +137,7 @@ function atomFn(atom: U, stack: Stack<State>, state: State, handler: StepperHand
 }
 
 class BlackHole implements StepperHandler {
-    atom(after: U, before: U): void {}
+    atom(after: U, before: U): void { }
 }
 
 const BLACK_HOLE = new BlackHole();
@@ -165,7 +152,7 @@ export class Stepper {
     #currStepper: Stepper;
     #stack: Stack<State> = new Stack();
     #tasks: Task[] = [];
-    #stepFunctions: { [type: string]: StepFunction };
+    readonly #stepFunctions: Map<string, StepFunction> = new Map();
     #getterStep: boolean = false;
     #setterStep: boolean = false;
     #value: unknown;
@@ -180,14 +167,12 @@ export class Stepper {
      */
     constructor(module: Cons, options?: Partial<StepperConfig>, initFunc?: (runner: Stepper, globalObject: Thing) => void) {
         this.#currStepper = this;
-        this.#stepFunctions = Object.create(null);
         this.#initFunc = initFunc;
         this.#initStepFunctions();
         // this.#coreEnv = create_env(env_options_from_stepper_options(options));
         // init_env(this.#coreEnv);
         this.#globalScope = this.createScope(null, new BaseEnv(this.#coreEnv, this.createObjectProto(null)));
         this.#globalThing = this.#globalScope.thing;
-        this.#runPolyfills();
         const state = new State(module, this.#globalScope);
         this.#stack.push(state);
     }
@@ -274,23 +259,26 @@ export class Stepper {
                 this.#currStepper = this;
                 try {
                     if (is_cons(input)) {
-                        // In an operator overloading world we would be computing the hash of the expression.
-                        const key = assert_cons_opr_key(input);
-
-                        const stepFn = this.#stepFunctions[key];
-                        if (stepFn) {
-                            // console.lg(`Calling StepFunction for key ${JSON.stringify(key)} with node ${node}`);
-                            const nextState = stepFn(input, stack, state);
-                            if (nextState) {
-                                stack.push(nextState);
+                        let found = false;
+                        const opr = assert_cons_opr(input);
+                        const keys = hash_candidates(opr, input);
+                        for (const key of keys) {
+                            if (this.#stepFunctions.has(key)) {
+                                const stepFn = this.#stepFunctions.get(key);
+                                if (stepFn) {
+                                    // console.lg(`Calling StepFunction for key ${JSON.stringify(key)} with node ${node}`);
+                                    const nextState = stepFn(input, stack, state);
+                                    if (nextState) {
+                                        stack.push(nextState);
+                                    }
+                                    found=true;
+                                    break;
+                                }
                             }
-                        } else {
-                            // Assume operators that are not recognized require all their arguments to be evaluated.
-                            // This allows users to create DSL languages with externally defined functions.
-                            const nextState = step_v_args(input, stack, state);
-                            if (nextState) {
-                                stack.push(nextState);
-                            }
+                        }
+                        if (!found) {
+                            // return false;
+                            throw Error(`${input} has no handler.`);
                         }
                     } else if (input.isnil) {
                         stack.top.value = input;
@@ -332,8 +320,8 @@ export class Stepper {
     get stack(): Stack<State> {
         return this.#stack;
     }
-    addListener(listener: ProgramIOListener): void {}
-    removeListener(listener: ProgramIOListener): void {}
+    addListener(listener: ProgramIOListener): void { }
+    removeListener(listener: ProgramIOListener): void { }
     #nextTask(): State | null {
         // console.lg(`Interpreter.#nextTask()`);
         if (this.#tasks.length > 0) {
@@ -371,105 +359,96 @@ export class Stepper {
     }
     #initStepFunctions(): void {
         // Notice here that the handlers are keyed only by the operator.key, so we don't have operator overloading.
-        this.#stepFunctions[native_sym(Native.add).key()] = step_add;
-        this.#stepFunctions[native_sym(Native.multiply).key()] = step_multiply;
-        this.#stepFunctions[native_sym(Native.lco).key()] = step_v_args;
-        this.#stepFunctions[native_sym(Native.rco).key()] = step_v_args;
-        this.#stepFunctions["="] = step_setq;
-        this.#stepFunctions[native_sym(Native.testeq).key()] = step_relational_expr;
-        this.#stepFunctions[native_sym(Native.testne).key()] = step_relational_expr;
-        this.#stepFunctions[native_sym(Native.testge).key()] = step_relational_expr;
-        this.#stepFunctions[native_sym(Native.testgt).key()] = step_relational_expr;
-        this.#stepFunctions[native_sym(Native.testle).key()] = step_relational_expr;
-        this.#stepFunctions[native_sym(Native.testlt).key()] = step_relational_expr;
-        this.#stepFunctions["module"] = step_module;
-        this.#stepFunctions["abs"] = step_abs;
-        this.#stepFunctions["adj"] = step_1_args;
-        this.#stepFunctions["algebra"] = step_2_args;
-        this.#stepFunctions["and"] = step_v_args;
-        this.#stepFunctions["arccos"] = step_1_args;
-        this.#stepFunctions["arccosh"] = step_1_args;
-        this.#stepFunctions["arcsin"] = step_1_args;
-        this.#stepFunctions["arcsinh"] = step_1_args;
-        this.#stepFunctions["arctan"] = step_1_args;
-        this.#stepFunctions["arctanh"] = step_1_args;
-        this.#stepFunctions["arg"] = step_1_args;
-        this.#stepFunctions["besselj"] = step_2_args;
-        this.#stepFunctions["bessely"] = step_2_args;
-        this.#stepFunctions["ceiling"] = step_1_args;
-        this.#stepFunctions["choose"] = step_2_args;
-        this.#stepFunctions["coeff"] = step_3_args;
-        this.#stepFunctions["cofactor"] = step_3_args;
-        this.#stepFunctions[native_sym(Native.component).key()] = step_3_args;
-        this.#stepFunctions["conj"] = step_1_args;
-        this.#stepFunctions["contract"] = step_v_args;
-        this.#stepFunctions[native_sym(Native.cos).key()] = step_1_args;
-        this.#stepFunctions[native_sym(Native.cosh).key()] = step_1_args;
-        this.#stepFunctions["circexp"] = step_1_args;
-        this.#stepFunctions["cross"] = step_2_args;
-        this.#stepFunctions["curl"] = step_1_args;
-        this.#stepFunctions["denominator"] = step_1_args;
-        this.#stepFunctions["det"] = step_1_args;
-        this.#stepFunctions["dim"] = step_2_args;
-        this.#stepFunctions["div"] = step_1_args;
-        this.#stepFunctions["do"] = step_v_args;
-        this.#stepFunctions["dot"] = step_v_args;
-        this.#stepFunctions["draw"] = step_2_args;
-        this.#stepFunctions["eval"] = step_v_args;
-        this.#stepFunctions["exp"] = step_1_args;
-        this.#stepFunctions["expand"] = step_2_args;
-        this.#stepFunctions["expcos"] = step_1_args;
-        this.#stepFunctions["expsin"] = step_1_args;
-        this.#stepFunctions["factor"] = step_v_args;
-        this.#stepFunctions["factorial"] = step_1_args;
-        this.#stepFunctions["float"] = step_1_args;
-        this.#stepFunctions["floor"] = step_1_args;
-        this.#stepFunctions["gcd"] = step_v_args;
-        this.#stepFunctions["hermite"] = step_2_args;
-        this.#stepFunctions[native_sym(Native.inner).key()] = step_v_args;
-        this.#stepFunctions["integral"] = step_2_args;
-        this.#stepFunctions["inv"] = step_1_args;
-        this.#stepFunctions["isprime"] = step_1_args;
-        this.#stepFunctions[native_sym(Native.pow).key()] = step_power;
-        this.#stepFunctions["laguerre"] = step_v_args;
-        this.#stepFunctions["lcm"] = step_v_args;
-        this.#stepFunctions["leading"] = step_2_args;
-        this.#stepFunctions["legendre"] = step_v_args;
-        this.#stepFunctions["log"] = step_1_args;
-        this.#stepFunctions["not"] = step_1_args;
-        this.#stepFunctions["numerator"] = step_1_args;
-        this.#stepFunctions["or"] = step_v_args;
-        this.#stepFunctions[native_sym(Native.outer).key()] = step_v_args;
-        this.#stepFunctions["prime"] = step_1_args;
-        this.#stepFunctions["quotient"] = step_n_args;
-        this.#stepFunctions["rank"] = step_1_args;
-        this.#stepFunctions["rationalize"] = step_1_args;
-        this.#stepFunctions["rect"] = step_1_args;
-        this.#stepFunctions["roots"] = step_n_args;
-        this.#stepFunctions["shape"] = step_1_args;
-        this.#stepFunctions["simplify"] = step_1_args;
-        this.#stepFunctions[native_sym(Native.sin).key()] = step_1_args;
-        this.#stepFunctions[native_sym(Native.sinh).key()] = step_1_args;
-        this.#stepFunctions["sqrt"] = step_1_args;
-        this.#stepFunctions["subst"] = step_n_args;
-        this.#stepFunctions["tan"] = step_1_args;
-        this.#stepFunctions["tanh"] = step_1_args;
-        this.#stepFunctions["tau"] = step_1_args;
-        this.#stepFunctions["taylor"] = step_taylor;
-        this.#stepFunctions["test"] = step_test;
-        this.#stepFunctions["transpose"] = step_transpose;
-        this.#stepFunctions["unit"] = step_unit;
-        this.#stepFunctions["uom"] = step_1_args;
-        this.#stepFunctions["zero"] = step_zero;
-    }
-    #runPolyfills(): void {
-        /*
-        this.ast = ...
-        const state = new State(this.ast, this.#globalScope);
-        this.#stack = [state];
-        this.run();
-        this.#value = void 0;
-        */
+        this.#stepFunctions.set(hash_nonop_cons(native_sym(Native.add)), step_add);
+        // this.#stepFunctions[native_sym(Native.multiply).key()] = step_multiply;
+        // this.#stepFunctions[native_sym(Native.lco).key()] = step_v_args;
+        // this.#stepFunctions[native_sym(Native.rco).key()] = step_v_args;
+        this.#stepFunctions.set(hash_nonop_cons(native_sym(Native.assign)), step_setq);
+        // this.#stepFunctions[native_sym(Native.testeq).key()] = step_relational_expr;
+        // this.#stepFunctions[native_sym(Native.testne).key()] = step_relational_expr;
+        // this.#stepFunctions[native_sym(Native.testge).key()] = step_relational_expr;
+        // this.#stepFunctions[native_sym(Native.testgt).key()] = step_relational_expr;
+        // this.#stepFunctions[native_sym(Native.testle).key()] = step_relational_expr;
+        // this.#stepFunctions[native_sym(Native.testlt).key()] = step_relational_expr;
+        this.#stepFunctions.set(hash_nonop_cons(create_sym("module")), step_module);
+        // this.#stepFunctions["abs"] = step_abs;
+        // this.#stepFunctions["adj"] = step_1_args;
+        // this.#stepFunctions["algebra"] = step_2_args;
+        // this.#stepFunctions["and"] = step_v_args;
+        // this.#stepFunctions["arccos"] = step_1_args;
+        // this.#stepFunctions["arccosh"] = step_1_args;
+        // this.#stepFunctions["arcsin"] = step_1_args;
+        // this.#stepFunctions["arcsinh"] = step_1_args;
+        // this.#stepFunctions["arctan"] = step_1_args;
+        // this.#stepFunctions["arctanh"] = step_1_args;
+        // this.#stepFunctions["arg"] = step_1_args;
+        // this.#stepFunctions["besselj"] = step_2_args;
+        // this.#stepFunctions["bessely"] = step_2_args;
+        // this.#stepFunctions["ceiling"] = step_1_args;
+        // this.#stepFunctions["choose"] = step_2_args;
+        // this.#stepFunctions["coeff"] = step_3_args;
+        // this.#stepFunctions["cofactor"] = step_3_args;
+        // this.#stepFunctions[native_sym(Native.component).key()] = step_3_args;
+        // this.#stepFunctions["conj"] = step_1_args;
+        // this.#stepFunctions["contract"] = step_v_args;
+        // this.#stepFunctions[native_sym(Native.cos).key()] = step_1_args;
+        // this.#stepFunctions[native_sym(Native.cosh).key()] = step_1_args;
+        // this.#stepFunctions["circexp"] = step_1_args;
+        // this.#stepFunctions["cross"] = step_2_args;
+        // this.#stepFunctions["curl"] = step_1_args;
+        // this.#stepFunctions["denominator"] = step_1_args;
+        // this.#stepFunctions["det"] = step_1_args;
+        // this.#stepFunctions["dim"] = step_2_args;
+        // this.#stepFunctions["div"] = step_1_args;
+        // this.#stepFunctions["do"] = step_v_args;
+        // this.#stepFunctions["dot"] = step_v_args;
+        // this.#stepFunctions["draw"] = step_2_args;
+        // this.#stepFunctions["eval"] = step_v_args;
+        // this.#stepFunctions["exp"] = step_1_args;
+        // this.#stepFunctions["expand"] = step_2_args;
+        // this.#stepFunctions["expcos"] = step_1_args;
+        // this.#stepFunctions["expsin"] = step_1_args;
+        // this.#stepFunctions["factor"] = step_v_args;
+        // this.#stepFunctions["factorial"] = step_1_args;
+        // this.#stepFunctions["float"] = step_1_args;
+        // this.#stepFunctions["floor"] = step_1_args;
+        // this.#stepFunctions["gcd"] = step_v_args;
+        // this.#stepFunctions["hermite"] = step_2_args;
+        // this.#stepFunctions[native_sym(Native.inner).key()] = step_v_args;
+        // this.#stepFunctions["integral"] = step_2_args;
+        // this.#stepFunctions["inv"] = step_1_args;
+        // this.#stepFunctions["isprime"] = step_1_args;
+        // this.#stepFunctions[native_sym(Native.pow).key()] = step_power;
+        // this.#stepFunctions["laguerre"] = step_v_args;
+        // this.#stepFunctions["lcm"] = step_v_args;
+        // this.#stepFunctions["leading"] = step_2_args;
+        // this.#stepFunctions["legendre"] = step_v_args;
+        // this.#stepFunctions["log"] = step_1_args;
+        // this.#stepFunctions["not"] = step_1_args;
+        // this.#stepFunctions["numerator"] = step_1_args;
+        // this.#stepFunctions["or"] = step_v_args;
+        // this.#stepFunctions[native_sym(Native.outer).key()] = step_v_args;
+        // this.#stepFunctions["prime"] = step_1_args;
+        // this.#stepFunctions["quotient"] = step_n_args;
+        // this.#stepFunctions["rank"] = step_1_args;
+        // this.#stepFunctions["rationalize"] = step_1_args;
+        // this.#stepFunctions["rect"] = step_1_args;
+        // this.#stepFunctions["roots"] = step_n_args;
+        // this.#stepFunctions["shape"] = step_1_args;
+        // this.#stepFunctions["simplify"] = step_1_args;
+        // this.#stepFunctions[native_sym(Native.sin).key()] = step_1_args;
+        // this.#stepFunctions[native_sym(Native.sinh).key()] = step_1_args;
+        // this.#stepFunctions["sqrt"] = step_1_args;
+        // this.#stepFunctions["subst"] = step_n_args;
+        // this.#stepFunctions["tan"] = step_1_args;
+        // this.#stepFunctions["tanh"] = step_1_args;
+        // this.#stepFunctions["tau"] = step_1_args;
+        // this.#stepFunctions["taylor"] = step_taylor;
+        // this.#stepFunctions["test"] = step_test;
+        // this.#stepFunctions["transpose"] = step_transpose;
+        // this.#stepFunctions["unit"] = step_unit;
+        // this.#stepFunctions["uom"] = step_1_args;
+        // this.#stepFunctions["zero"] = step_zero;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     #populateScope(node: unknown, scope: Scope): Map<string, unknown> {

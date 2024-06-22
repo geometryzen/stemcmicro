@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Sym } from "@stemcmicro/atoms";
 import { ExprContext, LambdaExpr } from "@stemcmicro/context";
-import { hash_info } from "@stemcmicro/hashing";
+import { hash_candidates } from "@stemcmicro/hashing";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { Scope, Thing } from "./Stepper";
@@ -20,7 +20,7 @@ export class BaseEnv implements Scope {
     }
     evaluate(opr: Native, ...args: U[]): U {
         const expr = items_to_cons(native_sym(opr), ...args);
-        const hashes: string[] = hash_info(expr);
+        const hashes: string[] = hash_candidates(native_sym(opr), expr);
         for (const hash of hashes) {
             if (this.#hash_to_lambda.has(hash)) {
                 const lambda = this.#hash_to_lambda.get(hash);

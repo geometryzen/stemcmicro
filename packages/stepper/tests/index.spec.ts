@@ -2,6 +2,7 @@ import { create_rat, create_sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { items_to_cons } from "@stemcmicro/tree";
 import { Stepper } from "../src/Stepper";
+
 describe("stepper", () => {
     it("00010", () => {
         const module = items_to_cons(create_sym("module"));

@@ -109,19 +109,20 @@ export function hash_nonop_cons(opr: Sym): string {
     return `(${opr.key()})`;
 }
 
-export function hash_target(opr: Sym, target: Cons): string[] {
-    if (is_nil(target)) {
+/**
+ *
+ * @param opr The operator for which handlers are required.
+ * @param expr The expression that is to be evaluated or nil if there is no context.
+ */
+export function hash_candidates(opr: Sym, expr: Cons): string[] {
+    if (is_nil(expr)) {
         return [hash_nonop_cons(opr)];
     } else {
-        return hash_info(target);
+        return hash_info(expr);
     }
 }
 
-/**
- * For a given expression, computes a list of hashes from most specific to least specific.
- * This is used to provide the possible hashes that the expression can match.
- */
-export function hash_info(expr: U): string[] {
+function hash_info(expr: Cons): string[] {
     const protos: string[] = [];
     const info = hash_info_at_level(expr, 0);
     protos.push(compress(info));

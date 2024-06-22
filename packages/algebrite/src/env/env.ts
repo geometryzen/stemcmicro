@@ -2,7 +2,7 @@
 import { assert_sym, Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_rat, is_sym, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, is_lambda, Lambda, LambdaExpr } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { hash_for_atom, hash_info, hash_nonop_cons, hash_target } from "@stemcmicro/hashing";
+import { hash_candidates, hash_for_atom, hash_nonop_cons } from "@stemcmicro/hashing";
 import { DirectiveStack } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { ProgramIOListener, ProgramStack, StackFunction } from "@stemcmicro/stack";
@@ -397,7 +397,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 const extensions: Extension<U>[] = currents[name.key()];
                 if (Array.isArray(extensions) && extensions.length > 0) {
                     // We may not match because available are (opr Rat) and (opr U), but this hash_nonop_cons gives (opr).
-                    const hashes = hash_target(name, target);
+                    const hashes = hash_candidates(name, target);
                     for (let h = 0; h < hashes.length; h++) {
                         const hash = hashes[h];
                         // console.lg("looking for: ", hash);
@@ -833,7 +833,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     }
                     // if (is_sym(head)) {
                     // console.lg("head", `${head}`);
-                    const hashes = hash_info(expr);
+                    const hashes = hash_candidates(assert_sym(expr.opr), expr);
                     for (const hash of hashes) {
                         const ops = currentOpsByHash()[hash];
                         if (Array.isArray(ops)) {
@@ -1009,7 +1009,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 // let changedExpr = false;
                 const hash_to_ops = currentOpsByHash();
                 // hashes are the buckets we should look in for operators from specific to generic.
-                const hashes: string[] = hash_info(expr);
+                const hashes: string[] = hash_candidates(assert_sym(opr), expr);
                 // console.lg("hashes", JSON.stringify(hashes));
                 for (const hash of hashes) {
                     const ops = hash_to_ops[hash];
@@ -1150,7 +1150,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 // let changedExpr = false;
                 const hash_to_ops = currentOpsByHash();
                 // hashes are the buckets we should look in for operators from specific to generic.
-                const hashes: string[] = hash_info(expr);
+                const hashes: string[] = hash_candidates(assert_sym(opr), expr);
                 // console.lg("keys", JSON.stringify(keys));
                 for (const hash of hashes) {
                     const ops = hash_to_ops[hash];

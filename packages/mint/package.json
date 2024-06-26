@@ -1,5 +1,5 @@
 {
-    "name": "@stemcmicro/stepper",
+    "name": "@stemcmicro/mint",
     "version": "0.9.87",
     "description": "Provides the meaning of universal mathematics symbols",
     "exports": {
@@ -41,7 +41,7 @@
         "docs": "npm run docs:typedoc && open-cli docs/index.html",
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
         "lint": "eslint .",
-        "pages": "npm run docs:typedoc && gh-pages --dist docs --dest stepper",
+        "pages": "npm run docs:typedoc && gh-pages --dist docs --dest mint",
         "test": "jest"
     },
     "repository": {
@@ -58,7 +58,8 @@
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "dependencies": {
-        "@stemcmicro/algebrite": "workspace:*"
+        "@stemcmicro/algebrite": "workspace:*",
+        "@geometryzen/esprima": "^0.9.13"
     },
     "peerDependencies": {
         "@stemcmicro/atoms": "workspace:*",

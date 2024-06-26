@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { eval_add } from "@stemcmicro/algebrite";
 import { assert_sym, create_sym, is_sym, Sym } from "@stemcmicro/atoms";
 import { ExprContext, LambdaExpr } from "@stemcmicro/context";
 import { hash_candidates, hash_nonop_cons } from "@stemcmicro/hashing";
@@ -9,6 +10,7 @@ import { Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { BaseEnv } from "./BaseEnv";
 import { DerivedScope } from "./DerivedEnv";
 import { step_add } from "./step_add";
+import { step_from_eval_function } from "./step_from_eval_function";
 import { step_module } from "./step_module";
 import { step_setq } from "./step_setq";
 
@@ -49,16 +51,8 @@ export class Thing {
     }
 }
 
-export interface Scope {
+export interface Scope extends ExprContext {
     thing: Thing;
-    evaluate(opr: Native, ...args: U[]): U;
-    hasBinding(sym: Sym, target: Cons): boolean;
-    getBinding(sym: Sym, target: Cons): U;
-    setBinding(sym: Sym, binding: U): void;
-    hasUserFunction(sym: Sym): boolean;
-    getUserFunction(sym: Sym): U;
-    setUserFunction(sym: Sym, usrfunc: U): void;
-    valueOf(expr: U): U;
 }
 
 export class State {
@@ -96,7 +90,7 @@ export class State {
     constructor(
         readonly input: U,
         readonly scope: Scope
-    ) { }
+    ) {}
 }
 
 /**
@@ -137,7 +131,7 @@ function atomFn(atom: U, stack: Stack<State>, state: State, handler: StepperHand
 }
 
 class BlackHole implements StepperHandler {
-    atom(after: U, before: U): void { }
+    atom(after: U, before: U): void {}
 }
 
 const BLACK_HOLE = new BlackHole();
@@ -271,7 +265,7 @@ export class Stepper {
                                     if (nextState) {
                                         stack.push(nextState);
                                     }
-                                    found=true;
+                                    found = true;
                                     break;
                                 }
                             }
@@ -320,8 +314,8 @@ export class Stepper {
     get stack(): Stack<State> {
         return this.#stack;
     }
-    addListener(listener: ProgramIOListener): void { }
-    removeListener(listener: ProgramIOListener): void { }
+    addListener(listener: ProgramIOListener): void {}
+    removeListener(listener: ProgramIOListener): void {}
     #nextTask(): State | null {
         // console.lg(`Interpreter.#nextTask()`);
         if (this.#tasks.length > 0) {
@@ -360,6 +354,7 @@ export class Stepper {
     #initStepFunctions(): void {
         // Notice here that the handlers are keyed only by the operator.key, so we don't have operator overloading.
         this.#stepFunctions.set(hash_nonop_cons(native_sym(Native.add)), step_add);
+        this.#stepFunctions.set(hash_nonop_cons(native_sym(Native.add)), step_from_eval_function(eval_add));
         // this.#stepFunctions[native_sym(Native.multiply).key()] = step_multiply;
         // this.#stepFunctions[native_sym(Native.lco).key()] = step_v_args;
         // this.#stepFunctions[native_sym(Native.rco).key()] = step_v_args;

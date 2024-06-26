@@ -1,9 +1,9 @@
 import { create_sym, is_blade, is_flt, is_num, is_tensor, Num, one, zero } from "@stemcmicro/atoms";
-import { ExprContext, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
+import { ExprContext, ExprHandler, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { canonical_factor_num_rhs, compare_blade_blade, contains_single_blade, extract_single_blade, float, is_add, is_multiply, multiply, prolog_eval_varargs, remove_factors } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
-import { assert_cons_or_nil, car, cdr, cons, Cons, is_atom, is_nil, items_to_cons, U } from "@stemcmicro/tree";
+import { assert_cons_or_nil, Atom, car, cdr, cons, Cons, is_atom, is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { add_num_num } from "../../calculators/add/add_num_num";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { evaluate_as_float } from "../float/float";
@@ -178,8 +178,8 @@ function combine_terms(terms: U[], $: ExprContext): void {
         let rhs = terms[i + 1];
 
         if (is_atom(lhs) && is_atom(rhs)) {
-            const lhsExt = $.handlerFor(lhs); // Assume that for atoms an extension can be found.
-            const rhsExt = $.handlerFor(rhs); // Assume that for atoms an extension can be found.
+            const lhsExt: ExprHandler<Atom> = $.handlerFor(lhs); // Assume that for atoms an extension can be found.
+            const rhsExt: ExprHandler<Atom> = $.handlerFor(rhs); // Assume that for atoms an extension can be found.
             // console.lg("combine_atoms", `${lhs}`, `${rhs}`, `${lhsExt}`, `${rhsExt}`, `${lhs.type}`, `${rhs.type}`);
             const sumLhs = lhsExt.binL(lhs, ADD, rhs, $);
             if (is_nil(sumLhs)) {

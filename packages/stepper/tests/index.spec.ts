@@ -19,6 +19,6 @@ describe("stepper", () => {
         const pending = stepper.run();
         expect(pending).toBe(false);
         const retval = stepper.stack.top.value;
-        expect(`${retval}`).toBe("(+ (2 (3 ())))");
+        expect(`${retval}`).toBe("5");
     });
 });

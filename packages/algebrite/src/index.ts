@@ -3,6 +3,9 @@ export { code_from_native_sym, is_native_sym, Native, NATIVE_MAX, NATIVE_MIN, na
 export { AtomExtensionBuilderFromExprHandlerBuilder } from "./adapters/AtomExtensionBuilderFromExprHandlerBuilder";
 export { create_env } from "./env/env";
 export { ALL_FEATURES, directive_from_flag, ExtensionEnv, FEATURE } from "./env/ExtensionEnv";
+export { eval_add } from "./operators/add/eval_add";
+export { FltExtension } from "./operators/flt/flt_extension";
+export { RatExtension } from "./operators/rat/rat_extension";
 export { simplify } from "./operators/simplify/simplify";
 export { assert_sym } from "./operators/sym/assert_sym";
 export { create_uom, UOM_NAMES } from "./operators/uom/uom";

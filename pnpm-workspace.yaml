@@ -13,6 +13,7 @@ packages:
   - "packages/helpers"
   - "packages/hilbert"
   - "packages/js-parse"
+  - "packages/mint"
   - "packages/native"
   - "packages/py-parse"
   - "packages/stack"

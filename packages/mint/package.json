@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/mint",
-    "version": "0.9.87",
+    "version": "0.9.88",
     "description": "Provides the meaning of universal mathematics symbols",
     "exports": {
         ".": {
@@ -58,8 +58,8 @@
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "dependencies": {
-        "@stemcmicro/algebrite": "workspace:*",
-        "@geometryzen/esprima": "^0.9.13"
+        "@geometryzen/esprima": "^0.9.13",
+        "@stemcmicro/algebrite": "workspace:*"
     },
     "peerDependencies": {
         "@stemcmicro/atoms": "workspace:*",

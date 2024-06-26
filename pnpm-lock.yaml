@@ -6880,7 +6880,7 @@ packages:
     dev: true
 
   /lerna@999.9.9:
-    resolution: {integrity: sha512-Mu0z7cGgoBNLUEORKx9mltXpOnKQWmnZbzgibJnnYJJCenghS9OpBifi1KZKej4vMLAO/Ayv7cDumAhns08l5g==}
+    resolution: {integrity: sha512-9ZG/n+oCSjG5q5kb+fv7R5QULiY2943tKYjTPEu9riKIX/OXeBQHHQAonfKetO+bjXEmv2G44iW7/kHjlL65Tg==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     dependencies:

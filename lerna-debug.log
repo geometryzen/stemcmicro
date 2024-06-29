@@ -1,10 +1,8 @@
 0 silly argv {
-0 silly argv   _: [ 'version' ],
-0 silly argv   private: false,
-0 silly argv   'force-publish': true,
-0 silly argv   forcePublish: true,
+0 silly argv   _: [ 'run' ],
 0 silly argv   lernaVersion: '999.9.9',
-0 silly argv   '$0': 'node_modules/lerna/dist/cli.js'
+0 silly argv   '$0': 'node_modules/lerna/dist/cli.js',
+0 silly argv   script: 'build'
 0 silly argv }
 1 notice cli v999.9.9
 2 verbose packageConfigs Package manager "pnpm" detected. Resolving packages using `pnpm-workspace.yaml`.
@@ -14,7 +12,6 @@
 4 error     at /home/david/Development/stemcmicro/node_modules/.pnpm/nx@19.3.2/node_modules/nx/src/daemon/server/server.js:55:15
 4 error     at Socket.<anonymous> (/home/david/Development/stemcmicro/node_modules/.pnpm/nx@19.3.2/node_modules/nx/src/utils/consume-messages-from-socket.js:13:17)
 4 error     at Socket.emit (node:events:514:28)
-4 error     at Socket.emit (node:domain:488:12)
 4 error     at addChunk (node:internal/streams/readable:376:12)
 4 error     at readableAddChunk (node:internal/streams/readable:349:9)
-4 error     at Socket.Readable.push (node:internal/streams/readable:286:10)
+4 error     at Readable.push (node:internal/streams/readable:286:10)

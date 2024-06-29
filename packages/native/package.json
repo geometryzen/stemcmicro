@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/native",
-    "version": "0.9.95",
+    "version": "0.9.96",
     "description": "Provides the meaning of universal mathematics symbols",
     "exports": {
         ".": {

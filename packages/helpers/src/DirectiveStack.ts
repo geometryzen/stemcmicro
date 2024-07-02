@@ -145,5 +145,6 @@ function initial_directives(): Directives {
     update_directives(directives, Directive.maxFixedPrintoutDigits, 6);
     update_directives(directives, Directive.printMode, 1);
     update_directives(directives, Directive.codeGen, 0);
+    update_directives(directives, Directive.traceLevel, 0);
     return Object.freeze(directives);
 }

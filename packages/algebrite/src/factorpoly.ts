@@ -5,7 +5,7 @@ import { Native, native_sym } from "@stemcmicro/native";
 import { items_to_cons, U } from "@stemcmicro/tree";
 import { rational } from "./bignum";
 import { complex_conjugate } from "./complex_conjugate";
-import { yycondense } from "./condense";
+import { condense } from "./condense";
 import { ExtensionEnv } from "./env/ExtensionEnv";
 import { equals } from "./helpers/equals";
 import { rect } from "./helpers/rect";
@@ -17,7 +17,7 @@ import { ydivisors } from "./operators/divisors/divisors";
 import { lcm } from "./operators/lcm/lcm";
 import { ProgrammingError } from "./programming/ProgrammingError";
 import { quotient } from "./quotient";
-import { defs, move_top_of_stack, noexpand_unary } from "./runtime/defs";
+import { defs, move_top_of_stack } from "./runtime/defs";
 import { stack_pop, stack_push, stack_push_items } from "./runtime/stack";
 
 /**
@@ -190,7 +190,7 @@ export function factor_polynomial(P: U, X: Sym, $: Pick<ExprContext, "handlerFor
                 if (!equals(checkingTheDivision, dividend, $)) {
                     stack_push(previousK);
 
-                    const arg2 = noexpand_unary(yycondense, dividend, $);
+                    const arg2 = condense(dividend, $);
 
                     const arg1 = stack_pop();
                     return hook(multiply_noexpand(arg1, arg2, $), "A");
@@ -229,7 +229,7 @@ export function factor_polynomial(P: U, X: Sym, $: Pick<ExprContext, "handlerFor
 
     // console.lg("temp       II", render_as_infix(temp, $));
 
-    const remaining = noexpand_unary(yycondense, temp, $);
+    const remaining = condense(temp, $);
 
     // console.lg("factorized II", render_as_infix(factorized, $));
     // console.lg("remaining  II", render_as_infix(remaining, $));

@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "stemcmicro",
-    "packageManager": "pnpm@9.4.0",
+    "packageManager": "pnpm@9.4.0+sha256.b6fd0bfda555e7e584ad7e56b30c68b01d5a04f9ee93989f4b93ca8473c49c74",
     "scripts": {
         "build": "lerna run build",
         "check": "lerna run check",
@@ -36,7 +36,7 @@
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "gh-pages": "^6.1.1",
-        "globals": "^15.6.0",
+        "globals": "^15.7.0",
         "jest": "^29.7.0",
         "lerna": "^999.9.9",
         "mocha": "^10.5.2",
@@ -50,7 +50,7 @@
         "ts-jest-resolver": "^2.0.1",
         "ts-node": "^10.9.2",
         "tslib": "^2.6.3",
-        "typedoc": "^0.26.2",
+        "typedoc": "^0.26.3",
         "typescript": "^5.5.2",
         "typescript-eslint": "7.14.1"
     },

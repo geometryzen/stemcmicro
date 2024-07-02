@@ -31,7 +31,7 @@ import {
     str_to_string
 } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
-import { caadr, caar, cadddr, caddr, cadnr, cadr, car, cddr, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
+import { assert_U, caadr, caar, cadddr, caddr, cadnr, cadr, car, cddr, cdr, Cons, is_atom, is_cons, nil, U } from "@stemcmicro/tree";
 import { mp_denominator } from "./mp_denominator";
 import { mp_numerator } from "./mp_numerator";
 import { PrintMode } from "./PrintMode";

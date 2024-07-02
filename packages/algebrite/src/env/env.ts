@@ -953,7 +953,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         transform(expr: U): [TFLAGS, U] {
             assert_U(expr);
-            // console.lg("ExtensionEnv.transform", `${expr}`);
             // We short-circuit some expressions in order to improve performance.
             if (is_cons(expr)) {
                 // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
@@ -1019,8 +1018,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         const op = unambiguous_extension(expr, ops, $);
                         if (op) {
                             const composite = op.transform(expr, $);
-                            // console.lg(`${op.name} ${expr} => ${composite[1]} flags: ${composite[0]}`);
-                            // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
+                            if ($.getDirective(Directive.traceLevel) > 0) {
+                                // console.log(`${op.name} ${expr} => ${composite[1]} flags: ${composite[0]}`);
+                                console.log(`${JSON.stringify(op.name)} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
+                            }
                             return composite;
                         }
                     } else {

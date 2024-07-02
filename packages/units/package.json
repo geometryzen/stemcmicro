@@ -46,6 +46,7 @@
     "peerDependencies": {
         "@stemcmicro/atoms": "workspace:*",
         "@stemcmicro/cs-parse": "workspace:*",
+        "@stemcmicro/directive": "workspace:*",
         "@stemcmicro/em-parse": "workspace:*",
         "@stemcmicro/engine": "workspace:*",
         "@stemcmicro/hilbert": "workspace:*",

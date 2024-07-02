@@ -1,22 +1,16 @@
 import { is_rat, one } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { inverse, isone, is_add, is_multiply, is_negative, is_power, multiply_items } from "@stemcmicro/helpers";
+import { inverse, isone, is_cons_opr_eq_add, is_cons_opr_eq_multiply, is_cons_opr_eq_power, is_negative, multiply_items } from "@stemcmicro/helpers";
 import { car, is_cons, U } from "@stemcmicro/tree";
-import { rationalize_factoring } from "../rationalize/rationalize";
+import { rationalize } from "../rationalize/rationalize";
 
 export function denominator(expr: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
-    // console.lg("denominator", `${expr}`);
-    const hook = function (retval: U): U {
-        // console.lg(`LEAVING denominator of ${$.toInfixString(expr)} ${$.toListString(expr)} => ${$.toInfixString(retval)}`);
-        return retval;
-    };
-
     if (is_rat(expr)) {
-        return hook(expr.denom());
+        return expr.denom();
     }
 
-    if (is_cons(expr) && is_add(expr)) {
-        expr = rationalize_factoring(expr, $);
+    if (is_cons(expr) && is_cons_opr_eq_add(expr)) {
+        expr = rationalize(expr, $);
     }
 
     if (is_cons(expr)) {
@@ -24,7 +18,7 @@ export function denominator(expr: U, $: Pick<ExprContext, "handlerFor" | "pushDi
         // (denom (* x1 x2 x3 ...)) = denom(x1) * denom(x2) * denom(x3)
         // "denominator of products = product of denominators"
         // TODO: Why do I care about whether a1 is one?
-        if (is_multiply(expr) && !isone(car(argList), $)) {
+        if (is_cons_opr_eq_multiply(expr) && !isone(car(argList), $)) {
             // console.lg("(denom (* x1 x2 x3 ...)) = denom(x1) * denom(x2) * denom(x3)");
             const xs = expr.tail();
             // console.lg(`xs => ${items_to_infix(xs, $)}`);
@@ -32,13 +26,13 @@ export function denominator(expr: U, $: Pick<ExprContext, "handlerFor" | "pushDi
             // console.lg(`denominators => ${items_to_infix(denoms, $)}`);
             const product_of_denoms = multiply_items(denoms, $);
             // console.lg(`product_of_denoms => ${$.toInfixString(product_of_denoms)}`)
-            return hook(product_of_denoms);
-        } else if (is_power(expr) && is_negative(expr.expo)) {
-            return hook(inverse(expr, $));
+            return product_of_denoms;
+        } else if (is_cons_opr_eq_power(expr) && is_negative(expr.expo)) {
+            return inverse(expr, $);
         }
     }
 
-    return hook(one);
+    return one;
 }
 
 function denominators(xs: U[], $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U[] {

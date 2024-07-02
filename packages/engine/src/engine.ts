@@ -94,6 +94,7 @@ export interface ExprEngine extends Pick<ExprContext, "clearBindings">, Pick<Exp
 export interface EngineConfig {
     allowUndeclaredVars: "Err" | "Nil";
     prolog: string[];
+    traceLevel: number;
     useCaretForExponentiation: boolean;
     useDerivativeShorthandLowerD: boolean;
     useIntegersForPredicates: boolean;
@@ -104,6 +105,14 @@ function allow_undeclared_vars(options: Partial<EngineConfig>, allowDefault: "Er
         return options.allowUndeclaredVars;
     } else {
         return allowDefault;
+    }
+}
+
+function trace_level(options: Partial<EngineConfig>, traceLevelDefault: 0): number {
+    if (typeof options.traceLevel === "number") {
+        return options.traceLevel;
+    } else {
+        return traceLevelDefault;
     }
 }
 
@@ -212,6 +221,10 @@ class MicroEngine implements ExprEngine {
             allowUndeclaredVars: allow_undeclared_vars(options, "Nil"),
             useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD
         });
+        const traceLevel = trace_level(options, 0);
+        if (traceLevel > 0) {
+            this.#env.pushDirective(Directive.traceLevel, traceLevel);
+        }
         define_math_constant_pi(this.#env);
         define_spacetime_algebra(this.#env);
         define_geometric30_algebra(this.#env);

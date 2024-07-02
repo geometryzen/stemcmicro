@@ -10,6 +10,7 @@ import { U } from "@stemcmicro/tree";
 export interface MungeConfig {
     allowUndeclaredVars: "Err" | "Nil";
     language: "eigenmath" | "javascript" | "python";
+    traceLevel?: number;
     useCaretForExponentiation?: boolean;
     useDerivativeShorthandLowerD?: boolean;
     useIntegersForPredicates?: boolean;
@@ -24,6 +25,7 @@ export function munge(sourceText: string | string[], options: Partial<MungeConfi
     if (errors.length === 0) {
         const engine = create_engine({
             allowUndeclaredVars: options.allowUndeclaredVars,
+            traceLevel: options.traceLevel,
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
             useIntegersForPredicates: options.useIntegersForPredicates

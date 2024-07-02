@@ -116,5 +116,6 @@ export enum Directive {
     forceFixedPrintout = 24,
     maxFixedPrintoutDigits = 25,
     printMode = 26,
-    codeGen = 27
+    codeGen = 27,
+    traceLevel = 28
 }

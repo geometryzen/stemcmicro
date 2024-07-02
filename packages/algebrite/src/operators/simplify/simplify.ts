@@ -7,7 +7,7 @@ import { Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, Cons2, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { nativeDouble } from "../../bignum";
 import { add_terms } from "../../calculators/add/add_terms";
-import { condense, yycondense } from "../../condense";
+import { condense } from "../../condense";
 import { TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { clock } from "../../helpers/clock";
 import { equals } from "../../helpers/equals";
@@ -20,7 +20,6 @@ import { multiply_noexpand } from "../../multiply";
 import { roots } from "../../roots";
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from "../../runtime/constants";
 import { count, countOccurrencesOfSymbol } from "../../runtime/count";
-import { noexpand_unary } from "../../runtime/defs";
 import { stack_pop } from "../../runtime/stack";
 import { ShareableStack } from "../../shareable/ShareableStack";
 import { simfac } from "../../simfac";
@@ -31,7 +30,7 @@ import { evaluate_as_float } from "../float/float";
 import { areunivarpolysfactoredorexpandedform, gcd } from "../gcd/gcd";
 import { numerator } from "../numerator/numerator";
 import { is_pow_2_any_any } from "../pow/is_pow_2_any_any";
-import { rationalize_factoring } from "../rationalize/rationalize";
+import { rationalize } from "../rationalize/rationalize";
 import { re } from "../real/real";
 import { transpose_factoring } from "../transpose/transpose";
 import { wrap_as_transform } from "../wrap_as_transform";
@@ -39,7 +38,7 @@ import { wrap_as_transform } from "../wrap_as_transform";
 function simplify_if_contains_factorial(expr: U, $: ExprContext): U {
     if (expr.contains(FACTORIAL)) {
         const p2 = simfac(expr, $);
-        const p3 = simfac(rationalize_factoring(expr, $), $);
+        const p3 = simfac(rationalize(expr, $), $);
         return count(p2) < count(p3) ? p2 : p3;
     } else {
         return expr;
@@ -150,7 +149,7 @@ function simplify_by_rationalizing(p1: U, $: ExprContext): U {
     if (!(is_cons(p1) && is_add(p1))) {
         return p1;
     }
-    const p2 = rationalize_factoring(p1, $);
+    const p2 = rationalize(p1, $);
     if (count(p2) < count(p1)) {
         p1 = p2;
     }
@@ -172,7 +171,7 @@ function simplify_by_condensing(p1: U, $: ExprContext): U {
 // this simplifies forms like (A-B) / (B-A)
 function simplify_a_minus_b_divided_by_b_minus_a(x: U, $: ExprContext): U {
     // console.lg("simplify_a_minus_b_divided_by_b_minus_a", `${x}`);
-    const candidate = rationalize_factoring(negate($, rationalize_factoring(negate($, rationalize_factoring(x, $)), $)), $);
+    const candidate = rationalize(negate($, rationalize(negate($, rationalize(x, $)), $)), $);
     if (count(candidate) < count(x)) {
         return candidate;
     } else {
@@ -216,11 +215,11 @@ function simplify_by_expanding_denominators(x: U, $: ExprContext): U {
     if (iszero(x, $)) {
         return x;
     }
-    const A = rationalize_factoring(x, $); //  A = x
+    const A = rationalize(x, $); //  A = x
     const B = inverse(A, $); //  B = 1/x
-    const C = rationalize_factoring(B, $); //  C = 1/x
+    const C = rationalize(B, $); //  C = 1/x
     const D = inverse(C, $); //  D = x
-    const E = rationalize_factoring(D, $); //  E = x
+    const E = rationalize(D, $); //  E = x
     if (count(E) < count(x)) {
         return E;
     } else {
@@ -440,7 +439,7 @@ function simplify_nested_radicals(x: U, $: ExprContext): [TFLAGS, U] {
     // which version has the least number of them.
 
     // We have a problem here, probably cause by the noexpand.
-    const green = noexpand_unary(yycondense, red, $);
+    const green = condense(red, $);
     // console.lg("red", `${$.toInfixString(red)}`);
     // console.lg("green", `${$.toInfixString(green)}`);
 

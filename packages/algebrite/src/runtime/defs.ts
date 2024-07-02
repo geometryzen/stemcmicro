@@ -85,6 +85,9 @@ export function move_top_of_stack(stackPos: number) {
     }
 }
 
+/**
+ * Executes the unary function in a context where the expanding directive is false.
+ */
 export function noexpand_unary<T extends keyof ExtensionEnv>(func: (arg: U, $: Pick<ExtensionEnv, T | "pushDirective" | "popDirective">) => U, arg: U, $: Pick<ExtensionEnv, T | "pushDirective" | "popDirective">): U {
     $.pushDirective(Directive.expanding, 0);
     try {

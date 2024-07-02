@@ -1,15 +1,13 @@
 import { create_sym, is_blade, is_flt, is_num, is_rat, is_tensor, is_uom, Num, one, zero } from "@stemcmicro/atoms";
-import { ExprContext } from "@stemcmicro/context";
+import { ExprContext, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { add, contains_single_blade, contains_single_uom, extract_single_blade, extract_single_uom, multiply, power, prolog_eval_varargs, remove_factors } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { car, cdr, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
-import { SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_expanding } from "../../helpers/is_expanding";
 import { OPERATOR } from "../../runtime/constants";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";
-import { MATH_MUL } from "../../runtime/ns_math";
 import { cddr } from "../../tree/helpers";
 
 const MUL = native_sym(Native.multiply);
@@ -212,7 +210,7 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
     }
 
     // Let's get this now before going into the while loop...
-    const compareFactors = $.compareFn(MATH_MUL);
+    const compareFactors = $.compareFn(MUL);
 
     while (is_cons(p1) && is_cons(p2)) {
         const head1 = p1.car;
@@ -321,7 +319,7 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
             // e.g. a^n * b * b => b * a^n * b = b * b * a^n => b^2 * a^n.
             factors.splice(0, 1); // remove the Rat(1)
             factors.sort(compareFactors);
-            const retval = items_to_cons(MATH_MUL, ...factors);
+            const retval = items_to_cons(MUL, ...factors);
             // console.lg("retval 3", $.toSExprString(retval));
             return hook(retval, "N");
         }

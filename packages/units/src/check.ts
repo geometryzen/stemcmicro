@@ -6,7 +6,7 @@ export interface CheckConfig {
     allowUndeclaredVars: "Err" | "Nil";
     format: "Ascii" | "Human" | "Infix" | "LaTeX" | "SExpr" | "SVG";
     language: "eigenmath" | "javascript" | "python";
-    traceLevel: number;
+    traceLevel: 0 | 1;
     useCaretForExponentiation: boolean;
 }
 

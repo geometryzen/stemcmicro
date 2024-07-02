@@ -11,7 +11,7 @@ read message
 git add --all
 git commit -m "'$message'"
 git push origin main
-pnpm run version --loglevel silly
-pnpm run publish --loglevel silly
+pnpm run version
+pnpm run publish
 # pnpm run docs
 # pnpm run pages

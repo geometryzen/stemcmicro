@@ -15,7 +15,6 @@ import {
     render_as_sexpr,
     RESERVED_KEYWORD_LAST,
     RESERVED_KEYWORD_TTY,
-    simplify,
     transform_tree,
     UOM_NAMES
 } from "@stemcmicro/algebrite";
@@ -25,8 +24,7 @@ import { Directive } from "@stemcmicro/directive";
 import { render_svg } from "@stemcmicro/eigenmath";
 import { EmParseOptions, em_parse } from "@stemcmicro/em-parse";
 import { Native, native_sym } from "@stemcmicro/native";
-import { ProgramStack } from "@stemcmicro/stack";
-import { assert_U, Atom, Cons, items_to_cons, nil, U } from "@stemcmicro/tree";
+import { assert_U, Atom, Cons, items_to_cons, U } from "@stemcmicro/tree";
 
 export interface ParseConfig {
     useCaretForExponentiation: boolean;
@@ -67,7 +65,6 @@ export interface ExprEngine extends Pick<ExprContext, "clearBindings">, Pick<Exp
 
     parse(sourceText: string): { trees: U[]; errors: Error[] };
 
-    simplify(expr: U): U;
     valueOf(expr: U): U;
 
     getBinding(opr: Sym, target: Cons): U;
@@ -94,7 +91,7 @@ export interface ExprEngine extends Pick<ExprContext, "clearBindings">, Pick<Exp
 export interface EngineConfig {
     allowUndeclaredVars: "Err" | "Nil";
     prolog: string[];
-    traceLevel: number;
+    traceLevel: 0 | 1;
     useCaretForExponentiation: boolean;
     useDerivativeShorthandLowerD: boolean;
     useIntegersForPredicates: boolean;
@@ -108,7 +105,7 @@ function allow_undeclared_vars(options: Partial<EngineConfig>, allowDefault: "Er
     }
 }
 
-function trace_level(options: Partial<EngineConfig>, traceLevelDefault: 0): number {
+function trace_level(options: Partial<EngineConfig>, traceLevelDefault: 0): 0 | 1 {
     if (typeof options.traceLevel === "number") {
         return options.traceLevel;
     } else {
@@ -276,23 +273,13 @@ class MicroEngine implements ExprEngine {
         };
         return em_parse(sourceText, options);
     }
-    simplify(expr: U): U {
-        return simplify(expr, this.#env);
-    }
-    valueOf(expr: U, stack?: Pick<ProgramStack, "push">): U {
-        const { value } = transform_tree(expr, {}, this.#env);
-        if (stack) {
-            try {
-                stack.push(value);
-                return nil;
-            } finally {
-                value.release();
-            }
-        } else {
-            // This seems harmless enough but it causes one unit test to hang.
-            // return simplify(value, this.#env);
-            return value;
+    valueOf(expr: U): U {
+        const { value, errors } = transform_tree(expr, {}, this.#env);
+        if (errors.length > 0) {
+            const error = errors[0];
+            throw error;
         }
+        return value;
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
         assert_U(expr);

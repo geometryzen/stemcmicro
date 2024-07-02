@@ -24,7 +24,7 @@ describe("e2e", () => {
                 if (!value.isnil) {
                     const s = engine.renderAsString(tree);
                     expect(s).toBe("cross(ex,ey)");
-                    const t = engine.renderAsString(engine.simplify(value));
+                    const t = engine.renderAsString(value);
                     expect(t).toBe("ez");
                 }
                 value.release();
@@ -46,7 +46,7 @@ describe("e2e", () => {
                 if (!value.isnil) {
                     const s = engine.renderAsString(tree);
                     expect(s).toBe("M");
-                    const t = engine.renderAsString(engine.simplify(value));
+                    const t = engine.renderAsString(value);
                     expect(t).toBe("[[a,b],[c,d]]");
                 }
                 value.release();

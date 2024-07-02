@@ -9374,7 +9374,6 @@ export function value_of(env: ExprContext, $: ProgramStack): void {
 /**
  * By the context of usage, I think the name here means evaluate predicate.
  * @param env
- * @param ctrl
  * @param $
  */
 function evalp(env: ExprContext, $: ProgramStack): void {
@@ -10035,7 +10034,6 @@ export function multiply_factors(n: number, env: ExprContext, $: ProgramStack): 
 
     flatten_items(start, MULTIPLY, $);
 
-    // console.lg(`after flatten factors: ${ $.stack } `);
     const uom = multiply_uom_factors(start, $);
     if (is_uom(uom)) {
         push(uom, $);
@@ -10051,8 +10049,6 @@ export function multiply_factors(n: number, env: ExprContext, $: ProgramStack): 
     }
 
     const T = multiply_tensor_factors(start, env, $);
-
-    // console.lg(`after multiply tensor factors: ${ $.stack } `);
 
     multiply_scalar_factors(start, env, $);
 
@@ -10100,7 +10096,6 @@ function multiply_rationals(lhs: Rat, rhs: Rat, $: ProgramStack): void {
  *
  * @param start the start of the factors on the stack.
  * @param env
- * @param ctrl
  * @param $
  * @returns
  */

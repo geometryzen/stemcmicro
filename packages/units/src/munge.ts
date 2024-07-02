@@ -10,7 +10,7 @@ import { U } from "@stemcmicro/tree";
 export interface MungeConfig {
     allowUndeclaredVars: "Err" | "Nil";
     language: "eigenmath" | "javascript" | "python";
-    traceLevel?: number;
+    traceLevel?: 0 | 1;
     useCaretForExponentiation?: boolean;
     useDerivativeShorthandLowerD?: boolean;
     useIntegersForPredicates?: boolean;

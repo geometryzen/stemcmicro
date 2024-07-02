@@ -1,29 +1,4 @@
-function assert_defined<T>(x: T | undefined): T {
-    if (typeof x === "undefined") {
-        throw new Error();
-    } else {
-        return x;
-    }
-}
-
-class Stack<T> {
-    readonly #elements: T[] = [];
-    constructor(elements: T[] = []) {
-        this.#elements = elements;
-    }
-    get length(): number {
-        return this.#elements.length;
-    }
-    get top(): T {
-        return this.#elements[this.#elements.length - 1];
-    }
-    push(element: T): void {
-        this.#elements.push(element);
-    }
-    pop(): T {
-        return assert_defined(this.#elements.pop());
-    }
-}
+import { Stack } from "@stemcmicro/stack";
 
 export interface ParseConfig<T> {
     bigIntAs: (value: string, pos: number, end: number) => T;

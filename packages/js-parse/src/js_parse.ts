@@ -19,10 +19,10 @@ import {
 } from "@geometryzen/esprima";
 import { create_boo, create_flt, create_int, create_rat, create_str, create_sym, create_tensor, is_sym } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
+import { StackU } from "@stemcmicro/stack";
 import { cons, is_atom, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { op_from_string } from "./helpers";
 import { geometric_algebra_operator_precedence } from "./precedence";
-import { StackU } from "./StackU";
 
 type Lift = (nodes: Node[]) => Node;
 type Test = (node: Node) => boolean;

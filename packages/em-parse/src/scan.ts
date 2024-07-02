@@ -2,8 +2,8 @@
 import { assert_sym, Boo, create_keyword_ns, create_tensor, is_num, is_rat, Map, negOne, one, Tensor } from "@stemcmicro/atoms";
 import { Native, native_sym } from "@stemcmicro/native";
 import { items_to_cons, nil, pos_end_items_to_cons, U } from "@stemcmicro/tree";
+import { StackU } from "@stemcmicro/stack";
 import { QUOTE, TRANSPOSE, TRANSPOSE_CHAR_CODE } from "./constants";
-import { ShareableStack } from "./ShareableStack";
 import { assert_token_code } from "./assert_token_code";
 import { clone_symbol_using_info } from "./clone_symbol_using_info";
 import {
@@ -494,7 +494,7 @@ export function scan_multiplicative_expr_implicit(state: InputState, options: Re
     try {
         pos = Math.min(assert_pos(lhs.pos), pos);
         end = Math.max(assert_end(lhs.end), end);
-        const stack = new ShareableStack<U>();
+        const stack = new StackU();
         try {
             stack.push(lhs);
             /*
@@ -592,9 +592,9 @@ export function scan_multiplicative_expr_implicit(state: InputState, options: Re
     }
 }
 
-function simplify_1_in_products(factors: ShareableStack<U>): void {
+function simplify_1_in_products(factors: StackU): void {
     if (factors.length > 0) {
-        const factor = factors.peek(factors.length - 1);
+        const factor = factors.peek();
         try {
             if (is_rat(factor) && factor.isOne()) {
                 factors.pop().release();

@@ -1,5 +1,5 @@
+import { Stack } from "@stemcmicro/stack";
 import { Shareable } from "@stemcmicro/tree";
-import { Stack } from "./Stack";
 
 export class ShareableStack<T extends Shareable> implements Shareable {
     #data: Stack<T> = new Stack();

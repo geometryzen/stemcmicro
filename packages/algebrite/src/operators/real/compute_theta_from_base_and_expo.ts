@@ -1,8 +1,6 @@
 import { ExprContext } from "@stemcmicro/context";
-import { multiply } from "@stemcmicro/helpers";
+import { imag, log, multiply } from "@stemcmicro/helpers";
 import { U } from "@stemcmicro/tree";
-import { imag } from "../../helpers/imag";
-import { log } from "../../helpers/log";
 
 /**
  * r * exp(i * theta) = base**expo => theta = imag(expo * log(base))

@@ -145,9 +145,9 @@ export class StackU implements ProgramStack {
         x.addRef();
         this.#stack.push(x);
     }
-    peek(): U {
-        const x = this.pop();
-        this.push(x);
+    peek(offset = 0): U {
+        const x = this.#stack.peek(offset);
+        x.addRef();
         return x;
     }
     pop(): U {

@@ -14,7 +14,12 @@ export interface ProgramStack extends Shareable {
      */
     cons(): void;
     dupl(): void;
-    peek(): U;
+    /**
+     * [...] => [...]
+     *
+     * @param offset The number of positions from the top of the stack.
+     */
+    peek(offset?: number): U;
     /**
      * [..., expr] => [...]
      */

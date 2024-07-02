@@ -1,17 +1,17 @@
 import { is_rat, negOne, one, Rat, Sym } from "@stemcmicro/atoms";
 import { Directive } from "@stemcmicro/directive";
+import { hash_binop_cons_atom, HASH_RAT } from "@stemcmicro/hashing";
+import { multiply } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { is_cons, U } from "@stemcmicro/tree";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, mkbuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_binop_cons_atom, HASH_RAT } from "@stemcmicro/hashing";
 import { MATH_POW } from "../../runtime/ns_math";
 import { add } from "../add/add";
 import { and } from "../helpers/and";
 import { Cons1 } from "../helpers/Cons1";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-import { multiply } from "../mul/multiply";
 import { sin } from "../sin/sin";
 import { is_cos } from "./is_cos";
 import { is_two } from "./is_two";
@@ -41,7 +41,7 @@ class Op extends Function2<LHS, RHS> {
             return [TFLAG_NONE, orig];
         } else {
             const X = cosX.arg;
-            const retval = add(one, multiply(negOne, pow(sin(X), two)));
+            const retval = add(one, multiply($, negOne, pow(sin(X), two)));
             return [TFLAG_DIFF, $.valueOf(retval)];
         }
     }

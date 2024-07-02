@@ -1,9 +1,9 @@
 import { ExprContext } from "@stemcmicro/context";
-import { cons_multiply } from "@stemcmicro/native";
+import { cons_log } from "@stemcmicro/native";
 import { U } from "@stemcmicro/tree";
 
-export function multiply(env: Pick<ExprContext, "valueOf">, ...values: U[]): U {
-    const raw = cons_multiply(...values);
+export function log(x: U, env: Pick<ExprContext, "valueOf">): U {
+    const raw = cons_log(x);
     try {
         return env.valueOf(raw);
     } finally {

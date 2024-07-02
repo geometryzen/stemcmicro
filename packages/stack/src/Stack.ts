@@ -30,8 +30,8 @@ export class Stack<T> {
     setAt(i: number, element: T): void {
         this.#elements[i] = element;
     }
-    peek(index: number): T {
-        return this.#elements[this.#elements.length - 1 - index];
+    peek(offset = 0): T {
+        return this.#elements[this.#elements.length - 1 - offset];
     }
     push(element: T): void {
         this.tos++;

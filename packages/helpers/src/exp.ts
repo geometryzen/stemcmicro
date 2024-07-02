@@ -1,11 +1,9 @@
 import { ExprContext } from "@stemcmicro/context";
-import { Native, native_sym } from "@stemcmicro/native";
-import { items_to_cons, U } from "@stemcmicro/tree";
-
-const EXP = native_sym(Native.exp);
+import { cons_exp } from "@stemcmicro/native";
+import { U } from "@stemcmicro/tree";
 
 export function exp(arg: U, env: Pick<ExprContext, "valueOf">): U {
-    const raw = items_to_cons(EXP, arg);
+    const raw = cons_exp(arg);
     try {
         return env.valueOf(raw);
     } finally {

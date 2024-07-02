@@ -2,11 +2,10 @@ import { bigInt, BigInteger, half, imu, negOne, one, Rat, Sym, zero } from "@ste
 import { ExprContext } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Directive } from "@stemcmicro/directive";
-import { is_num_and_negative, is_rat_and_integer, is_safe_integer_range, multiply, negate, num_to_number, subtract } from "@stemcmicro/helpers";
+import { exp, is_num_and_negative, is_rat_and_integer, is_safe_integer_range, multiply, negate, num_to_number, subtract } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { Cons, items_to_cons, U } from "@stemcmicro/tree";
 import { bignum_truncate, makePositive, makeSignSameAs } from "./bignum";
-import { exp } from "./helpers/exp";
 import { is_num_and_eq_minus_one } from "./is";
 import { mroot } from "./mroot";
 import { quickfactor } from "./quickfactor";

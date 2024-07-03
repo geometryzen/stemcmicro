@@ -1,7 +1,7 @@
 import { is_flt, is_rat } from "@stemcmicro/atoms";
 import { py_parse } from "../src/py_parse";
 
-xdescribe("py_parse", () => {
+describe("py_parse", () => {
     it("Rat", () => {
         const { trees, errors } = py_parse("2");
         expect(errors.length).toBe(0);

@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("imu", function () {
+describe("imu", function () {
     it("Euler's identity", function () {
         check("exp(sqrt(-1)*pi)+1", "0");
     });

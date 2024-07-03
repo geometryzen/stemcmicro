@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("sinh", function () {
+describe("sinh", function () {
     it("001", function () {
         check("sinh(x)", "sinh(x)");
         check("sinh(0)", "0");

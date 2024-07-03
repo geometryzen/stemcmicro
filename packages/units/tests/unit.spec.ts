@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("unit", function () {
+describe("unit", function () {
     it("(4)", function () {
         check("unit(4)", "[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]");
     });

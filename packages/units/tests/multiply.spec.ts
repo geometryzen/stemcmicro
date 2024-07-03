@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("multiply", function () {
+describe("multiply", function () {
     it("Blade * Blade", function () {
         check("ex * ex", "1");
         check("ex * ey", "ex^ey");

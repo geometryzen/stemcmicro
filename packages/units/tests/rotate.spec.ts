@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("rotate", function () {
+describe("rotate", function () {
     it("001", function () {
         check("rotate([1,0,0,0],H,0)", "[2**(1/2),2**(1/2),0,0]");
     });

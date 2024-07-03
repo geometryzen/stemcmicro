@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("defint", function () {
+describe("defint", function () {
     it("constant", function () {
         check("defint(a,x,0,1)", "a");
     });

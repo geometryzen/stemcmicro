@@ -3,7 +3,7 @@ import { Native, native_sym } from "@stemcmicro/native";
 import { items_to_cons } from "@stemcmicro/tree";
 import { Stepper } from "../src/Stepper";
 
-xdescribe("stepper", () => {
+describe("stepper", () => {
     it("00010", () => {
         const module = items_to_cons(create_sym("module"));
         const stepper = new Stepper(module);

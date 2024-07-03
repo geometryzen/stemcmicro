@@ -1,7 +1,7 @@
 import assert from "assert";
 import { js_parse } from "../src/js_parse";
 
-xdescribe("jsparse", function () {
+describe("jsparse", function () {
     it("should be able to parse a user symbol", function () {
         const lines: string[] = [`x`];
         const sourceText = lines.join("\n");

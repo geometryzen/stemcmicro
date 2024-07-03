@@ -2,7 +2,7 @@ import { create_int } from "@stemcmicro/atoms";
 import { items_to_cons, nil, U } from "@stemcmicro/tree";
 import { equals_cons_array } from "../src/equals_cons_array";
 
-xdescribe("equals_cons_array", () => {
+describe("equals_cons_array", () => {
     it("items_to_cons of an empty array should be nil", () => {
         expect(items_to_cons(...[])).toBe(nil);
     });

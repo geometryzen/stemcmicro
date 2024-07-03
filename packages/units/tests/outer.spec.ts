@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("broken", function () {
+describe("broken", function () {
     it("Blade,(* ...)", function () {
         check("ex^(5*ey*kilogram)", "5*ex^ey*kg");
     });
@@ -9,7 +9,7 @@ xdescribe("broken", function () {
     });
 });
 
-xdescribe("outer", function () {
+describe("outer", function () {
     it("tensor,tensor", function () {
         check("outer([a,b,c],[x,y,z])", "[[a*x,a*y,a*z],[b*x,b*y,b*z],[c*x,c*y,c*z]]");
     });
@@ -42,7 +42,7 @@ xdescribe("outer", function () {
     it("Uom, Blade", function () {
         check("outer(kilogram, ex)", "ex*kg");
     });
-    it("Distribution", function () {
+    xit("Distribution", function () {
         check("ex^(5+ex)", "5*ex");
         check("ex^(5+ey)", "5*ex+ex^ey");
         check("(5+ex)^ex", "5*ex");

@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("power", function () {
+describe("power", function () {
     it("pow(Blade, Rat)", function () {
         check("ex**2", "1");
         check("ex**1", "ex");

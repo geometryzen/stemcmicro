@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("grade", function () {
+describe("grade", function () {
     it("Flt", function () {
         check("grade(5.0,0)", "5.0");
         check("grade(5.0,1)", "0.0");

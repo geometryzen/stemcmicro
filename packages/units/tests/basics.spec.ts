@@ -21,16 +21,16 @@ describe("basics", function () {
     });
     it("sorting", function () {
         check("d*c*b*a", "a*b*c*d");
-        check("x*2*y*3*z*4", "2*3*4*x*y*z");
+        check("x*2*y*3*z*4", "24*x*y*z");
     });
     it("left-distributive property of * with respect to +", function () {
-        check("x*(y+z)", "x*(y+z)");
+        check("x*(y+z)", "x*y+x*z");
     });
     it("right-distributive property of * with respect to +", function () {
-        check("(x+y)*z", "z*(x+y)");
+        check("(x+y)*z", "x*z+y*z");
     });
     it("combine numerical factors", function () {
-        check("x*2*y*3*z*4", "2*3*4*x*y*z");
+        check("x*2*y*3*z*4", "24*x*y*z");
     });
     xit("004", function () {
         check("a*(1/a)", "1");

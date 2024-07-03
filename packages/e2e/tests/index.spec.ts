@@ -4,13 +4,13 @@ import { js_parse } from "@stemcmicro/js-parse";
 import { assert_cons, assert_U } from "@stemcmicro/tree";
 import { check } from "../src/check";
 
-xdescribe("broken", function () {
+describe("broken", function () {
     it("001", function () {
         check("1/4", "1/4");
     });
 });
 
-xdescribe("e2e", () => {
+describe("e2e", () => {
     it("create_engine", () => {
         const engine: ExprEngine = create_engine();
         try {

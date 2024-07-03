@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("real", function () {
+describe("real", function () {
     it("real(z)", function () {
         check("real(2-3*sqrt(-1))", "2");
     });

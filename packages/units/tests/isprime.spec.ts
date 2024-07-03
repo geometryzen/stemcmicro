@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("isprime", function () {
+describe("isprime", function () {
     it("001", function () {
         check("isprime(1)", "0");
         check("isprime(2)", "1");

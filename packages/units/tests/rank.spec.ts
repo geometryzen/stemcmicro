@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("rank", function () {
+describe("rank", function () {
     it("2x2", function () {
         check("rank([[a,b],[c,d]])", "2");
     });

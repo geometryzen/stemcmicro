@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("arcsinh", function () {
+describe("arcsinh", function () {
     it("001", function () {
         check("arcsinh(sinh(x))", "x");
     });

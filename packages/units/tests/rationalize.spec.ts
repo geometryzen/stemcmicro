@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("rationalize", function () {
+describe("rationalize", function () {
     it("001", function () {
         check("rationalize(1/a+1/b)", "(a+b)/(a*b)");
     });

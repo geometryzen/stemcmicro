@@ -1,6 +1,6 @@
 import { check } from "../src/index";
 
-xdescribe("add", function () {
+describe("add", function () {
     it("Blade, Blade", function () {
         check("ex + ex", "2*ex");
         check("ex + ey", "ex+ey");

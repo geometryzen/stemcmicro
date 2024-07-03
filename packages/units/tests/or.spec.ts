@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("or", function () {
+describe("or", function () {
     it("001", function () {
         check("or(false,false)", "false");
     });

@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("sandbox", function () {
+describe("sandbox", function () {
     it("001", function () {
         // check("1+x+x**2", "1+x+x**2");
         // check("x**2+x+1", "1+x+x**2");

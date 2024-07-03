@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("factor", function () {
+describe("factor", function () {
     it("001", function () {
         check("factor(x**2-1, x)", "(1+x)*(-1+x)");
         check("factor(x^2-1, x)", "(1+x)*(-1+x)", { useCaretForExponentiation: true });

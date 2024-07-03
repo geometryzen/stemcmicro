@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("hermite", function () {
+describe("hermite", function () {
     it("001", function () {
         check("hermite(x,0)", "1");
         check("hermite(x,1)", "2*x");

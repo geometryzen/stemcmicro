@@ -85,7 +85,7 @@ class MockExprContext implements ExprContext {
     }
 }
 
-xdescribe("index", () => {
+describe("index", () => {
     it("hilbert", () => {
         expect(typeof hilbert === "function").toBe(true);
     });

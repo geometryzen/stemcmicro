@@ -1,19 +1,13 @@
 import { ExprContext } from "@stemcmicro/context";
-import { flatten_items, prolog_eval_varargs, stack_items_to_cons, stack_sort_factors } from "@stemcmicro/helpers";
-import { Native, native_sym } from "@stemcmicro/native";
-import { StackU } from "@stemcmicro/stack";
-import { Cons, is_cons, U } from "@stemcmicro/tree";
-// import { multiply_values } from "./multiply_values";
-
-const MUL = native_sym(Native.multiply);
+import { prolog_eval_varargs } from "@stemcmicro/helpers";
+import { Cons, U } from "@stemcmicro/tree";
+import { multiply_values } from "./multiply_values";
 
 export function eval_multiply(expr: Cons, env: ExprContext): U {
     return prolog_eval_varargs(expr, multiply_values, env);
 }
 
-/**
- *
- */
+/*
 function multiply_values(values: Cons, env: ExprContext): U {
     const $ = new StackU(); //                      [...]
     const h0 = $.length;
@@ -27,7 +21,8 @@ function multiply_values(values: Cons, env: ExprContext): U {
     return $.pop();
     // return cons_multiply(...values);
 }
-
+*/
+/*
 function stack_push_cons(xs: Cons, stack: StackU): void {
     if (is_cons(xs)) {
         const head = xs.head;
@@ -41,3 +36,4 @@ function stack_push_cons(xs: Cons, stack: StackU): void {
         }
     }
 }
+*/

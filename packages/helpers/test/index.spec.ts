@@ -1,6 +1,6 @@
 import { inverse } from "../src/inverse";
 
-xdescribe("helpers", () => {
+describe("helpers", () => {
     it("inverse", () => {
         expect(typeof inverse === "function").toBe(true);
     });

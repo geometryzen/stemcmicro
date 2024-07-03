@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("and", function () {
+describe("and", function () {
     it("001", function () {
         check("and(false,false)", "false");
     });

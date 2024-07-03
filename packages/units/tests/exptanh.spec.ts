@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("exptanh", function () {
+describe("exptanh", function () {
     it("001", function () {
         check("exptanh(z)", "e**(2*z)/(1+e**(2*z))-1/(1+e**(2*z))");
     });

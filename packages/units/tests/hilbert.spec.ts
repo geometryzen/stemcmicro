@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("hilbert", function () {
+describe("hilbert", function () {
     it("001", function () {
         check("hilbert(0)", "[]");
         check("hilbert(1)", "[[1]]");

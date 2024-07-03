@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("arctanh", function () {
+describe("arctanh", function () {
     it("001", function () {
         check("arctanh(tanh(x))", "x");
     });

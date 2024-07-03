@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("gt", function () {
+describe("gt", function () {
     it("Rat, Rat", function () {
         check("1 > 0", "true");
         check("0 > 0", "false");

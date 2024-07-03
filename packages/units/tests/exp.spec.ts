@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("exp", function () {
+describe("exp", function () {
     it("exp(i*pi)", function () {
         check("exp(sqrt(-1)*pi)", "-1");
     });

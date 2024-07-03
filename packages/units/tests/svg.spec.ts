@@ -13,7 +13,7 @@ const svg = [
     `</svg>`
 ].join("");
 
-xdescribe("svg", function () {
+describe("svg", function () {
     it("001", function () {
         check("mega * joule", svg, { format: "SVG" });
     });

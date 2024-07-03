@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("coeff", function () {
+describe("coeff", function () {
     it("001", function () {
         check("coeff(a*x**2+b*x+c,x,0)", "c");
         check("coeff(a*x**2+b*x+c,x,1)", "b");

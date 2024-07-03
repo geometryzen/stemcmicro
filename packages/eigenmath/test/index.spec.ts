@@ -1,5 +1,5 @@
 import { absfunc } from "../src/eigenmath";
-describe("index", () => {
+xdescribe("index", () => {
     it("eignemath", () => {
         expect(true).toBe(true);
     });

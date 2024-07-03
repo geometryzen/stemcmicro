@@ -21,7 +21,6 @@ export {
     isfalsey,
     kronecker,
     LAST,
-    list,
     lookup,
     make_lambda_expr_from_stack_function,
     multiply,
@@ -158,7 +157,6 @@ export {
     value_of,
     value_of_args
 } from "./eigenmath";
-export { flatten_items } from "./flatten_items";
 export { isdoublez } from "./isdoublez";
 export { isnegativeterm } from "./isnegativeterm";
 export { isplusone } from "./isplusone";

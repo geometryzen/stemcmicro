@@ -1,13 +1,15 @@
 import { is_sym, Sym } from "@stemcmicro/atoms";
 import { ProgramStack } from "@stemcmicro/stack";
 import { is_atom, is_cons, U } from "@stemcmicro/tree";
-import { list } from "./eigenmath";
+import { stack_items_to_cons } from "./stack_items_to_cons";
 
 /**
+ * Used to "remove the parenthesis" when there is an associative operator.
+ *
  * [..., v1, v2, ..., vn] => [..., x1, x2, ..., xm]
  *
- * @param start The starting position on the stack.
- * @param opr Either ADD or MULTIPLY
+ * @param start The starting position on the stack. The end is considered to be the length of the stack. So start = end - n
+ * @param opr Either ADD or MULTIPLY or some other associative operator.
  */
 export function flatten_items(start: number, opr: Sym, $: ProgramStack): void {
     //                              // [..., v1, v2, ..., vn]
@@ -69,7 +71,8 @@ function flatten_item_recursive(stack: ProgramStack, expr: U, opr: Sym, parent: 
                     }
                     const Lf = stack.length;
                     const n = Lf - Li;
-                    list(n, stack);
+                    // TODO: Would be nice if list were a
+                    stack_items_to_cons(n, stack);
                 }
             } else {
                 throw new Error();

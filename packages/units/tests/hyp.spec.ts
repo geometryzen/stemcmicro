@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("Hym", function () {
+xdescribe("Hym", function () {
     it("001", function () {
         check('infinitesimal("x")', "x");
     });

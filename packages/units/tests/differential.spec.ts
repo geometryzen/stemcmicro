@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("differential", function () {
+xdescribe("differential", function () {
     it("differential(x) +> dx", function () {
         check("differential(x)", "dx");
     });

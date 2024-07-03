@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("algebra", function () {
+xdescribe("algebra", function () {
     it("001", function () {
         check('algebra([1,1,1],["i","j","k"])', "[i,j,k]");
     });

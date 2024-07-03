@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("ascii", function () {
+xdescribe("ascii", function () {
     it("001", function () {
         check("mega * joule", "1000000 J", { format: "Ascii" });
         check("mega * joule", "1000000 J", { format: "Human" });

@@ -1,8 +1,8 @@
 import { assert_blade, is_blade, is_rat, is_tensor, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { assert_stack_length, combine_terms, flatten_items, list, simplify_terms, sum_tensors, value_of_args } from "@stemcmicro/eigenmath";
-import { copy_tensor } from "@stemcmicro/helpers";
+import { assert_stack_length, combine_terms, simplify_terms, sum_tensors, value_of_args } from "@stemcmicro/eigenmath";
+import { copy_tensor, flatten_items, stack_items_to_cons } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { ProgramStack } from "@stemcmicro/stack";
 import { Cons, U } from "@stemcmicro/tree";
@@ -61,7 +61,7 @@ function sum_terms(n: number, id: U, env: ExprContext, $: ProgramStack): void {
     }
 
     if (k > 1) {
-        list(k, $);
+        stack_items_to_cons(k, $);
         $.push(ADD);
         $.swap();
         $.cons();

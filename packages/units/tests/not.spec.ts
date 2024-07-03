@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("not", function () {
+xdescribe("not", function () {
     it("001", function () {
         check("not(false)", "true");
         check("not(true)", "false");

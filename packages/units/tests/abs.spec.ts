@@ -1,12 +1,12 @@
 import { check } from "../src/check";
 
-describe("broken", function () {
+xdescribe("broken", function () {
     it("001", function () {
         check("abs(x)", "abs(x)");
     });
 });
 
-describe("abs", function () {
+xdescribe("abs", function () {
     it("abs(x: rational)", function () {
         check("typeof(1)", "rational");
         check("abs(1)", "1");

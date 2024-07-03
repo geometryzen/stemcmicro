@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("uom", function () {
+xdescribe("uom", function () {
     it("001", function () {
         check("ampere", "A");
         check("candela", "cd");

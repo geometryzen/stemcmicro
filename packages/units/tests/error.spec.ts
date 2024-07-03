@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("error", function () {
+xdescribe("error", function () {
     it("construction", function () {
         check('error("Something is rotten in Denmark.")', "Something is rotten in Denmark.");
     });

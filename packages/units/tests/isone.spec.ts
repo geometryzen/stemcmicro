@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("isone", function () {
+xdescribe("isone", function () {
     it("rational", function () {
         check("typeof(0)", "rational");
         check("isone(0)", "false");

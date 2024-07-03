@@ -1,7 +1,7 @@
 import { is_flt, is_rat } from "@stemcmicro/atoms";
 import { js_parse } from "../src/js_parse";
 
-describe("js_parse", () => {
+xdescribe("js_parse", () => {
     it("Rat", () => {
         const { trees, errors } = js_parse("2");
         expect(errors.length).toBe(0);

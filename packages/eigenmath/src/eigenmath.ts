@@ -11,7 +11,6 @@ import {
     create_int,
     create_rat,
     create_sym,
-    Err,
     Flt,
     half,
     imu,
@@ -46,6 +45,7 @@ import {
     convertMetricToNative,
     convert_tensor_to_strings,
     copy_tensor,
+    flatten_items,
     guess,
     handle_atom_atom_binop,
     is_cons_opr_eq_add,
@@ -53,14 +53,16 @@ import {
     is_cons_opr_eq_power,
     item_to_complex,
     predicate_return_value,
-    prolog_eval_varargs
+    prolog_eval_varargs,
+    stack_combine_numerical_factors,
+    stack_items_to_cons,
+    stack_sort_factors
 } from "@stemcmicro/helpers";
 import { is_native, Native, native_sym } from "@stemcmicro/native";
 import { ProgramEnv, ProgramIO, ProgramIOListener, ProgramStack, StackFunction, StackU } from "@stemcmicro/stack";
 import { assert_cons, car, cdr, Cons, cons as create_cons, Cons2, is_atom, is_cons, is_cons2, is_nil, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { bignum_equal } from "./bignum_equal";
 import { bignum_itoa } from "./bignum_itoa";
-import { flatten_items } from "./flatten_items";
 import { ColorCode, html_escape_and_colorize } from "./html_escape_and_colorize";
 import { isdigit } from "./isdigit";
 import { isdoublez } from "./isdoublez";
@@ -163,7 +165,9 @@ function alloc_vector(n: number): Tensor {
 
 function any_radical_factors(h: number, $: ProgramStack): 0 | 1 {
     const n = $.length;
-    for (let i = h; i < n; i++) if (isradical($.getAt(i))) return 1;
+    for (let i = h; i < n; i++) {
+        if (is_positive_integer_radical($.getAt(i))) return 1;
+    }
     return 0;
 }
 
@@ -522,11 +526,11 @@ function coeffs(P: U, X: U, env: ExprContext, $: ProgramStack): void {
     }
 }
 
-function combine_factors(start: number, env: ExprContext, $: ProgramStack): void {
+function stack_combine_factors(start: number, env: ExprContext, $: ProgramStack): void {
     sort_factors_provisional(start, $);
     let n = $.length;
     for (let i = start; i < n - 1; i++) {
-        if (combine_factors_nib(i, i + 1, env, $)) {
+        if (stack_combine_factors_nib(i, i + 1, env, $)) {
             $.splice(i + 1, 1); // remove factor
             i--; // use same index again
             n--;
@@ -534,7 +538,7 @@ function combine_factors(start: number, env: ExprContext, $: ProgramStack): void
     }
 }
 
-function combine_factors_nib(i: number, j: number, env: ExprContext, $: ProgramStack): 0 | 1 {
+function stack_combine_factors_nib(i: number, j: number, env: ExprContext, $: ProgramStack): 0 | 1 {
     let BASE1: U;
     let EXPO1: U;
     let BASE2: U;
@@ -568,45 +572,16 @@ function combine_factors_nib(i: number, j: number, env: ExprContext, $: ProgramS
 
     if (is_flt(BASE2)) BASE1 = BASE2; // if mixed rational and double, use double
 
-    push(POWER, $);
-    push(BASE1, $);
-    push(EXPO1, $);
-    push(EXPO2, $);
+    $.push(POWER);
+    $.push(BASE1);
+    $.push(EXPO1);
+    $.push(EXPO2);
     add(env, $);
-    list(3, $);
+    stack_items_to_cons(3, $);
 
     $.setAt(i, $.pop());
 
     return 1;
-}
-
-function combine_numerical_factors(start: number, coeff: Num | Err, $: ProgramStack): Num | Err {
-    let end = $.length;
-
-    for (let i = start; i < end; i++) {
-        const x = $.getAt(i);
-
-        if (is_num(x)) {
-            if (is_num(coeff)) {
-                multiply_numbers(coeff, x, $); //  [..., a, b, c, coeff * x], assume i points to a
-                coeff = $.pop() as Num; //  [..., a, b, c]
-                $.splice(i, 1); // remove factor        //  [..., b, c]
-                i--; //  [..., b, c],                i points to element before b
-                end--;
-            } else {
-                $.splice(i, 1); // remove factor
-                i--;
-                end--;
-            }
-        } else if (is_err(x)) {
-            coeff = x;
-            $.splice(i, 1); // remove factor
-            i--;
-            end--;
-        }
-    }
-
-    return coeff;
 }
 
 function compatible_dimensions(p1: U, p2: U): 0 | 1 {
@@ -728,7 +703,7 @@ function decomp_sum(F: U, X: U, env: ExprContext, $: ProgramStack): void {
 
     // push const parts, decomp var parts
 
-    list($.length - N, $);
+    stack_items_to_cons($.length - N, $);
     let parts = $.pop();
 
     while (is_cons(parts)) {
@@ -753,7 +728,7 @@ function decomp_sum(F: U, X: U, env: ExprContext, $: ProgramStack): void {
     const n = $.length - h;
 
     if (n > 1) {
-        list(n, $);
+        stack_items_to_cons(n, $);
         $.push(ADD);
         $.swap();
         $.cons(); // makes ADD head of list
@@ -787,7 +762,7 @@ function decomp_product(F: U, X: U, env: ExprContext, $: ProgramStack): void {
     const n = $.length - h;
 
     if (n > 1) {
-        list(n, $);
+        stack_items_to_cons(n, $);
         $.push(MULTIPLY);
         $.swap();
         $.cons();
@@ -934,11 +909,11 @@ export function absfunc(env: ExprContext, $: ProgramStack): void {
             const X = $.pop();
             push(ABS, $);
             push(X, $);
-            list(2, $);
+            stack_items_to_cons(2, $);
         } else {
             push(ABS, $);
             push(x, $);
-            list(2, $);
+            stack_items_to_cons(2, $);
         }
     } finally {
         x.release();
@@ -1025,7 +1000,7 @@ export function sum_terms(n: number, env: ExprContext, $: ProgramStack): void {
     }
 
     if (k > 1) {
-        list(k, $);
+        stack_items_to_cons(k, $);
         $.push(ADD);
         $.swap();
         $.cons();
@@ -1226,7 +1201,7 @@ function combine_terms_nib(i: number, j: number, env: ExprContext, $: ProgramSta
             $.push(MULTIPLY);
             push(coeff1, $);
             $.push(p1);
-            list(3, $);
+            stack_items_to_cons(3, $);
         }
     }
 
@@ -1343,7 +1318,7 @@ export function simplify_terms(h: number, env: ExprContext, $: ProgramStack): nu
 }
 
 function isradicalterm(p: U): boolean {
-    return car(p).equals(MULTIPLY) && is_num(cadr(p)) && isradical(caddr(p));
+    return car(p).equals(MULTIPLY) && is_num(cadr(p)) && is_positive_integer_radical(caddr(p));
 }
 /*
 function isimaginaryterm(p: U): 0 | 1 {
@@ -1758,7 +1733,7 @@ function arccos(env: ExprContext, $: ProgramStack): void {
 
     push(ARCCOS, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_arccosh(p1: U, env: ExprContext, $: ProgramStack): void {
@@ -1818,7 +1793,7 @@ function arccosh(env: ExprContext, $: ProgramStack): void {
 
     push(ARCCOSH, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_arcsin(p1: U, env: ExprContext, $: ProgramStack): void {
@@ -1917,7 +1892,7 @@ function arcsin(env: ExprContext, $: ProgramStack): void {
 
     push(ARCSIN, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_arcsinh(p1: U, env: ExprContext, $: ProgramStack): void {
@@ -1985,7 +1960,7 @@ function arcsinh(env: ExprContext, $: ProgramStack): void {
 
     push(ARCSINH, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 /**
@@ -2068,7 +2043,7 @@ function arctan(env: ExprContext, $: ProgramStack): void {
     push(ARCTAN, $);
     push(y, $);
     push(x, $);
-    list(3, $);
+    stack_items_to_cons(3, $);
 }
 
 export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ExprContext, $: ProgramStack): void {
@@ -2076,7 +2051,7 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ExprContext, $: Pr
         push(ARCTAN, $);
         push_integer(0, $);
         push_integer(0, $);
-        list(3, $);
+        stack_items_to_cons(3, $);
         return;
     }
 
@@ -2128,13 +2103,13 @@ export function eigenmath_arctan_numbers(X: Num, Y: Num, env: ExprContext, $: Pr
             push(Ynum, $);
             negate(env, $);
             push(Xnum, $);
-            list(3, $);
+            stack_items_to_cons(3, $);
             negate(env, $);
         } else {
             push(ARCTAN, $);
             push(Ynum, $);
             push(Xnum, $);
-            list(3, $);
+            stack_items_to_cons(3, $);
         }
         return;
     }
@@ -2177,7 +2152,7 @@ function arctanh(env: ExprContext, $: ProgramStack): void {
     if (isplusone(p1) || isminusone(p1)) {
         push(ARCTANH, $);
         $.push(p1);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -2229,7 +2204,7 @@ function arctanh(env: ExprContext, $: ProgramStack): void {
 
     push(ARCTANH, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_arg(expr: Cons, env: ExprContext, $: ProgramStack): void {
@@ -2391,7 +2366,7 @@ function principal_value(env: ExprContext, $: ProgramStack): void {
     push_native(Native.testgt, $); //      [..., a, a, >]
     $.swap(); //                           [..., a, >, a]
     $.push(upperBound); //                 [..., a, >, a, upperBound]
-    list(3, $); //                         [..., a, (> a upperBound)]
+    stack_items_to_cons(3, $); //                         [..., a, (> a upperBound)]
     value_of(env, $); //             [..., a, value(> a upperBound)]
     while ($.istrue) {
         $.pop().release(); //              [..., a]
@@ -2401,7 +2376,7 @@ function principal_value(env: ExprContext, $: ProgramStack): void {
         push_native(Native.testgt, $); //  [..., b, b, >]
         $.swap(); //                       [..., b, >, b]
         $.push(upperBound); //             [..., b, >, b, upperBound]
-        list(3, $); //                     [..., b, (> b upperBound)]
+        stack_items_to_cons(3, $); //                     [..., b, (> b upperBound)]
         value_of(env, $); //         [..., b, value(> b upperBound)]
     }
     $.pop().release(); //                  [..., b]
@@ -2410,7 +2385,7 @@ function principal_value(env: ExprContext, $: ProgramStack): void {
     push_native(Native.testle, $); //      [..., b, b, <=]
     $.swap(); //                           [..., b, <=, b]
     $.push(lowerBound); //                 [..., b, <=, b, lowerBound]
-    list(3, $); //                         [..., b, (<= b lowerBound)]
+    stack_items_to_cons(3, $); //                         [..., b, (<= b lowerBound)]
     value_of(env, $); //             [..., b, value(<= b lowerBound)]
     while ($.istrue) {
         $.pop().release(); //              [..., b]
@@ -2420,7 +2395,7 @@ function principal_value(env: ExprContext, $: ProgramStack): void {
         push_native(Native.testle, $); //  [..., c, c, <=]
         $.swap(); //                       [..., c, <=, c]
         $.push(lowerBound); //             [..., c, <=, c, lowerBound]
-        list(3, $); //                     [..., c, (<= c lowerBound)]
+        stack_items_to_cons(3, $); //                     [..., c, (<= c lowerBound)]
         value_of(env, $); //         [..., c, value(<= c lowerBound)]
     }
     $.pop().release(); //                  [..., c]
@@ -2484,7 +2459,7 @@ function ceilingfunc(env: ExprContext, $: ProgramStack): void {
 
     push(CEILING, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_check(p1: Cons, env: ExprContext, $: ProgramStack): void {
@@ -2526,7 +2501,7 @@ function circexp_subst($: ProgramStack): void {
         push(EXPCOS, $);
         push(cadr(p1), $);
         circexp_subst($);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -2534,7 +2509,7 @@ function circexp_subst($: ProgramStack): void {
         push(EXPSIN, $);
         push(cadr(p1), $);
         circexp_subst($);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -2542,7 +2517,7 @@ function circexp_subst($: ProgramStack): void {
         push(EXPTAN, $);
         push(cadr(p1), $);
         circexp_subst($);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -2550,7 +2525,7 @@ function circexp_subst($: ProgramStack): void {
         push(EXPCOSH, $);
         push(cadr(p1), $);
         circexp_subst($);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -2558,7 +2533,7 @@ function circexp_subst($: ProgramStack): void {
         push(EXPSINH, $);
         push(cadr(p1), $);
         circexp_subst($);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -2566,7 +2541,7 @@ function circexp_subst($: ProgramStack): void {
         push(EXPTANH, $);
         push(cadr(p1), $);
         circexp_subst($);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -2581,7 +2556,7 @@ function circexp_subst($: ProgramStack): void {
             circexp_subst($);
             p1 = cdr(p1);
         }
-        list($.length - h, $);
+        stack_items_to_cons($.length - h, $);
         return;
     }
 
@@ -2700,7 +2675,7 @@ function conjfunc_subst(env: ExprContext, $: ProgramStack): void {
             push(native_sym(Native.multiply), $); // [*]
             push_integer(-1, $); // [*,-1]
             push(z, $); // [*,-1,i]
-            list(3, $); // [-1*i]
+            stack_items_to_cons(3, $); // [-1*i]
             return;
         }
 
@@ -2711,7 +2686,7 @@ function conjfunc_subst(env: ExprContext, $: ProgramStack): void {
             push_integer(-1, $);
             push(caddr(z), $);
             negate(env, $);
-            list(3, $);
+            stack_items_to_cons(3, $);
             return;
         }
 
@@ -2724,7 +2699,7 @@ function conjfunc_subst(env: ExprContext, $: ProgramStack): void {
                 conjfunc_subst(env, $);
                 p1 = cdr(p1);
             }
-            list($.length - h, $);
+            stack_items_to_cons($.length - h, $);
             return;
         }
 
@@ -2921,7 +2896,7 @@ function cosfunc(env: ExprContext, $: ProgramStack): void {
     if (!is_num(p2)) {
         push(COS, $);
         $.push(p1);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -2940,7 +2915,7 @@ function cosfunc(env: ExprContext, $: ProgramStack): void {
     if (!(is_rat(p2) && p2.isInteger())) {
         push(COS, $);
         $.push(p1);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -3003,7 +2978,7 @@ function cosfunc(env: ExprContext, $: ProgramStack): void {
         default:
             push(COS, $);
             $.push(p1);
-            list(2, $);
+            stack_items_to_cons(2, $);
             break;
     }
 }
@@ -3041,7 +3016,7 @@ function cosfunc_sum(p1: Cons, env: ExprContext, $: ProgramStack): void {
     }
     push(COS, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_cosh(p1: Cons, env: ExprContext, $: ProgramStack): void {
@@ -3107,7 +3082,7 @@ function coshfunc(env: ExprContext, $: ProgramStack): void {
 
     push(COSH, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_defint(p1: Cons, env: ExprContext, $: ProgramStack): void {
@@ -3513,15 +3488,15 @@ function dd(p1: U, p2: U, env: ExprContext, $: ProgramStack): void {
 
         if (lessp(caddr(p3), caddr(p1))) {
             push(caddr(p3), $);
-            list(3, $);
+            stack_items_to_cons(3, $);
             push(caddr(p1), $);
         } else {
             push(caddr(p1), $);
-            list(3, $);
+            stack_items_to_cons(3, $);
             push(caddr(p3), $);
         }
 
-        list(3, $);
+        stack_items_to_cons(3, $);
     } else {
         push(p3, $);
         push(caddr(p1), $);
@@ -3538,7 +3513,7 @@ function dfunction(p1: U, p2: U, $: ProgramStack): void {
         $.push(DERIVATIVE);
         $.push(p1);
         $.push(p2);
-        list(3, $);
+        stack_items_to_cons(3, $);
     } else push_integer(0, $);
 }
 
@@ -4085,14 +4060,14 @@ function erffunc(env: ExprContext, $: ProgramStack): void {
         push(ERF, $);
         $.push(p1);
         negate(env, $);
-        list(2, $);
+        stack_items_to_cons(2, $);
         negate(env, $);
         return;
     }
 
     push(ERF, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_erfc(p1: Cons, env: ExprContext, $: ProgramStack): void {
@@ -4130,7 +4105,7 @@ function erfcfunc(env: ProgramEnv, $: ProgramStack): void {
 
     push(ERFC, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 /**
@@ -4342,7 +4317,7 @@ function factorial(env: ExprContext, $: ProgramStack): void {
 
     $.push(FACTORIAL);
     $.push(N);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_float(p1: Cons, env: ExprContext, $: ProgramStack): void {
@@ -4395,7 +4370,7 @@ function floatfunc_subst($: ProgramStack): void {
             push(MATH_E, $);
             push(caddr(expr), $);
             floatfunc_subst($);
-            list(3, $);
+            stack_items_to_cons(3, $);
             return;
         }
 
@@ -4408,8 +4383,8 @@ function floatfunc_subst($: ProgramStack): void {
             push(cadr(expr), $);
             push(caddr(expr), $);
             floatfunc_subst($);
-            list(3, $);
-            list(3, $);
+            stack_items_to_cons(3, $);
+            stack_items_to_cons(3, $);
             return;
         }
 
@@ -4424,7 +4399,7 @@ function floatfunc_subst($: ProgramStack): void {
                 floatfunc_subst($);
                 xs = xs.rest;
             }
-            list($.length - h, $);
+            stack_items_to_cons($.length - h, $);
             return;
         }
 
@@ -4486,7 +4461,7 @@ function floorfunc(env: ExprContext, $: ProgramStack): void {
 
     push(FLOOR, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 /**
@@ -6057,7 +6032,7 @@ function logfunc(env: ExprContext, $: ProgramStack): void {
     if (iszero(x, env)) {
         push(LOG, $);
         push_integer(0, $);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -6120,12 +6095,12 @@ function logfunc(env: ExprContext, $: ProgramStack): void {
                 push(p2.expo, $);
                 push(LOG, $);
                 push(p2.base, $);
-                list(2, $);
+                stack_items_to_cons(2, $);
                 multiply(env, $);
             } else {
                 push(LOG, $);
                 $.push(p2);
-                list(2, $);
+                stack_items_to_cons(2, $);
             }
             $.setAt(i, $.pop());
         }
@@ -6159,7 +6134,7 @@ function logfunc(env: ExprContext, $: ProgramStack): void {
 
     push(LOG, $);
     push(x, $);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 /**
@@ -6300,7 +6275,7 @@ function modfunc(env: ExprContext, $: ProgramStack): void {
         push(MOD, $);
         $.push(p1);
         $.push(p2);
-        list(3, $);
+        stack_items_to_cons(3, $);
         return;
     }
 
@@ -6857,7 +6832,7 @@ function binop_prolog(code: Native, expr: Cons, next: (env: ExprContext, $: Prog
         push_native(code, $);
         $.push(lhs);
         $.push(rhs);
-        list(3, $);
+        stack_items_to_cons(3, $);
         value_of(env, $);
     } finally {
         lhs.release();
@@ -7062,7 +7037,7 @@ export function power(env: ExprContext, $: ProgramStack): void {
             push(POWER, $);
             push(base, $);
             push(expo, $);
-            list(3, $);
+            stack_items_to_cons(3, $);
             return;
         }
 
@@ -7110,7 +7085,7 @@ export function power(env: ExprContext, $: ProgramStack): void {
             push(POWER, $);
             push(base, $);
             push(expo, $);
-            list(3, $);
+            stack_items_to_cons(3, $);
             return;
         }
 
@@ -7170,18 +7145,18 @@ export function power(env: ExprContext, $: ProgramStack): void {
                     push(caddr(p1), $); // expo
                     push(expo, $);
                     multiply(env, $);
-                    list(3, $);
+                    stack_items_to_cons(3, $);
                 } else {
                     push(POWER, $);
                     $.push(p1);
                     push(expo, $);
-                    list(3, $);
+                    stack_items_to_cons(3, $);
                 }
                 $.setAt(h + i, $.pop());
             }
             if (n > 1) {
-                sort_factors(h, env, $);
-                list(n, $);
+                stack_sort_factors(h, env, $);
+                stack_items_to_cons(n, $);
                 $.push(MULTIPLY);
                 $.swap();
                 $.cons();
@@ -7255,7 +7230,7 @@ export function power(env: ExprContext, $: ProgramStack): void {
         $.push(native_sym(Native.pow));
         $.push(base);
         $.push(expo);
-        list(3, $);
+        stack_items_to_cons(3, $);
     } finally {
         expo.release();
         base.release();
@@ -7468,7 +7443,7 @@ export function rect(env: ExprContext, $: ProgramStack): void {
                     push(POWER, $);
                     push(base, $);
                     push(car(p1), $);
-                    list(3, $);
+                    stack_items_to_cons(3, $);
                     rect(env, $);
                     p1 = cdr(p1);
                 }
@@ -8000,7 +7975,7 @@ function sgn(env: ExprContext, $: ProgramStack): void {
     if (!is_num(p1)) {
         push(SGN, $);
         $.push(p1);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -8057,7 +8032,7 @@ function simplify_scalar(p1: U, env: ExprContext, $: ProgramStack): void {
         p1 = cdr(p1);
     }
 
-    list($.length - h, $);
+    stack_items_to_cons($.length - h, $);
     value_of(env, $);
 
     simplify_pass1(env, $);
@@ -8293,7 +8268,7 @@ function sinfunc(env: ExprContext, $: ProgramStack): void {
     if (!is_num(p2)) {
         push(SIN, $);
         $.push(p1);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -8312,7 +8287,7 @@ function sinfunc(env: ExprContext, $: ProgramStack): void {
     if (!(is_rat(p2) && p2.isInteger())) {
         push(SIN, $);
         $.push(p1);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -8375,7 +8350,7 @@ function sinfunc(env: ExprContext, $: ProgramStack): void {
         default:
             push(SIN, $);
             $.push(p1);
-            list(2, $);
+            stack_items_to_cons(2, $);
             break;
     }
 }
@@ -8413,7 +8388,7 @@ function sinfunc_sum(p1: U, env: ExprContext, $: ProgramStack): void {
     }
     push(SIN, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_sinh(expr: Cons, env: ExprContext, $: ProgramStack): void {
@@ -8468,7 +8443,7 @@ function sinhfunc(env: ExprContext, $: ProgramStack): void {
 
     push(SINH, $);
     push(x, $);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_sqrt(expr: Cons, env: ExprContext, $: ProgramStack): void {
@@ -8544,7 +8519,7 @@ function subst($: Pick<ProgramStack, "length" | "pop" | "push" | "cons">): void 
             subst($);
             F = cdr(F);
         }
-        list($.length - h, $);
+        stack_items_to_cons($.length - h, $);
         return;
     }
 
@@ -8678,7 +8653,7 @@ function tanfunc(env: ExprContext, $: ProgramStack): void {
     if (!is_num(p2)) {
         push(TAN, $);
         $.push(p1);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -8697,7 +8672,7 @@ function tanfunc(env: ExprContext, $: ProgramStack): void {
     if (!(is_rat(p2) && p2.isInteger())) {
         push(TAN, $);
         $.push(p1);
-        list(2, $);
+        stack_items_to_cons(2, $);
         return;
     }
 
@@ -8751,7 +8726,7 @@ function tanfunc(env: ExprContext, $: ProgramStack): void {
         default:
             push(TAN, $);
             $.push(p1);
-            list(2, $);
+            stack_items_to_cons(2, $);
             break;
     }
 }
@@ -8776,7 +8751,7 @@ function tanfunc_sum(p1: U, env: ExprContext, $: ProgramStack): void {
     }
     push(TAN, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 export function stack_tanh(p1: Cons, env: ExprContext, $: ProgramStack): void {
@@ -8826,7 +8801,7 @@ function tanhfunc(env: ExprContext, $: ProgramStack): void {
 
     push(TANH, $);
     $.push(p1);
-    list(2, $);
+    stack_items_to_cons(2, $);
 }
 
 function expect_n_arguments(x: Cons, n: number): void | never {
@@ -9168,7 +9143,7 @@ export function stack_user_function(expr: Cons, env: ExprContext, $: ProgramStac
                 value_of(env, $);
                 args = args.rest;
             }
-            list($.length - h, $);
+            stack_items_to_cons($.length - h, $);
             return;
         }
 
@@ -9344,7 +9319,7 @@ export function value_of(env: ExprContext, $: ProgramStack): void {
                     // bare keyword
                     push(expr, $);
                     push(LAST, $); // default arg
-                    list(2, $);
+                    stack_items_to_cons(2, $);
                     value_of(env, $);
                     return;
                 }
@@ -9413,8 +9388,8 @@ function expand_sum_factors(start: number, env: ExprContext, $: ProgramStack): v
     n = $.length - start;
 
     if (n > 1) {
-        sort_factors(start, env, $);
-        list(n, $);
+        stack_sort_factors(start, env, $);
+        stack_items_to_cons(n, $);
         $.push(MULTIPLY);
         $.swap();
         $.cons();
@@ -9444,7 +9419,7 @@ function factor_bignum(N: BigInteger, M: U, env: ExprContext, $: ProgramStack): 
         $.push(POWER);
         $.swap();
         $.push(M);
-        list(3, $);
+        stack_items_to_cons(3, $);
         return;
     }
 
@@ -9473,7 +9448,7 @@ function factor_bignum(N: BigInteger, M: U, env: ExprContext, $: ProgramStack): 
         push(POWER, $);
         push(BASE, $);
         push(EXPO, $);
-        list(3, $);
+        stack_items_to_cons(3, $);
         $.setAt(h + i, $.pop());
     }
 
@@ -9502,7 +9477,7 @@ function factor_factor(env: ExprContext, $: ProgramStack): void {
             push(POWER, $);
             push_integer(-1, $);
             push(EXPO, $);
-            list(3, $); // leave on stack
+            stack_items_to_cons(3, $); // leave on stack
         }
 
         const numer = BASE.a;
@@ -9745,7 +9720,7 @@ function find_divisor_factor(x: U, env: ExprContext, $: ProgramStack): 0 | 1 {
                 push(base, $);
                 push(expo, $);
                 negate(env, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
                 return 1;
             }
         }
@@ -9934,11 +9909,21 @@ function isoneoversqrttwo(p: U): boolean {
     return car(p).equals(POWER) && isequaln(cadr(p), 2) && isequalq(caddr(p), -1, 2);
 }
 
-function isradical(expr: U): boolean {
+/**
+ * A radical is a square root, a cube root etc.
+ * This test is a little more restructive because we require the base to be a positive integer.
+ * Returns true if the expression is a power expression with a positive integer base and fractional exponent.
+ */
+function is_positive_integer_radical(expr: U): boolean {
     if (is_cons(expr) && is_cons_opr_eq_power(expr)) {
         const base = expr.base;
         const expo = expr.expo;
-        return is_rat(base) && base.isPositiveInteger() && is_rat(expo) && expo.isFraction();
+        try {
+            return is_rat(base) && base.isPositiveInteger() && is_rat(expo) && expo.isFraction();
+        } finally {
+            base.release();
+            expo.release();
+        }
     } else {
         return false;
     }
@@ -9978,16 +9963,6 @@ function isusersymbolsomewhere(p: U, env: ProgramEnv): 0 | 1 {
 
 function lessp(p1: U, p2: U): boolean {
     return cmp(p1, p2) < 0;
-}
-
-/**
- * [..., x1, x2, ..., xn] => [..., (x1, x2, ..., xn)]
- */
-export function list(n: number, $: Pick<ProgramStack, "pop" | "push" | "cons">): void {
-    push(nil, $);
-    for (let i = 0; i < n; i++) {
-        $.cons();
-    }
 }
 
 /**
@@ -10070,29 +10045,6 @@ function multiply_noexpand(env: ExprContext, $: ProgramStack): void {
 }
 
 /**
- * [...] => [..., lhs * rhs]
- */
-function multiply_numbers(lhs: Num, rhs: Num, $: ProgramStack): void {
-    if (is_rat(lhs) && is_rat(rhs)) {
-        multiply_rationals(lhs, rhs, $);
-        return;
-    }
-
-    const a = lhs.toNumber();
-    const b = rhs.toNumber();
-
-    push_double(a * b, $);
-}
-
-/**
- * [...] => [..., lhs * rhs]
- */
-function multiply_rationals(lhs: Rat, rhs: Rat, $: ProgramStack): void {
-    const x: Rat = lhs.mul(rhs);
-    push(x, $);
-}
-
-/**
  *
  * @param start the start of the factors on the stack.
  * @param env
@@ -10100,30 +10052,30 @@ function multiply_rationals(lhs: Rat, rhs: Rat, $: ProgramStack): void {
  * @returns
  */
 function multiply_scalar_factors(start: number, env: ExprContext, $: ProgramStack): void {
-    const k0 = combine_numerical_factors(start, one, $);
+    const k0 = stack_combine_numerical_factors(start, one, $);
 
     if (is_err(k0)) {
         $.splice(start); // pop all
-        push(k0, $);
+        $.push(k0);
         return;
     }
 
     if (iszero(k0, env) || start === $.length) {
         $.splice(start); // pop all
-        push(k0, $);
+        $.push(k0);
         return;
     }
 
-    combine_factors(start, env, $);
-    normalize_power_factors(start, env, $);
+    stack_combine_factors(start, env, $);
+    stack_normalize_power_factors(start, env, $);
 
     // do again in case exp(1/2 i pi) changed to i
 
-    combine_factors(start, env, $);
+    stack_combine_factors(start, env, $);
     // console.lg(`after combine factors: ${ $.stack } `);
-    normalize_power_factors(start, env, $);
+    stack_normalize_power_factors(start, env, $);
 
-    const k1 = combine_numerical_factors(start, k0, $);
+    const k1 = stack_combine_numerical_factors(start, k0, $);
 
     if (is_err(k1)) {
         $.splice(start); // pop all
@@ -10154,8 +10106,8 @@ function multiply_scalar_factors(start: number, env: ExprContext, $: ProgramStac
         case 1:
             break;
         default:
-            sort_factors(start, env, $); // previously sorted provisionally
-            list(n, $);
+            stack_sort_factors(start, env, $); // previously sorted provisionally
+            stack_items_to_cons(n, $);
             $.push(MULTIPLY);
             $.swap();
             $.cons();
@@ -10205,7 +10157,7 @@ function multiply_blade_factors(start: number, env: ExprContext, $: ProgramStack
                     push(native_sym(Native.multiply), $);
                     push(B, $);
                     push(x, $);
-                    list(3, $);
+                    stack_items_to_cons(3, $);
                     value_of(env, $);
                     B = $.pop();
                 }
@@ -10264,7 +10216,7 @@ function normalize_polar(EXPO: U, env: ExprContext, $: ProgramStack): void {
                 push(POWER, $);
                 push(MATH_E, $);
                 push(EXPO, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
             }
             p1 = cdr(p1);
         }
@@ -10326,8 +10278,8 @@ function normalize_polar_term_rational(R: U, env: ExprContext, $: ProgramStack):
                 push(R, $);
                 push(imu, $);
                 $.push(MATH_PI);
-                list(4, $);
-                list(3, $);
+                stack_items_to_cons(4, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -10342,9 +10294,9 @@ function normalize_polar_term_rational(R: U, env: ExprContext, $: ProgramStack):
                 push(R, $);
                 push(imu, $);
                 $.push(MATH_PI);
-                list(4, $);
-                list(3, $);
-                list(3, $);
+                stack_items_to_cons(4, $);
+                stack_items_to_cons(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -10359,9 +10311,9 @@ function normalize_polar_term_rational(R: U, env: ExprContext, $: ProgramStack):
                 push(R, $);
                 push(imu, $);
                 $.push(MATH_PI);
-                list(4, $);
-                list(3, $);
-                list(3, $);
+                stack_items_to_cons(4, $);
+                stack_items_to_cons(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -10370,7 +10322,7 @@ function normalize_polar_term_rational(R: U, env: ExprContext, $: ProgramStack):
                 $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(imu, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
             } else {
                 $.push(MULTIPLY);
                 push_integer(-1, $);
@@ -10381,9 +10333,9 @@ function normalize_polar_term_rational(R: U, env: ExprContext, $: ProgramStack):
                 push(R, $);
                 push(imu, $);
                 $.push(MATH_PI);
-                list(4, $);
-                list(3, $);
-                list(4, $);
+                stack_items_to_cons(4, $);
+                stack_items_to_cons(3, $);
+                stack_items_to_cons(4, $);
             }
             break;
     }
@@ -10414,8 +10366,8 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
                 push_double(r, $);
                 push(imu, $);
                 $.push(MATH_PI);
-                list(4, $);
-                list(3, $);
+                stack_items_to_cons(4, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -10430,9 +10382,9 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
                 push_double(r, $);
                 push(imu, $);
                 $.push(MATH_PI);
-                list(4, $);
-                list(3, $);
-                list(3, $);
+                stack_items_to_cons(4, $);
+                stack_items_to_cons(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -10447,9 +10399,9 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
                 push_double(r, $);
                 push(imu, $);
                 $.push(MATH_PI);
-                list(4, $);
-                list(3, $);
-                list(3, $);
+                stack_items_to_cons(4, $);
+                stack_items_to_cons(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -10458,7 +10410,7 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
                 $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(imu, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
             } else {
                 $.push(MULTIPLY);
                 push_integer(-1, $);
@@ -10469,29 +10421,35 @@ function normalize_polar_term_double(R: Flt, $: ProgramStack): void {
                 push_double(r, $);
                 push(imu, $);
                 $.push(MATH_PI);
-                list(4, $);
-                list(3, $);
-                list(4, $);
+                stack_items_to_cons(4, $);
+                stack_items_to_cons(3, $);
+                stack_items_to_cons(4, $);
             }
             break;
     }
 }
 
-function normalize_power_factors(h: number, env: ExprContext, $: ProgramStack): void {
-    const k = $.length;
-    for (let i = h; i < k; i++) {
+/**
+ *
+ * @param start The starting index on the stack.
+ * @param env
+ * @param $
+ */
+function stack_normalize_power_factors(start: number, env: ExprContext, $: ProgramStack): void {
+    const end = $.length;
+    for (let i = start; i < end; i++) {
         let p1 = $.getAt(i);
-        if (car(p1).equals(POWER)) {
-            push(cadr(p1), $);
-            push(caddr(p1), $);
+        if (is_cons(p1) && is_cons_opr_eq_power(p1)) {
+            $.push(p1.base);
+            $.push(p1.expo);
             power(env, $);
             p1 = $.pop();
-            if (car(p1).equals(MULTIPLY)) {
-                p1 = cdr(p1);
+            if (is_cons(p1) && is_cons_opr_eq_multiply(p1)) {
+                p1 = p1.argList;
                 $.setAt(i, car(p1));
                 p1 = cdr(p1);
                 while (is_cons(p1)) {
-                    push(car(p1), $);
+                    $.push(car(p1));
                     p1 = cdr(p1);
                 }
             } else $.setAt(i, p1);
@@ -10584,7 +10542,7 @@ function partition_term($: ProgramStack): void {
 
     if (n === 0) push_integer(1, $);
     else if (n > 1) {
-        list(n, $);
+        stack_items_to_cons(n, $);
         $.push(MULTIPLY);
         $.swap();
         $.cons();
@@ -10603,7 +10561,7 @@ function partition_term($: ProgramStack): void {
 
     if (n === 0) push_integer(1, $);
     else if (n > 1) {
-        list(n, $);
+        stack_items_to_cons(n, $);
         $.push(MULTIPLY);
         $.swap();
         $.cons();
@@ -10811,7 +10769,7 @@ function power_complex_number(base: U, expo: U, env: ExprContext, $: ProgramStac
         push(POWER, $);
         push(base, $);
         push(expo, $);
-        list(3, $);
+        stack_items_to_cons(3, $);
         return;
     }
 
@@ -10919,7 +10877,7 @@ function power_minusone(expo: U, env: ExprContext, $: ProgramStack): void {
     push(POWER, $);
     push_integer(-1, $);
     push(expo, $);
-    list(3, $);
+    stack_items_to_cons(3, $);
 }
 
 function normalize_clock_rational(expo: U, env: ExprContext, $: ProgramStack): void {
@@ -10959,7 +10917,7 @@ function normalize_clock_rational(expo: U, env: ExprContext, $: ProgramStack): v
                 push(POWER, $);
                 push_integer(-1, $);
                 push(R, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -10973,8 +10931,8 @@ function normalize_clock_rational(expo: U, env: ExprContext, $: ProgramStack): v
                 push(R, $);
                 push_rational(-1, 2, $);
                 add(env, $);
-                list(3, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -10986,8 +10944,8 @@ function normalize_clock_rational(expo: U, env: ExprContext, $: ProgramStack): v
                 push(POWER, $);
                 push_integer(-1, $);
                 push(R, $);
-                list(3, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -10996,14 +10954,14 @@ function normalize_clock_rational(expo: U, env: ExprContext, $: ProgramStack): v
                 $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(imu, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
             } else {
                 push(POWER, $);
                 push_integer(-1, $);
                 push(R, $);
                 push_rational(-1, 2, $);
                 add(env, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
     }
@@ -11031,7 +10989,7 @@ function normalize_clock_double(EXPO: Flt, $: ProgramStack): void {
                 push(POWER, $);
                 push_integer(-1, $);
                 push_double(r, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -11043,8 +11001,8 @@ function normalize_clock_double(EXPO: Flt, $: ProgramStack): void {
                 push(POWER, $);
                 push_integer(-1, $);
                 push_double(r - 0.5, $);
-                list(3, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -11056,8 +11014,8 @@ function normalize_clock_double(EXPO: Flt, $: ProgramStack): void {
                 push(POWER, $);
                 push_integer(-1, $);
                 push_double(r, $);
-                list(3, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
 
@@ -11066,12 +11024,12 @@ function normalize_clock_double(EXPO: Flt, $: ProgramStack): void {
                 $.push(MULTIPLY);
                 push_integer(-1, $);
                 push(imu, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
             } else {
                 push(POWER, $);
                 push_integer(-1, $);
                 push_double(r - 0.5, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
             }
             break;
     }
@@ -11127,7 +11085,7 @@ export function power_e_expo(expo: U, env: ExprContext, $: ProgramStack): void {
     push(POWER, $);
     push(MATH_E, $);
     push(expo, $);
-    list(3, $);
+    stack_items_to_cons(3, $);
 }
 
 function power_numbers(base: Num, expo: Num, env: ExprContext, $: ProgramStack): void {
@@ -11206,7 +11164,7 @@ function power_numbers(base: Num, expo: Num, env: ExprContext, $: ProgramStack):
     push(POWER, $);
     push(base, $);
     push(expo, $);
-    list(3, $);
+    stack_items_to_cons(3, $);
 
     factor_factor(env, $);
 
@@ -11251,8 +11209,8 @@ function power_numbers(base: Num, expo: Num, env: ExprContext, $: ProgramStack):
 
     if (n === 1) return;
 
-    sort_factors(h, env, $);
-    list(n, $);
+    stack_sort_factors(h, env, $);
+    stack_items_to_cons(n, $);
     $.push(MULTIPLY);
     $.swap();
     $.cons();
@@ -11312,7 +11270,7 @@ function power_numbers_factor(base: Rat, expo: Rat, env: ExprContext, $: Program
         push(POWER, $);
         push(base, $);
         push_bignum(expo.sign, r, expo.b, $);
-        list(3, $);
+        stack_items_to_cons(3, $);
         return;
     }
 
@@ -11325,7 +11283,7 @@ function power_numbers_factor(base: Rat, expo: Rat, env: ExprContext, $: Program
         push(POWER, $);
         push(base, $);
         push_bignum(expo.sign, r, expo.b, $);
-        list(3, $);
+        stack_items_to_cons(3, $);
         return;
     }
 
@@ -11598,9 +11556,9 @@ export function push_string(s: string, $: ProgramStack) {
  * [..., x] => [..., (pow x -1)]
  */
 function reciprocate(env: ExprContext, $: ProgramStack): void {
-    //                              [..., x]
+    //                       [..., x]
     push_integer(-1, $); //  [..., x, -1]
-    power(env, $); //  [..., (pow x -1)]
+    power(env, $); //        [..., (pow x -1)]
 }
 
 function reduce_radical_double(h: number, COEFF: Flt, $: ProgramStack): Flt {
@@ -11611,7 +11569,7 @@ function reduce_radical_double(h: number, COEFF: Flt, $: ProgramStack): Flt {
     for (let i = h; i < n; i++) {
         const p1 = $.getAt(i);
 
-        if (isradical(p1)) {
+        if (is_positive_integer_radical(p1)) {
             push(cadr(p1), $); // base
             const a = pop_double($);
 
@@ -11633,27 +11591,32 @@ function reduce_radical_double(h: number, COEFF: Flt, $: ProgramStack): Flt {
     return C;
 }
 
-function reduce_radical_factors(h: number, COEFF: Num, env: ExprContext, $: ProgramStack): Num {
-    if (!any_radical_factors(h, $)) return COEFF;
-
-    if (is_rat(COEFF)) return reduce_radical_rational(h, COEFF, env, $);
-    else return reduce_radical_double(h, COEFF, $);
+function reduce_radical_factors(h: number, coeff: Num, env: ExprContext, $: ProgramStack): Num {
+    if (any_radical_factors(h, $)) {
+        if (is_rat(coeff)) {
+            return reduce_radical_rational(h, coeff, env, $);
+        } else {
+            return reduce_radical_double(h, coeff, $);
+        }
+    } else {
+        return coeff;
+    }
 }
 
-function reduce_radical_rational(h: number, COEFF: Rat, env: ExprContext, $: ProgramStack): Rat {
-    if (isplusone(COEFF) || isminusone(COEFF)) return COEFF; // COEFF has no factors, no cancellation is possible
+function reduce_radical_rational(h: number, coeff: Rat, env: ExprContext, $: ProgramStack): Rat {
+    if (isplusone(coeff) || isminusone(coeff)) return coeff; // COEFF has no factors, no cancellation is possible
 
-    push(COEFF, $);
+    push(coeff, $);
     absfunc(env, $);
     let p1 = $.pop();
 
     $.push(p1);
     numerator(env, $);
-    let NUMER = $.pop();
+    let numer = $.pop();
 
     $.push(p1);
     denominator(env, $);
-    let DENOM = $.pop();
+    let denom = $.pop();
 
     let k = 0;
 
@@ -11661,40 +11624,40 @@ function reduce_radical_rational(h: number, COEFF: Rat, env: ExprContext, $: Pro
 
     for (let i = h; i < n; i++) {
         p1 = $.getAt(i);
-        if (!isradical(p1)) continue;
-        const BASE = cadr(p1);
-        const EXPO = caddr(p1);
-        if (is_num(EXPO) && EXPO.isNegative()) {
-            mod_integers(NUMER as Rat, BASE as Rat, $);
+        if (!is_positive_integer_radical(p1)) continue;
+        const base = cadr(p1);
+        const expo = caddr(p1);
+        if (is_num(expo) && expo.isNegative()) {
+            mod_integers(numer as Rat, base as Rat, $);
             const p2 = $.pop();
             if (iszero(p2, env)) {
-                push(NUMER, $);
-                push(BASE, $);
+                push(numer, $);
+                push(base, $);
                 divide(env, $);
-                NUMER = $.pop();
+                numer = $.pop();
                 push(POWER, $);
-                push(BASE, $);
+                push(base, $);
                 push_integer(1, $);
-                push(EXPO, $);
+                push(expo, $);
                 add(env, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
                 $.setAt(i, $.pop());
                 k++;
             }
         } else {
-            mod_integers(DENOM as Rat, BASE as Rat, $);
+            mod_integers(denom as Rat, base as Rat, $);
             const p2 = $.pop();
             if (iszero(p2, env)) {
-                push(DENOM, $);
-                push(BASE, $);
+                push(denom, $);
+                push(base, $);
                 divide(env, $);
-                DENOM = $.pop();
+                denom = $.pop();
                 push(POWER, $);
-                push(BASE, $);
+                push(base, $);
                 push_integer(-1, $);
-                push(EXPO, $);
+                push(expo, $);
                 add(env, $);
-                list(3, $);
+                stack_items_to_cons(3, $);
                 $.setAt(i, $.pop());
                 k++;
             }
@@ -11702,14 +11665,14 @@ function reduce_radical_rational(h: number, COEFF: Rat, env: ExprContext, $: Pro
     }
 
     if (k) {
-        push(NUMER, $);
-        push(DENOM, $);
+        push(numer, $);
+        push(denom, $);
         divide(env, $);
-        if (COEFF.isNegative()) negate(env, $);
-        COEFF = $.pop() as Rat;
+        if (coeff.isNegative()) negate(env, $);
+        coeff = $.pop() as Rat;
     }
 
-    return COEFF;
+    return coeff;
 }
 
 /**
@@ -11842,7 +11805,7 @@ function scan_stmt(env: ExprContext, $: ProgramStack, io: ProgramIO, config: Eig
         $.push(ASSIGN);
         $.swap();
         scan_relational_expr(env, $, io, config);
-        list(3, $);
+        stack_items_to_cons(3, $);
     }
 }
 
@@ -11873,7 +11836,7 @@ function scan_relational_expr(env: ExprContext, $: ProgramStack, io: ProgramIO, 
     $.swap();
     get_token_skip_newlines(io, config); // get token after rel op
     scan_additive_expr(env, $, io, config);
-    list(3, $);
+    stack_items_to_cons(3, $);
 }
 
 function scan_additive_expr(env: ExprContext, $: ProgramStack, io: ProgramIO, config: EigenmathParseConfig): void {
@@ -11889,7 +11852,7 @@ function scan_additive_expr(env: ExprContext, $: ProgramStack, io: ProgramIO, co
         if (t === "-") static_negate(env, $);
     }
     if ($.length - h > 1) {
-        list($.length - h, $);
+        stack_items_to_cons($.length - h, $);
         $.push(ADD);
         $.swap();
         $.cons();
@@ -11916,7 +11879,7 @@ function scan_multiplicative_expr(env: ExprContext, $: ProgramStack, io: Program
     }
 
     if ($.length - h > 1) {
-        list($.length - h, $);
+        stack_items_to_cons($.length - h, $);
         $.push(MULTIPLY);
         $.swap();
         $.cons();
@@ -11960,7 +11923,7 @@ function scan_power(env: ExprContext, $: ProgramStack, io: ProgramIO, config: Ei
             push(POWER, $);
             $.swap();
             scan_power(env, $, io, config);
-            list(3, $);
+            stack_items_to_cons(3, $);
         }
     } else {
         if (token === T_EXPONENTIATION) {
@@ -11968,7 +11931,7 @@ function scan_power(env: ExprContext, $: ProgramStack, io: ProgramIO, config: Ei
             push(POWER, $);
             $.swap();
             scan_power(env, $, io, config);
-            list(3, $);
+            stack_items_to_cons(3, $);
         }
     }
 }
@@ -12034,14 +11997,14 @@ function scan_factor(env: ExprContext, $: ProgramStack, io: ProgramIO, config: E
 
         get_token(io, config); // get token after ]
 
-        list($.length - h, $);
+        stack_items_to_cons($.length - h, $);
     }
 
     while ((token as string) === "!") {
         get_token(io, config); // get token after !
         $.push(FACTORIAL);
         $.swap();
-        list(2, $);
+        stack_items_to_cons(2, $);
     }
 }
 
@@ -12085,7 +12048,7 @@ function scan_function_call(env: ExprContext, $: ProgramStack, io: ProgramIO, co
     if (token === ")") {
         scan_level--;
         get_token(io, config); // get token after )
-        list(1, $); // function call with no args
+        stack_items_to_cons(1, $); // function call with no args
         return;
     }
     scan_stmt(env, $, io, config);
@@ -12096,7 +12059,7 @@ function scan_function_call(env: ExprContext, $: ProgramStack, io: ProgramIO, co
     if (token !== ")") scan_error("expected )", io);
     scan_level--;
     get_token(io, config); // get token after )
-    list($.length - h, $);
+    stack_items_to_cons($.length - h, $);
 }
 
 function get_matching_token(lhs: string | number): string {
@@ -12384,13 +12347,6 @@ function sort(n: number, env: ExprContext, $: ProgramStack): void {
     }
 }
 
-function sort_factors(start: number, env: ExprContext, $: ProgramStack): void {
-    const compareFn = env.compareFn(native_sym(Native.multiply));
-    const parts = $.splice(start);
-    const t = parts.sort(compareFn);
-    $.concat(t);
-}
-
 function sort_factors_provisional(start: number, $: ProgramStack): void {
     const compareFn = (lhs: U, rhs: U) => cmp_factors_provisional(lhs, rhs);
     const parts = $.splice(start);
@@ -12425,7 +12381,7 @@ function static_negate(env: ExprContext, $: ProgramStack): void {
     $.push(MULTIPLY);
     push_integer(-1, $);
     $.push(p1);
-    list(3, $);
+    stack_items_to_cons(3, $);
 }
 
 function static_reciprocate(env: ExprContext, $: ProgramStack): void {
@@ -12439,7 +12395,7 @@ function static_reciprocate(env: ExprContext, $: ProgramStack): void {
         push(POWER, $);
         $.push(p2);
         push_integer(-1, $);
-        list(3, $);
+        stack_items_to_cons(3, $);
         return;
     }
 
@@ -12463,7 +12419,7 @@ function static_reciprocate(env: ExprContext, $: ProgramStack): void {
         push(cadr(p2), $);
         push(caddr(p2), $);
         negate(env, $);
-        list(3, $);
+        stack_items_to_cons(3, $);
         return;
     }
 
@@ -12472,7 +12428,7 @@ function static_reciprocate(env: ExprContext, $: ProgramStack): void {
     push(POWER, $);
     $.push(p2);
     push_integer(-1, $);
-    list(3, $);
+    stack_items_to_cons(3, $);
 }
 
 export function stopf(errmsg: string): never {

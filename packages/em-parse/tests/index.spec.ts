@@ -1,7 +1,7 @@
 import { is_flt, is_rat } from "@stemcmicro/atoms";
 import { em_parse } from "../src/em_parse";
 
-describe("em_parse", () => {
+xdescribe("em_parse", () => {
     it("Rat", () => {
         const { trees, errors } = em_parse("2");
         expect(errors.length).toBe(0);

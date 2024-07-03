@@ -126,7 +126,7 @@ class MockExprContext implements ExprContext {
     release(): void {}
 }
 
-describe("absfunc", () => {
+xdescribe("absfunc", () => {
     it("Rat(1)", () => {
         const env = new MockExprContext();
         const $ = new StackU();

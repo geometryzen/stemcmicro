@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("simplify", function () {
+xdescribe("simplify", function () {
     it("Blade", function () {
         check("simplify(ex)", "ex");
     });

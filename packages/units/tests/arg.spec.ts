@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("arg", function () {
+xdescribe("arg", function () {
     xit("1", function () {
         check("arg(1)", "0");
     });

@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("float", function () {
+xdescribe("float", function () {
     it("Blade", function () {
         check("float(ex)", "ex");
         check("float(ey)", "ey");

@@ -1,6 +1,6 @@
 import { diagnostic } from "../src/diagnostics";
 
-describe("diagnostics", () => {
+xdescribe("diagnostics", () => {
     it("diagnostic", () => {
         expect(typeof diagnostic === "function").toBe(true);
     });

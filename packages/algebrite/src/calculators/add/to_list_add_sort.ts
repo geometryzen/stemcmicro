@@ -1,11 +1,10 @@
 import { is_num, is_tensor, Num, one, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
-import { add, iszero, multiply } from "@stemcmicro/helpers";
+import { add, iszero, multiply, multiply_num_num } from "@stemcmicro/helpers";
 import { assert_cons_or_nil, car, cdr, cons, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { is_multiply } from "../../runtime/helpers";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { sort_terms } from "../compare/sort_terms";
-import { multiply_num_num } from "../mul/multiply_num_num";
 import { add_num_num } from "./add_num_num";
 
 export function to_list_add_sort(terms: U[], $: ExprContext): U {

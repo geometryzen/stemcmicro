@@ -1,14 +1,24 @@
 import { create_sym, is_blade, is_flt, is_num, is_rat, is_tensor, is_uom, Num, one, zero } from "@stemcmicro/atoms";
 import { ExprContext, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
-import { add, contains_single_blade, contains_single_uom, extract_single_blade, extract_single_uom, is_cons_opr_eq_add, is_cons_opr_eq_multiply, is_cons_opr_eq_power, is_cons_opr_eq_sym, multiply, power, remove_factors } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
-import { car, cdr, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
-import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
-import { is_expanding } from "../../helpers/is_expanding";
-import { cddr } from "../../tree/helpers";
+import { car, cddr, cdr, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
+import { add } from "./add";
+import { contains_single_blade } from "./contains_single_blade";
+import { contains_single_uom } from "./contains_single_uom";
+import { extract_single_blade } from "./extract_single_blade";
+import { extract_single_uom } from "./extract_single_uom";
+import { is_cons_opr_eq_add } from "./is_cons_opr_eq_add";
+import { is_cons_opr_eq_multiply } from "./is_cons_opr_eq_multiply";
+import { is_cons_opr_eq_power } from "./is_cons_opr_eq_power";
+import { is_cons_opr_eq_sym } from "./is_cons_opr_eq_sym";
+import { is_expanding } from "./is_expanding";
+import { multiply } from "./multiply";
+import { multiply_num_num } from "./multiply_num_num";
+import { power } from "./power";
+import { remove_factors } from "./remove_factors";
 
-const MUL = native_sym(Native.multiply);
+const MULTIPLY = native_sym(Native.multiply);
 const OPERATOR = create_sym("operator");
 
 export function multiply_values(values: Cons, $: ExprContext): U {
@@ -21,12 +31,12 @@ export function multiply_values(values: Cons, $: ExprContext): U {
         // sort
         // perform pairwise multiplication
         // recombine
-        const retval = values.car;
-        const remaining = values.cdr;
-        if (is_cons(remaining)) {
-            return [...remaining].reduce((prev: U, curr: U) => multiplyLR(prev, curr, $), retval);
+        const head = values.head;
+        const rest = values.rest;
+        if (is_cons(rest)) {
+            return [...rest].reduce((prev: U, curr: U) => multiplyLR(prev, curr, $), head);
         } else {
-            return retval;
+            return head;
         }
     }
 }
@@ -40,12 +50,12 @@ function multiplyLR(lhs: U, rhs: U, $: ExprContext): U {
     if (is_atom(lhs) && is_atom(rhs)) {
         const lhsExt = $.handlerFor(lhs);
         const rhsExt = $.handlerFor(rhs);
-        const binLhs = lhsExt.binL(lhs, MUL, rhs, $);
+        const binLhs = lhsExt.binL(lhs, MULTIPLY, rhs, $);
         if (is_nil(binLhs)) {
-            const binRhs = rhsExt.binR(rhs, MUL, lhs, $);
+            const binRhs = rhsExt.binR(rhs, MULTIPLY, lhs, $);
             if (is_nil(binRhs)) {
                 // console.lg("combine_atoms", `${lhs}`, `${rhs}`, `${lhsExt}`, `${rhsExt}`, `${lhs.type}`, `${rhs.type}`);
-                const err = diagnostic(Diagnostics.Operator_0_cannot_be_applied_to_types_1_and_2, MUL, create_sym(lhs.type), create_sym(rhs.type));
+                const err = diagnostic(Diagnostics.Operator_0_cannot_be_applied_to_types_1_and_2, MULTIPLY, create_sym(lhs.type), create_sym(rhs.type));
                 return hook(err, "A");
             } else {
                 if (is_cons(binRhs) && is_cons_opr_eq_multiply(binRhs)) {
@@ -112,9 +122,9 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
             );
         } else {
             if (is_cons(rhs) && is_cons_opr_eq_multiply(rhs)) {
-                return hook(items_to_cons(native_sym(Native.multiply), lhs, ...rhs.tail()), "D2");
+                return hook(items_to_cons(MULTIPLY, lhs, ...rhs.tail()), "D2");
             } else {
-                return hook(items_to_cons(native_sym(Native.multiply), lhs, rhs), "D3");
+                return hook(items_to_cons(MULTIPLY, lhs, rhs), "D3");
             }
         }
     }
@@ -128,9 +138,9 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
             );
         } else {
             if (is_cons(lhs) && is_cons_opr_eq_multiply(lhs)) {
-                return hook(items_to_cons(native_sym(Native.multiply), ...lhs.tail(), rhs), "E2");
+                return hook(items_to_cons(MULTIPLY, ...lhs.tail(), rhs), "E2");
             } else {
-                return hook(items_to_cons(native_sym(Native.multiply), lhs, rhs), "E3");
+                return hook(items_to_cons(MULTIPLY, lhs, rhs), "E3");
             }
         }
     }
@@ -199,7 +209,7 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
     }
 
     // Let's get this now before going into the while loop...
-    const compareFactors = $.compareFn(MUL);
+    const compareFactors = $.compareFn(MULTIPLY);
 
     while (is_cons(p1) && is_cons(p2)) {
         const head1 = p1.car;
@@ -311,13 +321,13 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
             // e.g. a^n * b * b => b * a^n * b = b * b * a^n => b^2 * a^n.
             factors.splice(0, 1); // remove the Rat(1)
             factors.sort(compareFactors);
-            const retval = items_to_cons(MUL, ...factors);
+            const retval = items_to_cons(MULTIPLY, ...factors);
             // console.lg("retval 3", $.toSExprString(retval));
             return hook(retval, "N");
         }
     }
 
-    const retval = cons(native_sym(Native.multiply), items_to_cons(...factors));
+    const retval = cons(MULTIPLY, items_to_cons(...factors));
     return hook(retval, "O");
 }
 
@@ -361,10 +371,10 @@ function multiply_factors_array(factors: U[], $: ExprContext): U {
 /**
  * Computes base**(expoL+expoR) then finds the most efficient way to add the result to the list of factors.
  */
-function combine_exponentials_with_common_base(factors: U[], base: U, expoL: U, expoR: U, _: ExprContext): void {
-    const expo = add(_, expoL, expoR);
+function combine_exponentials_with_common_base(factors: U[], base: U, expoL: U, expoR: U, env: ExprContext): void {
+    const expo = add(env, expoL, expoR);
     try {
-        const pow = power(_, base, expo);
+        const pow = power(env, base, expo);
         try {
             combine_with_factors(factors, pow);
         } finally {

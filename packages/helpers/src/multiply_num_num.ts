@@ -1,6 +1,4 @@
-import { create_flt } from "../../tree/flt/Flt";
-import { Num } from "../../tree/num/Num";
-import { is_rat } from "../../operators/rat/is_rat";
+import { create_flt, is_rat, Num } from "@stemcmicro/atoms";
 
 export function multiply_num_num(lhs: Num, rhs: Num): Num {
     if (is_rat(lhs)) {

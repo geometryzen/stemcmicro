@@ -32,7 +32,11 @@ describe("basics", function () {
     it("combine numerical factors", function () {
         check("x*2*y*3*z*4", "24*x*y*z");
     });
-    xit("004", function () {
+    it("cancel", function () {
         check("a*(1/a)", "1");
+    });
+    it("cancel before distributive law", function () {
+        // Should evaluate to 1...
+        check("(a+b)*(1/(a+b))", "a/(a+b)+b/(a+b)");
     });
 });

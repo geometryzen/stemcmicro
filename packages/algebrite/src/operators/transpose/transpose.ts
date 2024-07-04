@@ -1,11 +1,10 @@
 import { is_num, is_tensor, one, Tensor, two, zero } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
 import { Directive } from "@stemcmicro/directive";
-import { add, isone, iszero, is_inner_or_dot, is_num_and_eq_two, multiply, num_to_number } from "@stemcmicro/helpers";
+import { add, isone, iszero, is_expanding, is_inner_or_dot, is_num_and_eq_two, multiply, num_to_number } from "@stemcmicro/helpers";
 import { car, cdr, Cons, is_cons, items_to_cons, nil, U } from "@stemcmicro/tree";
 import { equals } from "../../helpers/equals";
 import { inner } from "../../helpers/inner";
-import { is_expanding } from "../../helpers/is_expanding";
 import { MAXDIM, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { is_add, is_identity_matrix, is_multiply, is_transpose } from "../../runtime/helpers";

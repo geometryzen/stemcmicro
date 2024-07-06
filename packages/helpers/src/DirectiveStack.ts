@@ -128,10 +128,10 @@ function initial_directives(): Directives {
     update_directives(directives, Directive.convertExpToTrig, 0);
     update_directives(directives, Directive.convertTrigToExp, 0);
     update_directives(directives, Directive.evaluatingAsFloat, 0);
-    update_directives(directives, Directive.expanding, 1);
+    update_directives(directives, Directive.expanding, 0);
     update_directives(directives, Directive.expandAbsSum, 0);
     update_directives(directives, Directive.expandCosSum, 0);
-    update_directives(directives, Directive.expandPowSum, 1);
+    update_directives(directives, Directive.expandPowSum, 0);
     update_directives(directives, Directive.expandSinSum, 0);
     update_directives(directives, Directive.factoring, 0);
     update_directives(directives, Directive.keepZeroTermsInSums, 0);

@@ -2,7 +2,7 @@ import { create_sym, is_blade, is_flt, is_num, is_rat, is_tensor, is_uom, Num, o
 import { ExprContext, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
 import { Native, native_sym } from "@stemcmicro/native";
-import { car, cddr, cdr, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
+import { cddr, cdr, cons, Cons, is_atom, is_cons, is_nil, items_to_cons, U } from "@stemcmicro/tree";
 import { add } from "./add";
 import { contains_single_blade } from "./contains_single_blade";
 import { contains_single_uom } from "./contains_single_uom";
@@ -21,6 +21,9 @@ import { remove_factors } from "./remove_factors";
 const MULTIPLY = native_sym(Native.multiply);
 const OPERATOR = create_sym("operator");
 
+/**
+ * Multiplication of values that are assumed to have been evaluated already.
+ */
 export function multiply_values(values: Cons, $: ExprContext): U {
     // For multiplication, the expression (*) evaluates to 1.
     if (values.isnil) {
@@ -114,34 +117,16 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
     }
 
     // Right Distributive Law  (x1 + x2 + ...) * R => x1 * R + x2 * R + ...
-    if (is_cons(lhs) && is_cons_opr_eq_add(lhs)) {
-        if (is_expanding($)) {
-            return hook(
-                lhs.tail().reduce((a: U, b: U) => add($, a, multiply($, b, rhs)), zero),
-                "D1"
-            );
-        } else {
-            if (is_cons(rhs) && is_cons_opr_eq_multiply(rhs)) {
-                return hook(items_to_cons(MULTIPLY, lhs, ...rhs.tail()), "D2");
-            } else {
-                return hook(items_to_cons(MULTIPLY, lhs, rhs), "D3");
-            }
+    if (is_expanding($)) {
+        if (is_cons(lhs) && is_cons_opr_eq_add(lhs)) {
+            return lhs.tail().reduce((a: U, b: U) => add($, a, multiply($, b, rhs)), zero);
         }
     }
 
     // Left Distributive Law  L * (x1 + x2 + ...) => L * x1 + L * x2 + ...
-    if (is_cons(rhs) && is_cons_opr_eq_add(rhs)) {
-        if (is_expanding($)) {
-            return hook(
-                rhs.tail().reduce((a: U, b: U) => add($, a, multiply($, lhs, b)), zero),
-                "E1"
-            );
-        } else {
-            if (is_cons(lhs) && is_cons_opr_eq_multiply(lhs)) {
-                return hook(items_to_cons(MULTIPLY, ...lhs.tail(), rhs), "E2");
-            } else {
-                return hook(items_to_cons(MULTIPLY, lhs, rhs), "E3");
-            }
+    if (is_expanding($)) {
+        if (is_cons(rhs) && is_cons_opr_eq_add(rhs)) {
+            return rhs.tail().reduce((a: U, b: U) => add($, a, multiply($, lhs, b)), zero);
         }
     }
 
@@ -197,11 +182,9 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
         p1 = p1.cdr;
         p2 = p2.cdr;
     } else if (is_num(c1)) {
-        // console.lg("c1", render_as_sexpr(c1, $));
         factors.push(c1);
         p1 = p1.cdr;
     } else if (is_num(c2)) {
-        // console.lg("c2", render_as_sexpr(c2, $));
         factors.push(c2);
         p2 = p2.cdr;
     } else {
@@ -216,7 +199,7 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
         const head2 = p2.car;
 
         // TODO: What is going on here with "operator"?
-        if (is_cons(head1) && is_cons_opr_eq_sym(head1, OPERATOR) && is_cons(head2) && car(head2).equals(OPERATOR)) {
+        if (is_cons(head1) && is_cons_opr_eq_sym(head1, OPERATOR) && is_cons(head2) && is_cons_opr_eq_sym(head2, OPERATOR)) {
             factors.push(cons(OPERATOR, append(cdr(head1), cdr(head2))));
             p1 = p1.cdr;
             p2 = p2.cdr;
@@ -229,12 +212,6 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
         // We can get the ordering wrong here. e.g. lhs = (pow 2 1/2), rhs = imu
         // We end up comparing 2 and i and the 2 gets pushed first and the i waits
         // for the next loop iteration.
-        // console.lg("head1", render_as_infix(head1, $));
-        // console.lg("head2", render_as_infix(head2, $));
-        // console.lg("baseL", baseL.toString());
-        // console.lg("baseR", baseR.toString());
-        // console.lg("expoL", expoL.toString());
-        // console.lg("expoR", expoR.toString());
 
         // If the head elements are the same then the bases will be the same.
         // On the other hand, the heads can be different but the bases the same.
@@ -243,13 +220,7 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
             combine_exponentials_with_common_base(factors, baseL, expoL, expoR, $);
             p1 = p1.cdr;
             p2 = p2.cdr;
-        }
-        // else if ($.isFactoring() && is_both_expos_minus_one(expoL, expoR)) {
-        //    combine_exponentials_with_common_expo(factors, baseL, baseR, expoL, $);
-        //    p1 = p1.cdr;
-        //    p2 = p2.cdr;
-        //}
-        else {
+        } else {
             switch (compareFactors(head1, head2)) {
                 case SIGN_LT: {
                     factors.push(head1);

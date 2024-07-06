@@ -233,13 +233,7 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
                     break;
                 }
                 default: {
-                    // console.lg(`head1 => ${render_as_infix(head1, $)} head2 => ${render_as_infix(head2, $)}`);
-                    // Equality here means stable sorting of the head elements.
-                    // If we end up here then we already know that the bases are different.
-                    // So we definitely can't combine assuming base equality.
-                    // This can happen for non-commuting elements. e.g. Blade(s), Tensor(s).
-                    // Remove factors that don't commute earlier? Or do we handle them here?
-                    throw new Error(`baseL => ${baseL} expoL => ${expoL} baseR => ${baseR} expoR => ${expoR}`);
+                    throw new Error();
                 }
             }
         }
@@ -263,7 +257,7 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
         for (let i = 0; i < factors.length; i++) {
             const factor = factors[i];
             if (is_cons(factor) && is_cons_opr_eq_add(factor)) {
-                return hook(multiply_factors_array(factors, $), "K");
+                return multiply_factors_array(factors, $);
             }
         }
     }
@@ -271,18 +265,14 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
     // n is the number of result factors on the stack
     const n = factors.length;
     if (n === 1) {
-        const retval = assert_not_undefined(factors.pop());
-        // console.lg("retval 1", $.toSExprString(retval));
-        return hook(retval, "L");
+        return assert_not_undefined(factors.pop());
     }
 
     // discard integer 1
     const first = factors[0];
     if (is_rat(first) && first.isOne()) {
         if (n === 2) {
-            const retval = assert_not_undefined(factors.pop());
-            // console.lg("retval 2", $.toSExprString(retval));
-            return hook(retval, "M");
+            return assert_not_undefined(factors.pop());
         } else {
             // factors[0] is Rat(1) so we'll just replace it with the multiplication operand
             // so that we can easily built the multiplicative expression from the factors.
@@ -292,14 +282,11 @@ function yymultiply(lhs: U, rhs: U, $: ExprContext): U {
             // e.g. a^n * b * b => b * a^n * b = b * b * a^n => b^2 * a^n.
             factors.splice(0, 1); // remove the Rat(1)
             factors.sort(compareFactors);
-            const retval = items_to_cons(MULTIPLY, ...factors);
-            // console.lg("retval 3", $.toSExprString(retval));
-            return hook(retval, "N");
+            return items_to_cons(MULTIPLY, ...factors);
         }
     }
 
-    const retval = cons(MULTIPLY, items_to_cons(...factors));
-    return hook(retval, "O");
+    return cons(MULTIPLY, items_to_cons(...factors));
 }
 
 /**

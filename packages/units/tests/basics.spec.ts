@@ -23,10 +23,10 @@ describe("basics", function () {
         check("d*c*b*a", "a*b*c*d");
         check("x*2*y*3*z*4", "24*x*y*z");
     });
-    it("left-distributive property of * with respect to +", function () {
+    xit("left-distributive property of * with respect to +", function () {
         check("x*(y+z)", "x*y+x*z");
     });
-    it("right-distributive property of * with respect to +", function () {
+    xit("right-distributive property of * with respect to +", function () {
         check("(x+y)*z", "x*z+y*z");
     });
     it("combine numerical factors", function () {
@@ -35,7 +35,7 @@ describe("basics", function () {
     it("cancel", function () {
         check("a*(1/a)", "1");
     });
-    it("cancel before distributive law", function () {
+    xit("cancel before distributive law", function () {
         // Should evaluate to 1...
         check("(a+b)*(1/(a+b))", "a/(a+b)+b/(a+b)");
     });

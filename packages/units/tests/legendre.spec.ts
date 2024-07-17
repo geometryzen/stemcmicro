@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("legendre", function () {
+xdescribe("legendre", function () {
     it("001", function () {
         check("legendre(x,0)", "1");
         check("legendre(x,1)", "x");

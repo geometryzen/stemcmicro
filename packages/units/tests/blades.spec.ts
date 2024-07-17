@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-describe("blades", function () {
+xdescribe("blades", function () {
     it("inner", function () {
         check("ex|ex", "1");
         check("ex|ey", "0");

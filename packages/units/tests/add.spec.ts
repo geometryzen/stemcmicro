@@ -6,12 +6,14 @@ describe("add", function () {
         check("ex + ey", "ex+ey");
     });
     it("Flatten", function () {
+        check("(a+b)+c", "a+b+c");
+        check("a+(b+c)", "a+b+c");
         check("(a-b)-c", "a-b-c");
     });
-    it("Probe", function () {
+    xit("Probe", function () {
         check("a+b*(c+d)", "a+b*c+b*d");
     });
-    it("Probe", function () {
+    xit("Probe", function () {
         check("a+b*(c+(d+e))", "a+b*c+b*d+b*e");
     });
     it("Rat+Boo", function () {

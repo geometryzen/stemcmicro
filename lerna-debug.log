@@ -8,9 +8,9 @@
 2 verbose packageConfigs Package manager "pnpm" detected. Resolving packages using `pnpm-workspace.yaml`.
 3 verbose rootPath /home/david/Development/stemcmicro
 4 error Error: LOCK_FILES_CHANGED
-4 error     at handleMessage (/home/david/Development/stemcmicro/node_modules/.pnpm/nx@19.3.2/node_modules/nx/src/daemon/server/server.js:74:88)
-4 error     at /home/david/Development/stemcmicro/node_modules/.pnpm/nx@19.3.2/node_modules/nx/src/daemon/server/server.js:55:15
-4 error     at Socket.<anonymous> (/home/david/Development/stemcmicro/node_modules/.pnpm/nx@19.3.2/node_modules/nx/src/utils/consume-messages-from-socket.js:13:17)
+4 error     at handleMessage (/home/david/Development/stemcmicro/node_modules/.pnpm/nx@19.4.2/node_modules/nx/src/daemon/server/server.js:77:88)
+4 error     at /home/david/Development/stemcmicro/node_modules/.pnpm/nx@19.4.2/node_modules/nx/src/daemon/server/server.js:58:15
+4 error     at Socket.<anonymous> (/home/david/Development/stemcmicro/node_modules/.pnpm/nx@19.4.2/node_modules/nx/src/utils/consume-messages-from-socket.js:13:17)
 4 error     at Socket.emit (node:events:514:28)
 4 error     at addChunk (node:internal/streams/readable:376:12)
 4 error     at readableAddChunk (node:internal/streams/readable:349:9)

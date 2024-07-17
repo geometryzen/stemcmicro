@@ -6338,10 +6338,10 @@ export function stack_multiply(expr: Cons, env: ExprContext, $: ProgramStack): v
     }
 }
 
-export function stack_noexpand(p1: Cons, env: ExprContext, $: ProgramStack): void {
+export function stack_noexpand(expr: Cons, env: ExprContext, $: ProgramStack): void {
     env.pushDirective(Directive.expanding, 0);
     try {
-        push(cadr(p1), $);
+        push(cadr(expr), $);
         value_of(env, $);
     } finally {
         env.popDirective();
@@ -9994,7 +9994,8 @@ function multiply_expand(env: ExprContext, $: ProgramStack): void {
     }
 }
 /**
- *
+ * Multiplies n factors on the stack, each assumed to have been evaluated.
+ * The result is the top element of the stack.
  * @param n number of factors on stack to be multiplied.
  */
 export function multiply_factors(n: number, env: ExprContext, $: ProgramStack): void {
@@ -10072,7 +10073,6 @@ function multiply_scalar_factors(start: number, env: ExprContext, $: ProgramStac
     // do again in case exp(1/2 i pi) changed to i
 
     stack_combine_factors(start, env, $);
-    // console.lg(`after combine factors: ${ $.stack } `);
     stack_normalize_power_factors(start, env, $);
 
     const k1 = stack_combine_numerical_factors(start, k0, $);
@@ -10085,13 +10085,15 @@ function multiply_scalar_factors(start: number, env: ExprContext, $: ProgramStac
 
     if (iszero(k1, env) || start === $.length) {
         $.splice(start); // pop all
-        push(k1, $);
+        $.push(k1);
         return;
     }
 
     const k2 = reduce_radical_factors(start, k1, env, $);
 
-    if (!isplusone(k2) || is_flt(k2)) push(k2, $);
+    if (!isplusone(k2) || is_flt(k2)) {
+        push(k2, $);
+    }
 
     if (env.getDirective(Directive.expanding)) {
         expand_sum_factors(start, env, $); // success leaves one expr on stack

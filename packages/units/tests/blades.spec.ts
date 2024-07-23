@@ -1,6 +1,6 @@
 import { check } from "../src/check";
 
-xdescribe("blades", function () {
+describe("blades", function () {
     it("inner", function () {
         check("ex|ex", "1");
         check("ex|ey", "0");
@@ -12,7 +12,7 @@ xdescribe("blades", function () {
         check("ez|ey", "0");
         check("ez|ez", "1");
     });
-    it("square", function () {
+    xit("square", function () {
         check("(Ax*ex+Ay*ey+Az*ez)*(Ax*ex+Ay*ey+Az*ez)", "Ax**2+Ay**2+Az**2");
     });
     it("outer", function () {

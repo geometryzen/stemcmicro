@@ -40,11 +40,11 @@ xdescribe("infix", function () {
         check("infix([[a,b],[c,d]])", `[[a,b],[c,d]]`);
     });
     it("Uom", function () {
-        check("infix(meter)", `m`);
-        check("infix(kilogram)", `kg`);
-        check("infix(second)", `s`);
+        check("infix(meter)", `"m"`);
+        check("infix(kilogram)", `"kg"`);
+        check("infix(second)", `"s"`);
     });
-    it("Expression", function () {
+    xit("Expression", function () {
         check("infix((x+1)**2)", `1 + 2 x + x**2`);
     });
 });

@@ -89,12 +89,12 @@ function floatToRatioRoutine(decimal: number, AccuracyFactor: number): [number, 
     if (decimal < 1.0e-19) {
         // X = 0 already taken care of
         const FractionNumerator = DecimalSign;
-        // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+        // eslint-disable-next-line no-loss-of-precision
         const FractionDenominator = 9999999999999999999.0;
         return [FractionNumerator, FractionDenominator];
     }
     if (decimal > 1.0e19) {
-        // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+        // eslint-disable-next-line no-loss-of-precision
         const FractionNumerator = 9999999999999999999.0 * DecimalSign;
         const FractionDenominator = 1.0;
         return [FractionNumerator, FractionDenominator];

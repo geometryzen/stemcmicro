@@ -180,15 +180,15 @@ class PythonVisitor implements Visitor {
         });
     }
     name(name: Name): void {
-        name.id.range;
-        name.id.value;
+        // name.id.range;
+        // name.id.value;
         this.stack.push(create_sym(name.id.value));
     }
     num(num: Num): void {
         const value = num.n.value;
-        const range = num.n.range;
+        // const range = num.n.range;
         // Ranges are given a s line and column, so we need a converter to get offset.
-        range.begin;
+        // range.begin;
         if (value.isInt()) {
             this.stack.push(create_int(value.value as number));
         } else if (value.isFloat()) {
@@ -210,7 +210,7 @@ class PythonVisitor implements Visitor {
         }
     }
     str(str: PythonString): void {
-        str.s.range;
+        // str.s.range;
         const value = str.s.value;
         this.stack.push(new Str(value, 0, 0));
     }

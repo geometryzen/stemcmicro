@@ -139,6 +139,7 @@ export class Trie<T> {
         while (true) {
             if (parent) {
                 // remove child
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                 child && parent && delete parent.children[child.key as string];
 
                 // if more children or chain is empty, we're done!

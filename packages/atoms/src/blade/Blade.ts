@@ -8,4 +8,5 @@ import { BasisBlade } from "./BasisBlade";
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Blade extends BasisBlade<U, U> {
     // Nothing to see here.
+    bitmap: number;
 }

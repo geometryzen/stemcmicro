@@ -1020,7 +1020,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             const composite = op.transform(expr, $);
                             if ($.getDirective(Directive.traceLevel) > 0) {
                                 // console.lg(`${op.name} ${expr} => ${composite[1]} flags: ${composite[0]}`);
-                                console.log(`${JSON.stringify(op.name)} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
+                                // console.log(`${JSON.stringify(op.name)} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
                             }
                             return composite;
                         }

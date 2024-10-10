@@ -391,6 +391,7 @@ function millerRabinTest(n: BigInteger, a: (number | BigInteger)[]): boolean {
     const nPrev = n.prev();
     let b = nPrev;
     let r = 0;
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     while (b.isEven()) (b = b.divide(2)), r++;
     next: for (let i = 0; i < a.length; i++) {
         if (n.lesser(a[i])) continue;

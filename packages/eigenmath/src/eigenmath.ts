@@ -6376,7 +6376,7 @@ function evaluate_nonstop_nib(env: ExprContext, $: ProgramStack): void {
 
     try {
         value_of(env, $);
-    } catch (errmsg) {
+    } catch {
         $.splice(save_tos);
         frame.splice(save_tof);
 

@@ -1,10 +1,11 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { U } from "@stemcmicro/tree";
 import { JsAtom } from "../atom/JsAtom";
 
 export class JsFunction extends JsAtom {
     readonly type = "function";
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     #fn: Function;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     constructor(fn: Function) {
         super("function");
         if (typeof fn === "function") {

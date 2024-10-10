@@ -23,6 +23,8 @@ export default [
             // Make this "error" when releasing.
             "brace-style": [2, "stroustrup"],
             "no-console": "warn",
+            "no-loss-of-precision": "off",
+            "@typescript-eslint/no-loss-of-precision": "off",
             "no-param-reassign": "off",
             semi: [2, "always"]
         }

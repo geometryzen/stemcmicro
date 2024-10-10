@@ -20,8 +20,8 @@ export function gpG<T, K>(a: MaskAndWeight<T>, b: MaskAndWeight<T>, metric: Metr
 
     for (let i = 0; i < A.length; i++) {
         for (let k = 0; k < B.length; k++) {
-            A[i].bitmap;
-            A[i].weight;
+            // A[i].bitmap;
+            // A[i].weight;
             rez.push(gpL(A[i], B[k], M, adapter));
         }
     }

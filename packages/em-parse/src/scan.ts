@@ -910,8 +910,8 @@ function scan_atom(state: InputState, options: Readonly<ScanOptions>): [is_num: 
     } else if (code === T_SYM) {
         // TODO: This code should probably be merged into scan_symbol.
         if (state.text === "true") {
-            state.pos;
-            state.end;
+            // state.pos;
+            // state.end;
             const value = new Boo(true, assert_pos(state.pos), assert_end(state.end));
             state.get_token();
             return [false, value];

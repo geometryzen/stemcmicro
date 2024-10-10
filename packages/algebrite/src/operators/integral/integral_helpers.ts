@@ -557,24 +557,24 @@ function integral_of_form(F: U, X: U, $: ExprContext): U {
 const hashcode_values: { [name: string]: number } = {
     x: 0.95532,
     constexp: 1.43762,
-    // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+    // eslint-disable-next-line no-loss-of-precision
     constant: 1.14416593629414332,
     constbase: 1.20364122304218824,
-    // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+    // eslint-disable-next-line no-loss-of-precision
     sin: 1.73305482518303221,
-    // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+    // eslint-disable-next-line no-loss-of-precision
     arcsin: 1.6483368529465804,
     cos: 1.058672123686340116,
     arccos: 1.8405225918106694,
     tan: 1.12249437762925064,
-    // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+    // eslint-disable-next-line no-loss-of-precision
     arctan: 1.1297397925394962,
-    // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+    // eslint-disable-next-line no-loss-of-precision
     sinh: 1.8176164926060078,
     cosh: 1.9404934661708022,
-    // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+    // eslint-disable-next-line no-loss-of-precision
     tanh: 1.6421307715103121,
-    // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+    // eslint-disable-next-line no-loss-of-precision
     log: 1.47744370135492387,
     erf: 1.0825269225702916
 };

@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "stemcmicro",
-    "packageManager": "pnpm@9.4.0+sha256.b6fd0bfda555e7e584ad7e56b30c68b01d5a04f9ee93989f4b93ca8473c49c74",
+    "packageManager": "pnpm@9.12.0",
     "scripts": {
         "build": "lerna run build",
         "check": "lerna run check",
@@ -58,6 +58,6 @@
         "node": "20.14.0",
         "yarn": "1.22.19",
         "npm": "10.7.0",
-        "pnpm": "9.4.0"
+        "pnpm": "9.12.1"
     }
 }

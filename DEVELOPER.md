@@ -39,7 +39,7 @@ This builds the modified Lerna and publishes it to the local registry.
 In the stemcmicro folder,
 
 ```
-npm --registry=http://localhost:4873/ install
+pnpm --registry=http://localhost:4873/ install
 ```
 
 This installs dependencies in the node_modules folder.
@@ -47,5 +47,7 @@ This installs dependencies in the node_modules folder.
 You are now ready to build stemcmicro...
 
 ```
-npm run build
+pnpm run build
 ```
+
+Use --skip-nx-cache for lerna commands in package.json if the caching isn't working out.

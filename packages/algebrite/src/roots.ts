@@ -346,11 +346,7 @@ function _solveDegree3(A: U, B: U, C: U, D: U, $: ExprContext): U[] {
         R_C = simplify(power($, multiply($, add($, arg1, R_DELTA1), half), third), $);
         const R_C_simplified_toCheckIfZero = float_eval_abs_eval(simplify(R_C, $), $);
 
-        // log.dbg(`cubic: C: ${toInfixString(R_C)}`);
-        // log.dbg(`cubic: C as absval and float: ${toInfixString(R_C_simplified_toCheckIfZero)}`);
-
         if (iszero(R_C_simplified_toCheckIfZero, $)) {
-            // log.dbg(' cubic: C IS ZERO flipping the sign');
             flipSignOFQSoCIsNotZero = true;
         } else {
             C_CHECKED_AS_NOT_ZERO = true;

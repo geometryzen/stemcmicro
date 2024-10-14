@@ -10,6 +10,7 @@ const ADD = native_sym(Native.add);
 const ARG = native_sym(Native.arg);
 const EXP = native_sym(Native.exp);
 const IMAG = native_sym(Native.imag);
+const INNER = native_sym(Native.inner);
 const LOG = native_sym(Native.log);
 const MULTIPLY = native_sym(Native.multiply);
 const REAL = native_sym(Native.real);
@@ -52,6 +53,10 @@ export function cons_exp<A extends U>(arg: A): Cons1<Sym, A> {
 
 export function cons_imag<A extends U>(arg: A): Cons1<Sym, A> {
     return combination1(IMAG, arg);
+}
+
+export function cons_inner(...args: U[]): Cons {
+    return items_to_cons(INNER, ...args);
 }
 
 export function cons_log<A extends U>(arg: A): Cons1<Sym, A> {

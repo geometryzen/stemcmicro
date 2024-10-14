@@ -1,20 +1,11 @@
-import { em_parse } from "@stemcmicro/em-parse";
 import { create_engine, ExprEngine } from "@stemcmicro/engine";
 import { js_parse } from "@stemcmicro/js-parse";
-import { assert_cons, assert_U } from "@stemcmicro/tree";
-import { check } from "../src/check";
 
-describe("sniff", function () {
-    it("001", function () {
-        check("1/4", "1/4");
-    });
-});
-
-describe("e2e", () => {
-    it("create_engine", () => {
+describe("abs", () => {
+    it("a*b", () => {
         const engine: ExprEngine = create_engine();
         try {
-            const sourceText = [`G20 = algebra([1, 1, 1], ["ex", "ey", "ez"])`, `ex = G20[1]`, `ey = G20[2]`, `cross(ex,ey)`].join("\n");
+            const sourceText = [`abs(a*b)`].join("\n");
             const { trees, errors } = js_parse(sourceText);
             if (errors.length > 0) {
             }
@@ -23,9 +14,9 @@ describe("e2e", () => {
                 const value = engine.valueOf(tree);
                 if (!value.isnil) {
                     const s = engine.renderAsString(tree);
-                    expect(s).toBe("cross(ex,ey)");
+                    expect(s).toBe("abs(a*b)");
                     const t = engine.renderAsString(value);
-                    expect(t).toBe("ez");
+                    expect(t).toBe("abs(a)*abs(b)");
                 }
                 value.release();
             }
@@ -33,10 +24,10 @@ describe("e2e", () => {
             engine.release();
         }
     });
-    it("Geometric Algebra", () => {
+    it("a/b", () => {
         const engine: ExprEngine = create_engine();
         try {
-            const sourceText = [`G20 = algebra([1, 1, 1], ["i", "j", "k"])`, `ex = G20[1]`, `ey = G20[2]`, `ez = G20[3]`, `abs(x*y)`].join("\n");
+            const sourceText = [`abs(a/b)`].join("\n");
             const { trees, errors } = js_parse(sourceText);
             if (errors.length > 0) {
             }
@@ -45,9 +36,9 @@ describe("e2e", () => {
                 const value = engine.valueOf(tree);
                 if (!value.isnil) {
                     const s = engine.renderAsString(tree);
-                    expect(s).toBe("abs(x*y)");
+                    expect(s).toBe("abs(a/b)");
                     const t = engine.renderAsString(value);
-                    expect(t).toBe("abs(x)*abs(y)");
+                    expect(t).toBe("abs(a)/abs(b)");
                 }
                 value.release();
             }
@@ -55,10 +46,10 @@ describe("e2e", () => {
             engine.release();
         }
     });
-    it("tensor component assignment", () => {
+    it("a+b", () => {
         const engine: ExprEngine = create_engine();
         try {
-            const sourceText = [`M=zero(2,2)`, `M[1,1]=a`, `M[1,2]=b`, `M[2,1]=c`, `M[2,2]=d`, `M`].join("\n");
+            const sourceText = [`abs(a+b)`].join("\n");
             const { trees, errors } = js_parse(sourceText);
             if (errors.length > 0) {
             }
@@ -67,9 +58,9 @@ describe("e2e", () => {
                 const value = engine.valueOf(tree);
                 if (!value.isnil) {
                     const s = engine.renderAsString(tree);
-                    expect(s).toBe("M");
+                    expect(s).toBe("abs(a+b)");
                     const t = engine.renderAsString(value);
-                    expect(t).toBe("[[a,b],[c,d]]");
+                    expect(t).toBe("(2*a*b+a**2+b**2)**(1/2)");
                 }
                 value.release();
             }
@@ -77,10 +68,10 @@ describe("e2e", () => {
             engine.release();
         }
     });
-    it("factor", () => {
+    it("ex+ey", () => {
         const engine: ExprEngine = create_engine();
         try {
-            const sourceText = [`factor(56)`].join("\n");
+            const sourceText = [`G20 = algebra([1, 1, 1], ["i", "j", "k"])`, `ex = G20[1]`, `ey = G20[2]`, `ez = G20[3]`, `abs(ex+ey)`].join("\n");
             const { trees, errors } = js_parse(sourceText);
             if (errors.length > 0) {
             }
@@ -89,9 +80,9 @@ describe("e2e", () => {
                 const value = engine.valueOf(tree);
                 if (!value.isnil) {
                     const s = engine.renderAsString(tree);
-                    expect(s).toBe("factor(56)");
+                    expect(s).toBe("abs(ex+ey)");
                     const t = engine.renderAsString(value);
-                    expect(t).toBe("2**3*7");
+                    expect(t).toBe("2**(1/2)");
                 }
                 value.release();
             }
@@ -99,45 +90,21 @@ describe("e2e", () => {
             engine.release();
         }
     });
-    it("Uom ** 2", () => {
+    it("3*ex+4*ey", () => {
         const engine: ExprEngine = create_engine();
         try {
-            const sourceText = [`m ** 2`].join("\n");
-            const { trees, errors } = em_parse(sourceText);
-            if (errors.length > 0) {
-            }
-            for (let i = 0; i < trees.length; i++) {
-                const tree = trees[i];
-                const value = engine.valueOf(tree);
-                if (!value.isnil) {
-                    const s = engine.renderAsString(tree);
-                    expect(s).toBe("m**2");
-                    const t = engine.renderAsString(value);
-                    expect(t).toBe("m**2");
-                }
-                value.release();
-            }
-        } finally {
-            engine.release();
-        }
-    });
-    it("1/4", () => {
-        const engine: ExprEngine = create_engine();
-        try {
-            const sourceText = [`1/4`].join("\n");
+            const sourceText = [`G20 = algebra([1, 1, 1], ["i", "j", "k"])`, `ex = G20[1]`, `ey = G20[2]`, `ez = G20[3]`, `abs(3*ex+4*ey)`].join("\n");
             const { trees, errors } = js_parse(sourceText);
             if (errors.length > 0) {
             }
             for (let i = 0; i < trees.length; i++) {
                 const tree = trees[i];
-                assert_U(tree);
-                assert_cons(tree);
                 const value = engine.valueOf(tree);
                 if (!value.isnil) {
                     const s = engine.renderAsString(tree);
-                    expect(s).toBe("1/4");
+                    expect(s).toBe("abs(3*ex+4*ey)");
                     const t = engine.renderAsString(value);
-                    expect(t).toBe("1/4");
+                    expect(t).toBe("5");
                 }
                 value.release();
             }

@@ -31,6 +31,9 @@ export class StackU implements ProgramStack {
             b.release();
         }
     }
+    /**
+     * [..., x] => [..., x, x]
+     */
     dupl(): void {
         const x = this.pop();
         try {

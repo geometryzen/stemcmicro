@@ -214,7 +214,6 @@ function getBasisVector<T extends U, K extends U>(index: number, algebra: Algebr
 export function create_blade<T extends U, K extends U>(bitmap: number, algebra: Algebra<T, K>, metric: METRIC<T>, labels: string[]): BasisBlade<T, K> {
     if (bitmap === 0) {
         const e = new Error("bitmap must be non-zero (without weights a scalar blade is ambiguous)");
-        // console.lg(e.stack);
         throw e;
     }
     const field = algebra.field;

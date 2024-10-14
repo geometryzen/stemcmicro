@@ -23,14 +23,12 @@ export function abs(x: U, env: ExprContext): U {
     if (is_atom(x)) {
         return env.handlerFor(x).dispatch(x, ABS, nil, env);
     }
-    // console.lg("abs", `${x}`);
+    // FIXME: The following is only known to be true for real and complex numbers.
     const n = numerator(x, env);
     const d = denominator(x, env);
-    // console.lg("n => ", `${n}`, "d => ", `${d}`);
     try {
         const abs_numer = absval(n, env);
         const abs_denom = absval(d, env);
-        // console.lg("abs(n) => ", `${abs_numer}`, "abs(d) => ", `${abs_denom}`);
         try {
             // The problem here is that if abs_denom is one, then abs_numer is or could be the same as x and we've
             // just set up an infinite loop because the arguments will be re-evaluated.
@@ -189,8 +187,8 @@ export function absval(expr: U, $: ExprContext): U {
         // trying to remove the abs function by applying the Cauchy-Schwartz equality,
         // hoping for the case that all terms are positive.
         // https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality
-        // return hook($.valueOf(simplify($.power($.inner(expr, expr), half), $)), "N");
-        return hook(items_to_cons(ABS, expr), "N");
+        return hook($.valueOf(simplify(power($, inner(expr, expr, $), half), $)), "N");
+        // return hook(items_to_cons(ABS, expr), "N");
     } else {
         // Here we have given up and simply wrap the expression.
         // Perhaps the real question is whether expr is a vector in an inner product space.

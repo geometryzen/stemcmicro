@@ -86,6 +86,7 @@ import { cons_extension_builder } from "../operators/cons/cons_extension";
 import { contract_varargs } from "../operators/contract/contract_varargs";
 import { cross_any_any } from "../operators/cross/cross_any_any";
 import { cross_blade_blade_builder } from "../operators/cross/cross_blade_blade";
+import { MATH_VECTOR_CROSS_PRODUCT } from "../operators/cross/MATH_VECTOR_CROSS_PRODUCT";
 import { def_sym_builder } from "../operators/def/def_sym";
 import { def_sym_doc_init_builder } from "../operators/def/def_sym_doc_init";
 import { def_sym_init_builder } from "../operators/def/def_sym_init";
@@ -101,6 +102,7 @@ import { map_extension_builder } from "../operators/dictionary/dictionary_extens
 import { eval_differential } from "../operators/differential/differential";
 import { dim_varargs } from "../operators/dim/dim_varargs";
 import { dirac_varargs } from "../operators/dirac/dirac_varargs";
+import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from "../operators/distrib/make_distrib_expand_law";
 import { eval_divisors } from "../operators/divisors/divisors_varargs";
 import { do_varargs } from "../operators/do/do_varargs";
 import { dotdot_builder } from "../operators/dotdot/eval_dotdot";
@@ -257,6 +259,7 @@ import { eval_quotient } from "../quotient";
 import { eval_roots } from "../roots";
 import { AND, APPROXRATIO, CHECK, CHOOSE, CLEAR, DOT, ISREAL, QUOTE, RANK, UOM } from "../runtime/constants";
 import { PrintMode } from "../runtime/defs";
+import { MATH_INNER, MATH_LCO, MATH_RCO } from "../runtime/ns_math";
 import { eval_conjugate } from "../scripting/eval_conjugate";
 import { eval_power } from "../scripting/eval_power";
 import { ExtensionEnv } from "./ExtensionEnv";
@@ -300,8 +303,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     // Multiplication (*)
     // Associative(MATH_MUL, one);
-    // $.defineExtension(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
-    // $.defineExtension(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
     $.defineExtension(mul_2_blade_blade);
     $.defineExtension(mul_2_tensor_tensor);
     $.defineEvalFunction(MATH_MUL, eval_multiply);
@@ -330,8 +333,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(native_sym(Native.infix), stack_infix);
 
     // Inner Product (|)
-    // $.defineExtension(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));
-    // $.defineExtension(make_rhs_distrib_expand_law(MATH_INNER, MATH_ADD));
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_INNER, MATH_ADD));
     $.defineExtension(inner_2_num_num);
     $.defineExtension(inner_2_rat_imu);
     $.defineExtension(inner_2_rat_sym);
@@ -358,8 +361,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     // Left Contraction (<<)
     $.defineExtension(lco_2_blade_blade);
-    // $.defineExtension(make_lhs_distrib_expand_law(MATH_LCO, MATH_ADD));
-    // $.defineExtension(make_rhs_distrib_expand_law(MATH_LCO, MATH_ADD));
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_LCO, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_LCO, MATH_ADD));
     $.defineExtension(lco_2_any_any);
 
     $.defineExtension(legendre_varargs);
@@ -376,8 +379,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     // Outer Product (^)
     $.defineExtension(outer_2_blade_blade);
     $.defineExtension(outer_2_tensor_tensor);
-    // $.defineExtension(make_lhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
-    // $.defineExtension(make_rhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
     $.defineExtension(outer_2_mul_blade);
     // $.defineExtension(outer_2_sym_sym);
     $.defineExtension(outer_2_blade_mul);
@@ -392,8 +395,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(RANK, stack_rank);
 
     $.defineExtension(rco_2_blade_blade);
-    // $.defineExtension(make_lhs_distrib_expand_law(MATH_RCO, MATH_ADD));
-    // $.defineExtension(make_rhs_distrib_expand_law(MATH_RCO, MATH_ADD));
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_RCO, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_RCO, MATH_ADD));
     $.defineExtension(rco_2_mul_2_scalar_any_any);
     $.defineExtension(rco_2_any_mul_2_scalar_any);
     $.defineExtension(rco_2_any_any);
@@ -451,8 +454,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineStackFunction(native_sym(Native.cosh), stack_cosh);
 
     $.defineExtension(cross_blade_blade_builder);
-    // $.defineExtension(make_lhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
-    // $.defineExtension(make_rhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
+    $.defineExtension(make_lhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
+    $.defineExtension(make_rhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
     $.defineExtension(cross_any_any);
 
     $.defineExtension(def_sym_builder);

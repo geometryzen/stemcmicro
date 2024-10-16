@@ -22,11 +22,11 @@ export function eval_gcd(p1: U, $: ExprContext): U {
     return result;
 }
 
-export function gcd(p1: U, p2: U, $: Pick<ExprContext, "handlerFor" | "popDirective" | "pushDirective" | "valueOf">): U {
+export function gcd(p1: U, p2: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "popDirective" | "pushDirective" | "valueOf">): U {
     return doexpand_binary(gcd_main, p1, p2, $);
 }
 
-function gcd_main(a: U, b: U, $: Pick<ExprContext, "handlerFor" | "popDirective" | "pushDirective" | "valueOf">): U {
+function gcd_main(a: U, b: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "popDirective" | "pushDirective" | "valueOf">): U {
     // console.lg("gcd_main", `${a}`, `${b}`);
     if (a.equals(b)) {
         return a;
@@ -81,7 +81,7 @@ export function areunivarpolysfactoredorexpandedform(p1: U, p2: U): U | false {
     }
 }
 
-function gcd_polys(a: U, b: U, polyVar: U, $: Pick<ExprContext, "handlerFor" | "popDirective" | "pushDirective" | "valueOf">) {
+function gcd_polys(a: U, b: U, polyVar: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "popDirective" | "pushDirective" | "valueOf">) {
     // console.lg("gcd_polys", `${a}`, `${b}`);
     let p1 = factorize(a, polyVar, $);
     let p2 = factorize(b, polyVar, $);
@@ -102,7 +102,7 @@ function gcd_polys(a: U, b: U, polyVar: U, $: Pick<ExprContext, "handlerFor" | "
     return gcd_powers_with_same_base(p1, p2, $);
 }
 
-function gcd_product_product(p1: Cons, p2: Cons, $: Pick<ExprContext, "handlerFor" | "valueOf" | "popDirective" | "pushDirective">): U {
+function gcd_product_product(p1: Cons, p2: Cons, $: Pick<ExprContext, "getDirective" | "handlerFor" | "valueOf" | "popDirective" | "pushDirective">): U {
     // console.lg("gcd_product_product", `${p1}`, `${p2}`);
 
     const p3: Cons = p1.rest;
@@ -116,7 +116,7 @@ function gcd_product_product(p1: Cons, p2: Cons, $: Pick<ExprContext, "handlerFo
     }, one);
 }
 
-function gcd_powers_with_same_base(base1: U, base2: U, $: Pick<ExprContext, "valueOf">): U {
+function gcd_powers_with_same_base(base1: U, base2: U, $: Pick<ExprContext, "getDirective" | "valueOf">): U {
     // console.lg("gcd_powers_with_same_base", `${base1}`, `${base2}`);
     let exponent1: U, exponent2: U;
     if (is_power(base1)) {
@@ -171,7 +171,7 @@ function gcd_powers_with_same_base(base1: U, base2: U, $: Pick<ExprContext, "val
 }
 
 // in this case gcd is used as a composite function, i.e. gcd(gcd(gcd...
-function gcd_sum_sum(p1: Cons, p2: Cons, $: Pick<ExprContext, "handlerFor" | "valueOf" | "pushDirective" | "popDirective">): U {
+function gcd_sum_sum(p1: Cons, p2: Cons, $: Pick<ExprContext, "getDirective" | "handlerFor" | "valueOf" | "pushDirective" | "popDirective">): U {
     assert_cons(p1);
     assert_cons(p2);
 
@@ -201,7 +201,7 @@ function gcd_sum_sum(p1: Cons, p2: Cons, $: Pick<ExprContext, "handlerFor" | "va
     return one;
 }
 
-function gcd_sum(p: Cons, $: Pick<ExprContext, "handlerFor" | "valueOf" | "pushDirective" | "popDirective">): U {
+function gcd_sum(p: Cons, $: Pick<ExprContext, "getDirective" | "handlerFor" | "valueOf" | "pushDirective" | "popDirective">): U {
     return p.tail().reduce(function (x, y) {
         return gcd(x, y, $);
     });
@@ -218,12 +218,12 @@ function gcd_term_term(p1: U, p2: U): U {
 }
 */
 
-function gcd_sum_product(p1: Cons, p2: U, $: Pick<ExprContext, "handlerFor" | "valueOf" | "popDirective" | "pushDirective">): U {
+function gcd_sum_product(p1: Cons, p2: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "valueOf" | "popDirective" | "pushDirective">): U {
     // console.lg("gcd_sum_procduct", `${p1}`, `${p2}`);
     return p1.tail().reduce((a: U, b: U) => multiply($, a, gcd(b, p2, $)), one);
 }
 
-function gcd_product_sum(p1: U, p2: Cons, $: Pick<ExprContext, "handlerFor" | "valueOf" | "popDirective" | "pushDirective">): U {
+function gcd_product_sum(p1: U, p2: Cons, $: Pick<ExprContext, "getDirective" | "handlerFor" | "valueOf" | "popDirective" | "pushDirective">): U {
     // console.lg("gcd_procduct_sum", `${p1}`, `${p2}`);
     return p2.tail().reduce((a: U, b: U) => multiply($, a, gcd(p1, b, $)), one);
 }

@@ -25,12 +25,10 @@ export function eval_numerator(expr: Cons, $: ExprContext): U {
     }
 }
 
-export function numerator(p1: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
-    // console.lg("numerator", `${p1}`);
+export function numerator(p1: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     if (is_cons(p1) && is_cons_opr_eq_add(p1)) {
         //console.trace "rationalising "
         p1 = rationalize(p1, $);
-        // console.lg("rationalized", `${p1}`);
     }
     // console.lg(`rationalized=${$.toInfixString(p1)}`);
     // console.lg(`rationalized=${$.toSExprString(p1)}`);

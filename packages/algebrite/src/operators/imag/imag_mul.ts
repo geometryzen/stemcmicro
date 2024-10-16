@@ -29,9 +29,9 @@ class Op extends CompositeOperator {
                 cs.push(factor);
             }
         });
-        const A = multiply_factors(rs, $);
+        const A = multiply_factors_array(rs, $);
         // console.lg("A", $.toInfixString(A));
-        const B = multiply_factors(cs, $);
+        const B = multiply_factors_array(cs, $);
         // console.lg("B", $.toInfixString(B));
         if (B.equals(innerExpr)) {
             // We didn't make any progress.
@@ -51,7 +51,7 @@ class Op extends CompositeOperator {
 
 export const imag_mul = mkbuilder(Op);
 
-function multiply_factors(factors: U[], $: ExtensionEnv): U {
+function multiply_factors_array(factors: U[], $: ExtensionEnv): U {
     if (factors.length > 1) {
         return $.valueOf(items_to_cons(MUL, ...factors));
     } else if (factors.length === 1) {

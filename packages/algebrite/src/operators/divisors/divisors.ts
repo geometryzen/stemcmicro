@@ -32,7 +32,7 @@ export function divisors(term: U, $: ExtensionEnv): U {
     return new Tensor([n], sort_factors(factors, $));
 }
 
-export function ydivisors(term: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U[] {
+export function ydivisors(term: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U[] {
     const stack: U[] = [];
     // push all of the term's factors
     if (is_num(term)) {
@@ -123,7 +123,7 @@ function gen(stack: U[], h: number, k: number, _: Pick<ExprContext, "valueOf">):
 //  by the exponent.
 //
 //-----------------------------------------------------------------------------
-function __factor_add(p1: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U[] {
+function __factor_add(p1: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U[] {
     // get gcd of all terms
     const temp1 = is_cons(p1)
         ? p1.tail().reduce(function (x, y) {

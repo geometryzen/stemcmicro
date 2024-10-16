@@ -23,7 +23,7 @@ import { car, cdr, Cons, is_cons, U } from "./tree/tree";
  * @param sum
  * @param $
  */
-export function power_sum(n: number, sum: Cons, $: Pick<ExtensionEnv, "add" | "multiply" | "power" | "valueOf">): U {
+export function power_sum(n: number, sum: Cons, $: Pick<ExtensionEnv, "add" | "getDirective" | "multiply" | "power" | "valueOf">): U {
     // console.lg(`power_sum(n=${n}, sum=${render_as_infix(sum, $)})`);
     // number of terms in the sum
     // Notice the decrement by 1; we are not going to include the operator.
@@ -60,7 +60,7 @@ export function power_sum(n: number, sum: Cons, $: Pick<ExtensionEnv, "add" | "m
  * @param p1 n!
  * @param p2
  */
-function multinomial_sum(k: number, n: number, a: number[], i: number, m: number, A: U[], p1: U, p2: U, $: Pick<ExtensionEnv, "add" | "multiply" | "valueOf">): U {
+function multinomial_sum(k: number, n: number, a: number[], i: number, m: number, A: U[], p1: U, p2: U, $: Pick<ExtensionEnv, "add" | "getDirective" | "multiply" | "valueOf">): U {
     if (i < k - 1) {
         for (let j = 0; j <= m; j++) {
             a[i] = j;

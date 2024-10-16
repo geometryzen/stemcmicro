@@ -10,7 +10,6 @@ import { multiply } from "./multiply";
  * @param items is an integer
  */
 export function multiply_items(items: U[], _: Pick<ExprContext, "valueOf">): U {
-    // console.lg(`multiply_items items => ${items_to_infix(items, $)} ${items_to_sexpr(items, $)}`);
     if (items.length > 1) {
         let temp = items[0];
         for (let i = 1; i < items.length; i++) {

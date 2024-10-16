@@ -20,7 +20,7 @@ export function factor_again(p1: U, p2: U, $: ExprContext): U {
     return arr[0];
 }
 
-function factor_term(arr: U[], arg1: U, arg2: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): void {
+function factor_term(arr: U[], arg1: U, arg2: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): void {
     const p1 = factorize(arg1, arg2, $);
     if (is_cons(p1) && is_cons_opr_eq_multiply(p1)) {
         arr.push(...p1.tail());
@@ -30,7 +30,7 @@ function factor_term(arr: U[], arg1: U, arg2: U, $: Pick<ExprContext, "handlerFo
     arr.push(p1);
 }
 
-export function factor(poly: U, x: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+export function factor(poly: U, x: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     // console.lg("factor", "poly", `${$.toInfixString(poly)}`, "x", `${x}`);
     if (is_rat(poly) && poly.isInteger()) {
         return factor_rat(poly);
@@ -39,7 +39,7 @@ export function factor(poly: U, x: U, $: Pick<ExprContext, "handlerFor" | "pushD
     return factorize(poly, x, $);
 }
 
-export function factorize(p: U, x: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+export function factorize(p: U, x: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     if (!p.contains(x)) {
         // console.lg(`Giving up b/c the polynomial does not contain the variable.`);
         return p;

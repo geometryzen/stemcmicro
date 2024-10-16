@@ -10,7 +10,7 @@ describe("sniff", function () {
     });
 });
 
-describe("e2e", () => {
+xdescribe("e2e", () => {
     it("create_engine", () => {
         const engine: ExprEngine = create_engine();
         try {

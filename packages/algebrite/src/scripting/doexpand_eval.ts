@@ -5,7 +5,8 @@ import { doexpand_unary } from "../runtime/defs";
 export function doexpand_value_of(expr: U, $: Pick<ExtensionEnv, "valueOf" | "pushDirective" | "popDirective">): U {
     return doexpand_unary(
         function (x: U) {
-            return $.valueOf(x);
+            const retval = $.valueOf(x);
+            return retval;
         },
         expr,
         $

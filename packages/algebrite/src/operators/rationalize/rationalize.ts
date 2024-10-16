@@ -30,7 +30,7 @@ export function eval_rationalize(expr: Cons, $: ExprContext): U {
     }
 }
 
-export function rationalize(x: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+export function rationalize(x: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     $.pushDirective(Directive.factoring, 1);
     try {
         return yyrationalize(x, $);
@@ -39,7 +39,7 @@ export function rationalize(x: U, $: Pick<ExprContext, "handlerFor" | "pushDirec
     }
 }
 
-function yyrationalize(x: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+function yyrationalize(x: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     if (is_tensor(x)) {
         return __rationalize_tensor(x, $);
     }
@@ -60,11 +60,11 @@ function yyrationalize(x: U, $: Pick<ExprContext, "handlerFor" | "pushDirective"
     }
 }
 
-function multiply_denominators(terms: U[], $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+function multiply_denominators(terms: U[], $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     return terms.reduce((acc: U, term: U) => multiply_denominators_term(term, acc, $), one);
 }
 
-function multiply_denominators_term(term: U, initialValue: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+function multiply_denominators_term(term: U, initialValue: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     if (is_cons(term) && is_cons_opr_eq_multiply(term)) {
         const factors = term.tail();
         return factors.reduce((acc, factor) => multiply_denominators_factor(factor, acc, $), initialValue);
@@ -72,7 +72,7 @@ function multiply_denominators_term(term: U, initialValue: U, $: Pick<ExprContex
     return multiply_denominators_factor(term, initialValue, $);
 }
 
-function multiply_denominators_factor(p: U, p2: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+function multiply_denominators_factor(p: U, p2: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     if (is_cons(p) && is_cons_opr_eq_power(p)) {
         const arg2 = p;
 
@@ -95,7 +95,7 @@ function multiply_denominators_factor(p: U, p2: U, $: Pick<ExprContext, "handler
     }
 }
 
-function __rationalize_tensor(p1: Tensor<U>, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+function __rationalize_tensor(p1: Tensor<U>, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     if (!is_tensor(p1)) {
         // might be zero
         return p1;
@@ -108,6 +108,6 @@ function __rationalize_tensor(p1: Tensor<U>, $: Pick<ExprContext, "handlerFor" |
     return p1.withElements(elems);
 }
 
-function __lcm(p1: U, p2: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+function __lcm(p1: U, p2: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     return divide(multiply($, p1, p2), gcd(p1, p2, $), $);
 }

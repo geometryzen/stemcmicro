@@ -50,7 +50,7 @@ export class BaseEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     getDirective(directive: number): number {
-        throw new Error("Method not implemented.");
+        return 0;
     }
     pushDirective(directive: number, value: number): void {
         throw new Error("Method not implemented.");

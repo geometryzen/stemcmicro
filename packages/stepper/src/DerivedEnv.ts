@@ -65,7 +65,7 @@ export class DerivedScope implements Scope {
         throw new Error("Method not implemented.");
     }
     getDirective(directive: number): number {
-        throw new Error("Method not implemented.");
+        return this.parentEnv.getDirective(directive);
     }
     pushDirective(directive: number, value: number): void {
         throw new Error("Method not implemented.");

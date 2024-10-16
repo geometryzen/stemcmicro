@@ -1,6 +1,7 @@
 import { create_sym, is_blade, is_flt, is_num, is_tensor, Num, one, zero } from "@stemcmicro/atoms";
 import { ExprContext, ExprHandler, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "@stemcmicro/context";
 import { diagnostic, Diagnostics } from "@stemcmicro/diagnostics";
+import { Directive } from "@stemcmicro/directive";
 import { canonical_factor_num_rhs, compare_blade_blade, contains_single_blade, extract_single_blade, float, is_add, is_multiply, multiply, prolog_eval_varargs, remove_factors } from "@stemcmicro/helpers";
 import { Native, native_sym } from "@stemcmicro/native";
 import { assert_cons_or_nil, Atom, car, cdr, cons, Cons, is_atom, is_nil, items_to_cons, U } from "@stemcmicro/tree";
@@ -12,7 +13,12 @@ import { add_tensor_tensor } from "../tensor/tensor_extension";
 const ADD = native_sym(Native.add);
 
 export function eval_add(expr: Cons, env: ExprContext): U {
-    return prolog_eval_varargs(expr, add_values, env);
+    const debug = env.getDirective(Directive.traceLevel) > 0;
+    const retval = prolog_eval_varargs(expr, add_values, env);
+    if (debug) {
+        // console.lg("eval_add", `${expr}`, " => ", `${retval}`);
+    }
+    return retval;
 }
 
 function add_values(vals: Cons, $: ExprContext): U {

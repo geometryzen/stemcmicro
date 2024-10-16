@@ -12,7 +12,7 @@ import { SYMBOL_X } from "./runtime/constants";
  *
  * The remainder can be calculated by p - q * quotient(p,q)
  */
-export function eval_quotient(expr: Cons, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+export function eval_quotient(expr: Cons, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     const p = $.valueOf(expr.item1);
     const q = $.valueOf(expr.item2);
     const X = $.valueOf(expr.item3);
@@ -23,7 +23,7 @@ export function eval_quotient(expr: Cons, $: Pick<ExprContext, "handlerFor" | "p
     }
 }
 
-export function quotient(p: U, q: U, X: U, _: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+export function quotient(p: U, q: U, X: U, _: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     const dividendCs = coefficients(p, X, _);
     let m = dividendCs.length - 1; // m is dividend's highest power
 

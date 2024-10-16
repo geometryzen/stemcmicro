@@ -17,14 +17,14 @@ Result
 
 The result is undefined if P is not a polynomial.
 */
-export function eval_leading(arg: Cons, $: Pick<ExtensionEnv, "add" | "multiply" | "power" | "valueOf">): U {
+export function eval_leading(arg: Cons, $: Pick<ExtensionEnv, "add" | "getDirective" | "multiply" | "power" | "valueOf">): U {
     const P = $.valueOf(cadr(arg));
     const V = $.valueOf(caddr(arg));
     const X = V.isnil ? guess(P) : V;
     return leading(P, X, $);
 }
 
-function leading(P: U, X: U, $: Pick<ExtensionEnv, "add" | "multiply" | "power" | "valueOf">) {
+function leading(P: U, X: U, $: Pick<ExtensionEnv, "add" | "getDirective" | "multiply" | "power" | "valueOf">) {
     // N = degree of P
     const N = degree(P, X);
 

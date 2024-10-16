@@ -181,17 +181,13 @@ export function absval(expr: U, $: ExprContext): U {
 
     // But we haven't handled the sum of terms.
     if (is_cons(expr) && is_add(expr)) {
-        // TODO: This should probably be the implementation in all cases.
-        // Everything else is just an optimization.
-        // By selecting only sums of terms, we are narrowing ourselves down to
-        // trying to remove the abs function by applying the Cauchy-Schwartz equality,
-        // hoping for the case that all terms are positive.
-        // https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality
-        return hook($.valueOf(simplify(power($, inner(expr, expr, $), half), $)), "N");
-        // return hook(items_to_cons(ABS, expr), "N");
+        const temp1 = inner(expr, expr, $);
+        const temp2 = power($, temp1, half);
+        const temp3 = simplify(temp2, $);
+        const temp4 = $.valueOf(temp3);
+        return hook(temp4, "N");
     } else {
         // Here we have given up and simply wrap the expression.
-        // Perhaps the real question is whether expr is a vector in an inner product space.
         return hook(items_to_cons(ABS, expr), "O");
     }
 }

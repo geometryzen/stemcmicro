@@ -20,7 +20,7 @@ const POW = native_sym(Native.pow);
 const RE = native_sym(Native.real);
 const MUL = native_sym(Native.multiply);
 
-function multiply_factors(factors: U[], $: ExtensionEnv): U {
+function multiply_factors_array(factors: U[], $: ExtensionEnv): U {
     if (factors.length > 1) {
         return $.valueOf(items_to_cons(MUL, ...factors));
     } else if (factors.length === 1) {
@@ -133,13 +133,13 @@ class Op extends CompositeOperator {
         // console.lg(`cs.length=${cs.length}`);
         if (cs.length === 0) {
             // Everything is real. We can throw away the (re ...) wrapper.
-            const A = multiply_factors(rs, $);
+            const A = multiply_factors_array(rs, $);
             // console.lg("A", $.toInfixString(A));
             return [TFLAG_DIFF, A];
         }
-        const A = multiply_factors(rs, $);
+        const A = multiply_factors_array(rs, $);
         // console.lg("A", $.toInfixString(A));
-        const B = multiply_factors(cs, $);
+        const B = multiply_factors_array(cs, $);
         // console.lg("B", $.toInfixString(B));
         if (B.equals(innerExpr)) {
             // We didn't make any progress.

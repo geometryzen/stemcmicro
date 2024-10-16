@@ -4,7 +4,7 @@ import { inverse, isone, is_cons_opr_eq_add, is_cons_opr_eq_multiply, is_cons_op
 import { car, is_cons, U } from "@stemcmicro/tree";
 import { rationalize } from "../rationalize/rationalize";
 
-export function denominator(expr: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+export function denominator(expr: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     if (is_rat(expr)) {
         return expr.denom();
     }
@@ -35,13 +35,13 @@ export function denominator(expr: U, $: Pick<ExprContext, "handlerFor" | "pushDi
     return one;
 }
 
-function denominators(xs: U[], $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U[] {
+function denominators(xs: U[], $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U[] {
     const denom_mapper = make_denom_mapper($);
     const denoms = xs.map(denom_mapper);
     return denoms;
 }
 
-function make_denom_mapper($: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): (x: U) => U {
+function make_denom_mapper($: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): (x: U) => U {
     return function (x: U) {
         return denominator(x, $);
     };

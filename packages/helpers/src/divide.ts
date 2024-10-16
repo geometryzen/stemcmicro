@@ -1,12 +1,14 @@
 import { is_flt, is_num, is_rat, is_uom } from "@stemcmicro/atoms";
 import { ExprContext } from "@stemcmicro/context";
+import { Directive } from "@stemcmicro/directive";
 import { is_atom, U } from "@stemcmicro/tree";
 import { divide_num_num } from "./divide_num_num";
 import { float } from "./float";
 import { inverse } from "./inverse";
 import { multiply } from "./multiply";
 
-export function divide(lhs: U, rhs: U, $: Pick<ExprContext, "valueOf">): U {
+export function divide(lhs: U, rhs: U, $: Pick<ExprContext, "getDirective" | "valueOf">): U {
+    const debug = $.getDirective(Directive.traceLevel) > 0;
     if (is_rat(rhs) && rhs.isOne()) {
         return lhs;
     }
@@ -26,8 +28,11 @@ export function divide(lhs: U, rhs: U, $: Pick<ExprContext, "valueOf">): U {
     } else {
         const inverse_rhs = inverse(rhs, $);
         try {
-            // console.lg("inverse_rhs", `${rhs}`, `${inverse_rhs}`);
-            return multiply($, lhs, inverse_rhs);
+            const retval = multiply($, lhs, inverse_rhs);
+            if (debug) {
+                // console.lg("divide", "lhs", `${lhs}`, "rhs", `${rhs}`, "retval", `${retval}`)
+            }
+            return retval;
         } finally {
             inverse_rhs.release();
         }

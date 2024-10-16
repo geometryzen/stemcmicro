@@ -6315,21 +6315,25 @@ function mod_integers(p1: Rat, p2: Rat, $: ProgramStack): void {
     push_bignum(p1.sign, a, b, $);
 }
 
-export function stack_multiply(expr: Cons, env: ExprContext, $: ProgramStack): void {
-    const h0 = $.length;
+export function stack_multiply(expr: Cons, env: ExprContext, stack: ProgramStack): void {
+    const debug = env.getDirective(Directive.traceLevel) > 0;
+    const h0 = stack.length;
     const argList = expr.argList;
     try {
         env.pushDirective(Directive.expanding, env.getDirective(Directive.expanding) - 1);
+        if (debug) {
+            // console.lg("stack_multiply", `${expr}`, "expanding", env.getDirective(Directive.expanding));
+        }
         try {
             let factors = argList;
             while (is_cons(factors)) {
-                $.push(factors);
-                $.head();
-                value_of(env, $);
+                stack.push(factors);
+                stack.head();
+                value_of(env, stack);
                 factors = factors.rest;
             }
-            const n = $.length - h0;
-            multiply_factors(n, env, $);
+            const n = stack.length - h0;
+            multiply_factors(n, env, stack);
         } finally {
             env.popDirective();
         }
@@ -9998,7 +10002,12 @@ function multiply_expand(env: ExprContext, $: ProgramStack): void {
  * The result is the top element of the stack.
  * @param n number of factors on stack to be multiplied.
  */
-export function multiply_factors(n: number, env: ExprContext, $: ProgramStack): void {
+export function multiply_factors(n: number, env: ExprContext, stack: ProgramStack): void {
+    const debug = env.getDirective(Directive.traceLevel) > 0;
+    if (debug) {
+        // console.lg("multiply_factors", "n", n);
+    }
+
     if (n < 2) {
         return;
     }
@@ -10006,33 +10015,38 @@ export function multiply_factors(n: number, env: ExprContext, $: ProgramStack): 
     /**
      * The start of the factors on the stack.
      */
-    const start = $.length - n;
+    const start = stack.length - n;
 
-    flatten_items(start, MULTIPLY, $);
-
-    const uom = multiply_uom_factors(start, $);
-    if (is_uom(uom)) {
-        push(uom, $);
+    if (debug) {
+        for (let i = 0; i < n; i++) {
+            // const index = start + i;
+            // console.lg(index, `${stack.getAt(index)}`);
+        }
     }
 
-    const B = multiply_blade_factors(start, env, $);
+    flatten_items(start, MULTIPLY, stack);
+
+    const uom = multiply_uom_factors(start, stack);
+    if (is_uom(uom)) {
+        push(uom, stack);
+    }
+
+    const B = multiply_blade_factors(start, env, stack);
     if (is_rat(B) && B.isOne()) {
         // Ignore
     } else if (is_nil(B)) {
         // Ignore
     } else {
-        push(B, $);
+        push(B, stack);
     }
 
-    const T = multiply_tensor_factors(start, env, $);
+    const T = multiply_tensor_factors(start, env, stack);
 
-    multiply_scalar_factors(start, env, $);
-
-    // console.lg(`after multiply scalar factors: ${ $.stack } `);
+    multiply_scalar_factors(start, env, stack);
 
     if (is_tensor(T)) {
-        push(T, $);
-        inner(env, $);
+        push(T, stack);
+        inner(env, stack);
     }
 }
 

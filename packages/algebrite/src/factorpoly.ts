@@ -27,7 +27,7 @@ import { stack_pop, stack_push, stack_push_items } from "./runtime/stack";
  * @param $
  * @returns factored polynomial
  */
-export function factor_polynomial(P: U, X: Sym, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+export function factor_polynomial(P: U, X: Sym, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     // console.lg("yyfactorpoly", `${($ as ExtensionEnv).toInfixString(P)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
@@ -253,7 +253,7 @@ export function factor_polynomial(P: U, X: Sym, $: Pick<ExprContext, "handlerFor
  * @param cs This array is mutated as an intended side-effect and we return a value, k, such that
  * multiplication of the mutated coefficient by k recreates the original coefficients.
  */
-function rationalize_coefficients(cs: U[], $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
+function rationalize_coefficients(cs: U[], $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): U {
     // console.lg("rationalize_coefficients", ($ as ExtensionEnv).toSExprString(items_to_cons(...cs)));
     // console.lg(`rationalize_coefficients ${coefficients}`);
     // LCM of all polynomial coefficients
@@ -281,7 +281,7 @@ function rationalize_coefficients(cs: U[], $: Pick<ExprContext, "handlerFor" | "
  * @param $
  * @returns
  */
-function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, a: U, b: U, $: Pick<ExprContext, "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): [success: boolean, a: U, b: U] {
+function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, a: U, b: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "pushDirective" | "popDirective" | "valueOf">): [success: boolean, a: U, b: U] {
     const h = defs.tos;
 
     const an = defs.tos;
@@ -393,13 +393,13 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
  * @param k
  * @param _
  */
-function yydivpoly(a: U, b: U, coeffs: U[], k: number, _: Pick<ExprContext, "valueOf">): void {
+function yydivpoly(a: U, b: U, coeffs: U[], k: number, env: Pick<ExprContext, "getDirective" | "valueOf">): void {
     let temp: U = zero;
     for (let i = k; i > 0; i--) {
-        const divided = divide(coeffs[i], a, _);
+        const divided = divide(coeffs[i], a, env);
         coeffs[i] = temp;
         temp = divided;
-        coeffs[i - 1] = subtract(_, coeffs[i - 1], multiply(_, temp, b));
+        coeffs[i - 1] = subtract(env, coeffs[i - 1], multiply(env, temp, b));
     }
     coeffs[0] = temp;
 }

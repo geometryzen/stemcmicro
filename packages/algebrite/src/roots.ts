@@ -80,7 +80,7 @@ function is_simple_root(ks: U[], $: Pick<ExprContext, "valueOf">): boolean {
  * Computes the coefficients of the polynomial then divides each by the highest power coefficient.
  * The coefficients are returned in the order [c0, c1, c2, ..., 1] where c0 is the constant coefficient.
  */
-function normalized_coeff(poly: U, x: U, $: Pick<ExprContext, "handlerFor" | "valueOf" | "pushDirective" | "popDirective">): U[] {
+function normalized_coeff(poly: U, x: U, $: Pick<ExprContext, "getDirective" | "handlerFor" | "valueOf" | "pushDirective" | "popDirective">): U[] {
     const cs = coefficients(poly, x, $);
     const highest = cs[cs.length - 1];
     return cs.map((c) => divide(c, highest, $));
@@ -256,7 +256,7 @@ function mini_solve(cs: U[], $: ExprContext): U[] {
     return [];
 }
 
-function _solveDegree1(A: U, B: U, $: Pick<ExprContext, "valueOf">): U[] {
+function _solveDegree1(A: U, B: U, $: Pick<ExprContext, "getDirective" | "valueOf">): U[] {
     return [negate($, divide(B, A, $))];
 }
 

@@ -1945,8 +1945,10 @@ function emit_symbol(sym: Sym, $: ProgramStack): void {
         emit_symbol_as_fragments("pi", $);
     } else if (sym.key() === "Ω") {
         emit_symbol_as_fragments("Omega", $);
+    } else if (sym.key().startsWith("theta")) {
+        emit_symbol_as_fragments(sym.key(), $);
     } else {
-        return emit_symbol_roman(sym, $);
+        emit_symbol_roman(sym, $);
     }
 }
 

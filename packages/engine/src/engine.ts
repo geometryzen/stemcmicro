@@ -59,10 +59,26 @@ export interface ExprHandlerBuilder<T extends U> {
 
 export interface ExprEngine extends Pick<ExprContext, "clearBindings">, Pick<ExprContext, "pushDirective" | "popDirective"> {
     clearBindings(): void;
-
+    /**
+     * Define the behavior of extension atoms with respect to other atoms in the system and operators.
+     * New kinds of atoms are introduced using extension functions.
+     * @param builder
+     * @param type
+     * @param guard
+     */
     defineAtomHandler<T extends Atom>(builder: ExprHandlerBuilder<T>, type: string, guard: (expr: Atom) => boolean): void;
+    /**
+     * The expression engine may be extended by adding new functions.
+     * If the functions introduce new kinds of atoms, their behavior may be defined using an atom handler.
+     * @param name
+     * @param lambda
+     */
     defineFunction(name: Sym, lambda: LambdaExpr): void;
-
+    /**
+     * Parses source text into a list of trees and possible syntax errors.
+     * The default syntax is eigenmath.
+     * @param sourceText
+     */
     parse(sourceText: string): { trees: U[]; errors: Error[] };
 
     valueOf(expr: U): U;

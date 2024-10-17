@@ -53,6 +53,8 @@ class SymMathPi implements Extension<Sym> {
                     } else {
                         return items_to_cons(POW, lhs, rhs);
                     }
+                } else if (is_flt(rhs)) {
+                    return create_flt(Math.pow(Math.PI, rhs.toNumber()));
                 }
             }
         }

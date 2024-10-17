@@ -116,7 +116,16 @@ describe("abs", () => {
     it("3*ex*m+4*ey*m", () => {
         const engine: ExprEngine = create_engine();
         try {
-            const sourceText = [`G20 = algebra([1, 1, 1], ["i", "j", "k"])`, `ex = G20[1]`, `ey = G20[2]`, `ez = G20[3]`, `m=uom("meter")`, `r=3*ex*m+4*ey*m`, `abs(r)`].join("\n");
+            const sourceText = [
+                `G20 = algebra([1, 1, 1],
+                     ["i", "j", "k"])`,
+                `ex = G20[1]`,
+                `ey = G20[2]`,
+                `ez = G20[3]`,
+                `m=uom("meter")`,
+                `r=3*ex*m+4*ey*m`,
+                `abs(r)`
+            ].join("\n");
             const { trees, errors } = js_parse(sourceText);
             if (errors.length > 0) {
             }

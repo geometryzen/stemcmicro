@@ -1939,13 +1939,75 @@ function emit_subexpr(p: U, env: SvgRenderEnv, $: ProgramStack, ec: SvgRenderCon
     emit_list(p, env, $, ec);
     emit_update_subexpr($);
 }
+const greek_name_tab = [
+    "Alpha",
+    "Beta",
+    "Gamma",
+    "Delta",
+    "Epsilon",
+    "Zeta",
+    "Eta",
+    "Theta",
+    "Iota",
+    "Kappa",
+    "Lambda",
+    "Mu",
+    "Nu",
+    "Xi",
+    "Omicron",
+    "Pi",
+    "Rho",
+    "Sigma",
+    "Tau",
+    "Upsilon",
+    "Phi",
+    "Chi",
+    "Psi",
+    "Omega",
+
+    "alpha",
+    "beta",
+    "gamma",
+    "delta",
+    "epsilon",
+    "zeta",
+    "eta",
+    "theta",
+    "iota",
+    "kappa",
+    "lambda",
+    "mu",
+    "nu",
+    "xi",
+    "omicron",
+    "pi",
+    "rho",
+    "sigma",
+    "tau",
+    "upsilon",
+    "phi",
+    "chi",
+    "psi",
+    "omega"
+];
+
+function starts_with_greek_name(name: string): boolean {
+    const n = greek_name_tab.length;
+    for (let i = 0; i < n; i++) {
+        const greek = greek_name_tab[i];
+        if (name.startsWith(greek)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 function emit_symbol(sym: Sym, $: ProgramStack): void {
     if (is_native(sym, Native.PI)) {
         emit_symbol_as_fragments("pi", $);
     } else if (sym.key() === "Ω") {
         emit_symbol_as_fragments("Omega", $);
-    } else if (sym.key().startsWith("theta")) {
+    } else if (starts_with_greek_name(sym.key())) {
         emit_symbol_as_fragments(sym.key(), $);
     } else {
         emit_symbol_roman(sym, $);
@@ -1971,8 +2033,8 @@ function emit_symbol_roman(sym: Sym, $: ProgramStack): void {
  * Used to render symbols as a leading character then a suffix.
  * We use this when there is some cue that the symbol.
  */
-export function emit_symbol_as_fragments(s: string, $: ProgramStack): void {
-    let k = emit_symbol_fragment(s, 0, $);
+export function emit_symbol_as_fragments(s: string, stack: ProgramStack): void {
+    let k = emit_symbol_fragment(s, 0, stack);
 
     if (k === s.length) {
         return;
@@ -1982,17 +2044,17 @@ export function emit_symbol_as_fragments(s: string, $: ProgramStack): void {
 
     emit_level++;
 
-    const t = $.length;
+    const t = stack.length;
 
     while (k < s.length) {
-        k = emit_symbol_fragment(s, k, $);
+        k = emit_symbol_fragment(s, k, stack);
     }
 
-    emit_update_list(t, $);
+    emit_update_list(t, stack);
 
     emit_level--;
 
-    emit_update_subscript($);
+    emit_update_subscript(stack);
 }
 
 const symbol_name_tab = [
@@ -2051,7 +2113,7 @@ const symbol_name_tab = [
 
 const symbol_italic_tab = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0];
 
-function emit_symbol_fragment(s: string, k: number, $: ProgramStack): number {
+function emit_symbol_fragment(s: string, k: number, stack: ProgramStack): number {
     let i: number;
     let t: string = "";
 
@@ -2063,15 +2125,15 @@ function emit_symbol_fragment(s: string, k: number, $: ProgramStack): number {
     }
 
     if (i === n) {
-        if (isdigit(s.charAt(k))) emit_roman_char(s.charCodeAt(k), $);
-        else emit_italic_char(s.charCodeAt(k), $);
+        if (isdigit(s.charAt(k))) emit_roman_char(s.charCodeAt(k), stack);
+        else emit_italic_char(s.charCodeAt(k), stack);
         return k + 1;
     }
 
     const char_num = i + 128;
 
-    if (symbol_italic_tab[i]) emit_italic_char(char_num, $);
-    else emit_roman_char(char_num, $);
+    if (symbol_italic_tab[i]) emit_italic_char(char_num, stack);
+    else emit_roman_char(char_num, stack);
 
     return k + t.length;
 }

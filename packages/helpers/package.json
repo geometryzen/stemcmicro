@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/helpers",
-    "version": "0.9.106",
+    "version": "0.9.107",
     "description": "Helpers for stemcmicro",
     "exports": {
         ".": {

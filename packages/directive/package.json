@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/directive",
-    "version": "0.9.106",
+    "version": "0.9.107",
     "description": "JavaScript parser for math expressions",
     "exports": {
         ".": {

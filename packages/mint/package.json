@@ -1,6 +1,6 @@
 {
     "name": "@stemcmicro/mint",
-    "version": "0.9.106",
+    "version": "0.9.107",
     "description": "Provides the meaning of universal mathematics symbols",
     "exports": {
         ".": {

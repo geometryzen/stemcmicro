@@ -4,7 +4,7 @@ stemcmicro currently uses a proprietary version of the Lerna monorepo pending th
 
 This version is available at https://github.com/geometryzen/lerna
 
-In order to develop stemcmicro, you MUST clone this repo then take the following actions.
+In order to develop stemcmicro, you MUST clone this lerna repo then take the following actions.
 
 Read the contributing guide in Lerna and set up volta, verdaccio, etc as if you were going to develop Lerna.
 
